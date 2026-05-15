@@ -10,7 +10,11 @@
     'external_dependencies': {
         'python': ['requests', 'bs4', 'lxml'],
     },
-    'data': [],
+    'data': [
+        'security/ir.model.access.csv',
+        'views/comic_bdgest_enrich_wizard_views.xml',
+        'views/comic_album_inherit_views.xml',
+    ],
     'demo': [],
     'installable': True,
     'application': False,

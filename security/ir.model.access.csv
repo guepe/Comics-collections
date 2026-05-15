@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bdgest_enrich_wizard_user,bdgest.enrich.wizard user,model_comic_bdgest_enrich_wizard,comics_collections.group_comic_user,1,1,1,1
+access_bdgest_result_line_user,bdgest.result.line user,model_comic_bdgest_result_line,comics_collections.group_comic_user,1,1,1,1

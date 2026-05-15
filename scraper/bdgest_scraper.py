@@ -24,7 +24,7 @@ from .bdgest_parser import BdgestParser
 _logger = logging.getLogger(__name__)
 
 BASE_URL = "https://www.bedetheque.com"
-SEARCH_ALBUMS_URL = f"{BASE_URL}/recherche-albums.html"
+SEARCH_ALBUMS_URL = f"{BASE_URL}/search/albums"
 LOGIN_URL = f"{BASE_URL}/log_in.php"
 
 DEFAULT_HEADERS = {
@@ -79,6 +79,7 @@ class BdgestScraper:
     def __init__(self, request_delay=2.0, login=None, password=None):
         self.request_delay = request_delay
         self._last_request_time = 0.0
+        self._csrf_token = None
         self._session = requests.Session()
         self._session.headers.update(DEFAULT_HEADERS)
         if login and password:
@@ -94,19 +95,29 @@ class BdgestScraper:
 
         Retourne : list[dict] — données partielles (sans ISBN ni détail complet).
         """
-        response = self._get(SEARCH_ALBUMS_URL, params={'RechAlbumTitre': term})
+        params = self._search_params(RechTitre=term)
+        response = self._get(SEARCH_ALBUMS_URL, params=params)
         return BdgestParser.parse_search_results(response.text)
 
     def search_by_isbn(self, isbn):
         """
         Recherche un album par EAN-13 / ISBN.
 
-        Retourne : dict | None
+        Retourne : dict complet (fiche détaillée) | None
+        Flux : search/albums → 1er résultat de liste → fiche album complète.
         """
         isbn_clean = re.sub(r'[\s\-]', '', isbn)
-        response = self._get(SEARCH_ALBUMS_URL, params={'RechAlbumEan': isbn_clean})
+        params = self._search_params(RechISBN=isbn_clean)
+        response = self._get(SEARCH_ALBUMS_URL, params=params)
         results = BdgestParser.parse_search_results(response.text)
-        return results[0] if results else None
+        if not results:
+            return None
+        first = results[0]
+        detail = self.get_album_detail(first['bdgest_album_id'])
+        # Complète avec les données de série issues de la liste si absentes
+        detail.setdefault('bdgest_serie_id', first.get('bdgest_serie_id'))
+        detail.setdefault('serie_name', first.get('serie_name'))
+        return detail
 
     def search_by_author(self, term):
         """
@@ -114,7 +125,8 @@ class BdgestScraper:
 
         Retourne : list[dict]
         """
-        response = self._get(SEARCH_ALBUMS_URL, params={'RechAlbumAuteur': term})
+        params = self._search_params(RechAuteur=term)
+        response = self._get(SEARCH_ALBUMS_URL, params=params)
         return BdgestParser.parse_search_results(response.text)
 
     def get_album_detail(self, bdgest_album_id):
@@ -151,6 +163,46 @@ class BdgestScraper:
         except BdgestError:
             _logger.warning("Impossible de télécharger l'image : %s", image_url)
             return None
+
+    # ──────────────────────────────────────────────────────────
+    # Helpers de recherche
+    # ──────────────────────────────────────────────────────────
+
+    def _search_params(self, **criteria):
+        """Construit les paramètres de recherche avec le CSRF token."""
+        base = {
+            'RechIdSerie': '', 'RechIdAuteur': '', 'RechSerie': '',
+            'RechTitre': '', 'RechEditeur': '', 'RechCollection': '',
+            'RechStyle': '', 'RechAuteur': '', 'RechISBN': '',
+            'RechParution': '', 'RechOrigine': '', 'RechLangue': '',
+            'RechMotCle': '', 'RechDLDeb': '', 'RechDLFin': '',
+            'RechCoteMin': '', 'RechCoteMax': '', 'RechEO': '0',
+        }
+        base.update(criteria)
+        token = self._get_csrf_token()
+        if token:
+            base['csrf_token_bel'] = token
+        return base
+
+    def _get_csrf_token(self):
+        """Récupère (et met en cache) le csrf_token_bel depuis la page de recherche."""
+        if self._csrf_token:
+            return self._csrf_token
+        try:
+            response = self._get(SEARCH_ALBUMS_URL)
+            from bs4 import BeautifulSoup
+            soup = BeautifulSoup(response.text, 'html.parser')
+            inp = soup.find('input', {'name': 'csrf_token_bel'})
+            if inp:
+                self._csrf_token = inp.get('value', '')
+                _logger.debug("CSRF token BDGest récupéré")
+            else:
+                _logger.warning("csrf_token_bel introuvable dans la page de recherche")
+                self._csrf_token = ''
+        except BdgestError as exc:
+            _logger.warning("Impossible de récupérer le CSRF token : %s", exc)
+            self._csrf_token = ''
+        return self._csrf_token
 
     # ──────────────────────────────────────────────────────────
     # HTTP
