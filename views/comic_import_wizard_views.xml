@@ -5,7 +5,7 @@
         <field name="name">comic.import.wizard.form</field>
         <field name="model">comic.import.wizard</field>
         <field name="arch" type="xml">
-            <form string="Import CSV/XLSX">
+            <form string="Import CSV/Excel">
                 <sheet>
                     <field name="state" invisible="1"/>
                     <field name="template_file" invisible="1"/>
@@ -82,7 +82,7 @@
     </record>
 
     <record id="action_comic_import_wizard" model="ir.actions.act_window">
-        <field name="name">Import CSV/XLSX</field>
+        <field name="name">Import CSV/Excel</field>
         <field name="res_model">comic.import.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>

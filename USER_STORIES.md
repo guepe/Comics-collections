@@ -162,7 +162,7 @@ Critères d'acceptance :
 
 ---
 
-**US-018 — Source Google Books API**
+**US-018 — Source Google Books API** ✅
 
 ```
 En tant que collectionneur
@@ -170,14 +170,14 @@ Je veux que le système récupère les données depuis Google Books
 Afin d'obtenir synopsis, couvertures HD et métadonnées de qualité
 
 Critères d'acceptance :
-- [ ] Classe GoogleBooksSource opérationnelle
-- [ ] Recherche par ISBN (prioritaire)
-- [ ] Recherche par titre + auteur optionnel
-- [ ] Extraction : titre, auteurs, éditeur, date, pages, synopsis, couvertures
-- [ ] Couvertures disponibles en 4 tailles (small/medium/large/extraLarge)
-- [ ] Clé API configurable dans Paramètres Odoo
-- [ ] Gestion erreur quota dépassé (HTTP 429) avec message clair
-- [ ] Fonctionne sans clé pour les requêtes de base (mode anonyme)
+- [x] Classe GoogleBooksSource opérationnelle
+- [x] Recherche par ISBN (prioritaire)
+- [x] Recherche par titre + auteur optionnel
+- [x] Extraction : titre, auteurs, éditeur, date, pages, synopsis, couvertures
+- [x] Couvertures disponibles en 4 tailles (small/medium/large/extraLarge)
+- [x] Clé API configurable dans Paramètres Odoo
+- [x] Gestion erreur quota dépassé (HTTP 429) avec message clair
+- [x] Fonctionne sans clé pour les requêtes de base (mode anonyme)
 ```
 
 ---
@@ -262,7 +262,7 @@ Critères d'acceptance :
 
 ---
 
-**US-023 — Wizard de recherche et import unifié**
+**US-023 — Wizard de recherche et import unifié** ✅
 
 ```
 En tant que collectionneur
@@ -270,15 +270,15 @@ Je veux rechercher un album dans toutes les sources en un seul geste
 Afin d'importer facilement n'importe quelle BD dans ma collection
 
 Critères d'acceptance :
-- [ ] Wizard accessible depuis menu et depuis bouton sur comic.album
-- [ ] Champ de recherche unique (ISBN ou titre)
-- [ ] Détection automatique ISBN vs titre (format EAN-13)
-- [ ] Affichage des résultats avec badge source (Google/OpenLib/BnF/BDGest)
-- [ ] Couverture preview dans le wizard
-- [ ] Sélection multiple pour import en lot
-- [ ] Gestion des doublons (ISBN déjà en base → avertissement)
-- [ ] Import crée automatiquement : série, auteurs (res.partner), éditeur
-- [ ] Rapport post-import : X créés, Y mis à jour, Z ignorés
+- [x] Wizard accessible depuis menu et depuis bouton sur comic.album
+- [x] Champ de recherche unique (ISBN ou titre)
+- [x] Détection automatique ISBN vs titre (format EAN-13)
+- [x] Affichage des résultats avec badge source (Google/OpenLib/BnF/BDGest)
+- [x] Couverture preview dans le wizard
+- [x] Sélection multiple pour import en lot
+- [x] Gestion des doublons (ISBN déjà en base → avertissement)
+- [x] Import crée automatiquement : série, auteurs (res.partner), éditeur
+- [x] Rapport post-import : X créés, Y mis à jour, Z ignorés
 ```
 
 ---
@@ -574,7 +574,7 @@ Critères d'acceptance :
 
 ---
 
-## 📥 PHASE 6 — Import CSV/XLSX
+## 📥 PHASE 6 — Import CSV/Excel
 
 ### EPIC 7 : Import de données
 
@@ -599,16 +599,16 @@ Critères d'acceptance :
 
 ---
 
-**US-031 — Wizard d'import CSV/XLSX** ✅
+**US-031 — Wizard d'import CSV/Excel** ✅
 
 ```
 En tant que collectionneur
-Je veux importer ma collection depuis un fichier CSV ou XLSX
+Je veux importer ma collection depuis un fichier CSV, XLS ou XLSX
 Afin de ne pas tout saisir manuellement
 
 Critères d'acceptance :
 - [x] Wizard en 4 étapes : Upload → Mapping → Prévisualisation → Import
-- [x] Détection automatique CSV/XLSX selon l'extension
+- [x] Détection automatique CSV/XLS/XLSX selon l'extension
 - [x] Détection automatique du séparateur CSV (; ou ,)
 - [x] Étape Mapping : associer chaque colonne du fichier au champ Odoo
 - [x] Prévisualisation des 10 premières lignes avant import

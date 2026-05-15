@@ -1,7 +1,7 @@
 import base64
 import csv
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from io import BytesIO, StringIO
 from xml.etree import ElementTree as ET
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -188,7 +188,7 @@ class ComicImportWizard(models.TransientModel):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': "Import CSV/XLSX",
+            'name': "Import CSV/Excel",
             'res_model': self._name,
             'res_id': self.id,
             'view_mode': 'form',
@@ -210,9 +210,11 @@ class ComicImportWizard(models.TransientModel):
         content = base64.b64decode(self.import_file)
         if filename.endswith('.xlsx'):
             return self._read_xlsx_rows(content)
+        if filename.endswith('.xls'):
+            return self._read_xls_rows(content)
         if filename.endswith('.csv') or not filename:
             return self._read_csv_rows(content)
-        raise UserError("Formats acceptés : CSV ou XLSX.")
+        raise UserError("Formats acceptés : CSV, XLS ou XLSX.")
 
     def _normalise_mapped_rows(self, rows):
         if not rows:
@@ -237,7 +239,7 @@ class ComicImportWizard(models.TransientModel):
                     values.update(self._parse_collection_content(value))
                     continue
                 if values.get(target_field):
-                    values[target_field] = "%s, %s" % (values[target_field], value)
+                    values[target_field] = "%s\n%s" % (values[target_field], value)
                 else:
                     values[target_field] = value
             if any(values.values()):
@@ -352,6 +354,8 @@ class ComicImportWizard(models.TransientModel):
     def _read_xlsx_rows(cls, content):
         with ZipFile(BytesIO(content)) as workbook:
             shared_strings = cls._xlsx_shared_strings(workbook)
+            date_style_ids = cls._xlsx_date_style_ids(workbook)
+            date_1904 = cls._xlsx_uses_1904_dates(workbook)
             sheet_path = cls._xlsx_first_sheet_path(workbook)
             root = ET.fromstring(workbook.read(sheet_path))
         namespace = {'main': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
@@ -362,7 +366,42 @@ class ComicImportWizard(models.TransientModel):
                 column_index = cls._xlsx_column_index(cell.attrib.get('r', 'A1'))
                 while len(values) < column_index - 1:
                     values.append('')
-                values.append(cls._xlsx_cell_value(cell, shared_strings))
+                values.append(
+                    cls._xlsx_cell_value(
+                        cell,
+                        shared_strings,
+                        date_style_ids,
+                        date_1904,
+                    )
+                )
+            rows.append(values)
+        return rows
+
+    @staticmethod
+    def _read_xls_rows(content):
+        try:
+            import xlrd
+        except ImportError as exc:
+            raise UserError(
+                "L'import XLS nécessite la bibliothèque Python xlrd. "
+                "Convertissez le fichier en XLSX ou installez xlrd côté serveur."
+            ) from exc
+
+        workbook = xlrd.open_workbook(file_contents=content)
+        sheet = workbook.sheet_by_index(0)
+        rows = []
+        for row_index in range(sheet.nrows):
+            values = []
+            for column_index in range(sheet.ncols):
+                cell = sheet.cell(row_index, column_index)
+                value = cell.value
+                if cell.ctype == xlrd.XL_CELL_DATE:
+                    date_value = xlrd.xldate_as_datetime(value, workbook.datemode).date()
+                    values.append(date_value.isoformat())
+                elif cell.ctype == xlrd.XL_CELL_NUMBER and float(value).is_integer():
+                    values.append(str(int(value)))
+                else:
+                    values.append(str(value or '').strip())
             rows.append(values)
         return rows
 
@@ -381,6 +420,57 @@ class ComicImportWizard(models.TransientModel):
                 )
             )
         return strings
+
+    @staticmethod
+    def _xlsx_uses_1904_dates(workbook):
+        if 'xl/workbook.xml' not in workbook.namelist():
+            return False
+        namespace = {'main': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+        root = ET.fromstring(workbook.read('xl/workbook.xml'))
+        workbook_properties = root.find('main:workbookPr', namespace)
+        return (
+            workbook_properties is not None
+            and workbook_properties.attrib.get('date1904') in ('1', 'true', 'True')
+        )
+
+    @classmethod
+    def _xlsx_date_style_ids(cls, workbook):
+        if 'xl/styles.xml' not in workbook.namelist():
+            return set()
+
+        namespace = {'main': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
+        root = ET.fromstring(workbook.read('xl/styles.xml'))
+        custom_date_formats = set()
+        for number_format in root.findall('main:numFmts/main:numFmt', namespace):
+            number_format_id = int(number_format.attrib.get('numFmtId', '0'))
+            format_code = number_format.attrib.get('formatCode', '')
+            if cls._is_xlsx_date_format(format_code):
+                custom_date_formats.add(number_format_id)
+
+        date_style_ids = set()
+        cell_formats = root.find('main:cellXfs', namespace)
+        if cell_formats is None:
+            return date_style_ids
+
+        for style_index, cell_format in enumerate(cell_formats.findall('main:xf', namespace)):
+            number_format_id = int(cell_format.attrib.get('numFmtId', '0'))
+            if number_format_id in cls._xlsx_builtin_date_format_ids() or number_format_id in custom_date_formats:
+                date_style_ids.add(style_index)
+        return date_style_ids
+
+    @staticmethod
+    def _is_xlsx_date_format(format_code):
+        format_code = re.sub(r'".*?"', '', format_code.lower())
+        format_code = re.sub(r'\[.*?\]', '', format_code)
+        return bool(re.search(r'(^|[^a-z])[dmyh]([^a-z]|$)', format_code))
+
+    @staticmethod
+    def _xlsx_builtin_date_format_ids():
+        return {
+            14, 15, 16, 17, 18, 19, 20, 21, 22,
+            27, 28, 29, 30, 31, 32, 33, 34, 35, 36,
+            45, 46, 47, 50, 51, 52, 53, 54, 55, 56, 57, 58,
+        }
 
     @classmethod
     def _xlsx_first_sheet_path(cls, workbook):
@@ -401,7 +491,7 @@ class ComicImportWizard(models.TransientModel):
         return index or 1
 
     @staticmethod
-    def _xlsx_cell_value(cell, shared_strings):
+    def _xlsx_cell_value(cell, shared_strings, date_style_ids=None, date_1904=False):
         namespace = {'main': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
         cell_type = cell.attrib.get('t')
         value = cell.find('main:v', namespace)
@@ -415,7 +505,20 @@ class ComicImportWizard(models.TransientModel):
                 text.text or ''
                 for text in inline.iter('{http://schemas.openxmlformats.org/spreadsheetml/2006/main}t')
             )
+        style_id = int(cell.attrib.get('s', '0'))
+        if value is not None and style_id in (date_style_ids or set()):
+            return ComicImportWizard._excel_serial_date(value.text, date_1904)
         return (value.text or '').strip() if value is not None else ''
+
+    @staticmethod
+    def _excel_serial_date(value, date_1904=False):
+        try:
+            serial = float(value)
+        except (TypeError, ValueError):
+            return ''
+        if date_1904:
+            return (date(1904, 1, 1) + timedelta(days=int(serial))).isoformat()
+        return (date(1899, 12, 30) + timedelta(days=int(serial))).isoformat()
 
     def _import_row(self, row):
         title = (row.get('titre_album') or row.get('name') or '').strip()
@@ -425,12 +528,15 @@ class ComicImportWizard(models.TransientModel):
         if not title:
             title = serie_name
 
-        isbn = self._clean_text(row.get('isbn'))
+        isbn = self._clean_isbn(row.get('isbn'))
         values = self._album_values(row, title, serie_name)
         album = self.env['comic.album']
         existing = album.browse()
         if self.import_policy == 'update' and isbn:
-            existing = album.search([('isbn', '=', isbn)], limit=1)
+            existing = album.search(
+                ['|', ('isbn', '=', isbn), ('isbn', '=', row.get('isbn', '').strip())],
+                limit=1
+            )
         if existing:
             existing.write(values)
             return 'updated'
@@ -438,7 +544,7 @@ class ComicImportWizard(models.TransientModel):
         return 'created'
 
     def _album_values(self, row, title, serie_name):
-        isbn = self._clean_text(row.get('isbn'))
+        isbn = self._clean_isbn(row.get('isbn'))
         values = {
             'name': title,
             'isbn': isbn,
@@ -501,13 +607,36 @@ class ComicImportWizard(models.TransientModel):
     def _split_names(value):
         return [
             name.strip()
-            for name in re.split(r'[,;]', str(value or ''))
+            for name in re.split(r'[;\n|]+', str(value or ''))
             if name.strip()
         ]
 
     @staticmethod
     def _clean_text(value):
         return str(value or '').strip()
+
+    @staticmethod
+    def _clean_isbn(value):
+        """
+        Normalise un ISBN : supprime tirets/espaces et convertit ISBN-10 → EAN-13.
+        Retourne une chaîne de 13 chiffres ou False.
+        """
+        import re as _re
+        raw = _re.sub(r'[\-\s]', '', str(value or '').strip())
+        if not raw:
+            return False
+        if len(raw) == 13 and raw.isdigit():
+            return raw
+        if len(raw) == 10:
+            # Conversion ISBN-10 → EAN-13 : préfixe 978 + recalcul du chiffre de contrôle
+            digits9 = raw[:9]
+            if not digits9.isdigit():
+                return raw  # laisse passer, la validation le signalera
+            base = '978' + digits9
+            total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
+            check = (10 - total % 10) % 10
+            return base + str(check)
+        return raw or False
 
     @staticmethod
     def _parse_integer(value):
@@ -648,17 +777,17 @@ class ComicImportWizard(models.TransientModel):
             },
             {
                 'name': 'scenariste',
-                'description': 'Scénaristes, séparés par des virgules',
+                'description': 'Scénaristes, séparés par ;, | ou retour ligne',
                 'example': '',
             },
             {
                 'name': 'dessinateur',
-                'description': 'Dessinateurs, séparés par des virgules',
+                'description': 'Dessinateurs, séparés par ;, | ou retour ligne',
                 'example': '',
             },
             {
                 'name': 'coloriste',
-                'description': 'Coloristes, séparés par des virgules',
+                'description': 'Coloristes, séparés par ;, | ou retour ligne',
                 'example': '',
             },
             {
@@ -707,8 +836,9 @@ class ComicImportWizard(models.TransientModel):
             ),
             (
                 'Auteurs',
-                'Séparer plusieurs auteurs par une virgule dans scenariste, '
-                'dessinateur ou coloriste.',
+                'Séparer plusieurs auteurs par point-virgule, barre verticale '
+                'ou retour ligne dans scenariste, dessinateur ou coloriste. '
+                'Les virgules sont conservées dans les noms.',
             ),
             (
                 'État de lecture',

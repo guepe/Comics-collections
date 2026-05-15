@@ -11,7 +11,7 @@ Développer un ensemble de modules Odoo 19 (open source) permettant à un utilis
 - Un module principal de gestion de collection
 - Un connecteur de scraping vers BDGest / Bedetheque
 - Un connecteur IA (Claude + OpenAI) pour enrichir les fiches
-- Un système d'import CSV/XLSX
+- Un système d'import CSV/XLS/XLSX
 
 ---
 
@@ -30,7 +30,7 @@ addons/
 │   └── wizards/
 │       └── search_wizard.py
 ├── comic_ai/                # Connecteur IA Claude + OpenAI
-└── comic_import/            # Import CSV/XLSX
+└── comic_import/            # Import CSV/XLS/XLSX
 ```
 
 ---
@@ -54,6 +54,7 @@ lxml
 openai
 anthropic
 openpyxl
+xlrd
 xmltodict
 ```
 
@@ -311,7 +312,7 @@ Bouton "✨ Générer avec l'IA" dans le formulaire album, ouvrant un wizard :
 ### Dépend de
 `comic_collection`
 
-### Format CSV/XLSX
+### Format CSV/XLS/XLSX
 Colonnes attendues (ordre flexible, mapping configurable) :
 ```
 serie_name, tome, titre_album, isbn, date_parution, nb_pages,
@@ -320,7 +321,7 @@ etat_lecture, note, url_couverture, url_club_be, url_amazon_be
 ```
 
 ### Wizard `comic.import.wizard`
-- Upload du fichier (CSV ou XLSX)
+- Upload du fichier (CSV, XLS ou XLSX)
 - Détection automatique du séparateur CSV
 - Étape 1 : mapping des colonnes
 - Étape 2 : prévisualisation (10 premières lignes)

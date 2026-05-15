@@ -30,7 +30,7 @@
               sequence="20"/>
 
     <menuitem id="menu_comic_import"
-              name="Import CSV/XLSX"
+              name="Import CSV/Excel"
               parent="menu_comic_collection"
               action="action_comic_import_wizard"
               groups="comics_collections.group_comic_user"
