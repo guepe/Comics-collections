@@ -82,7 +82,7 @@
                 <filter string="BD" name="bd" domain="[('type', '=', 'bd')]"/>
                 <filter string="Manga" name="manga" domain="[('type', '=', 'manga')]"/>
                 <filter string="Comics" name="comics" domain="[('type', '=', 'comics')]"/>
-                <group expand="0" string="Grouper par">
+                <group name="group_by">
                     <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
                     <filter string="Statut" name="group_statut" context="{'group_by': 'statut'}"/>
                     <filter string="Genre" name="group_genre" context="{'group_by': 'genre_id'}"/>

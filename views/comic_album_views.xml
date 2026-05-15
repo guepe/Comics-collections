@@ -102,7 +102,7 @@
                         domain="[('etat_lecture', '=', 'non_lu')]"/>
                 <filter string="En cours" name="en_cours_lecture"
                         domain="[('etat_lecture', '=', 'en_cours')]"/>
-                <group expand="0" string="Grouper par">
+                <group name="group_by">
                     <filter string="Série" name="group_serie" context="{'group_by': 'serie_id'}"/>
                     <filter string="État de lecture" name="group_etat"
                             context="{'group_by': 'etat_lecture'}"/>

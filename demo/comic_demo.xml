@@ -59,7 +59,7 @@
         <field name="name">Astérix</field>
         <field name="type">bd</field>
         <field name="statut">en_cours</field>
-        <field name="genre_id" ref="comic_collection.genre_humour"/>
+        <field name="genre_id" ref="genre_humour"/>
         <field name="editeur_id" ref="editeur_albert_rene"/>
         <field name="synopsis"><![CDATA[
             <p>La série culte de René Goscinny et Albert Uderzo. Un village gaulois résiste
@@ -71,7 +71,7 @@
         <field name="name">Blacksad</field>
         <field name="type">bd</field>
         <field name="statut">en_cours</field>
-        <field name="genre_id" ref="comic_collection.genre_policier"/>
+        <field name="genre_id" ref="genre_policier"/>
         <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="synopsis"><![CDATA[
             <p>John Blacksad est un détective privé dans une ville américaine des années 50,
@@ -83,7 +83,7 @@
         <field name="name">Largo Winch</field>
         <field name="type">bd</field>
         <field name="statut">en_cours</field>
-        <field name="genre_id" ref="comic_collection.genre_aventure"/>
+        <field name="genre_id" ref="genre_aventure"/>
         <field name="editeur_id" ref="editeur_dupuis"/>
         <field name="synopsis"><![CDATA[
             <p>Largo Winch hérite à la mort de son père adoptif d'un empire financier mondial.

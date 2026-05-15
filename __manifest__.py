@@ -21,6 +21,7 @@
         'views/comic_editeur_views.xml',
         'views/comic_serie_views.xml',
         'views/comic_album_views.xml',
+        'views/comic_import_wizard_views.xml',
         'views/comic_menu.xml',
     ],
     'demo': [

@@ -1,6 +1,6 @@
 # USER STORIES — Odoo Comic Collection
 
-> Projet Odoo 18 — Gestion de collection de bandes dessinées
+> Projet Odoo 19 — Gestion de collection de bandes dessinées
 > Format : `US-XXX | En tant que... | Je veux... | Afin de...`
 
 ---
@@ -15,7 +15,7 @@
 
 ```
 Critères d'acceptance :
-- [x] __manifest__.py correct (version 18.0.1.0.0, LGPL-3)
+- [x] __manifest__.py correct (version 19.0.1.0.0, LGPL-3)
 - [x] Dépendances : base, mail, contacts
 - [x] Module installable sans erreur
 - [x] Icône présente dans static/description/
@@ -518,7 +518,7 @@ Critères d'acceptance :
 
 ---
 
-**US-027 — Modèle de fichier d'import**
+**US-027 — Modèle de fichier d'import** ✅
 
 ```
 En tant que collectionneur
@@ -526,18 +526,18 @@ Je veux un modèle CSV/XLSX à télécharger pour importer ma collection existan
 Afin de migrer facilement depuis une autre gestion (Excel, autre logiciel)
 
 Critères d'acceptance :
-- [ ] Fichier modèle téléchargeable depuis le wizard d'import
-- [ ] Format CSV (UTF-8, séparateur ;) et XLSX disponibles
-- [ ] Colonnes : serie_name, tome, titre_album, isbn, date_parution, nb_pages,
+- [x] Fichier modèle téléchargeable depuis le wizard d'import
+- [x] Format CSV (UTF-8, séparateur ;) et XLSX disponibles
+- [x] Colonnes : serie_name, tome, titre_album, isbn, date_parution, nb_pages,
         editeur, scenariste, dessinateur, coloriste, genre, etat_lecture,
         note, url_couverture, url_club_be, url_amazon_be
-- [ ] Ligne d'exemple incluse dans le modèle
-- [ ] README inclus dans le XLSX (onglet "Instructions")
+- [x] Ligne d'exemple incluse dans le modèle
+- [x] README inclus dans le XLSX (onglet "Instructions")
 ```
 
 ---
 
-**US-028 — Wizard d'import CSV/XLSX**
+**US-028 — Wizard d'import CSV/XLSX** ✅
 
 ```
 En tant que collectionneur
@@ -545,14 +545,14 @@ Je veux importer ma collection depuis un fichier CSV ou XLSX
 Afin de ne pas tout saisir manuellement
 
 Critères d'acceptance :
-- [ ] Wizard en 3 étapes : Upload → Mapping → Prévisualisation → Import
-- [ ] Détection automatique CSV/XLSX selon l'extension
-- [ ] Détection automatique du séparateur CSV (; ou ,)
-- [ ] Étape Mapping : associer chaque colonne du fichier au champ Odoo
-- [ ] Prévisualisation des 10 premières lignes avant import
-- [ ] Import avec rapport : X créés, Y mis à jour, Z erreurs (avec détail)
-- [ ] Option : "Mettre à jour si ISBN existant" ou "Toujours créer"
-- [ ] Téléchargement du rapport d'erreurs en CSV
+- [x] Wizard en 4 étapes : Upload → Mapping → Prévisualisation → Import
+- [x] Détection automatique CSV/XLSX selon l'extension
+- [x] Détection automatique du séparateur CSV (; ou ,)
+- [x] Étape Mapping : associer chaque colonne du fichier au champ Odoo
+- [x] Prévisualisation des 10 premières lignes avant import
+- [x] Import avec rapport : X créés, Y mis à jour, Z erreurs (avec détail)
+- [x] Option : "Mettre à jour si ISBN existant" ou "Toujours créer"
+- [x] Téléchargement du rapport d'erreurs en CSV
 ```
 
 ---
@@ -604,7 +604,7 @@ Critères d'acceptance :
 | Phase 3    | Connecteur IA            | US-023 à US-026         | 🔲 À faire                      |
 | Phase 4    | Interface complète       | US-008b à US-015        | ⏳ Design validé — en attente   |
 | Phase 5    | Gestion des prêts        | US-006                  | ⏳ En attente                   |
-| Phase 6    | Import CSV/XLSX          | US-027, US-028          | ⏳ En attente                   |
+| Phase 6    | Import CSV/XLSX          | US-027, US-028          | ✅ Terminée                     |
 | Transverse | Qualité                  | US-029, US-030          | ⏳ En attente                   |
 
 ---
@@ -612,7 +612,7 @@ Critères d'acceptance :
 ## 🚀 Pour travailler avec Claude dans VS Code
 
 ```
-Je travaille sur le projet Odoo 18 Comic Collection.
+Je travaille sur le projet Odoo 19 Comic Collection.
 Contexte complet dans CLAUDE.md à la racine du projet.
 US en cours : [numéro et titre de l'US]
 ```
