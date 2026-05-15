@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_comic_serie_list" model="ir.ui.view">
+        <field name="name">comic.serie.list</field>
+        <field name="model">comic.serie</field>
+        <field name="arch" type="xml">
+            <list string="Séries">
+                <field name="name"/>
+                <field name="type"/>
+                <field name="statut"/>
+                <field name="genre_id"/>
+                <field name="editeur_id"/>
+                <field name="nb_albums_possedes" string="Possédés"/>
+                <field name="nb_albums_total" string="Total"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_comic_serie_form" model="ir.ui.view">
+        <field name="name">comic.serie.form</field>
+        <field name="model">comic.serie</field>
+        <field name="arch" type="xml">
+            <form string="Série">
+                <sheet>
+                    <field name="image_couverture" widget="image"
+                           class="oe_avatar" options="{'preview_image': 'image_couverture'}"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Titre de la série"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="type"/>
+                            <field name="statut"/>
+                            <field name="genre_id"/>
+                            <field name="editeur_id"/>
+                        </group>
+                        <group>
+                            <field name="nb_albums_total"/>
+                            <field name="nb_albums_possedes"/>
+                            <field name="bdgest_id"/>
+                            <field name="bedetheque_url" widget="url"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Synopsis">
+                            <field name="synopsis"/>
+                        </page>
+                        <page string="Albums">
+                            <field name="album_ids">
+                                <list>
+                                    <field name="tome"/>
+                                    <field name="name"/>
+                                    <field name="date_parution"/>
+                                    <field name="etat_lecture"/>
+                                    <field name="dans_collection"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_comic_serie_search" model="ir.ui.view">
+        <field name="name">comic.serie.search</field>
+        <field name="model">comic.serie</field>
+        <field name="arch" type="xml">
+            <search string="Séries">
+                <field name="name" string="Titre"/>
+                <field name="genre_id"/>
+                <field name="editeur_id"/>
+                <filter string="En cours" name="en_cours"
+                        domain="[('statut', '=', 'en_cours')]"/>
+                <filter string="Terminées" name="terminee"
+                        domain="[('statut', '=', 'terminee')]"/>
+                <separator/>
+                <filter string="BD" name="bd" domain="[('type', '=', 'bd')]"/>
+                <filter string="Manga" name="manga" domain="[('type', '=', 'manga')]"/>
+                <filter string="Comics" name="comics" domain="[('type', '=', 'comics')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
+                    <filter string="Statut" name="group_statut" context="{'group_by': 'statut'}"/>
+                    <filter string="Genre" name="group_genre" context="{'group_by': 'genre_id'}"/>
+                    <filter string="Éditeur" name="group_editeur" context="{'group_by': 'editeur_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_comic_serie" model="ir.actions.act_window">
+        <field name="name">Séries</field>
+        <field name="res_model">comic.serie</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

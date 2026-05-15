@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="genre_aventure" model="comic.genre">
+        <field name="name">Aventure</field>
+        <field name="color">1</field>
+    </record>
+
+    <record id="genre_humour" model="comic.genre">
+        <field name="name">Humour</field>
+        <field name="color">3</field>
+    </record>
+
+    <record id="genre_science_fiction" model="comic.genre">
+        <field name="name">Science-Fiction</field>
+        <field name="color">4</field>
+    </record>
+
+    <record id="genre_fantastique" model="comic.genre">
+        <field name="name">Fantastique</field>
+        <field name="color">5</field>
+    </record>
+
+    <record id="genre_policier" model="comic.genre">
+        <field name="name">Policier</field>
+        <field name="color">6</field>
+    </record>
+
+    <record id="genre_historique" model="comic.genre">
+        <field name="name">Historique</field>
+        <field name="color">7</field>
+    </record>
+
+    <record id="genre_manga" model="comic.genre">
+        <field name="name">Manga</field>
+        <field name="color">8</field>
+    </record>
+
+    <record id="genre_comics" model="comic.genre">
+        <field name="name">Comics</field>
+        <field name="color">9</field>
+    </record>
+
+    <record id="genre_horreur" model="comic.genre">
+        <field name="name">Horreur</field>
+        <field name="color">10</field>
+    </record>
+
+    <record id="genre_romance" model="comic.genre">
+        <field name="name">Romance</field>
+        <field name="color">2</field>
+    </record>
+
+</odoo>

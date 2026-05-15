@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_comic_genre_user,comic.genre user,model_comic_genre,group_comic_user,1,1,1,0
+access_comic_genre_manager,comic.genre manager,model_comic_genre,group_comic_manager,1,1,1,1
+access_comic_editeur_user,comic.editeur user,model_comic_editeur,group_comic_user,1,1,1,0
+access_comic_editeur_manager,comic.editeur manager,model_comic_editeur,group_comic_manager,1,1,1,1
+access_comic_serie_user,comic.serie user,model_comic_serie,group_comic_user,1,1,1,1
+access_comic_serie_manager,comic.serie manager,model_comic_serie,group_comic_manager,1,1,1,1
+access_comic_album_user,comic.album user,model_comic_album,group_comic_user,1,1,1,1
+access_comic_album_manager,comic.album manager,model_comic_album,group_comic_manager,1,1,1,1
+access_comic_album_auteur_line_user,comic.album.auteur.line user,model_comic_album_auteur_line,group_comic_user,1,1,1,1
+access_comic_album_auteur_line_manager,comic.album.auteur.line manager,model_comic_album_auteur_line,group_comic_manager,1,1,1,1

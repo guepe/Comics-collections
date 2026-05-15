@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_comic_album_list" model="ir.ui.view">
+        <field name="name">comic.album.list</field>
+        <field name="model">comic.album</field>
+        <field name="arch" type="xml">
+            <list string="Albums">
+                <field name="serie_id"/>
+                <field name="tome"/>
+                <field name="name"/>
+                <field name="isbn"/>
+                <field name="date_parution"/>
+                <field name="etat_lecture"/>
+                <field name="note"/>
+                <field name="dans_collection" widget="boolean_toggle"/>
+                <field name="dans_wishlist" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_comic_album_form" model="ir.ui.view">
+        <field name="name">comic.album.form</field>
+        <field name="model">comic.album</field>
+        <field name="arch" type="xml">
+            <form string="Album">
+                <sheet>
+                    <field name="image_couverture" widget="image"
+                           class="oe_avatar" options="{'preview_image': 'image_couverture'}"/>
+                    <div class="oe_title">
+                        <label for="serie_id"/>
+                        <h2>
+                            <field name="serie_id" placeholder="Série"/>
+                        </h2>
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Titre de l'album"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tome"/>
+                            <field name="isbn"/>
+                            <field name="date_parution"/>
+                            <field name="date_depot_legal"/>
+                        </group>
+                        <group>
+                            <field name="nb_pages"/>
+                            <field name="bdgest_album_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Auteurs">
+                            <field name="auteur_line_ids">
+                                <list editable="bottom">
+                                    <field name="partner_id"/>
+                                    <field name="role"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Ma Collection">
+                            <group>
+                                <group>
+                                    <field name="dans_collection"/>
+                                    <field name="dans_wishlist"/>
+                                    <field name="etat_lecture"/>
+                                    <field name="note"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Liens">
+                            <group>
+                                <field name="url_club_be" widget="url"/>
+                                <field name="url_amazon_be" widget="url"/>
+                            </group>
+                        </page>
+                        <page string="IA">
+                            <group>
+                                <field name="synopsis"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_comic_album_search" model="ir.ui.view">
+        <field name="name">comic.album.search</field>
+        <field name="model">comic.album</field>
+        <field name="arch" type="xml">
+            <search string="Albums">
+                <field name="name" string="Titre"/>
+                <field name="serie_id"/>
+                <field name="isbn"/>
+                <filter string="Dans ma collection" name="collection"
+                        domain="[('dans_collection', '=', True)]"/>
+                <filter string="Wishlist" name="wishlist"
+                        domain="[('dans_wishlist', '=', True)]"/>
+                <filter string="Non lus" name="non_lu"
+                        domain="[('etat_lecture', '=', 'non_lu')]"/>
+                <filter string="En cours" name="en_cours_lecture"
+                        domain="[('etat_lecture', '=', 'en_cours')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter string="Série" name="group_serie" context="{'group_by': 'serie_id'}"/>
+                    <filter string="État de lecture" name="group_etat"
+                            context="{'group_by': 'etat_lecture'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_comic_album" model="ir.actions.act_window">
+        <field name="name">Albums</field>
+        <field name="res_model">comic.album</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

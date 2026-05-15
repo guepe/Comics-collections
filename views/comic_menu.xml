@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu racine -->
+    <menuitem id="menu_comic_root"
+              name="Bandes Dessinées"
+              web_icon="comic_collection,static/description/icon.png"
+              groups="comic_collection.group_comic_user"
+              sequence="50"/>
+
+    <!-- Ma Collection -->
+    <menuitem id="menu_comic_collection"
+              name="Ma Collection"
+              parent="menu_comic_root"
+              groups="comic_collection.group_comic_user"
+              sequence="10"/>
+
+    <menuitem id="menu_comic_series"
+              name="Séries"
+              parent="menu_comic_collection"
+              action="action_comic_serie"
+              groups="comic_collection.group_comic_user"
+              sequence="10"/>
+
+    <menuitem id="menu_comic_albums"
+              name="Albums"
+              parent="menu_comic_collection"
+              action="action_comic_album"
+              groups="comic_collection.group_comic_user"
+              sequence="20"/>
+
+    <!-- Catalogues -->
+    <menuitem id="menu_comic_catalogues"
+              name="Catalogues"
+              parent="menu_comic_root"
+              groups="comic_collection.group_comic_user"
+              sequence="20"/>
+
+    <menuitem id="menu_comic_editeurs"
+              name="Éditeurs"
+              parent="menu_comic_catalogues"
+              action="action_comic_editeur"
+              groups="comic_collection.group_comic_user"
+              sequence="10"/>
+
+    <menuitem id="menu_comic_genres"
+              name="Genres"
+              parent="menu_comic_catalogues"
+              action="action_comic_genre"
+              groups="comic_collection.group_comic_user"
+              sequence="20"/>
+
+    <!-- Configuration (gestionnaire uniquement, actions ajoutées en Phase 2 et 3) -->
+    <menuitem id="menu_comic_config_root"
+              name="Configuration"
+              parent="menu_comic_root"
+              groups="comic_collection.group_comic_manager"
+              sequence="90"/>
+
+</odoo>
