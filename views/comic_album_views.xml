@@ -68,10 +68,29 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="Liens">
+                        <page string="Liens d'achat">
                             <group>
-                                <field name="url_club_be" widget="url"/>
-                                <field name="url_amazon_be" widget="url"/>
+                                <div class="text-muted mb-2">
+                                    Les liens sont générés automatiquement depuis l'ISBN.
+                                    Vous pouvez les modifier manuellement ou cliquer sur
+                                    <b>Régénérer</b> pour réinitialiser depuis l'ISBN courant.
+                                </div>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="url_club_be" widget="url"/>
+                                    <field name="url_amazon_be" widget="url"/>
+                                    <field name="url_fnac_be" widget="url"/>
+                                </group>
+                                <group>
+                                    <div>
+                                        <button name="action_generate_purchase_links"
+                                                string="Régénérer les liens"
+                                                type="object"
+                                                class="btn-secondary"
+                                                invisible="not isbn"/>
+                                    </div>
+                                </group>
                             </group>
                         </page>
                         <page string="IA">

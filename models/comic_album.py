@@ -1,6 +1,13 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import ValidationError
 
+# URL templates pour les liens d'achat (paramètre : ISBN EAN-13)
+_PURCHASE_LINK_TEMPLATES = {
+    'url_club_be': 'https://www.librairieclub.be/c/search?filter=search({isbn})&page=1&page_size=24&sort=RelevanceClub&sort_type=desc',
+    'url_amazon_be': 'https://www.amazon.com.be/s?k={isbn}',
+    'url_fnac_be': 'https://www.fnac.be/SearchResult/ResultList.aspx?Search={isbn}&sft=2',
+}
+
 
 class ComicAlbum(models.Model):
     _name = 'comic.album'
@@ -27,9 +34,12 @@ class ComicAlbum(models.Model):
     dans_wishlist = fields.Boolean(string='Wishlist')
     url_club_be = fields.Char(string='Lien Club.be')
     url_amazon_be = fields.Char(string='Lien Amazon.be')
+    url_fnac_be = fields.Char(string='Lien FNAC.be')
     bdgest_album_id = fields.Integer(string='ID BDGest')
     auteur_line_ids = fields.One2many('comic.album.auteur.line', 'album_id', string='Auteurs')
     active = fields.Boolean(default=True)
+
+    # ── Validation ISBN ────────────────────────────────────────────────────────
 
     @api.constrains('isbn')
     def _check_isbn(self):
@@ -47,3 +57,34 @@ class ComicAlbum(models.Model):
         total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(isbn[:12]))
         check = (10 - total % 10) % 10
         return check == int(isbn[12])
+
+    # ── Liens d'achat automatiques ─────────────────────────────────────────────
+
+    @staticmethod
+    def _build_purchase_links(isbn):
+        """Retourne un dict {field: url} pour un ISBN donné."""
+        if not isbn:
+            return {}
+        return {field: tpl.format(isbn=isbn) for field, tpl in _PURCHASE_LINK_TEMPLATES.items()}
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('isbn'):
+                for field, url in self._build_purchase_links(vals['isbn']).items():
+                    vals.setdefault(field, url)
+        return super().create(vals_list)
+
+    @api.onchange('isbn')
+    def _onchange_isbn_purchase_links(self):
+        if self.isbn:
+            for field, url in self._build_purchase_links(self.isbn).items():
+                if not getattr(self, field):
+                    setattr(self, field, url)
+
+    def action_generate_purchase_links(self):
+        """Régénère les liens d'achat depuis l'ISBN (écrase les valeurs existantes)."""
+        for album in self:
+            links = self._build_purchase_links(album.isbn)
+            if links:
+                album.write(links)
