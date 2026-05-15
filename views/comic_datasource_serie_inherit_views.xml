@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Bouton "Mettre à jour depuis les sources" dans le formulaire série -->
+    <record id="view_comic_serie_form_inherit_datasource" model="ir.ui.view">
+        <field name="name">comic.serie.form.inherit.datasource</field>
+        <field name="model">comic.serie</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_serie_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <div name="button_box" class="oe_button_box">
+                    <button name="action_update_albums_from_datasource"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-refresh">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Mettre à jour</span>
+                            <span class="o_stat_text">les albums</span>
+                        </div>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vue du wizard de mise à jour série -->
+    <record id="view_comic_serie_update_wizard_form" model="ir.ui.view">
+        <field name="name">comic.serie.update.wizard.form</field>
+        <field name="model">comic.serie.update.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Mise à jour depuis les sources de données">
+
+                <!-- Confirmation -->
+                <group invisible="state != 'confirm'">
+                    <group string="Série à mettre à jour">
+                        <field name="serie_id" readonly="1"/>
+                        <field name="nb_albums" readonly="1" string="Albums dans la série"/>
+                    </group>
+                    <group>
+                        <div class="alert alert-info" role="status">
+                            Cette action va interroger les sources de données (Google Books, Open Library, BnF)
+                            pour chaque album de la série et mettre à jour :
+                            couverture, synopsis, nombre de pages, date de parution, auteurs manquants.
+                        </div>
+                    </group>
+                </group>
+
+                <!-- Rapport -->
+                <group invisible="state != 'done'" string="Rapport de mise à jour">
+                    <field name="import_report" nolabel="1" widget="html" readonly="1"/>
+                </group>
+
+                <!-- Champ caché -->
+                <field name="state" invisible="1"/>
+
+                <footer>
+                    <button name="action_run"
+                            string="Mettre à jour les albums"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'confirm'"/>
+                    <button string="Fermer"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

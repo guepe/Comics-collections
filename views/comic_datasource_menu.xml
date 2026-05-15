@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Menus datasource — ajoutés en US-023/024 -->
+
+    <!-- Entrée de menu sous Ma Collection -->
+    <menuitem id="menu_comic_datasource_search"
+              name="Rechercher des BD"
+              parent="comics_collections.menu_comic_collection"
+              action="comic_datasource.action_comic_datasource_search_wizard_standalone"
+              groups="comics_collections.group_comic_user"
+              sequence="40"/>
+
 </odoo>

@@ -23,9 +23,53 @@ Modèle normalisé retourné par chaque source (ComicSourceResult) :
 }
 """
 import logging
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Optional
+
+# Patterns pour extraire la série et le tome depuis un titre Google Books
+# Ex: "Astérix - Tome 1 : Astérix le Gaulois"  → serie="Astérix", tome=1, title="Astérix le Gaulois"
+#     "Blacksad T. 1 : Quelque part entre les ombres" → serie="Blacksad", tome=1
+#     "Largo Winch, tome 1"                            → serie="Largo Winch", tome=1
+#     "Lucky Luke - Tome 12"                          → serie="Lucky Luke", tome=12
+_BD_TITLE_PATTERNS = [
+    # "Serie - Tome N : Titre" ou "Serie - T.N : Titre"
+    re.compile(
+        r'^(?P<serie>.+?)\s*[-,]\s*(?:tome|t\.?|vol\.?)\s*(?P<tome>\d+)\s*(?::\s*(?P<title>.+))?$',
+        re.IGNORECASE,
+    ),
+    # "Serie T.N" ou "Serie Tome N" sans titre séparé
+    re.compile(
+        r'^(?P<serie>.+?)\s+(?:tome|t\.)\s*(?P<tome>\d+)$',
+        re.IGNORECASE,
+    ),
+]
+
+
+def parse_bd_title(full_title: str, subtitle: str = None):
+    """
+    Tente d'extraire (serie_name, tome, clean_title) d'un titre Google Books.
+    Retourne (serie_name, tome, clean_title) — chacun peut être None si non détecté.
+    """
+    if not full_title:
+        return None, None, full_title
+
+    for pattern in _BD_TITLE_PATTERNS:
+        m = pattern.match(full_title.strip())
+        if m:
+            serie = m.group('serie').strip()
+            tome = int(m.group('tome'))
+            title = m.group('title').strip() if m.lastindex >= 3 and m.group('title') else full_title
+            return serie, tome, title
+
+    # Cherche le numéro de tome dans le subtitle si dispo
+    if subtitle:
+        m = re.search(r'(?:tome|t\.?|vol\.?)\s*(\d+)', subtitle, re.IGNORECASE)
+        if m:
+            return None, int(m.group(1)), full_title
+
+    return None, None, full_title
 
 _logger = logging.getLogger(__name__)
 

@@ -147,8 +147,11 @@ class ComicDataAggregator:
         return all_results
 
     def _safe_search(self, method, *args):
+        from .sources.google_books import GoogleBooksQuotaError
         try:
             return method(*args)
+        except GoogleBooksQuotaError:
+            raise  # quota error remonte jusqu'à l'appelant pour affichage UI
         except Exception as e:
             _logger.warning('Aggregator: source error: %s', e)
             return None
