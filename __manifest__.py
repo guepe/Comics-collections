@@ -23,10 +23,16 @@
         'views/comic_album_views.xml',
         'views/comic_import_wizard_views.xml',
         'views/comic_menu.xml',
+        'views/comic_fonts_template.xml',
     ],
     'demo': [
         'demo/comic_demo.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'comics_collections/static/src/scss/comics_theme.scss',
+        ],
+    },
     'installable': True,
     'application': True,
     'auto_install': False,

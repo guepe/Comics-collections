@@ -31,6 +31,12 @@ class ComicSerie(models.Model):
     nb_albums_possedes = fields.Integer(
         string='Tomes possédés', compute='_compute_albums', store=True)
     active = fields.Boolean(default=True)
+    has_cover = fields.Boolean(compute='_compute_has_cover', store=True)
+
+    @api.depends('image_couverture')
+    def _compute_has_cover(self):
+        for rec in self:
+            rec.has_cover = bool(rec.image_couverture)
 
     @api.depends('album_ids', 'album_ids.dans_collection')
     def _compute_albums(self):

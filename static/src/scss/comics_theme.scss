@@ -1,0 +1,502 @@
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// Comic Collection — Design System  (Variant A — Sobre éditorial)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// ── Variables ─────────────────────────────────────────────────
+:root {
+    --comic-ink:           #022E51;
+    --comic-ink-2:         #2a4a6a;
+    --comic-ink-3:         #6f88a4;
+    --comic-cream:         #f3eee4;
+    --comic-paper:         #ffffff;
+    --comic-accent:        #B74803;
+    --comic-star:          #CC6D3D;
+    --comic-border:        rgba(2, 46, 81, 0.10);
+    --comic-border-strong: rgba(2, 46, 81, 0.20);
+}
+
+// ── Kanban Albums (US-010) ────────────────────────────────────
+
+.o_kanban_view.o_comic_kanban_albums {
+    background: var(--comic-cream);
+    padding: 20px 28px;
+
+    // Override Odoo default record padding/border
+    .o_kanban_record {
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        margin: 0 !important;
+        width: 200px;
+    }
+
+    .o_kanban_record:hover {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    // Ensure flex-wrap layout
+    .o_kanban_renderer,
+    .o_kanban_group {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 16px !important;
+        align-items: flex-start;
+    }
+}
+
+// Carte album
+.o_comic_album_card {
+    width: 200px;
+    background: var(--comic-paper);
+    border: 1px solid var(--comic-border);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+
+    &:hover {
+        box-shadow: 0 6px 20px rgba(2, 46, 81, 0.14);
+        transform: translateY(-2px);
+    }
+}
+
+// Zone couverture (200×270)
+.o_comic_cover {
+    position: relative;
+    width: 200px;
+    height: 270px;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    .o_comic_cover_img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    // Badge wishlist overlay
+    .o_comic_wishlist_dot {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 22px;
+        height: 22px;
+        background: var(--comic-accent);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: #fff;
+        line-height: 1;
+    }
+}
+
+// ── Couverture placeholder (palette éditoriale) ───────────────
+
+.o_comic_cover_placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+
+    .o_cover_band {
+        height: 6px;
+        width: 100%;
+        flex-shrink: 0;
+    }
+
+    .o_cover_serie {
+        font-family: 'Instrument Sans', system-ui, sans-serif;
+        font-size: 8px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-top: 14px;
+        padding: 0 12px;
+        text-align: center;
+        opacity: 0.72;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .o_cover_sep {
+        width: calc(100% - 24px);
+        height: 1px;
+        margin: 10px 12px 8px;
+        opacity: 0.30;
+        flex-shrink: 0;
+    }
+
+    .o_cover_title {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: 19px;
+        font-weight: 400;
+        line-height: 1.25;
+        padding: 0 14px;
+        text-align: center;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .o_cover_tome_block {
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex-shrink: 0;
+
+        .o_cover_tome_label {
+            font-family: 'Instrument Sans', system-ui, sans-serif;
+            font-size: 7px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            opacity: 0.70;
+        }
+
+        .o_cover_tome_num {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1;
+        }
+    }
+}
+
+// Palettes de couleurs (8 variantes)
+// format: [bg, fg, accent_band]
+.o_comic_pal_0 {
+    background: #f4c842; color: #1a1a1a;
+    .o_cover_band  { background: #c5341d; }
+    .o_cover_sep   { background: #1a1a1a; }
+    .o_cover_title { color: #1a1a1a; }
+    .o_cover_serie { color: #1a1a1a; }
+    .o_cover_tome_num { color: #c5341d; }
+    .o_cover_tome_label { color: #1a1a1a; }
+}
+
+.o_comic_pal_1 {
+    background: #0a1f3d; color: #e8b339;
+    .o_cover_band  { background: #c5341d; }
+    .o_cover_sep   { background: #e8b339; }
+    .o_cover_title { color: #e8b339; }
+    .o_cover_serie { color: #e8b339; }
+    .o_cover_tome_num { color: #e8b339; }
+    .o_cover_tome_label { color: #e8b339; }
+}
+
+.o_comic_pal_2 {
+    background: #1a1a1a; color: #f0e0c0;
+    .o_cover_band  { background: #c5341d; }
+    .o_cover_sep   { background: #f0e0c0; }
+    .o_cover_title { color: #f0e0c0; }
+    .o_cover_serie { color: #f0e0c0; }
+    .o_cover_tome_num { color: #c5341d; }
+    .o_cover_tome_label { color: #f0e0c0; }
+}
+
+.o_comic_pal_3 {
+    background: #c5301f; color: #fdf5e6;
+    .o_cover_band  { background: #1a1a1a; }
+    .o_cover_sep   { background: #fdf5e6; }
+    .o_cover_title { color: #fdf5e6; }
+    .o_cover_serie { color: #fdf5e6; }
+    .o_cover_tome_num { color: #fdf5e6; }
+    .o_cover_tome_label { color: #fdf5e6; }
+}
+
+.o_comic_pal_4 {
+    background: #1a4a6a; color: #f0e0c0;
+    .o_cover_band  { background: #b8a060; }
+    .o_cover_sep   { background: #f0e0c0; }
+    .o_cover_title { color: #f0e0c0; }
+    .o_cover_serie { color: #f0e0c0; }
+    .o_cover_tome_num { color: #b8a060; }
+    .o_cover_tome_label { color: #f0e0c0; }
+}
+
+.o_comic_pal_5 {
+    background: #3f86d4; color: #ffffff;
+    .o_cover_band  { background: #f4c842; }
+    .o_cover_sep   { background: #ffffff; }
+    .o_cover_title { color: #ffffff; }
+    .o_cover_serie { color: #ffffff; }
+    .o_cover_tome_num { color: #f4c842; }
+    .o_cover_tome_label { color: #ffffff; }
+}
+
+.o_comic_pal_6 {
+    background: #5b2a8a; color: #f0c8ff;
+    .o_cover_band  { background: #ffd700; }
+    .o_cover_sep   { background: #f0c8ff; }
+    .o_cover_title { color: #f0c8ff; }
+    .o_cover_serie { color: #f0c8ff; }
+    .o_cover_tome_num { color: #ffd700; }
+    .o_cover_tome_label { color: #f0c8ff; }
+}
+
+.o_comic_pal_7 {
+    background: #e8c478; color: #5a3416;
+    .o_cover_band  { background: #c5341d; }
+    .o_cover_sep   { background: #5a3416; }
+    .o_cover_title { color: #5a3416; }
+    .o_cover_serie { color: #5a3416; }
+    .o_cover_tome_num { color: #c5341d; }
+    .o_cover_tome_label { color: #5a3416; }
+}
+
+// ── Info card ──────────────────────────────────────────────────
+
+.o_comic_card_info {
+    padding: 10px 12px 12px;
+
+    .o_comic_card_serie {
+        font-family: 'Instrument Sans', system-ui, sans-serif;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--comic-ink-3);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 3px;
+    }
+
+    .o_comic_card_title {
+        font-family: 'Instrument Serif', Georgia, serif;
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--comic-ink);
+        line-height: 1.3;
+        height: 36px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        margin-bottom: 6px;
+    }
+
+    .o_comic_card_meta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        min-height: 14px;
+
+        .o_comic_meta_text {
+            font-family: 'Instrument Sans', system-ui, sans-serif;
+            font-size: 10px;
+            color: var(--comic-ink-3);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .o_comic_stars {
+            display: flex;
+            gap: 1px;
+
+            .o_star {
+                font-size: 10px;
+                color: rgba(0, 0, 0, 0.12);
+                line-height: 1;
+            }
+
+            .o_star_full {
+                color: var(--comic-star);
+            }
+        }
+    }
+}
+
+// ── Badges état de lecture ────────────────────────────────────
+
+.o_comic_reading_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    font-family: 'Instrument Sans', system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 500;
+
+    &::before {
+        content: '';
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    &.o_badge_lu {
+        background: #e0efe2;
+        color: #1f6a3a;
+        &::before { background: #2d9550; }
+    }
+
+    &.o_badge_en_cours {
+        background: #fde6c8;
+        color: #9c5410;
+        &::before { background: #e8901a; }
+    }
+
+    &.o_badge_non_lu {
+        background: #ece8df;
+        color: #5a544c;
+        &::before { background: #8a8278; }
+    }
+}
+
+// ── Kanban Séries (US-009) ────────────────────────────────────
+
+.o_kanban_view.o_comic_kanban_series {
+    background: var(--comic-cream);
+    padding: 20px 28px;
+
+    .o_kanban_record {
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        margin: 0 !important;
+        width: 200px;
+    }
+
+    .o_kanban_record:hover {
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .o_kanban_renderer,
+    .o_kanban_group {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 16px !important;
+        align-items: flex-start;
+    }
+}
+
+.o_comic_serie_card {
+    width: 200px;
+    background: var(--comic-paper);
+    border: 1px solid var(--comic-border);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, transform 0.1s ease;
+
+    &:hover {
+        box-shadow: 0 6px 20px rgba(2, 46, 81, 0.14);
+        transform: translateY(-2px);
+    }
+
+    // Zone image série (format paysage)
+    .o_comic_serie_cover {
+        position: relative;
+        width: 200px;
+        height: 120px;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .o_comic_serie_placeholder {
+            width: 100%;
+            height: 100%;
+            background: var(--comic-ink);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 16px;
+
+            span {
+                font-family: 'Instrument Serif', Georgia, serif;
+                font-size: 18px;
+                color: rgba(255, 255, 255, 0.80);
+                text-align: center;
+                line-height: 1.25;
+            }
+        }
+
+        // Badge statut
+        .o_comic_serie_statut {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-family: 'Instrument Sans', system-ui, sans-serif;
+            font-size: 9px;
+            font-weight: 600;
+
+            &.o_statut_en_cours   { background: #fde6c8; color: #9c5410; }
+            &.o_statut_terminee   { background: #e0efe2; color: #1f6a3a; }
+            &.o_statut_abandonnee { background: #ece8df; color: #5a544c; }
+        }
+    }
+
+    // Infos
+    .o_comic_serie_info {
+        padding: 10px 12px 12px;
+
+        .o_comic_serie_title {
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 14px;
+            color: var(--comic-ink);
+            line-height: 1.3;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .o_comic_serie_meta {
+            font-family: 'Instrument Sans', system-ui, sans-serif;
+            font-size: 10px;
+            color: var(--comic-ink-3);
+            margin-bottom: 8px;
+        }
+
+        // Barre de progression (tomes possédés / total)
+        .o_comic_progress_wrap {
+            .o_comic_progress_bar {
+                height: 4px;
+                background: var(--comic-border);
+                border-radius: 2px;
+                overflow: hidden;
+
+                .o_comic_progress_fill {
+                    height: 100%;
+                    background: var(--comic-accent);
+                    border-radius: 2px;
+                }
+            }
+
+            .o_comic_progress_label {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 4px;
+                font-family: 'Instrument Sans', system-ui, sans-serif;
+                font-size: 9px;
+                color: var(--comic-ink-3);
+                font-variant-numeric: tabular-nums;
+            }
+        }
+    }
+}

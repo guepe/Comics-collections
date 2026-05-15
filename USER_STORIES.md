@@ -276,9 +276,11 @@ Critères d'acceptance :
 - [x] Affichage des résultats avec badge source (Google/OpenLib/BnF/BDGest)
 - [x] Couverture preview dans le wizard
 - [x] Sélection multiple pour import en lot
-- [x] Gestion des doublons (ISBN déjà en base → avertissement)
+- [x] Gestion des doublons (ISBN déjà en base → avertissement + mise à jour)
+- [x] Gestion conflit de titre (EN vs FR) : choix keep / use_new / skip par ligne
 - [x] Import crée automatiquement : série, auteurs (res.partner), éditeur
 - [x] Rapport post-import : X créés, Y mis à jour, Z ignorés
+- [x] Bouton "Mettre à jour les albums" sur la fiche Série (lot)
 ```
 
 ---
@@ -304,7 +306,7 @@ Critères d'acceptance :
 
 ---
 
-**US-025 — Enrichissement automatique des liens d'achat**
+**US-025 — Enrichissement automatique des liens d'achat** ✅
 
 ```
 En tant que collectionneur
@@ -312,11 +314,13 @@ Je veux que les liens club.be et amazon.com.be soient générés automatiquement
 Afin de pouvoir acheter rapidement un album manquant
 
 Critères d'acceptance :
-- [ ] À l'import, construction URL club.be : https://www.club.be/search?q={isbn}
-- [ ] À l'import, construction URL amazon.be : https://www.amazon.com.be/s?k={isbn}
-- [ ] Bouton "Rafraîchir les liens" sur le formulaire album
-- [ ] Les liens s'ouvrent dans un nouvel onglet
-- [ ] Boutons grisés si URL vide
+- [x] À la création, construction URL librairieclub.be depuis l'ISBN
+- [x] À la création, construction URL amazon.com.be depuis l'ISBN
+- [x] À la création, construction URL fnac.be depuis l'ISBN (bonus)
+- [x] Bouton "Régénérer les liens" sur le formulaire album
+- [x] Les liens s'ouvrent dans un nouvel onglet (via action_open_*)
+- [x] Boutons grisés si URL vide
+- [x] Auto-remplissage à la saisie ISBN (onchange) si champs vides
 ```
 
 ---
@@ -418,15 +422,17 @@ Je veux un menu principal complet avec toutes les fonctions
 Afin de naviguer dans toute l'application
 
 Critères d'acceptance :
-- [ ] Sous-menus : Ma Collection > Séries / Albums / Prêts
-- [ ] Sous-menu : Wishlist
-- [ ] Sous-menus : Catalogues > Auteurs (res.partner filtré) / Éditeurs / Genres
-- [ ] Menu Configuration avec accès paramètres IA et BDGest
+- [x] Sous-menus : Ma Collection > Séries / Albums
+- [x] Sous-menu : Wishlist
+- [ ] Sous-menu : Prêts (US-006 non encore implémenté)
+- [ ] Sous-menus : Catalogues > Auteurs (res.partner filtré)
+- [x] Catalogues > Éditeurs / Genres
+- [ ] Menu Configuration avec accès paramètres IA et BDGest (partiel)
 ```
 
 ---
 
-**US-009 — Vue Kanban des séries**
+**US-009 — Vue Kanban des séries** ✅
 
 ```
 En tant que collectionneur
@@ -434,17 +440,17 @@ Je veux voir mes séries sous forme de grille avec les couvertures
 Afin d'avoir une vue visuelle de ma collection
 
 Critères d'acceptance :
-- [ ] Vue kanban comic.serie avec image de couverture
-- [ ] Affichage : titre, type, nb tomes possédés / total
-- [ ] Barre de progression (tomes possédés)
-- [ ] Badge couleur selon statut (en cours / terminée)
-- [ ] Clic sur la carte → ouvre le form
-- [ ] Image placeholder si pas de couverture
+- [x] Vue kanban comic.serie avec image de couverture
+- [x] Affichage : titre, nb tomes possédés / total
+- [x] Barre de progression (tomes possédés)
+- [x] Badge couleur selon statut (en cours / terminée / abandonnée)
+- [x] Clic sur la carte → ouvre le form
+- [x] Image placeholder (fond INK + titre) si pas de couverture
 ```
 
 ---
 
-**US-010 — Vue Kanban des albums**
+**US-010 — Vue Kanban des albums** ✅
 
 ```
 En tant que collectionneur
@@ -452,12 +458,12 @@ Je veux voir mes albums sous forme de grille de couvertures
 Afin d'avoir une vraie bibliothèque visuelle
 
 Critères d'acceptance :
-- [ ] Vue kanban comic.album avec couverture en grand
-- [ ] Affichage : titre, tome, note en étoiles
-- [ ] Badge état de lecture (lu / en cours / non lu)
-- [ ] Icône wishlist si dans_wishlist = True
-- [ ] Filtres rapides : dans ma collection / wishlist / non lu
-- [ ] Image placeholder si pas de couverture
+- [x] Vue kanban comic.album avec couverture en grand (200×270)
+- [x] Affichage : titre, tome, note en étoiles (5★)
+- [x] Badge état de lecture coloré (lu / en cours / non lu)
+- [x] Icône ♥ wishlist si dans_wishlist = True
+- [x] Filtres rapides : dans ma collection / wishlist / non lu / en cours
+- [x] Placeholder coloré éditorial (8 palettes) si pas de couverture
 ```
 
 ---
@@ -489,10 +495,12 @@ Je veux filtrer et rechercher dans ma collection
 Afin de retrouver rapidement un album ou une série
 
 Critères d'acceptance :
-- [ ] Barre de recherche sur : titre, ISBN, auteur, série, éditeur
-- [ ] Filtres prédéfinis : Dans ma collection / Wishlist / Prêtés /
-        Non lus / En cours de lecture
-- [ ] Group by : Série / Genre / Éditeur / Type / État de lecture
+- [x] Barre de recherche sur : titre, ISBN, série
+- [ ] Recherche auteur, éditeur
+- [x] Filtres prédéfinis : Dans ma collection / Wishlist / Non lus / En cours de lecture
+- [ ] Filtre Prêtés (US-006 requis)
+- [x] Group by : Série / État de lecture
+- [ ] Group by : Genre / Éditeur / Type
 - [ ] Filtre par note (> 3 étoiles, etc.)
 ```
 
@@ -533,7 +541,7 @@ Critères d'acceptance :
 
 ---
 
-**US-015 — Liens d'achat club.be et amazon.com.be**
+**US-015 — Liens d'achat club.be et amazon.com.be** ✅
 
 ```
 En tant que collectionneur
@@ -541,9 +549,9 @@ Je veux avoir des liens directs vers club.be et amazon.com.be pour chaque album
 Afin d'acheter facilement un album manquant
 
 Critères d'acceptance :
-- [ ] Boutons "Acheter sur Club.be" et "Acheter sur Amazon.be" dans le form
-- [ ] Si URL vide, bouton désactivé (grisé)
-- [ ] Ouverture dans un nouvel onglet (target="_blank")
+- [x] Boutons "Acheter sur Club.be" et "Acheter sur Amazon.be" dans le form
+- [x] Si URL vide, bouton désactivé (grisé)
+- [x] Ouverture dans un nouvel onglet (target="_blank")
 ```
 
 ---

@@ -32,12 +32,18 @@ class ComicAlbum(models.Model):
     ], string='État de lecture', default='non_lu', tracking=True)
     dans_collection = fields.Boolean(string='Dans ma collection', tracking=True)
     dans_wishlist = fields.Boolean(string='Wishlist')
+    has_cover = fields.Boolean(compute='_compute_has_cover', store=True)
     url_club_be = fields.Char(string='Lien Club.be')
     url_amazon_be = fields.Char(string='Lien Amazon.be')
     url_fnac_be = fields.Char(string='Lien FNAC.be')
     bdgest_album_id = fields.Integer(string='ID BDGest')
     auteur_line_ids = fields.One2many('comic.album.auteur.line', 'album_id', string='Auteurs')
     active = fields.Boolean(default=True)
+
+    @api.depends('image_couverture')
+    def _compute_has_cover(self):
+        for rec in self:
+            rec.has_cover = bool(rec.image_couverture)
 
     # ── Validation ISBN ────────────────────────────────────────────────────────
 

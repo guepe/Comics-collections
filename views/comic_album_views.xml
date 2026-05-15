@@ -130,10 +130,86 @@
         </field>
     </record>
 
+    <!-- ── Vue Kanban Albums (US-010) ──────────────────────────────────────── -->
+    <record id="view_comic_album_kanban" model="ir.ui.view">
+        <field name="name">comic.album.kanban</field>
+        <field name="model">comic.album</field>
+        <field name="arch" type="xml">
+            <kanban class="o_comic_kanban_albums" sample="1">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="serie_id"/>
+                <field name="tome"/>
+                <field name="date_parution"/>
+                <field name="has_cover"/>
+                <field name="note"/>
+                <field name="etat_lecture"/>
+                <field name="dans_collection"/>
+                <field name="dans_wishlist"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_comic_album_card" t-att-data-id="record.id.raw_value">
+                            <!-- Couverture -->
+                            <div class="o_comic_cover">
+                                <t t-if="record.has_cover.raw_value">
+                                    <img class="o_comic_cover_img" loading="lazy"
+                                         t-att-src="'/web/image/comic.album/' + record.id.raw_value + '/image_couverture'"
+                                         t-att-alt="record.name.value"/>
+                                </t>
+                                <t t-else="">
+                                    <div t-attf-class="o_comic_cover_placeholder o_comic_pal_#{record.id.raw_value % 8}">
+                                        <div class="o_cover_band"/>
+                                        <div class="o_cover_serie" t-esc="record.serie_id.value || ''"/>
+                                        <div class="o_cover_sep"/>
+                                        <div class="o_cover_title" t-esc="record.name.value"/>
+                                        <div class="o_cover_tome_block">
+                                            <span class="o_cover_tome_label">TOME</span>
+                                            <span class="o_cover_tome_num" t-esc="record.tome.raw_value || ''"/>
+                                        </div>
+                                    </div>
+                                </t>
+                                <t t-if="record.dans_wishlist.raw_value">
+                                    <div class="o_comic_wishlist_dot">♥</div>
+                                </t>
+                            </div>
+                            <!-- Infos -->
+                            <div class="o_comic_card_info">
+                                <div class="o_comic_card_serie" t-esc="record.serie_id.value || ''"/>
+                                <div class="o_comic_card_title" t-esc="record.name.value"/>
+                                <div class="o_comic_card_meta">
+                                    <span class="o_comic_meta_text">
+                                        <t t-if="record.tome.raw_value">T.<t t-esc="record.tome.raw_value"/></t>
+                                        <t t-if="record.date_parution.raw_value"> · <t t-esc="record.date_parution.raw_value.slice(0, 4)"/></t>
+                                    </span>
+                                    <span class="o_comic_stars">
+                                        <t t-foreach="[1, 2, 3, 4, 5]" t-as="s">
+                                            <span t-att-class="'o_star' + (s &lt;= (record.note.raw_value || 0) ? ' o_star_full' : '')">★</span>
+                                        </t>
+                                    </span>
+                                </div>
+                                <span t-attf-class="o_comic_reading_badge o_badge_#{record.etat_lecture.raw_value}">
+                                    <t t-esc="record.etat_lecture.value"/>
+                                </span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="action_comic_album" model="ir.actions.act_window">
         <field name="name">Albums</field>
         <field name="res_model">comic.album</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <record id="action_comic_wishlist" model="ir.actions.act_window">
+        <field name="name">Wishlist</field>
+        <field name="res_model">comic.album</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('dans_wishlist', '=', True)]</field>
+        <field name="context">{'search_default_wishlist': 1}</field>
     </record>
 
 </odoo>
