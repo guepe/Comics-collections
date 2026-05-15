@@ -2,6 +2,9 @@
 
 > Projet Odoo 19 — Gestion de collection de bandes dessinées
 > Format : `US-XXX | En tant que... | Je veux... | Afin de...`
+> **Sources de données :** Google Books API (gratuite) + Open Library (gratuite, sans clé)
+> + BnF SRU (gratuite, sans clé) + BDGest scraping (fallback, opt-in légal)
+> **Pas de scraping par défaut** — toutes les sources primaires sont des APIs officielles ouvertes.
 
 ---
 
@@ -132,134 +135,193 @@ Critères d'acceptance :
 
 ---
 
-## 🔌 PHASE 2 — Connecteur BDGest
+## 🔌 PHASE 3 — Connecteur Multi-Sources
 
-> Priorité haute : permet de peupler rapidement la collection sans saisie manuelle.
+> Priorité haute : permet de peupler rapidement la collection via APIs ouvertes, sans scraping par défaut.
 
-### EPIC 3 : Scraping et import BDGest
+### EPIC 3 : APIs ouvertes + BDGest fallback
 
 ---
 
-**US-017 — Infrastructure scraping BDGest** ✅ (couche scraping) / 🔲 (UI Odoo → US-019)
+**US-017 — Infrastructure du module `comic_datasource`** ✅
 
 ```
 En tant que développeur
-Je veux une couche de scraping robuste pour BDGest/Bedetheque
-Afin de récupérer les données de BD automatiquement
+Je veux créer la structure de base du module comic_datasource
+Afin d'avoir un connecteur multi-sources propre et extensible
 
 Critères d'acceptance :
-- [x] Module comic_bdgest avec __manifest__ correct
+- [x] Module comic_datasource avec __manifest__ correct
 - [x] Dépend de : comic_collection
-- [x] Classe BdgestScraper dans comic_bdgest/scraper/bdgest_scraper.py
-- [x] Méthode search_by_title(term) → liste de résultats
-- [x] Méthode search_by_isbn(isbn) → résultat unique
-- [x] Méthode search_by_author(term) → liste de résultats
-- [x] Méthode get_album_detail(bdgest_id) → dict complet
-- [x] Méthode get_serie_albums(serie_id) → liste d'albums
-- [x] Délai de 2 secondes entre chaque requête (rate limiting)
-- [x] Gestion des erreurs (timeout, 404, blocage IP, captcha)
-- [x] User-Agent correct dans les headers
-- [ ] Bouton à côté de l'ISBN pour enrichir une fiche depuis BDGest  → US-019
-- [ ] Sélection multiple en list view + action "Enrichir depuis BDGest"  → US-019
+- [x] Structure sources/ avec un fichier par source
+- [x] Classe de base abstraite BaseComicSource avec interface commune
+- [x] Modèle normalisé de retour (dict) défini et documenté
+- [x] Classe ComicDataAggregator dans aggregator.py
+- [x] Tests unitaires avec mocks HTTP pour chaque source
 ```
 
 ---
 
-**US-018 — Parsing des données BDGest**
+**US-018 — Source Google Books API**
+
+```
+En tant que collectionneur
+Je veux que le système récupère les données depuis Google Books
+Afin d'obtenir synopsis, couvertures HD et métadonnées de qualité
+
+Critères d'acceptance :
+- [ ] Classe GoogleBooksSource opérationnelle
+- [ ] Recherche par ISBN (prioritaire)
+- [ ] Recherche par titre + auteur optionnel
+- [ ] Extraction : titre, auteurs, éditeur, date, pages, synopsis, couvertures
+- [ ] Couvertures disponibles en 4 tailles (small/medium/large/extraLarge)
+- [ ] Clé API configurable dans Paramètres Odoo
+- [ ] Gestion erreur quota dépassé (HTTP 429) avec message clair
+- [ ] Fonctionne sans clé pour les requêtes de base (mode anonyme)
+```
+
+---
+
+**US-019 — Source Open Library API**
+
+```
+En tant que collectionneur
+Je veux que le système récupère les couvertures depuis Open Library
+Afin d'avoir des images de couverture sans avoir besoin d'une clé API
+
+Critères d'acceptance :
+- [ ] Classe OpenLibrarySource opérationnelle
+- [ ] Recherche par ISBN → métadonnées complètes
+- [ ] URL couverture générée directement : covers.openlibrary.org/b/isbn/{ISBN}-L.jpg
+- [ ] Vérification existence couverture avant téléchargement (évite les 404)
+- [ ] Extraction auteurs avec mapping rôles si disponible
+- [ ] Aucune configuration requise (pas de clé API)
+- [ ] Utilisée automatiquement comme source de couverture alternative
+```
+
+---
+
+**US-020 — Source BnF SRU API**
+
+```
+En tant que collectionneur
+Je veux que le système interroge la BnF pour les BD francophones
+Afin d'avoir des données officielles de dépôt légal pour les BD FR/BE
+
+Critères d'acceptance :
+- [ ] Classe BnfSource opérationnelle
+- [ ] Recherche par ISBN via API SRU
+- [ ] Parsing XML de la réponse (xmltodict)
+- [ ] Extraction : titre, auteurs, éditeur, date dépôt légal, ISBN
+- [ ] Priorité sur les autres sources pour les champs date_depot_legal
+- [ ] Aucune configuration requise
+- [ ] Gestion timeout (la BnF peut être lente)
+```
+
+---
+
+**US-021 — Source BDGest (fallback scraping)**
+
+```
+En tant que collectionneur
+Je veux pouvoir utiliser BDGest comme source de dernier recours
+Afin de récupérer des BD non trouvées dans les APIs ouvertes
+
+Critères d'acceptance :
+- [ ] Classe BdgestSource opérationnelle (scraping BeautifulSoup)
+- [ ] DISCLAIMER légal affiché à la première activation dans les paramètres
+- [ ] Case à cocher "J'accepte les CGU de BDGest" obligatoire pour activer
+- [ ] Désactivée par défaut (opt-in explicite)
+- [ ] Délai de 2 secondes entre chaque requête (rate limiting)
+- [ ] Credentials optionnels (login/mdp) pour accès authentifié
+- [ ] Recherche par ISBN, titre, auteur
+- [ ] Import série complète via bdgest_serie_id
+- [ ] Gestion blocage IP avec message d'erreur explicite
+```
+
+---
+
+**US-022 — Aggregateur multi-sources**
 
 ```
 En tant que développeur
-Je veux extraire correctement toutes les données d'une fiche BDGest
-Afin d'avoir des informations complètes lors de l'import
+Je veux un aggregateur qui fusionne intelligemment les données de toutes les sources
+Afin d'obtenir la fiche la plus complète possible automatiquement
 
 Critères d'acceptance :
-- [x] Extraction : titre, tome, série, ISBN
-- [x] Extraction : scénariste(s), dessinateur(s), coloriste(s)
-- [x] Extraction : éditeur, date parution, dépôt légal, nb pages
-- [x] Extraction : URL image de couverture
-- [x] Extraction : ID BDGest de la série et de l'album
-- [x] Téléchargement et encodage base64 de la couverture
-- [x] Mapping automatique des rôles auteurs
-
-Notes implémentation :
-- `comic_bdgest/scraper/bdgest_parser.py` — classe stateless BdgestParser (testable sans HTTP)
-- `comic_bdgest/tests/test_bdgest_parser.py` — 46 tests unitaires (fixtures HTML)
-- `BdgestScraper` délègue tout le parsing HTML à BdgestParser
+- [ ] Classe ComicDataAggregator avec méthode search(isbn, title, author)
+- [ ] Cascade dans l'ordre : Google → Open Library → BnF → BDGest
+- [ ] Fusion des champs : prend le premier champ non-vide trouvé
+- [ ] Exception : synopsis priorité Google > BnF > BDGest
+- [ ] Exception : date_depot_legal priorité BnF > autres
+- [ ] Exception : couverture priorité Google Large > OpenLib L > BDGest
+- [ ] Résultat indique quelle source a fourni chaque champ
+- [ ] Cache des résultats en session (évite les appels répétés)
+- [ ] Log des sources interrogées pour debugging
 ```
 
 ---
 
-**US-022 — Configuration BDGest**
+**US-023 — Wizard de recherche et import unifié**
+
+```
+En tant que collectionneur
+Je veux rechercher un album dans toutes les sources en un seul geste
+Afin d'importer facilement n'importe quelle BD dans ma collection
+
+Critères d'acceptance :
+- [ ] Wizard accessible depuis menu et depuis bouton sur comic.album
+- [ ] Champ de recherche unique (ISBN ou titre)
+- [ ] Détection automatique ISBN vs titre (format EAN-13)
+- [ ] Affichage des résultats avec badge source (Google/OpenLib/BnF/BDGest)
+- [ ] Couverture preview dans le wizard
+- [ ] Sélection multiple pour import en lot
+- [ ] Gestion des doublons (ISBN déjà en base → avertissement)
+- [ ] Import crée automatiquement : série, auteurs (res.partner), éditeur
+- [ ] Rapport post-import : X créés, Y mis à jour, Z ignorés
+```
+
+---
+
+**US-024 — Configuration des sources de données**
 
 ```
 En tant qu'administrateur
-Je veux configurer les paramètres de connexion BDGest
-Afin de pouvoir utiliser un compte authentifié si nécessaire
+Je veux configurer les sources de données dans les paramètres Odoo
+Afin de contrôler quelles APIs sont utilisées et dans quel ordre
 
 Critères d'acceptance :
-- [ ] Page de configuration dans Paramètres Odoo
-- [ ] Champs : login BDGest (optionnel), mot de passe (password field)
-- [ ] Bouton "Tester la connexion"
-- [ ] Paramètre : délai entre requêtes (défaut 2s)
-- [ ] Stockage sécurisé via ir.config_parameter
+- [ ] Section "Sources de données BD" dans Paramètres > Configuration
+- [ ] Champ clé API Google Books avec lien vers console.cloud.google.com
+- [ ] Bouton "Tester Google Books" avec retour visuel
+- [ ] Toggle activation Open Library (activé par défaut)
+- [ ] Toggle activation BnF (activé par défaut)
+- [ ] Toggle activation BDGest avec disclaimer légal (désactivé par défaut)
+- [ ] Champs login/mdp BDGest (conditionnels si BDGest activé)
+- [ ] Champ délai BDGest (défaut : 2 secondes)
+- [ ] Ordre de priorité des sources (drag & drop ou sélection)
 ```
 
 ---
 
-**US-019 — Wizard de recherche et d'import BDGest**
+**US-025 — Enrichissement automatique des liens d'achat**
 
 ```
 En tant que collectionneur
-Je veux rechercher un album sur BDGest depuis Odoo et l'importer en un clic
-Afin d'éviter la saisie manuelle des informations
+Je veux que les liens club.be et amazon.com.be soient générés automatiquement
+Afin de pouvoir acheter rapidement un album manquant
 
 Critères d'acceptance :
-- [ ] Wizard accessible depuis le menu BDGest et depuis le bouton sur comic.album
-- [ ] Étape 1 : saisie du terme de recherche + type (titre / ISBN / auteur)
-- [ ] Étape 2 : liste des résultats avec couverture miniature, titre, auteur, éditeur
-- [ ] Case à cocher pour sélectionner les albums à importer
-- [ ] Étape 3 : confirmation et import
-- [ ] Gestion des doublons (si bdgest_album_id déjà présent → alerte)
-- [ ] Création automatique des res.partner auteurs si non existants
-- [ ] Création automatique de la série si non existante
+- [ ] À l'import, construction URL club.be : https://www.club.be/search?q={isbn}
+- [ ] À l'import, construction URL amazon.be : https://www.amazon.com.be/s?k={isbn}
+- [ ] Bouton "Rafraîchir les liens" sur le formulaire album
+- [ ] Les liens s'ouvrent dans un nouvel onglet
+- [ ] Boutons grisés si URL vide
 ```
 
 ---
 
-**US-020 — Import d'une série complète depuis BDGest**
-
-```
-En tant que collectionneur
-Je veux importer tous les tomes d'une série en une seule action
-Afin de peupler rapidement ma collection
-
-Critères d'acceptance :
-- [ ] Bouton "Synchroniser depuis BDGest" sur le formulaire comic.serie
-- [ ] Récupère tous les albums de la série via bdgest_id
-- [ ] N'importe que les albums non encore présents (pas de doublon)
-- [ ] Rapport final : X albums ajoutés, Y déjà présents, Z erreurs
-- [ ] Progression affichée pendant la synchro (si longue)
-```
-
----
-
-**US-021 — Enrichissement liens d'achat automatique**
-
-```
-En tant que collectionneur
-Je veux que les liens club.be et amazon.com.be soient générés automatiquement à l'import
-Afin de ne pas avoir à les chercher manuellement
-
-Critères d'acceptance :
-- [ ] À l'import BDGest, construction URL club.be : https://www.club.be/search?q={isbn}
-- [ ] À l'import BDGest, construction URL amazon.be : https://www.amazon.com.be/s?k={isbn}
-- [ ] URLs sauvegardées sur comic.album
-- [ ] Possibilité de rafraîchir les liens manuellement (bouton)
-```
-
----
-
-## 🤖 PHASE 3 — Connecteur IA
+## 🤖 PHASE 4a — Connecteur IA
 
 > Priorité haute : enrichissement des fiches BD via Claude / OpenAI.
 
@@ -267,7 +329,7 @@ Critères d'acceptance :
 
 ---
 
-**US-023 — Configuration des connecteurs IA**
+**US-026 — Configuration des connecteurs IA**
 
 ```
 En tant qu'administrateur
@@ -287,7 +349,7 @@ Critères d'acceptance :
 
 ---
 
-**US-024 — Génération de synopsis par IA**
+**US-027 — Génération de synopsis par IA**
 
 ```
 En tant que collectionneur
@@ -307,7 +369,7 @@ Critères d'acceptance :
 
 ---
 
-**US-025 — Traduction du synopsis par IA**
+**US-028 — Traduction du synopsis par IA**
 
 ```
 En tant que collectionneur
@@ -323,7 +385,7 @@ Critères d'acceptance :
 
 ---
 
-**US-026 — Suggestions de BD similaires par IA**
+**US-029 — Suggestions de BD similaires par IA**
 
 ```
 En tant que collectionneur
@@ -518,7 +580,7 @@ Critères d'acceptance :
 
 ---
 
-**US-027 — Modèle de fichier d'import** ✅
+**US-030 — Modèle de fichier d'import** ✅
 
 ```
 En tant que collectionneur
@@ -537,7 +599,7 @@ Critères d'acceptance :
 
 ---
 
-**US-028 — Wizard d'import CSV/XLSX** ✅
+**US-031 — Wizard d'import CSV/XLSX** ✅
 
 ```
 En tant que collectionneur
@@ -561,7 +623,7 @@ Critères d'acceptance :
 
 ---
 
-**US-029 — Tests unitaires**
+**US-032 — Tests unitaires**
 
 ```
 En tant que développeur
@@ -578,7 +640,7 @@ Critères d'acceptance :
 
 ---
 
-**US-030 — Documentation et README**
+**US-033 — Documentation et README**
 
 ```
 En tant qu'utilisateur externe
@@ -596,16 +658,14 @@ Critères d'acceptance :
 
 ## 📊 Récapitulatif
 
-| Phase      | Epic                     | US                      | Statut                          |
-| ---------- | ------------------------ | ----------------------- | ------------------------------- |
-| Phase 1    | Infrastructure & Modèles | US-001 à US-005, US-007 | ✅ Terminée                     |
-| Phase 1b   | Layout minimal           | US-008, US-016          | ✅ Terminée                     |
-| Phase 2    | Connecteur BDGest        | US-017 à US-022         | 🔄 En cours (US-017 ✅, US-018 ✅) |
-| Phase 3    | Connecteur IA            | US-023 à US-026         | 🔲 À faire                      |
-| Phase 4    | Interface complète       | US-008b à US-015        | ⏳ Design validé — en attente   |
-| Phase 5    | Gestion des prêts        | US-006                  | ⏳ En attente                   |
-| Phase 6    | Import CSV/XLSX          | US-027, US-028          | ✅ Terminée                     |
-| Transverse | Qualité                  | US-029, US-030          | ⏳ En attente                   |
+| Phase | Epic | US | Priorité |
+|---|---|---|---|
+| Phase 1 | Infrastructure | US-001 à US-007 | 🔴 Must Have |
+| Phase 2 | Interface | US-008 à US-016 | 🔴 Must Have |
+| Phase 3 | Multi-sources | US-017 à US-025 | 🟠 Should Have |
+| Phase 4a | IA | US-026 à US-029 | 🟡 Nice to Have |
+| Phase 4b | Import | US-030 à US-031 | 🟠 Should Have |
+| Transverse | Qualité | US-032 à US-033 | 🟡 Nice to Have |
 
 ---
 

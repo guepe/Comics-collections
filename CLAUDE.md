@@ -20,7 +20,15 @@ Développer un ensemble de modules Odoo 19 (open source) permettant à un utilis
 ```
 addons/
 ├── comic_collection/        # Module principal
-├── comic_bdgest/            # Connecteur scraping BDGest
+├── comic_datasource/        # Connecteur multi-sources (Google Books, Open Library, BnF, BDGest)
+│   ├── sources/
+│   │   ├── google_books.py
+│   │   ├── open_library.py
+│   │   ├── bnf.py
+│   │   └── bdgest.py        # fallback scraping
+│   ├── aggregator.py
+│   └── wizards/
+│       └── search_wizard.py
 ├── comic_ai/                # Connecteur IA Claude + OpenAI
 └── comic_import/            # Import CSV/XLSX
 ```
@@ -46,7 +54,16 @@ lxml
 openai
 anthropic
 openpyxl
+xmltodict
 ```
+
+### APIs externes utilisées (sans scraping)
+| API | Auth | Usage | Limite |
+|---|---|---|---|
+| Google Books API | Clé API gratuite | Métadonnées + synopsis + couvertures | 1000 req/jour gratuit |
+| Open Library API | Aucune | Couvertures + métadonnées + auteurs | Illimitée |
+| BnF SRU API | Aucune | BD francophones (dépôt légal) | Illimitée |
+| BDGest (scraping) | Login optionnel | Fallback uniquement | Délai 2s obligatoire |
 
 ---
 
@@ -156,33 +173,102 @@ Bandes Dessinées
 
 ---
 
-## 📦 Module 2 — `comic_bdgest`
+## 📦 Module 2 — `comic_datasource`
+
+> Remplace l'ancien module `comic_bdgest`.
+> Agrège plusieurs sources de données ouvertes + BDGest en fallback.
 
 ### Dépend de
 `comic_collection`
 
-### Fonctionnement
-- Scraping HTTP de `bedetheque.com` via `requests` + `BeautifulSoup4`
-- Pas d'API officielle disponible → scraping respectueux (délai entre requêtes)
-- Stockage du `bdgest_album_id` et `bdgest_id` pour éviter les doublons
+### Architecture — Cascade de sources
 
-### Wizard `comic.bdgest.import.wizard`
-Champs :
-- `search_term` : terme de recherche
-- `search_type` : `title` / `isbn` / `auteur`
-- `result_ids` : One2many vers `comic.bdgest.result.line`
+La recherche suit cette priorité automatique :
+1. **Google Books API** → synopsis, couverture HD, métadonnées générales
+2. **Open Library API** → couverture alternative, auteurs, éditions multiples
+3. **BnF SRU API** → données officielles BD francophones (dépôt légal)
+4. **BDGest scraping** → fallback uniquement, avec avertissement légal à l'utilisateur
 
-`comic.bdgest.result.line` :
-- `wizard_id`, `bdgest_album_id`, `serie_name`, `tome`, `titre`, `auteur`, `isbn`, `couverture_url`, `selected`
+### Sous-modules
 
-### Actions
-- `action_search()` : appel scraping, peuple `result_ids`
-- `action_import_selected()` : crée les enregistrements Odoo depuis les lignes sélectionnées
-- `action_sync_serie()` : importe tous les tomes d'une série
+#### `comic_datasource/sources/google_books.py`
+- Classe `GoogleBooksSource`
+- Méthode `search_by_isbn(isbn)` → dict normalisé
+- Méthode `search_by_title(title, author=None)` → liste de résultats
+- Endpoint : `https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}&key={key}`
+- Retourne : titre, auteurs, éditeur, date, pages, synopsis, URL couverture (small/medium/large/extraLarge)
+- Clé API stockée en `ir.config_parameter` : `comic.google_books_api_key`
 
-### Enrichissement automatique
-- Résolution des liens club.be via `https://www.club.be/search?q={isbn}`
-- Résolution des liens amazon.com.be via `https://www.amazon.com.be/s?k={isbn}`
+#### `comic_datasource/sources/open_library.py`
+- Classe `OpenLibrarySource`
+- Méthode `search_by_isbn(isbn)` → dict normalisé
+- Méthode `get_cover_url(isbn, size='L')` → URL directe (S/M/L)
+- Endpoint données : `https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&format=json&jscmd=data`
+- Endpoint couverture : `https://covers.openlibrary.org/b/isbn/{isbn}-L.jpg`
+- Aucune clé API requise
+
+#### `comic_datasource/sources/bnf.py`
+- Classe `BnfSource`
+- Méthode `search_by_isbn(isbn)` → dict normalisé
+- Méthode `search_by_title(title)` → liste de résultats
+- Endpoint : `http://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&query=bib.isbn+adj+"{isbn}"`
+- Parsing XML (utiliser `xmltodict`)
+- Aucune clé API requise
+
+#### `comic_datasource/sources/bdgest.py`
+- Classe `BdgestSource` (scraping — fallback uniquement)
+- AVERTISSEMENT : afficher disclaimer légal avant activation
+- Méthode `search_by_isbn(isbn)` → dict normalisé
+- Méthode `search_by_title(title)` → liste de résultats
+- Méthode `get_serie_albums(bdgest_serie_id)` → liste complète
+- Délai 2 secondes entre requêtes (OBLIGATOIRE)
+- Credentials optionnels : `comic.bdgest_login` / `comic.bdgest_password`
+
+#### `comic_datasource/aggregator.py`
+- Classe `ComicDataAggregator`
+- Méthode `search(isbn=None, title=None, author=None)` → résultat fusionné
+- Logique de cascade : tente chaque source dans l'ordre, fusionne les champs
+- Priorité couverture : Google Large > Open Library L > BDGest
+- Priorité synopsis : Google > BnF > BDGest
+- Priorité métadonnées BD FR : BnF > Google > Open Library
+
+### Modèle normalisé retourné par chaque source
+```python
+{
+    'title': str,
+    'serie_name': str | None,
+    'tome': int | None,
+    'isbn': str,
+    'date_parution': str,  # YYYY-MM-DD
+    'nb_pages': int | None,
+    'editeur': str | None,
+    'auteurs': [
+        {'name': str, 'role': 'scenariste'|'dessinateur'|'coloriste'|'autre'}
+    ],
+    'synopsis': str | None,  # HTML ou texte brut
+    'cover_url': str | None,
+    'cover_url_small': str | None,
+    'source': 'google'|'openlibrary'|'bnf'|'bdgest',
+}
+```
+
+### Wizard `comic.datasource.search.wizard`
+- Champ `search_term` (isbn ou titre)
+- Champ `search_type` : `isbn` / `title`
+- Bouton `action_search()` → appelle l'aggregator, affiche résultats fusionnés
+- `result_ids` : One2many vers `comic.datasource.result.line`
+- Affichage source utilisée pour chaque champ (badge coloré)
+- Case à cocher multi-sélection
+- `action_import_selected()` → crée les enregistrements Odoo
+
+### Configuration (`res.config.settings`)
+| Paramètre | ir.config_parameter key | Description |
+|---|---|---|
+| Clé Google Books | `comic.google_books_api_key` | Gratuite sur console.cloud.google.com |
+| Login BDGest | `comic.bdgest_login` | Optionnel |
+| MDP BDGest | `comic.bdgest_password` | Optionnel, champ password |
+| Sources actives | `comic.datasource_order` | Ordre de priorité (JSON list) |
+| Délai BDGest | `comic.bdgest_delay` | Délai en secondes (défaut: 2) |
 
 ---
 
@@ -318,3 +404,6 @@ comic_collection/
 8. Chaque module a son propre `__manifest__.py` avec les bonnes dépendances
 9. Les vues Kanban des albums doivent afficher la couverture en priorité
 10. Compatible Odoo 19.0 uniquement — ne pas utiliser d'API dépréciées
+11. Le module `comic_datasource` utilise UNIQUEMENT des APIs publiques et légales en priorité (Google Books, Open Library, BnF) — le scraping BDGest est un fallback de dernier recours avec avertissement légal explicite à l'utilisateur
+12. Les clés API Google Books sont gratuites mais doivent être créées sur console.cloud.google.com par l'utilisateur final — ne jamais hardcoder de clé
+13. L'aggregator fusionne les données de plusieurs sources — en cas de conflit, les métadonnées BnF sont prioritaires pour les BD francophones
