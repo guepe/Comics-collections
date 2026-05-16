@@ -54,7 +54,15 @@
       "Bash(git merge *)",
       "Bash(git remote *)",
       "Bash(git clone *)",
-      "Bash(rm -rf /Users/phde/Projects/odoo/comics_collections_bak \\\\ *)"
+      "Bash(rm -rf /Users/phde/Projects/odoo/comics_collections_bak \\\\ *)",
+      "Bash(git checkout *)",
+      "Bash(git branch *)",
+      "Bash(git symbolic-ref *)",
+      "Bash(git -C /Users/phde/Projects/odoo status --short)",
+      "Bash(git -C /Users/phde/Projects/odoo add comics_collections/__manifest__.py comics_collections/models/__init__.py comics_collections/models/comic_album.py comics_collections/models/res_partner.py comics_collections/views/comic_album_views.xml comics_collections/views/comic_auteur_views.xml comics_collections/views/comic_menu.xml comics_collections/static/description/index.html comics_collections/README.rst)",
+      "Bash(git -C /Users/phde/Projects/odoo commit -m ' *)",
+      "Bash(git -C /Users/phde/Projects/odoo add comics_collections/wizards/comic_import_wizard.py)",
+      "Bash(git -C /Users/phde/Projects/odoo add comics_collections/CLAUDE.md comics_collections/USER_STORIES.md CHANGES.md)"
     ],
     "additionalDirectories": [
       "/private/tmp/cc_import"

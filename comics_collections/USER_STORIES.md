@@ -3,8 +3,9 @@
 > Projet Odoo 19 — Gestion de collection de bandes dessinées
 > Format : `US-XXX | En tant que... | Je veux... | Afin de...`
 > **Sources de données :** Google Books API (gratuite) + Open Library (gratuite, sans clé)
-> + BnF SRU (gratuite, sans clé) + BDGest scraping (fallback, opt-in légal)
-> **Pas de scraping par défaut** — toutes les sources primaires sont des APIs officielles ouvertes.
+>
+> - BnF SRU (gratuite, sans clé) + BDGest scraping (fallback, opt-in légal)
+>   **Pas de scraping par défaut** — toutes les sources primaires sont des APIs officielles ouvertes.
 
 ---
 
@@ -640,7 +641,6 @@ Afin de garantir la stabilité du module
 
 Critères d'acceptance :
 - [ ] Tests pour la validation ISBN
-- [ ] Tests pour le scraper BDGest (avec mock HTTP)
 - [ ] Tests pour les champs computed (nb_albums_possedes, etc.)
 - [ ] Tests pour l'import CSV
 - [ ] Lancement via : python -m pytest ou ./odoo-bin test
@@ -667,14 +667,14 @@ Critères d'acceptance :
 
 ## 📊 Récapitulatif
 
-| Phase | Epic | US | Priorité |
-|---|---|---|---|
-| Phase 1 | Infrastructure | US-001 à US-007 | 🔴 Must Have |
-| Phase 2 | Interface | US-008 à US-016 | 🔴 Must Have |
-| Phase 3 | Multi-sources | US-017 à US-025 | 🟠 Should Have |
-| Phase 4a | IA | US-026 à US-029 | 🟡 Nice to Have |
-| Phase 4b | Import | US-030 à US-031 | 🟠 Should Have |
-| Transverse | Qualité | US-032 à US-033 | 🟡 Nice to Have |
+| Phase      | Epic           | US              | Priorité        |
+| ---------- | -------------- | --------------- | --------------- |
+| Phase 1    | Infrastructure | US-001 à US-007 | 🔴 Must Have    |
+| Phase 2    | Interface      | US-008 à US-016 | 🔴 Must Have    |
+| Phase 3    | Multi-sources  | US-017 à US-025 | 🟠 Should Have  |
+| Phase 4a   | IA             | US-026 à US-029 | 🟡 Nice to Have |
+| Phase 4b   | Import         | US-030 à US-031 | 🟠 Should Have  |
+| Transverse | Qualité        | US-032 à US-033 | 🟡 Nice to Have |
 
 ---
 
