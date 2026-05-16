@@ -3,8 +3,9 @@
 > Projet Odoo 19 — Gestion de collection de bandes dessinées
 > Format : `US-XXX | En tant que... | Je veux... | Afin de...`
 > **Sources de données :** Google Books API (gratuite) + Open Library (gratuite, sans clé)
-> + BnF SRU (gratuite, sans clé) + BDGest scraping (fallback, opt-in légal)
-> **Pas de scraping par défaut** — toutes les sources primaires sont des APIs officielles ouvertes.
+>
+> - BnF SRU (gratuite, sans clé) + BDGest scraping (fallback, opt-in légal)
+>   **Pas de scraping par défaut** — toutes les sources primaires sont des APIs officielles ouvertes.
 
 ---
 
@@ -13,50 +14,54 @@
 > Légende : ✅ Terminé · 🔄 Partiel · ⏳ À faire · 🔴 Priorité haute · 🟠 Moyenne · 🟡 Basse
 
 ### Prêt à publier (bloquants levés)
-| US | Titre | État |
-|---|---|---|
-| US-001 → 007 | Infrastructure & Sécurité | ✅ |
-| US-008 | Navigation minimale | ✅ |
-| US-009 | Kanban Séries | ✅ |
-| US-010 | Kanban Albums | ✅ |
-| US-011 | Formulaire album enrichi | ✅ |
-| US-015 | Liens d'achat | ✅ |
-| US-016 | Données de démo | ✅ |
-| US-017 | Infrastructure comic_datasource | ✅ |
-| US-018 | Source Google Books | ✅ |
-| US-023 | Wizard recherche & import | ✅ |
-| US-025 | Génération liens d'achat auto | ✅ |
-| US-030 | Modèle fichier import | ✅ |
-| US-031 | Wizard import CSV/Excel | ✅ |
-| US-033 | Documentation & README | ✅ |
-| US-034 | Suivi séries — tomes manquants → wishlist | ✅ |
-| US-019 | Source Open Library API | ✅ |
-| US-020 | Source BnF SRU API | ✅ |
-| US-022 | Aggregateur multi-sources | ✅ |
-| US-014 | Wishlist : vue dédiée + bouton "Marquer comme acquis" | ✅ |
-| US-024 | Config UI sources de données | ✅ |
+
+| US           | Titre                                                 | État |
+| ------------ | ----------------------------------------------------- | ---- |
+| US-001 → 007 | Infrastructure & Sécurité                             | ✅   |
+| US-008       | Navigation minimale                                   | ✅   |
+| US-009       | Kanban Séries                                         | ✅   |
+| US-010       | Kanban Albums                                         | ✅   |
+| US-011       | Formulaire album enrichi                              | ✅   |
+| US-015       | Liens d'achat                                         | ✅   |
+| US-016       | Données de démo                                       | ✅   |
+| US-017       | Infrastructure comic_datasource                       | ✅   |
+| US-018       | Source Google Books                                   | ✅   |
+| US-023       | Wizard recherche & import                             | ✅   |
+| US-025       | Génération liens d'achat auto                         | ✅   |
+| US-030       | Modèle fichier import                                 | ✅   |
+| US-031       | Wizard import CSV/Excel                               | ✅   |
+| US-033       | Documentation & README                                | ✅   |
+| US-034       | Suivi séries — tomes manquants → wishlist             | ✅   |
+| US-019       | Source Open Library API                               | ✅   |
+| US-020       | Source BnF SRU API                                    | ✅   |
+| US-022       | Aggregateur multi-sources                             | ✅   |
+| US-014       | Wishlist : vue dédiée + bouton "Marquer comme acquis" | ✅   |
+| US-024       | Config UI sources de données                          | ✅   |
 
 ### À faire — Priorité haute 🔴
-| US | Titre | Dépend de |
-|---|---|---|
-| US-008b | Menu Auteurs ✅, Prêts ⏳, Config ⏳ | US-006 pour Prêts |
-| US-006 | Modèle `comic.pret` (prêts) | — |
+
+| US      | Titre                          | Dépend de |
+| ------- | ------------------------------ | --------- |
+| US-008b | Menu Auteurs ✅, ⏳, Config ⏳ |           |
 
 ### À faire — Priorité moyenne 🟠
-| US | Titre | Dépend de |
-|---|---|---|
-| US-021 | Source BDGest (fallback scraping, partiel) | — |
-| US-012 | Filtres & recherche avancée (partiel) | — |
+
+| US     | Titre                                 | Dépend de |
+| ------ | ------------------------------------- | --------- |
+| US-012 | Filtres & recherche avancée (partiel) | —         |
 
 ### À faire — Priorité basse 🟡
-| US | Titre | Dépend de |
-|---|---|---|
-| US-026 | Config connecteurs IA | module comic_ai |
-| US-027 | Génération synopsis par IA | US-026 |
-| US-028 | Traduction synopsis par IA | US-026 |
-| US-029 | Découverte IA par profil de goûts | US-026, US-027 |
-| US-013 | Dashboard statistiques | — |
-| US-032 | Tests unitaires | — |
+
+| US     | Titre                                      | Dépend de       |
+| ------ | ------------------------------------------ | --------------- |
+| US-006 | Modèle `comic.pret` (prêts)                | —               |
+| US-021 | Source BDGest (fallback scraping, partiel) | —               |
+| US-026 | Config connecteurs IA                      | module comic_ai |
+| US-027 | Génération synopsis par IA                 | US-026          |
+| US-028 | Traduction synopsis par IA                 | US-026          |
+| US-029 | Découverte IA par profil de goûts          | US-026, US-027  |
+| US-013 | Dashboard statistiques                     | —               |
+| US-032 | Tests unitaires                            | —               |
 
 ---
 
@@ -486,7 +491,7 @@ Critères d'acceptance :
 - [x] Comparaison entre les tomes en base et les tomes trouvés via datasource (par ISBN ou titre)
 - [x] Liste des tomes manquants affichée avec confirmation utilisateur avant ajout
 - [x] Tomes manquants confirmés → ajoutés en wishlist (dans_wishlist = True)
-- [ ] (optionnel) Cron hebdomadaire pour toutes les séries suivies en lot
+- [x] (optionnel) Cron hebdomadaire pour toutes les séries suivies en lot
 ```
 
 ---

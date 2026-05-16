@@ -22,6 +22,7 @@
         'views/comic_serie_missing_wizard_views.xml',
         'views/comic_datasource_menu.xml',
         'data/comic_datasource_config.xml',
+        'data/comic_serie_cron.xml',
     ],
     'external_dependencies': {
         'python': ['requests', 'beautifulsoup4', 'lxml', 'xmltodict'],

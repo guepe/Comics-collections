@@ -155,18 +155,18 @@ class BnfSource(BaseComicSource):
             return None
         return self._parse_unimarc(records[0])
 
-    def search_by_serie(self, serie_name: str, page_size: int = 100) -> list:
+    def search_by_serie(self, serie_name: str, page_size: int = 50, max_results: int = 200) -> list:
         """Recherche tous les albums d'une série via BnF SRU, avec pagination complète.
-        Essaie bib.serie d'abord, puis bib.title si peu de résultats."""
-        # Essai 1 : champ série (field 225 UNIMARC) — le plus précis
+        Essaie bib.serie adj d'abord, puis bib.title adj si peu de résultats."""
+        # Essai 1 : champ série UNIMARC 225 — le plus précis
         results = self._paginate_query(
-            f'bib.serie adj "{serie_name}"', page_size,
+            f'bib.serie adj "{serie_name}"', page_size, max_results,
         )
-        # Essai 2 : champ titre (plus large, rattrape les albums non taggués en série)
+        # Essai 2 : phrase exacte dans le titre — rattrape les albums non taggués en série
         # On cumule uniquement si le premier essai a retourné peu de résultats
         if len(results) < 5:
             title_results = self._paginate_query(
-                f'bib.title any "{serie_name}"', page_size,
+                f'bib.title adj "{serie_name}"', page_size, max_results,
             )
             # Déduplique par ISBN, puis par titre
             seen_isbns = {r.isbn for r in results if r.isbn}
@@ -183,14 +183,15 @@ class BnfSource(BaseComicSource):
                     seen_titles.add(r.title.lower())
         return results
 
-    def _paginate_query(self, query: str, page_size: int) -> list:
-        """Exécute une requête SRU avec pagination automatique complète."""
+    def _paginate_query(self, query: str, page_size: int, max_results: int = 200) -> list:
+        """Exécute une requête SRU avec pagination, capée à max_results enregistrements."""
         results = []
         start = 1
         total = None
 
         while True:
-            data = self._sru_query(query, max_records=page_size, start_record=start)
+            batch_size = min(page_size, max_results - len(results))
+            data = self._sru_query(query, max_records=batch_size, start_record=start)
             if not data:
                 break
 
@@ -198,7 +199,9 @@ class BnfSource(BaseComicSource):
                 total = self._extract_total(data)
                 if total == 0:
                     break
-                _logger.info('BnF "%s" : %d résultats', query[:60], total)
+                _logger.info(
+                    'BnF "%s" : %d résultats (cap %d)', query[:60], total, max_results
+                )
 
             records = self._extract_records(data)
             if not records:
@@ -210,7 +213,7 @@ class BnfSource(BaseComicSource):
                     results.append(parsed)
 
             start += len(records)
-            if start > total or len(records) < page_size:
+            if start > total or len(records) < batch_size or len(results) >= max_results:
                 break
 
         return results

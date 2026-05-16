@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ir_cron_check_missing_volumes" model="ir.cron">
+        <field name="name">BD — Détection hebdomadaire des tomes manquants</field>
+        <field name="model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_missing_volumes()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="active" eval="False"/>
+    </record>
+
+</odoo>

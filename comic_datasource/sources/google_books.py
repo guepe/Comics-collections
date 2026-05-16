@@ -1,4 +1,5 @@
 import logging
+import time
 import requests
 from .base import BaseComicSource, ComicSourceResult, parse_bd_title
 
@@ -21,36 +22,50 @@ class GoogleBooksSource(BaseComicSource):
     def _api_key(self):
         return self._get_config('comic.google_books_api_key', '')
 
-    def _fetch(self, params):
+    def _fetch(self, params, _retries=3, _backoff=2):
         key = self._api_key()
         if key:
             params['key'] = key
-        try:
-            resp = requests.get(GOOGLE_BOOKS_URL, params=params, timeout=10)
-        except Exception as e:
-            _logger.warning('Google Books: requête échouée: %s', e)
-            return None
 
-        if resp.status_code == 429:
-            _logger.error(
-                'Google Books: quota dépassé (HTTP 429). '
-                'Ajoutez une clé API dans Paramètres > Bandes Dessinées '
-                'pour augmenter la limite (1000 req/jour).'
-            )
-            raise GoogleBooksQuotaError(
-                'Quota Google Books dépassé. '
-                'Ajoutez une clé API dans Paramètres > Sources de données BD.'
-            )
-        if resp.status_code == 403:
-            _logger.error('Google Books: accès refusé (HTTP 403) — clé API invalide ou API non activée.')
-            return None
+        for attempt in range(_retries):
+            try:
+                resp = requests.get(GOOGLE_BOOKS_URL, params=params, timeout=10)
+            except Exception as e:
+                _logger.warning('Google Books: requête échouée: %s', e)
+                return None
 
-        try:
-            resp.raise_for_status()
-            return resp.json()
-        except Exception as e:
-            _logger.warning('Google Books: erreur HTTP %s: %s', resp.status_code, e)
-            return None
+            if resp.status_code == 429:
+                _logger.error(
+                    'Google Books: quota dépassé (HTTP 429). '
+                    'Ajoutez une clé API dans Paramètres > Bandes Dessinées '
+                    'pour augmenter la limite (1000 req/jour).'
+                )
+                raise GoogleBooksQuotaError(
+                    'Quota Google Books dépassé. '
+                    'Ajoutez une clé API dans Paramètres > Sources de données BD.'
+                )
+            if resp.status_code == 403:
+                _logger.error('Google Books: accès refusé (HTTP 403) — clé API invalide ou API non activée.')
+                return None
+
+            if resp.status_code in (500, 502, 503, 504):
+                wait = _backoff * (2 ** attempt)
+                _logger.warning(
+                    'Google Books: erreur %s (tentative %d/%d), retry dans %ds.',
+                    resp.status_code, attempt + 1, _retries, wait,
+                )
+                time.sleep(wait)
+                continue
+
+            try:
+                resp.raise_for_status()
+                return resp.json()
+            except Exception as e:
+                _logger.warning('Google Books: erreur HTTP %s: %s', resp.status_code, e)
+                return None
+
+        _logger.error('Google Books: abandon après %d tentatives.', _retries)
+        return None
 
     def _parse_volume(self, item) -> ComicSourceResult:
         info = item.get('volumeInfo', {})

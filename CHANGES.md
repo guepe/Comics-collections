@@ -640,3 +640,62 @@ Composants CSS :
     ],
 },
 ```
+
+---
+
+## 2026-05-16 (suite 2) — US-034, US-014, US-024 + cosmétique kanban + cron
+
+### US-034 ✅ — Détection des tomes manquants
+
+**Fichiers créés dans `comic_datasource/` :**
+
+| Fichier | Description |
+|---|---|
+| `wizards/comic_serie_missing_wizard.py` | Wizard `comic.serie.missing.wizard` + `comic.serie.missing.line` |
+| `views/comic_serie_missing_wizard_views.xml` | Vues form wizard (états confirm/results/done) |
+| `security/ir.model.access.csv` | Droits ajoutés pour les deux nouveaux TransientModel |
+| `data/comic_serie_cron.xml` | Cron hebdomadaire `ir_cron_check_missing_volumes` (désactivé par défaut) |
+
+**Modifications :**
+- `comic_datasource/models/comic_serie.py` : ajout `action_search_missing_volumes()` + `_cron_check_missing_volumes()`
+- `comic_datasource/views/comic_datasource_serie_inherit_views.xml` : bouton "Tomes manquants" dans `button_box`
+- `comics_collections/models/comic_serie.py` : champ `a_suivre = fields.Boolean` + `first_album_cover_id = fields.Many2one` (computed stored)
+- `comics_collections/views/comic_serie_views.xml` : filtre "À suivre", fallback couverture kanban (has_cover → first_album_cover_id → placeholder)
+
+**Logique de recherche :**
+- Google Books : `_fetch_google_all()` — sonde `totalItems`, pagine par 40 jusqu'au cap 200
+- BnF : `search_by_serie()` avec `bib.serie adj` + fallback `bib.title any` si < 5 résultats, `_paginate_query()` pour pagination complète
+- Stubs pour les tomes attendus si `nb_albums_total` est renseigné
+
+**Cron `ir_cron_check_missing_volumes` :**
+- Appelle `model._cron_check_missing_volumes()` sur `comic.serie`
+- Parcourt toutes les séries `a_suivre=True`, instancie le wizard en code, exécute `action_search()` puis `action_add_to_wishlist()`
+- `active=False` par défaut — à activer dans Configuration > Crons
+
+**Correctifs BnF :**
+- Bug `max_records` vs `page_size` : l'appel `source.search_by_serie(serie_name, max_records=40)` passait un kwarg inconnu → TypeError silencieuse → 0 résultats. Fix : appel sans kwarg.
+- `bib.serie adj` ne tag pas tous les albums → fallback `bib.title any` si < 5 résultats.
+
+---
+
+### US-014 ✅ — Wishlist
+
+- `comics_collections/models/comic_album.py` : `action_mark_acquired()` → `dans_collection=True, dans_wishlist=False`
+- `comics_collections/views/comic_album_views.xml` :
+  - `view_comic_album_wishlist_list` : colonnes Club.be, Amazon.be, Fnac.be (widget url) + bouton Acquérir
+  - `view_comic_album_kanban_wishlist_btn` : héritage xpath — bouton "Acquérir" conditionnel dans kanban
+  - `action_comic_wishlist` : domain `dans_wishlist=True`, `context={'group_by': 'serie_id'}`, `view_id` pointant sur la liste dédiée
+
+**Erreur rencontrée :** `ir.actions.act_window.view` unique constraint — Odoo auto-crée ces records au premier install, INSERT → violation. Solution : utiliser `view_id` sur l'action + héritage xpath pour le kanban, pas de records `ir.actions.act_window.view` séparés.
+
+---
+
+### US-024 ✅ — Configuration des sources
+
+- `comic_datasource/models/res_config_settings.py` : `comic_openlibrary_enabled`, `comic_bnf_enabled`, `comic_bdgest_delay`
+- `comic_datasource/views/comic_datasource_config_views.xml` : toggles Open Library, BnF, champ délai BDGest conditionnel
+- `comic_datasource/data/comic_datasource_config.xml` : valeurs par défaut (`openlibrary=True`, `bnf=True`, `bdgest_delay=2`)
+- `comic_datasource/sources/open_library.py` : `is_available()` lit `comic.openlibrary_enabled`
+- `comic_datasource/sources/bnf.py` : `is_available()` lit `comic.bnf_enabled`
+- `comic_datasource/sources/bdgest.py` : `_get_delay()` lit `comic.bdgest_delay`, minimum 2s
+```
