@@ -72,9 +72,13 @@ class ComicAlbum(models.Model):
                 })
 
     def _cron_update_albums(self, batch_size=30):
-        """Cron : enrichit les albums incomplets (sans synopsis, couverture ou ISBN)."""
+        """Cron : enrichit les albums incomplets (sans synopsis, couverture ou ISBN).
+
+        Règle : on ne traite un album que si une source externe retourne un résultat
+        avec un ISBN. Sans ISBN confirmé, on passe — cela évite d'appliquer des
+        données ambiguës issues d'une simple correspondance de titre.
+        """
         from ..aggregator import ComicDataAggregator
-        from ..wizards.comic_serie_update_wizard import _FakeAgg
 
         domain = [
             '|', '|',
@@ -99,11 +103,15 @@ class ComicAlbum(models.Model):
                 elif album.name:
                     results = aggregator.search_list(title=album.name)
                     if results:
-                        best = next((r for r in results if r.tome == album.tome), results[0])
-                        if best.isbn:
+                        # Prend le premier résultat avec ISBN (tome exact en priorité,
+                        # puis n'importe quel résultat avec ISBN toutes sources confondues).
+                        # Sans ISBN confirmé, on ignore cet album.
+                        best = next(
+                            (r for r in results if r.isbn and r.tome == album.tome),
+                            next((r for r in results if r.isbn), None),
+                        )
+                        if best:
                             agg = aggregator.search(isbn=best.isbn)
-                        else:
-                            agg = _FakeAgg(best.to_dict())
 
                 if not agg or not agg.data:
                     continue

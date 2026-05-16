@@ -50,12 +50,9 @@ class ComicSerieUpdateWizard(models.TransientModel):
                 elif album.name:
                     results = aggregator.search_list(title=album.name)
                     if results:
-                        best = self._best_match(results, album)
-                        if best and best.isbn:
+                        best = self._best_match_with_isbn(results, album)
+                        if best:
                             agg = aggregator.search(isbn=best.isbn)
-                        elif best:
-                            # Utilise les données du résultat titre directement
-                            agg = _FakeAgg(best.to_dict())
 
                 if not agg or not agg.data:
                     skipped.append(album)
@@ -72,13 +69,16 @@ class ComicSerieUpdateWizard(models.TransientModel):
         self.state = 'done'
         return self._reopen()
 
-    def _best_match(self, results, album):
-        """Retourne le résultat le plus pertinent pour cet album (par numéro de tome)."""
+    def _best_match_with_isbn(self, results, album):
+        """Retourne le meilleur résultat ayant un ISBN (tome exact en priorité).
+
+        On ne retourne rien si aucune source n'a produit un ISBN confirmé.
+        """
         if album.tome:
             for r in results:
-                if r.tome == album.tome:
+                if r.isbn and r.tome == album.tome:
                     return r
-        return results[0] if results else None
+        return next((r for r in results if r.isbn), None)
 
     def _build_report(self, updated, skipped, errors):
         lines = []
@@ -115,9 +115,3 @@ class ComicSerieUpdateWizard(models.TransientModel):
             'view_mode': 'form',
             'target': 'new',
         }
-
-
-class _FakeAgg:
-    """Wrapper minimal pour uniformiser le résultat d'une recherche titre."""
-    def __init__(self, data):
-        self.data = data
