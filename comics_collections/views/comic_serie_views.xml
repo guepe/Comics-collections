@@ -13,6 +13,7 @@
                 <field name="editeur_id"/>
                 <field name="nb_albums_possedes" string="Possédés"/>
                 <field name="nb_albums_total" string="Total"/>
+                <field name="a_suivre" string="Suivie" widget="boolean_toggle"/>
             </list>
         </field>
     </record>
