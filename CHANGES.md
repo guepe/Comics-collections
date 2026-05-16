@@ -698,4 +698,71 @@ Composants CSS :
 - `comic_datasource/sources/open_library.py` : `is_available()` lit `comic.openlibrary_enabled`
 - `comic_datasource/sources/bnf.py` : `is_available()` lit `comic.bnf_enabled`
 - `comic_datasource/sources/bdgest.py` : `_get_delay()` lit `comic.bdgest_delay`, minimum 2s
+
+---
+
+## 2026-05-16 (suite 3) — Correctifs sources, UX liste albums, cron enrichissement, audit
+
+### Correctifs BnF — requête trop large
+
+**`comic_datasource/sources/bnf.py`**
+
+- `bib.title any` → `bib.title adj` dans le fallback de `search_by_serie()` : `any` = logique OR sur chaque mot → 2,4 millions de résultats pour "Complainte des Landes perdues". `adj` = phrase exacte.
+- `_paginate_query()` : ajout param `max_results=200` + `batch_size = min(page_size, max_results - len(results))` pour éviter de télécharger des millions de records.
+- `search_by_serie()` : signature `page_size=50, max_results=200`.
+
+### Correctif Google Books — retry sur erreur 5xx
+
+**`comic_datasource/sources/google_books.py`**
+
+- `_fetch()` : retry automatique (3 tentatives) avec backoff exponentiel (2s, 4s, 8s) sur HTTP 500/502/503/504.
+- Abandon propre après 3 tentatives → retourne `None` sans exception.
+
+### Correctif cron — `numbercall` supprimé (Odoo 19)
+
+**`comic_datasource/data/comic_serie_cron.xml`** : champ `numbercall` retiré (champ inexistant en Odoo 19 → `ValueError: Invalid field`).
+
+### Déduplication tomes manquants — 3 couches + `isbn_unverified`
+
+**`comic_datasource/wizards/comic_serie_missing_wizard.py`**
+
+- Ajout `_normalize_isbn()` (ISBN-10 → ISBN-13, suppression tirets/espaces).
+- Ajout `_normalize_title()` (minuscules, suppression ponctuation).
+- `action_search()` : déduplication en 3 couches :
+  1. Tome dans `existing_tomes` (inchangé)
+  2. ISBN normalisé dans `existing_isbns` (normalisé) + vérification globale DB via `search_read` groupé
+  3. Chevauchement de mots (≥60%) pour candidats sans ISBN
+- Candidats sans ISBN marqués `isbn_unverified=True` → ligne surlignée en orange dans le wizard.
+- Nouveau champ `isbn_unverified` sur `ComicSerieMissingLine`.
+- Vue wizard : `decoration-warning="isbn_unverified"` + colonne "⚠️" optionnelle.
+
+### Cron enrichissement quotidien des albums
+
+**`comic_datasource/models/comic_album.py`**
+
+- `_apply_datasource_data(data)` : logique de mise à jour extraite du wizard (synopsis, pages, ISBN, dates, couverture, auteurs) — centralisée sur le modèle, appelée par le wizard ET le cron.
+- `_cron_update_albums(batch_size=30)` : enrichit les albums incomplets (sans synopsis OU couverture OU ISBN), priorise `dans_collection`, limite à 30 par run.
+
+**`comic_datasource/wizards/comic_serie_update_wizard.py`** : `_apply_data()` supprimée, remplacée par appel à `album._apply_datasource_data(data)`.
+
+**`comic_datasource/data/comic_serie_cron.xml`** : second cron `ir_cron_update_albums` — quotidien, `active=False` par défaut.
+
+### UX — Vue Albums dans la fiche Série
+
+**`comics_collections/views/comic_serie_views.xml`**
+
+- `dans_collection` → `widget="boolean_toggle"` dans la liste Albums de l'onglet.
+- `etat_lecture` remplacé par 3 boutons cycle (un seul clic : Non lu → En cours → Lu → Non lu) :
+  - Gris "Non lu" / Orange "En cours" / Vert "Lu ✓"
+  - `etat_lecture` chargé via `column_invisible="True"`.
+- Colonne `a_suivre` avec `widget="boolean_toggle"` ajoutée à la vue liste des séries.
+
+**`comics_collections/models/comic_album.py`** : méthode `action_cycle_etat_lecture()` (cycle `non_lu → en_cours → lu → non_lu`).
+
+### Audit pré-GitHub — sécurité
+
+- **Doublon `action_comic_album`** supprimé de `comic_album_views.xml` (lignes 274-278 en double → violation contrainte unique Odoo à l'install).
+- **`.claude/settings.local.json`** dé-tracké (`git rm --cached`) : contenait credentials dev localhost `admin/admin`.
+- **`.gitignore`** : ajout `.claude/` pour éviter tout futur commit de settings Claude Code locaux.
+- Clé Google Books API : jamais committée (`Clés API` dans `.gitignore` depuis le début). ✅
 ```
