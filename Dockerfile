@@ -1,8 +1,8 @@
-FROM odoo:19
+FROM odoo:latest
 
 USER root
 
 COPY requirements.txt /tmp/requirements.txt
-RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+RUN pip3 install --break-system-packages --no-cache-dir -r /tmp/requirements.txt
 
 USER odoo

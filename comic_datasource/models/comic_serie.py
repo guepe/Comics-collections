@@ -51,7 +51,16 @@ class ComicSerie(models.Model):
                 if not wizard.line_ids:
                     _logger.info('  [%s] aucun tome manquant détecté.', serie.name)
                     continue
-                nb_lines = len(wizard.line_ids)
+                # Cron : on n'ajoute que les tomes avec ISBN confirmé par une source.
+                # Les lignes sans ISBN (isbn_unverified ou source "expected") sont
+                # écartées pour éviter les doublons et les faux positifs.
+                wizard.line_ids.filtered(
+                    lambda l: not l.isbn or l.isbn_unverified or l.source == 'expected'
+                ).write({'selected': False})
+                nb_lines = len(wizard.line_ids.filtered('selected'))
+                if not nb_lines:
+                    _logger.info('  [%s] aucun tome avec ISBN confirmé.', serie.name)
+                    continue
                 wizard.action_add_to_wishlist()
                 _logger.info(
                     '  [%s] %d tome(s) ajouté(s) à la wishlist.', serie.name, nb_lines
