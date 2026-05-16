@@ -24,3 +24,6 @@ Thumbs.db
 Clés API
 *.env
 .env
+
+# Claude Code — paramètres locaux (peuvent contenir des credentials)
+.claude/

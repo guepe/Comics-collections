@@ -271,12 +271,6 @@
         </field>
     </record>
 
-    <record id="action_comic_album" model="ir.actions.act_window">
-        <field name="name">Albums</field>
-        <field name="res_model">comic.album</field>
-        <field name="view_mode">kanban,list,form</field>
-    </record>
-
     <record id="action_comic_wishlist" model="ir.actions.act_window">
         <field name="name">Wishlist</field>
         <field name="res_model">comic.album</field>
