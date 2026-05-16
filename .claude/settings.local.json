@@ -62,7 +62,12 @@
       "Bash(git -C /Users/phde/Projects/odoo add comics_collections/__manifest__.py comics_collections/models/__init__.py comics_collections/models/comic_album.py comics_collections/models/res_partner.py comics_collections/views/comic_album_views.xml comics_collections/views/comic_auteur_views.xml comics_collections/views/comic_menu.xml comics_collections/static/description/index.html comics_collections/README.rst)",
       "Bash(git -C /Users/phde/Projects/odoo commit -m ' *)",
       "Bash(git -C /Users/phde/Projects/odoo add comics_collections/wizards/comic_import_wizard.py)",
-      "Bash(git -C /Users/phde/Projects/odoo add comics_collections/CLAUDE.md comics_collections/USER_STORIES.md CHANGES.md)"
+      "Bash(git -C /Users/phde/Projects/odoo add comics_collections/CLAUDE.md comics_collections/USER_STORIES.md CHANGES.md)",
+      "Bash(git -C /Users/phde/Projects/odoo add comic_datasource/views/comic_datasource_album_inherit_views.xml)",
+      "Bash(git -C /Users/phde/Projects/odoo commit -m 'fix: datasource — injecter le bouton dans le button_box existant \\(US-011\\) *)",
+      "Bash(git -C /Users/phde/Projects/odoo log --oneline 19.0)",
+      "Bash(git -C /Users/phde/Projects/odoo add CHANGES.md)",
+      "Bash(git -C /Users/phde/Projects/odoo commit -m 'docs: CHANGES.md — correctifs post-déploiement 2026-05-16 *)"
     ],
     "additionalDirectories": [
       "/private/tmp/cc_import"
