@@ -10,7 +10,10 @@
         - BnF SRU API (sans clé, dépôt légal)
         - BDGest scraping (fallback uniquement, opt-in légal)
     """,
-    'author': 'Philippe Delaval',
+    'author': 'Belspace',
+    'maintainer': 'Belspace',
+    'support': 'sales@belspace.net',
+    'website': 'https://guepe.github.io',
     'license': 'LGPL-3',
     'depends': ['comics_collections'],
     'data': [
