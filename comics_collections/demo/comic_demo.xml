@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ===== AUTEURS (res.partner) ===== -->
+
+    <record id="partner_goscinny" model="res.partner">
+        <field name="name">René Goscinny</field>
+        <field name="is_company" eval="False"/>
+    </record>
+
+    <record id="partner_uderzo" model="res.partner">
+        <field name="name">Albert Uderzo</field>
+        <field name="is_company" eval="False"/>
+    </record>
+
+    <record id="partner_canales" model="res.partner">
+        <field name="name">Juan Díaz Canales</field>
+        <field name="is_company" eval="False"/>
+    </record>
+
+    <record id="partner_guarnido" model="res.partner">
+        <field name="name">Juanjo Guarnido</field>
+        <field name="is_company" eval="False"/>
+    </record>
+
+    <record id="partner_vanhamme" model="res.partner">
+        <field name="name">Jean Van Hamme</field>
+        <field name="is_company" eval="False"/>
+    </record>
+
+    <record id="partner_francq" model="res.partner">
+        <field name="name">Philippe Francq</field>
+        <field name="is_company" eval="False"/>
+    </record>
+
+    <!-- ===== ÉDITEURS ===== -->
+
+    <record id="editeur_albert_rene" model="comic.editeur">
+        <field name="name">Albert René</field>
+        <field name="pays_id" ref="base.fr"/>
+        <field name="site_web">https://www.asterix.com</field>
+    </record>
+
+    <record id="editeur_dargaud" model="comic.editeur">
+        <field name="name">Dargaud</field>
+        <field name="pays_id" ref="base.fr"/>
+        <field name="site_web">https://www.dargaud.com</field>
+    </record>
+
+    <record id="editeur_dupuis" model="comic.editeur">
+        <field name="name">Dupuis</field>
+        <field name="pays_id" ref="base.be"/>
+        <field name="site_web">https://www.dupuis.com</field>
+    </record>
+
+    <!-- ===== SÉRIES ===== -->
+
+    <record id="serie_asterix" model="comic.serie">
+        <field name="name">Astérix</field>
+        <field name="type">bd</field>
+        <field name="statut">en_cours</field>
+        <field name="genre_id" ref="genre_humour"/>
+        <field name="editeur_id" ref="editeur_albert_rene"/>
+        <field name="synopsis"><![CDATA[
+            <p>La série culte de René Goscinny et Albert Uderzo. Un village gaulois résiste
+            encore et toujours à l'envahisseur romain, grâce à la potion magique du druide Panoramix.</p>
+        ]]></field>
+    </record>
+
+    <record id="serie_blacksad" model="comic.serie">
+        <field name="name">Blacksad</field>
+        <field name="type">bd</field>
+        <field name="statut">en_cours</field>
+        <field name="genre_id" ref="genre_policier"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
+        <field name="synopsis"><![CDATA[
+            <p>John Blacksad est un détective privé dans une ville américaine des années 50,
+            peuplée d'animaux anthropomorphes. Un polar noir envoûtant aux aquarelles somptueuses.</p>
+        ]]></field>
+    </record>
+
+    <record id="serie_largo_winch" model="comic.serie">
+        <field name="name">Largo Winch</field>
+        <field name="type">bd</field>
+        <field name="statut">en_cours</field>
+        <field name="genre_id" ref="genre_aventure"/>
+        <field name="editeur_id" ref="editeur_dupuis"/>
+        <field name="synopsis"><![CDATA[
+            <p>Largo Winch hérite à la mort de son père adoptif d'un empire financier mondial.
+            Aventures internationales, complots et action au cœur du monde des affaires.</p>
+        ]]></field>
+    </record>
+
+    <!-- ===== ALBUMS — Astérix ===== -->
+
+    <record id="album_asterix_01" model="comic.album">
+        <field name="name">Astérix le Gaulois</field>
+        <field name="serie_id" ref="serie_asterix"/>
+        <field name="tome">1</field>
+        <field name="isbn">9782012101302</field>
+        <field name="date_parution">1961-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">5.0</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_asterix_01_goscinny" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_01"/>
+        <field name="partner_id" ref="partner_goscinny"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_asterix_01_uderzo" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_01"/>
+        <field name="partner_id" ref="partner_uderzo"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_asterix_02" model="comic.album">
+        <field name="name">La Serpe d'Or</field>
+        <field name="serie_id" ref="serie_asterix"/>
+        <field name="tome">2</field>
+        <field name="date_parution">1962-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">4.5</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_asterix_02_goscinny" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_02"/>
+        <field name="partner_id" ref="partner_goscinny"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_asterix_02_uderzo" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_02"/>
+        <field name="partner_id" ref="partner_uderzo"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_asterix_03" model="comic.album">
+        <field name="name">Astérix et les Goths</field>
+        <field name="serie_id" ref="serie_asterix"/>
+        <field name="tome">3</field>
+        <field name="date_parution">1963-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">4.0</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_asterix_03_goscinny" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_03"/>
+        <field name="partner_id" ref="partner_goscinny"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_asterix_03_uderzo" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_03"/>
+        <field name="partner_id" ref="partner_uderzo"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_asterix_04" model="comic.album">
+        <field name="name">Astérix Gladiateur</field>
+        <field name="serie_id" ref="serie_asterix"/>
+        <field name="tome">4</field>
+        <field name="date_parution">1964-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">4.5</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_asterix_04_goscinny" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_04"/>
+        <field name="partner_id" ref="partner_goscinny"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_asterix_04_uderzo" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_04"/>
+        <field name="partner_id" ref="partner_uderzo"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_asterix_05" model="comic.album">
+        <field name="name">Le Tour de Gaule d'Astérix</field>
+        <field name="serie_id" ref="serie_asterix"/>
+        <field name="tome">5</field>
+        <field name="date_parution">1965-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">en_cours</field>
+        <field name="note">4.0</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_asterix_05_goscinny" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_05"/>
+        <field name="partner_id" ref="partner_goscinny"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_asterix_05_uderzo" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_asterix_05"/>
+        <field name="partner_id" ref="partner_uderzo"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <!-- ===== ALBUMS — Blacksad ===== -->
+
+    <record id="album_blacksad_01" model="comic.album">
+        <field name="name">Quelque part entre les ombres</field>
+        <field name="serie_id" ref="serie_blacksad"/>
+        <field name="tome">1</field>
+        <field name="date_parution">2000-11-01</field>
+        <field name="nb_pages">56</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">5.0</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_blacksad_01_canales" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_01"/>
+        <field name="partner_id" ref="partner_canales"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_blacksad_01_guarnido" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_01"/>
+        <field name="partner_id" ref="partner_guarnido"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_blacksad_02" model="comic.album">
+        <field name="name">Arctic-Nation</field>
+        <field name="serie_id" ref="serie_blacksad"/>
+        <field name="tome">2</field>
+        <field name="date_parution">2003-03-01</field>
+        <field name="nb_pages">56</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">5.0</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_blacksad_02_canales" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_02"/>
+        <field name="partner_id" ref="partner_canales"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_blacksad_02_guarnido" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_02"/>
+        <field name="partner_id" ref="partner_guarnido"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_blacksad_03" model="comic.album">
+        <field name="name">Âme rouge</field>
+        <field name="serie_id" ref="serie_blacksad"/>
+        <field name="tome">3</field>
+        <field name="date_parution">2005-06-01</field>
+        <field name="nb_pages">56</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">4.5</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_blacksad_03_canales" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_03"/>
+        <field name="partner_id" ref="partner_canales"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_blacksad_03_guarnido" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_03"/>
+        <field name="partner_id" ref="partner_guarnido"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_blacksad_04" model="comic.album">
+        <field name="name">L'Enfer, le silence</field>
+        <field name="serie_id" ref="serie_blacksad"/>
+        <field name="tome">4</field>
+        <field name="date_parution">2010-11-01</field>
+        <field name="nb_pages">56</field>
+        <field name="etat_lecture">non_lu</field>
+        <field name="dans_wishlist" eval="True"/>
+    </record>
+    <record id="auteur_blacksad_04_canales" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_04"/>
+        <field name="partner_id" ref="partner_canales"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_blacksad_04_guarnido" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_04"/>
+        <field name="partner_id" ref="partner_guarnido"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_blacksad_05" model="comic.album">
+        <field name="name">Amarillo</field>
+        <field name="serie_id" ref="serie_blacksad"/>
+        <field name="tome">5</field>
+        <field name="date_parution">2013-11-01</field>
+        <field name="nb_pages">56</field>
+        <field name="etat_lecture">non_lu</field>
+        <field name="dans_wishlist" eval="True"/>
+    </record>
+    <record id="auteur_blacksad_05_canales" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_05"/>
+        <field name="partner_id" ref="partner_canales"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_blacksad_05_guarnido" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_blacksad_05"/>
+        <field name="partner_id" ref="partner_guarnido"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <!-- ===== ALBUMS — Largo Winch ===== -->
+
+    <record id="album_largo_01" model="comic.album">
+        <field name="name">L'Héritier</field>
+        <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="tome">1</field>
+        <field name="date_parution">1990-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">4.0</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_largo_01_vanhamme" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_01"/>
+        <field name="partner_id" ref="partner_vanhamme"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_largo_01_francq" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_01"/>
+        <field name="partner_id" ref="partner_francq"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_largo_02" model="comic.album">
+        <field name="name">Le Groupe W</field>
+        <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="tome">2</field>
+        <field name="date_parution">1992-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">lu</field>
+        <field name="note">4.0</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_largo_02_vanhamme" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_02"/>
+        <field name="partner_id" ref="partner_vanhamme"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_largo_02_francq" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_02"/>
+        <field name="partner_id" ref="partner_francq"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_largo_03" model="comic.album">
+        <field name="name">O.P.A.</field>
+        <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="tome">3</field>
+        <field name="date_parution">1994-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">en_cours</field>
+        <field name="note">3.5</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_largo_03_vanhamme" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_03"/>
+        <field name="partner_id" ref="partner_vanhamme"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_largo_03_francq" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_03"/>
+        <field name="partner_id" ref="partner_francq"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_largo_04" model="comic.album">
+        <field name="name">Business Blues</field>
+        <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="tome">4</field>
+        <field name="date_parution">1996-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">non_lu</field>
+        <field name="dans_collection" eval="True"/>
+    </record>
+    <record id="auteur_largo_04_vanhamme" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_04"/>
+        <field name="partner_id" ref="partner_vanhamme"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_largo_04_francq" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_04"/>
+        <field name="partner_id" ref="partner_francq"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+    <record id="album_largo_05" model="comic.album">
+        <field name="name">Sans Merci</field>
+        <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="tome">5</field>
+        <field name="date_parution">1998-01-01</field>
+        <field name="nb_pages">48</field>
+        <field name="etat_lecture">non_lu</field>
+        <field name="dans_wishlist" eval="True"/>
+    </record>
+    <record id="auteur_largo_05_vanhamme" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_05"/>
+        <field name="partner_id" ref="partner_vanhamme"/>
+        <field name="role">scenariste</field>
+    </record>
+    <record id="auteur_largo_05_francq" model="comic.album.auteur.line">
+        <field name="album_id" ref="album_largo_05"/>
+        <field name="partner_id" ref="partner_francq"/>
+        <field name="role">dessinateur</field>
+    </record>
+
+</odoo>

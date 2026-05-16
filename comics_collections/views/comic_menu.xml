@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu racine -->
+    <menuitem id="menu_comic_root"
+              name="Bandes Dessinées"
+              web_icon="comics_collections,static/description/icon.png"
+              groups="comics_collections.group_comic_user"
+              sequence="50"/>
+
+    <!-- Ma Collection -->
+    <menuitem id="menu_comic_collection"
+              name="Ma Collection"
+              parent="menu_comic_root"
+              groups="comics_collections.group_comic_user"
+              sequence="10"/>
+
+    <menuitem id="menu_comic_series"
+              name="Séries"
+              parent="menu_comic_collection"
+              action="action_comic_serie"
+              groups="comics_collections.group_comic_user"
+              sequence="10"/>
+
+    <menuitem id="menu_comic_albums"
+              name="Albums"
+              parent="menu_comic_collection"
+              action="action_comic_album"
+              groups="comics_collections.group_comic_user"
+              sequence="20"/>
+
+    <menuitem id="menu_comic_wishlist"
+              name="Wishlist"
+              parent="menu_comic_collection"
+              action="action_comic_wishlist"
+              groups="comics_collections.group_comic_user"
+              sequence="25"/>
+
+    <menuitem id="menu_comic_import"
+              name="Import CSV/Excel"
+              parent="menu_comic_collection"
+              action="action_comic_import_wizard"
+              groups="comics_collections.group_comic_user"
+              sequence="30"/>
+
+    <!-- Catalogues -->
+    <menuitem id="menu_comic_catalogues"
+              name="Catalogues"
+              parent="menu_comic_root"
+              groups="comics_collections.group_comic_user"
+              sequence="20"/>
+
+    <menuitem id="menu_comic_editeurs"
+              name="Éditeurs"
+              parent="menu_comic_catalogues"
+              action="action_comic_editeur"
+              groups="comics_collections.group_comic_user"
+              sequence="10"/>
+
+    <menuitem id="menu_comic_genres"
+              name="Genres"
+              parent="menu_comic_catalogues"
+              action="action_comic_genre"
+              groups="comics_collections.group_comic_user"
+              sequence="20"/>
+
+    <!-- Configuration (gestionnaire uniquement, actions ajoutées en Phase 2 et 3) -->
+    <menuitem id="menu_comic_config_root"
+              name="Configuration"
+              parent="menu_comic_root"
+              groups="comics_collections.group_comic_manager"
+              sequence="90"/>
+
+</odoo>

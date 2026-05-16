@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Chargement non-bloquant des polices Instrument Sans + Instrument Serif
+        via Google Fonts. Utilise rel="preconnect" pour éviter tout blocage du
+        rendu Odoo, contrairement à @import dans un bundle CSS.
+    -->
+    <template id="comic_fonts" inherit_id="web.layout" name="Comic Collection Fonts">
+        <xpath expr="//head" position="inside">
+            <link rel="preconnect" href="https://fonts.googleapis.com"/>
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/>
+            <link rel="stylesheet"
+                  href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600&amp;family=Instrument+Serif&amp;display=swap"/>
+        </xpath>
+    </template>
+</odoo>
