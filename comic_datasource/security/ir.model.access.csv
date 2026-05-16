@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_comic_datasource_search_wizard_user,comic.datasource.search.wizard user,model_comic_datasource_search_wizard,comics_collections.group_comic_user,1,1,1,1
+access_comic_datasource_result_line_user,comic.datasource.result.line user,model_comic_datasource_result_line,comics_collections.group_comic_user,1,1,1,1
+access_comic_serie_update_wizard_user,comic.serie.update.wizard user,model_comic_serie_update_wizard,comics_collections.group_comic_user,1,1,1,1

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Bouton "Rechercher sur les sources BD" dans le formulaire album -->
+    <record id="view_comic_album_form_inherit_datasource" model="ir.ui.view">
+        <field name="name">comic.album.form.inherit.datasource</field>
+        <field name="model">comic.album</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_album_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]" position="before">
+                <div name="button_box" class="oe_button_box">
+                    <button name="action_search_datasource"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-search">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Rechercher</span>
+                            <span class="o_stat_text">sur les sources</span>
+                        </div>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

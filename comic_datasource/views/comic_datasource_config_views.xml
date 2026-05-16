@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_comic_datasource" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.comic_datasource</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+
+                <app data-string="Bandes Dessinées"
+                     string="Bandes Dessinées"
+                     name="comic_datasource"
+                     groups="comics_collections.group_comic_manager">
+
+                    <!-- Google Books API -->
+                    <block title="Sources de données" id="comic_datasource_sources">
+
+                        <setting id="comic_google_books_setting"
+                                 title="Source principale : synopsis, couvertures HD et métadonnées générales.">
+                            <div class="row">
+                                <div class="col-lg-8">
+                                    <label for="comic_google_books_api_key" class="o_form_label fw-bold"/>
+                                    <div class="text-muted mt-1">
+                                        Clé gratuite sur
+                                        <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a>.
+                                        Sans clé : ~100 req/jour (mode anonyme).
+                                    </div>
+                                    <div class="mt-2">
+                                        <field name="comic_google_books_api_key"
+                                               placeholder="AIza... (optionnel)"
+                                               class="o_field_widget"/>
+                                    </div>
+                                    <div class="mt-2">
+                                        <button name="action_test_google_books"
+                                                string="Tester la connexion Google Books"
+                                                type="object"
+                                                class="btn btn-secondary btn-sm"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </setting>
+
+                        <!-- BDGest fallback -->
+                        <setting id="comic_bdgest_setting"
+                                 title="Fallback scraping — uniquement si aucune API officielle ne trouve l'album.">
+                            <field name="comic_bdgest_enabled"/>
+                            <div class="content-group">
+                                <label for="comic_bdgest_enabled" class="o_form_label fw-bold"/>
+                                <div class="text-muted mt-1">
+                                    ⚠️ L'utilisation est soumise aux
+                                    <a href="https://www.bedetheque.com" target="_blank">CGU de BDGest</a>.
+                                    Désactivé par défaut. Délai de 2 secondes entre requêtes.
+                                </div>
+                                <div class="mt-2" invisible="not comic_bdgest_enabled">
+                                    <field name="comic_bdgest_login"
+                                           placeholder="Login BDGest (optionnel)"/>
+                                    <field name="comic_bdgest_password"
+                                           placeholder="Mot de passe BDGest"
+                                           password="True"/>
+                                </div>
+                            </div>
+                        </setting>
+
+                    </block>
+                </app>
+
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

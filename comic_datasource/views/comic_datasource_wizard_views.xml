@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Vue liste des lignes de résultats ─────────────────────────────── -->
+    <record id="view_comic_datasource_result_line_list" model="ir.ui.view">
+        <field name="name">comic.datasource.result.line.list</field>
+        <field name="model">comic.datasource.result.line</field>
+        <field name="arch" type="xml">
+            <list editable="bottom" decoration-warning="is_duplicate">
+                <field name="selected" widget="boolean_toggle"/>
+                <field name="cover_data" widget="image" options="{'size': [60, 80]}" optional="show"/>
+                <field name="title"/>
+                <field name="serie_name" optional="show"/>
+                <field name="tome" optional="show"/>
+                <field name="isbn" optional="show"/>
+                <field name="editeur" optional="show"/>
+                <field name="auteurs_display" optional="show"/>
+                <field name="date_parution" optional="show"/>
+                <field name="source" widget="badge"
+                       decoration-success="source == 'google'"
+                       decoration-info="source == 'openlibrary'"
+                       decoration-primary="source == 'bnf'"
+                       decoration-warning="source == 'bdgest'"/>
+                <field name="is_duplicate" widget="boolean"
+                       column_invisible="True"/>
+                <field name="existing_album_id" optional="show"
+                       invisible="not is_duplicate"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Wizard principal ──────────────────────────────────────────────── -->
+    <record id="view_comic_datasource_search_wizard_form" model="ir.ui.view">
+        <field name="name">comic.datasource.search.wizard.form</field>
+        <field name="model">comic.datasource.search.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Recherche BD multi-sources">
+
+                <!-- État : recherche -->
+                <group invisible="state != 'search'">
+                    <group string="Rechercher un album">
+                        <field name="search_term"
+                               placeholder="ISBN (9782...) ou titre de l'album"
+                               autofocus="1"/>
+                        <field name="search_type" readonly="1"/>
+                    </group>
+                    <group>
+                        <div class="text-muted">
+                            Sources interrogées (par ordre de priorité) :
+                            <b>Google Books</b> → <b>Open Library</b> → <b>BnF</b>
+                            <span invisible="not bdgest_enabled"> → <b>BDGest</b></span>
+                        </div>
+                    </group>
+                </group>
+
+                <!-- État : résultats -->
+                <group invisible="state != 'results'" string="Résultats">
+                    <div class="alert alert-info mb-2" role="status" invisible="not has_duplicates">
+                        ⚠️ Certains albums (surlignés en orange) ont un ISBN déjà présent en base.
+                        Leur import mettra à jour l'album existant.
+                    </div>
+                    <div class="alert alert-warning mb-2" role="status" invisible="not has_title_conflicts">
+                        ⚠️ Certains titres (surlignés en rouge) diffèrent de la version en base (ex : titre en anglais vs français).
+                        Choisissez l'action à effectuer sur chaque ligne.
+                    </div>
+                    <field name="result_ids"
+                           widget="one2many"
+                           nolabel="1"
+                           context="{'default_wizard_id': id}">
+                        <list editable="bottom"
+                              decoration-warning="is_duplicate and not title_conflict"
+                              decoration-danger="title_conflict">
+                            <field name="selected" widget="boolean_toggle"/>
+                            <field name="cover_data" widget="image" options="{'size': [60, 80]}" optional="show"/>
+                            <field name="title"/>
+                            <field name="existing_title" string="Titre en base"
+                                   optional="show" readonly="1"
+                                   invisible="not title_conflict"/>
+                            <field name="title_action" string="Action titre"
+                                   optional="show"
+                                   invisible="not title_conflict"/>
+                            <field name="serie_name" optional="show"/>
+                            <field name="tome" optional="show"/>
+                            <field name="isbn" optional="show"/>
+                            <field name="editeur" optional="show"/>
+                            <field name="auteurs_display" string="Auteurs" optional="show"/>
+                            <field name="date_parution" optional="show"/>
+                            <field name="source" widget="badge"
+                                   decoration-success="source == 'google'"
+                                   decoration-info="source == 'openlibrary'"
+                                   decoration-primary="source == 'bnf'"
+                                   decoration-warning="source == 'bdgest'"/>
+                            <field name="is_duplicate" column_invisible="True"/>
+                            <field name="title_conflict" column_invisible="True"/>
+                            <field name="existing_album_id" optional="show"
+                                   invisible="not is_duplicate"/>
+                        </list>
+                    </field>
+                </group>
+
+                <!-- État : terminé -->
+                <group invisible="state != 'done'" string="Rapport d'import">
+                    <field name="import_report" nolabel="1" widget="html" readonly="1"/>
+                </group>
+
+                <!-- Champs cachés -->
+                <field name="state" invisible="1"/>
+                <field name="album_id" invisible="1"/>
+                <field name="has_duplicates" invisible="1"/>
+                <field name="has_title_conflicts" invisible="1"/>
+                <field name="bdgest_enabled" invisible="1"/>
+
+                <footer>
+                    <!-- Boutons état : recherche -->
+                    <button name="action_search"
+                            string="Rechercher"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'search'"/>
+
+                    <!-- Boutons état : résultats -->
+                    <button name="action_import"
+                            string="Importer la sélection"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'results'"/>
+                    <button name="action_back"
+                            string="Retour"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state != 'results'"/>
+
+                    <!-- Boutons état : terminé -->
+                    <button name="action_view_imported"
+                            string="Voir les albums"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'done'"/>
+                    <button name="action_new_search"
+                            string="Nouvelle recherche"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state != 'done'"/>
+
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Action pour ouvrir le wizard depuis le menu ───────────────────── -->
+    <record id="action_comic_datasource_search_wizard" model="ir.actions.act_window">
+        <field name="name">Rechercher et importer des BD</field>
+        <field name="res_model">comic.datasource.search.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="comics_collections.model_comic_album"/>
+        <field name="binding_view_types">list</field>
+    </record>
+
+    <!-- ── Action standalone (menu + bouton formulaire) ─────────────────── -->
+    <record id="action_comic_datasource_search_wizard_standalone" model="ir.actions.act_window">
+        <field name="name">Rechercher des BD</field>
+        <field name="res_model">comic.datasource.search.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
