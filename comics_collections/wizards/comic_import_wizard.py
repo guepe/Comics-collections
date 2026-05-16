@@ -604,9 +604,20 @@ class ComicImportWizard(models.TransientModel):
         return self.env[model_name].create({'name': name})
 
     @staticmethod
+    def _normalize_author_name(name):
+        """Transforme "Nom, Prénom" en "Prénom Nom". Laisse les autres formes intactes."""
+        if ',' in name:
+            parts = name.split(',', 1)
+            last = parts[0].strip()
+            first = parts[1].strip()
+            if first:
+                return '%s %s' % (first, last)
+        return name
+
+    @staticmethod
     def _split_names(value):
         return [
-            name.strip()
+            ComicImportWizard._normalize_author_name(name.strip())
             for name in re.split(r'[;\n|]+', str(value or ''))
             if name.strip()
         ]
