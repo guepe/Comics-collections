@@ -408,3 +408,36 @@ comic_collection/
 11. Le module `comic_datasource` utilise UNIQUEMENT des APIs publiques et légales en priorité (Google Books, Open Library, BnF) — le scraping BDGest est un fallback de dernier recours avec avertissement légal explicite à l'utilisateur
 12. Les clés API Google Books sont gratuites mais doivent être créées sur console.cloud.google.com par l'utilisateur final — ne jamais hardcoder de clé
 13. L'aggregator fusionne les données de plusieurs sources — en cas de conflit, les métadonnées BnF sont prioritaires pour les BD francophones
+
+---
+
+## 📋 Suivi de projet — Règles de handoff entre sessions
+
+Ces deux fichiers doivent être maintenus à jour **à la fin de chaque session de travail**, avant le commit final.
+
+### `USER_STORIES.md`
+
+**Règle :** Dès qu'une US est terminée (tous ses critères d'acceptance validés), cocher toutes ses cases `[ ]` → `[x]` et ajouter `✅` après le titre.
+
+- Cocher **uniquement** les critères réellement implémentés et testés
+- Ne jamais cocher par anticipation
+- Si une US est partiellement faite, ne cocher que les cases correspondantes
+
+### `CHANGES.md` (à la racine `/Users/phde/Projects/odoo/`)
+
+**Règle :** Ajouter une entrée datée à chaque fin de session couvrant **tout** ce qui a été fait.
+
+Format d'une entrée :
+```
+## YYYY-MM-DD (suite N) — Titre court
+
+### US-XXX — Titre
+Fichiers modifiés/créés, description des changements.
+
+### Correctif — Titre
+Description du bug et du fix.
+```
+
+- Inclure : fichiers créés/modifiés, méthodes ajoutées, bugs corrigés, décisions techniques
+- Inclure les **erreurs rencontrées et leurs solutions** (précieux pour les sessions suivantes)
+- Ne pas résumer ce qui est déjà dans `USER_STORIES.md` — aller dans le détail technique

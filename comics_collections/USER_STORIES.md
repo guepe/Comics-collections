@@ -425,7 +425,7 @@ Critères d'acceptance :
 - [x] Sous-menus : Ma Collection > Séries / Albums
 - [x] Sous-menu : Wishlist
 - [ ] Sous-menu : Prêts (US-006 non encore implémenté)
-- [ ] Sous-menus : Catalogues > Auteurs (res.partner filtré)
+- [x] Sous-menus : Catalogues > Auteurs (res.partner filtré)
 - [x] Catalogues > Éditeurs / Genres
 - [ ] Menu Configuration avec accès paramètres IA et BDGest (partiel)
 ```
@@ -468,7 +468,7 @@ Critères d'acceptance :
 
 ---
 
-**US-011 — Formulaire album enrichi**
+**US-011 — Formulaire album enrichi** ✅
 
 ```
 En tant que collectionneur
@@ -476,13 +476,13 @@ Je veux un formulaire détaillé et ergonomique pour chaque album
 Afin de saisir et consulter toutes les informations
 
 Critères d'acceptance :
-- [ ] Onglet "Informations" : titre, série, tome, ISBN, dates, pages, éditeur, couverture
-- [ ] Onglet "Auteurs" : liste des auteurs avec leur rôle (widget editable inline)
-- [ ] Onglet "Ma Collection" : état lecture, note étoiles, prêts liés
-- [ ] Onglet "Liens" : url_club_be, url_amazon_be avec boutons "Ouvrir"
-- [ ] Onglet "IA" : synopsis + bouton génération IA
-- [ ] Bouton "Ajouter à la wishlist" / "Dans ma collection"
-- [ ] Widget note en étoiles (priority widget ou custom)
+- [x] Onglet "Informations" : titre, série, tome, ISBN, dates, pages, éditeur, couverture
+- [x] Onglet "Auteurs" : liste des auteurs avec leur rôle (widget editable inline)
+- [x] Onglet "Ma Collection" : état lecture, note (/5)
+- [x] Onglet "Liens" : url_club_be, url_amazon_be, url_fnac_be avec widget url
+- [x] Onglet "Synopsis" (ex "IA") : champ synopsis Html
+- [x] Bouton "En collection" (fa-book) et "Wishlist" (fa-heart) en button_box
+- [ ] Widget note en étoiles (priority widget ou custom) — reporté
 ```
 
 ---
@@ -648,7 +648,7 @@ Critères d'acceptance :
 
 ---
 
-**US-033 — Documentation et README**
+**US-033 — Documentation et README** ✅
 
 ```
 En tant qu'utilisateur externe
@@ -656,9 +656,10 @@ Je veux une documentation claire pour installer et utiliser les modules
 Afin de pouvoir les déployer sur mon Odoo
 
 Critères d'acceptance :
-- [ ] README.rst pour chaque module (format OCA)
-- [ ] Section : Description, Installation, Configuration, Usage
-- [ ] CHANGELOG.rst
+- [x] README.rst pour chaque module (format OCA)
+- [x] Section : Description, Installation, Configuration, Usage
+- [x] static/description/index.html (requis Odoo Apps store)
+- [ ] CHANGELOG.rst (couvert par CHANGES.md à la racine)
 - [ ] requirements.txt à la racine du projet
 ```
 

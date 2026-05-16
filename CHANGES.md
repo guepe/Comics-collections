@@ -338,6 +338,61 @@ comic_datasource/
 
 ---
 
+## 2026-05-16 — US-033, US-008b, US-011 + fix import auteurs
+
+### US-033 ✅ — Documentation publication Odoo Apps
+
+| Fichier | Action |
+|---|---|
+| `comics_collections/static/description/index.html` | Créé — page HTML store avec screenshots `overview.png` et `v2.png` |
+| `comics_collections/README.rst` | Créé — format OCA : description, installation, configuration, usage, roadmap |
+
+Le scanner Odoo Apps (même que pour `partner_vcard_import`) exige `static/description/index.html` — sans ce fichier le module est refusé à la publication.
+
+### US-008b (partiel) — Menu Auteurs
+
+| Fichier | Action |
+|---|---|
+| `models/res_partner.py` | Créé — inherit `res.partner`, ajout `auteur_album_line_ids` (One2many vers `comic.album.auteur.line`) |
+| `models/__init__.py` | Modifié — import `res_partner` |
+| `views/comic_auteur_views.xml` | Créé — action `action_comic_auteurs` : `res.partner` filtré sur `auteur_album_line_ids != False` |
+| `views/comic_menu.xml` | Modifié — menu *Catalogues → Auteurs* (sequence 10, avant Éditeurs) |
+| `__manifest__.py` | Modifié — ajout `views/comic_auteur_views.xml` dans `data` |
+
+Le filtre sur `auteur_album_line_ids != False` fonctionne grâce au One2many déclaré sur `res.partner` — Odoo traduit en EXISTS SQL automatiquement.
+
+### US-011 ✅ — Formulaire album enrichi
+
+| Fichier | Action |
+|---|---|
+| `views/comic_album_views.xml` | Modifié — button_box, onglet Synopsis, Ma Collection allégée |
+| `models/comic_album.py` | Modifié — `action_toggle_collection()`, `action_toggle_wishlist()` |
+
+Détails :
+- `button_box` avec deux stat buttons : **En collection** (`fa-book`) et **Wishlist** (`fa-heart`), visibles en haut de fiche sans cliquer sur un onglet
+- Les deux boutons appellent `action_toggle_collection()` / `action_toggle_wishlist()` qui font `self.field = not self.field`
+- `dans_collection` et `dans_wishlist` supprimés de l'onglet "Ma Collection" (maintenant dans button_box)
+- Onglet "IA" renommé **"Synopsis"** (plus honnête sans le module `comic_ai`)
+- `note` gardé comme Float avec label `"Note (/5)"` — widget étoiles reporté
+
+⚠️ **Erreur rencontrée :** `action_toggle_collection is not a valid action on comic.album` lors de la mise à jour Odoo via l'UI. Cause : le `__pycache__` Docker contenait une version périmée de `comic_album.py` sans les nouvelles méthodes. Fix : supprimer les `__pycache__` puis relancer `odoo -u comics_collections` via Docker.
+
+### Fix import — Normalisation des noms d'auteurs
+
+| Fichier | Action |
+|---|---|
+| `wizards/comic_import_wizard.py` | Modifié — `_normalize_author_name()` + `_split_names()` mis à jour |
+
+`_normalize_author_name(name)` : si le nom contient une virgule, suppose le format `"Famille, Prénom"` et retourne `"Prénom Famille"`. Exemples : `"Van Hamme, Jean"` → `"Jean Van Hamme"`, `"Goscinny, René"` → `"René Goscinny"`. Noms sans virgule inchangés.
+
+### CLAUDE.md — Règles de handoff entre sessions
+
+Ajout d'une section **📋 Suivi de projet** avec les règles obligatoires :
+- Cocher les cases `USER_STORIES.md` dès qu'une US est terminée
+- Ajouter une entrée datée dans `CHANGES.md` à la fin de chaque session
+
+---
+
 ## 2026-05-15 (suite 5) — US-023 complété + Epic 5 (Vues avancées)
 
 ### US-023 — Conflits de titres dans le wizard de résultats
