@@ -42,7 +42,7 @@
 
 | US      | Titre                          | Dépend de |
 | ------- | ------------------------------ | --------- |
-| US-008b | Menu Auteurs ✅, ⏳, Config ⏳ |           |
+| US-008b | Menus et navigation complète ✅ |           |
 
 ### À faire — Priorité moyenne 🟠
 
@@ -517,7 +517,7 @@ Critères d'acceptance :
 - [ ] Sous-menu : Prêts (US-006 non encore implémenté)
 - [x] Sous-menus : Catalogues > Auteurs (res.partner filtré)
 - [x] Catalogues > Éditeurs / Genres
-- [ ] Menu Configuration avec accès paramètres IA et BDGest (partiel)
+- [x] Menu Configuration avec accès paramètres sources de données (BDGest, Open Library, BnF)
 ```
 
 ---

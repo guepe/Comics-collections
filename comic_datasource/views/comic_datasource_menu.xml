@@ -9,4 +9,20 @@
               groups="comics_collections.group_comic_user"
               sequence="40"/>
 
+    <!-- Configuration > Paramètres sources de données -->
+    <record id="action_comic_config_settings" model="ir.actions.act_window">
+        <field name="name">Paramètres Sources de données</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="res_config_settings_view_form_comic_datasource"/>
+        <field name="target">inline</field>
+    </record>
+
+    <menuitem id="menu_comic_config_datasource"
+              name="Sources de données"
+              parent="comics_collections.menu_comic_config_root"
+              action="action_comic_config_settings"
+              groups="comics_collections.group_comic_manager"
+              sequence="10"/>
+
 </odoo>
