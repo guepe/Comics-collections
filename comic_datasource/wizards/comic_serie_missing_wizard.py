@@ -20,6 +20,22 @@ def _extract_tome_fallback(title: str):
     return int(m.group(1)) if m else None
 
 
+def _normalize_isbn(isbn: str) -> str:
+    """Normalise un ISBN : supprime tirets/espaces, convertit ISBN-10 → ISBN-13."""
+    raw = re.sub(r'[\-\s]', '', isbn or '')
+    if len(raw) == 10 and raw[:9].isdigit():
+        base = '978' + raw[:9]
+        total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
+        check = (10 - total % 10) % 10
+        return base + str(check)
+    return raw
+
+
+def _normalize_title(title: str) -> str:
+    """Titre en minuscules, sans ponctuation, pour comparaison floue."""
+    return re.sub(r'\W+', ' ', (title or '').lower()).strip()
+
+
 class ComicSerieMissingWizard(models.TransientModel):
     _name = 'comic.serie.missing.wizard'
     _description = "Détection des tomes manquants dans une série"
@@ -52,8 +68,12 @@ class ComicSerieMissingWizard(models.TransientModel):
         from ..sources.bnf import BnfSource
 
         serie_name = self.serie_id.name
-        existing_tomes = set(t for t in self.serie_id.album_ids.mapped('tome') if t)
-        existing_isbns = set(i for i in self.serie_id.album_ids.mapped('isbn') if i)
+
+        # --- Données existantes (3 axes de déduplication) ---
+        existing_albums = self.serie_id.album_ids
+        existing_tomes = {t for t in existing_albums.mapped('tome') if t}
+        existing_isbns = {_normalize_isbn(i) for i in existing_albums.mapped('isbn') if i}
+        existing_titles = {_normalize_title(a.name) for a in existing_albums if a.name}
 
         # candidates: tome -> {'name', 'isbn', 'cover_url', 'date_parution', 'source'}
         candidates = {}
@@ -63,25 +83,61 @@ class ComicSerieMissingWizard(models.TransientModel):
         for item in self._fetch_google_all(google_source, serie_name, max_total=200):
             self._process_google_item(
                 item, google_source, serie_name,
-                existing_tomes, existing_isbns, candidates,
+                existing_tomes, existing_isbns, existing_titles, candidates,
             )
 
         # --- BnF (par champ série) ---
         bnf_source = BnfSource(env=self.env)
         for result in self._fetch_bnf(bnf_source, serie_name):
             tome = result.tome
+            norm_isbn = _normalize_isbn(result.isbn) if result.isbn else None
             if not tome or tome in existing_tomes:
                 continue
-            if result.isbn and result.isbn in existing_isbns:
+            if norm_isbn and norm_isbn in existing_isbns:
+                continue
+            if result.title and _normalize_title(result.title) in existing_titles:
                 continue
             if tome not in candidates:
                 candidates[tome] = {
                     'name': result.title or f'{serie_name} - Tome {tome}',
-                    'isbn': result.isbn or '',
+                    'isbn': norm_isbn or '',
                     'cover_url': None,
                     'date_parution': result.date_parution,
                     'source': 'bnf',
                 }
+
+        # --- Vérification globale ISBN (une requête pour tous les candidats) ---
+        candidate_isbns = [c['isbn'] for c in candidates.values() if c.get('isbn')]
+        if candidate_isbns:
+            already_in_db = self.env['comic.album'].search_read(
+                [('isbn', 'in', candidate_isbns)], ['isbn'],
+            )
+            db_isbns = {_normalize_isbn(r['isbn']) for r in already_in_db if r.get('isbn')}
+            candidates = {
+                t: c for t, c in candidates.items()
+                if not (c.get('isbn') and _normalize_isbn(c['isbn']) in db_isbns)
+            }
+
+        # --- Vérification complémentaire pour les candidats SANS ISBN ---
+        # Google Books/BnF ne retournent pas toujours un ISBN.
+        # On filtre par titre (souple) contre les albums existants dans la série.
+        no_isbn = [t for t, c in candidates.items() if not c.get('isbn')]
+        if no_isbn:
+            # Titres existants : mots de ≥3 chars pour éviter les faux positifs
+            existing_words = {
+                word
+                for a in existing_albums if a.name
+                for word in re.findall(r'\w{3,}', a.name.lower())
+            }
+            for t in no_isbn:
+                cand_words = set(re.findall(r'\w{3,}', candidates[t]['name'].lower()))
+                if cand_words and existing_words:
+                    overlap = len(cand_words & existing_words) / len(cand_words)
+                    if overlap >= 0.6:
+                        del candidates[t]
+                        continue
+                # Marque comme non-vérifié (ISBN absent) pour alerter l'utilisateur
+                candidates[t]['isbn_unverified'] = True
 
         # --- Stubs pour les tomes attendus mais introuvables ---
         if self.serie_id.nb_albums_total:
@@ -106,6 +162,7 @@ class ComicSerieMissingWizard(models.TransientModel):
                 'tome': tome,
                 'name': c['name'],
                 'isbn': c['isbn'],
+                'isbn_unverified': bool(c.get('isbn_unverified')),
                 'cover_data': cover_data,
                 'date_parution': self._parse_date(c['date_parution']),
                 'selected': True,
@@ -143,7 +200,7 @@ class ComicSerieMissingWizard(models.TransientModel):
                 break
 
     def _process_google_item(self, item, source, serie_name,
-                             existing_tomes, existing_isbns, candidates):
+                             existing_tomes, existing_isbns, existing_titles, candidates):
         try:
             parsed = source._parse_volume(item)
         except Exception:
@@ -153,20 +210,23 @@ class ComicSerieMissingWizard(models.TransientModel):
 
         raw_title = item.get('volumeInfo', {}).get('title', '')
 
-        # Filtre léger : le nom de série doit apparaître quelque part dans le titre brut
-        # ou dans le serie_name extrait. On accepte avec ≥50% de mots communs.
         if not self._title_relates_to_serie(raw_title, parsed.serie_name, serie_name):
             return
+
+        norm_isbn = _normalize_isbn(parsed.isbn) if parsed.isbn else None
 
         tome = parsed.tome or _extract_tome_fallback(raw_title)
         if not tome or tome in existing_tomes or tome > 999:
             return
-        if parsed.isbn and parsed.isbn in existing_isbns:
+        if norm_isbn and norm_isbn in existing_isbns:
+            return
+        candidate_title = parsed.title or raw_title
+        if _normalize_title(candidate_title) in existing_titles:
             return
         if tome not in candidates:
             candidates[tome] = {
-                'name': parsed.title or raw_title,
-                'isbn': parsed.isbn or '',
+                'name': candidate_title,
+                'isbn': norm_isbn or '',
                 'cover_url': parsed.cover_url_small or parsed.cover_url,
                 'date_parution': parsed.date_parution,
                 'source': 'google',
@@ -283,6 +343,10 @@ class ComicSerieMissingLine(models.TransientModel):
     tome = fields.Integer(string='Tome')
     name = fields.Char(string='Titre')
     isbn = fields.Char(string='ISBN')
+    isbn_unverified = fields.Boolean(
+        string='ISBN absent',
+        help="Aucun ISBN retourné par la source — déduplication moins fiable, vérifiez manuellement.",
+    )
     cover_data = fields.Image(string='Couverture', max_width=80, max_height=110)
     date_parution = fields.Date(string='Parution')
     selected = fields.Boolean(string='Sélectionner', default=True)

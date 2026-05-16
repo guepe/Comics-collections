@@ -36,13 +36,17 @@
                     </div>
                     <field name="nb_missing" invisible="1"/>
                     <field name="line_ids" nolabel="1" invisible="nb_missing == 0">
-                        <list editable="bottom" decoration-muted="source == 'expected'">
+                        <list editable="bottom"
+                              decoration-muted="source == 'expected'"
+                              decoration-warning="isbn_unverified">
                             <field name="selected" widget="boolean_toggle"/>
                             <field name="cover_data" widget="image"
                                    options="{'size': [50, 70]}" optional="show"/>
                             <field name="tome"/>
                             <field name="name"/>
                             <field name="isbn" optional="show"/>
+                            <field name="isbn_unverified" string="⚠️" widget="boolean"
+                                   optional="show"/>
                             <field name="date_parution" optional="show"/>
                             <field name="source" widget="badge"
                                    decoration-success="source == 'google'"
