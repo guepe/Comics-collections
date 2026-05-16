@@ -338,6 +338,112 @@ comic_datasource/
 
 ---
 
+## 2026-05-16 (suite) — Correctifs post-déploiement
+
+### Correctif — Conflit button_box entre `comics_collections` et `comic_datasource`
+
+**Problème :** Après l'ajout du `button_box` dans le formulaire album (US-011), le bouton "Rechercher sur les sources" de `comic_datasource` avait disparu.
+
+**Cause :** `comic_datasource_album_inherit_views.xml` injectait son propre `<div class="oe_button_box">` via `xpath before oe_title`. Avec un `button_box` déjà présent dans la vue de base, Odoo se retrouvait avec deux `div.oe_button_box` et le rendu du second était ignoré.
+
+**Fix — `comic_datasource/views/comic_datasource_album_inherit_views.xml` :**
+```xml
+<!-- Avant (cassé) -->
+<xpath expr="//div[hasclass('oe_title')]" position="before">
+    <div name="button_box" class="oe_button_box"> ... </div>
+</xpath>
+
+<!-- Après (correct) -->
+<xpath expr="//div[@name='button_box']" position="inside">
+    <button name="action_search_datasource" .../>
+</xpath>
+```
+
+**Règle à retenir :** Quand un `button_box` existe déjà dans la vue parente, les modules héritiers doivent cibler `//div[@name='button_box']` avec `position="inside"` — jamais créer un nouveau `div.oe_button_box`.
+
+---
+
+### Correctif — `__pycache__` Docker périmé (RPC_ERROR sur les nouvelles méthodes)
+
+**Problème récurrent :** Après chaque ajout de méthode Python, Odoo retourne `action_xxx is not a valid action` lors de la mise à jour via l'UI.
+
+**Cause :** Docker avec volumes bind-mounted compile les `.py` en `.pyc` dans `__pycache__`. Si le timestamp ou l'inode du fichier ne change pas côté container, Python utilise le `.pyc` périmé qui ne contient pas les nouvelles méthodes. La validation XML des vues échoue alors car elle vérifie l'existence des méthodes sur le modèle chargé.
+
+**Fix systématique :**
+```bash
+find /Users/phde/Projects/odoo/<module> -name "__pycache__" -type d -exec rm -rf {} +
+docker exec odoo-web odoo -u <module> -d odoo \
+  --db_host postgres-Odoo --db_port 5432 \
+  --db_user odoo --db_password odoo --stop-after-init
+```
+
+Concerné cette session : `action_toggle_collection`, `action_toggle_wishlist` (comics_collections), `_normalize_author_name` (import wizard).
+
+---
+
+### Correctif — Import auteurs : virgule persistante dans les noms
+
+**Problème :** `"Cauvin, Raoul"` restait `"Cauvin, Raoul"` après import CSV au lieu de devenir `"Raoul Cauvin"`.
+
+**Cause :** Le `__pycache__` Docker contenait la version de `comic_import_wizard.py` sans `_normalize_author_name()`. La méthode était dans le `.py` mais pas dans le `.pyc` utilisé par le container.
+
+**Code ajouté (commit `60177f5`) :**
+```python
+@staticmethod
+def _normalize_author_name(name):
+    if ',' in name:
+        parts = name.split(',', 1)
+        last, first = parts[0].strip(), parts[1].strip()
+        if first:
+            return '%s %s' % (first, last)
+    return name
+
+@staticmethod
+def _split_names(value):
+    return [
+        ComicImportWizard._normalize_author_name(name.strip())
+        for name in re.split(r'[;\n|]+', str(value or ''))
+        if name.strip()
+    ]
+```
+
+Fix après purge du `__pycache__` et redémarrage Odoo.
+
+---
+
+### Feat — Retour à la fiche album/série après fermeture du wizard datasource
+
+**Problème UX :** Après la mise à jour via datasource (album ou série), fermer le wizard ramenait à la liste au lieu de rester sur la fiche d'origine.
+
+**Fix — méthode `action_close_and_return()` ajoutée sur les deux wizards :**
+
+`comic_datasource/wizards/comic_datasource_search_wizard.py` :
+```python
+def action_close_and_return(self):
+    if self.album_id:
+        return {'type': 'ir.actions.act_window',
+                'res_model': 'comic.album', 'res_id': self.album_id.id,
+                'view_mode': 'form', 'target': 'current'}
+    return {'type': 'ir.actions.act_window_close'}
+```
+
+`comic_datasource/wizards/comic_serie_update_wizard.py` :
+```python
+def action_close_and_return(self):
+    return {'type': 'ir.actions.act_window',
+            'res_model': 'comic.serie', 'res_id': self.serie_id.id,
+            'view_mode': 'form', 'target': 'current'}
+```
+
+**Vues mises à jour :** `special="cancel"` remplacé par `name="action_close_and_return" type="object"` dans `comic_datasource_wizard_views.xml` et `comic_datasource_serie_inherit_views.xml`.
+
+**Comportement :**
+- Wizard album (ouvert depuis fiche album) → Fermer → retour à la fiche album
+- Wizard album (ouvert depuis menu) → Fermer → ferme le dialog
+- Wizard série → Fermer → retour à la fiche série
+
+---
+
 ## 2026-05-16 — US-033, US-008b, US-011 + fix import auteurs
 
 ### US-033 ✅ — Documentation publication Odoo Apps
