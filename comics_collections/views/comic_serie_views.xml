@@ -56,8 +56,20 @@
                                     <field name="tome"/>
                                     <field name="name"/>
                                     <field name="date_parution"/>
-                                    <field name="etat_lecture"/>
-                                    <field name="dans_collection"/>
+                                    <field name="etat_lecture" column_invisible="True"/>
+                                    <button name="action_cycle_etat_lecture" type="object"
+                                            string="Non lu"
+                                            class="btn-sm btn-secondary"
+                                            invisible="etat_lecture != 'non_lu'"/>
+                                    <button name="action_cycle_etat_lecture" type="object"
+                                            string="En cours"
+                                            class="btn-sm btn-warning"
+                                            invisible="etat_lecture != 'en_cours'"/>
+                                    <button name="action_cycle_etat_lecture" type="object"
+                                            string="Lu ✓"
+                                            class="btn-sm btn-success"
+                                            invisible="etat_lecture != 'lu'"/>
+                                    <field name="dans_collection" widget="boolean_toggle"/>
                                 </list>
                             </field>
                         </page>

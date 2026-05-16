@@ -106,3 +106,8 @@ class ComicAlbum(models.Model):
     def action_mark_acquired(self):
         """Marque l'album comme acquis : l'ajoute à la collection et le retire de la wishlist."""
         self.write({'dans_collection': True, 'dans_wishlist': False})
+
+    def action_cycle_etat_lecture(self):
+        self.ensure_one()
+        cycle = {'non_lu': 'en_cours', 'en_cours': 'lu', 'lu': 'non_lu'}
+        self.etat_lecture = cycle.get(self.etat_lecture, 'non_lu')
