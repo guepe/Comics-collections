@@ -27,6 +27,26 @@
                 <sheet>
                     <field name="image_couverture" widget="image"
                            class="oe_avatar" options="{'preview_image': 'image_couverture'}"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_toggle_collection"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-book">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text" invisible="not dans_collection">En collection</span>
+                                <span class="o_stat_text text-muted" invisible="dans_collection">Hors collection</span>
+                            </div>
+                        </button>
+                        <button name="action_toggle_wishlist"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-heart">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text" invisible="not dans_wishlist">En wishlist</span>
+                                <span class="o_stat_text text-muted" invisible="dans_wishlist">Wishlist</span>
+                            </div>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <label for="serie_id"/>
                         <h2>
@@ -61,10 +81,8 @@
                         <page string="Ma Collection">
                             <group>
                                 <group>
-                                    <field name="dans_collection"/>
-                                    <field name="dans_wishlist"/>
                                     <field name="etat_lecture"/>
-                                    <field name="note"/>
+                                    <field name="note" string="Note (/5)"/>
                                 </group>
                             </group>
                         </page>
@@ -93,10 +111,8 @@
                                 </group>
                             </group>
                         </page>
-                        <page string="IA">
-                            <group>
-                                <field name="synopsis"/>
-                            </group>
+                        <page string="Synopsis">
+                            <field name="synopsis"/>
                         </page>
                     </notebook>
                 </sheet>

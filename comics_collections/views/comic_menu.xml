@@ -50,12 +50,19 @@
               groups="comics_collections.group_comic_user"
               sequence="20"/>
 
+    <menuitem id="menu_comic_auteurs"
+              name="Auteurs"
+              parent="menu_comic_catalogues"
+              action="action_comic_auteurs"
+              groups="comics_collections.group_comic_user"
+              sequence="10"/>
+
     <menuitem id="menu_comic_editeurs"
               name="Éditeurs"
               parent="menu_comic_catalogues"
               action="action_comic_editeur"
               groups="comics_collections.group_comic_user"
-              sequence="10"/>
+              sequence="20"/>
 
     <menuitem id="menu_comic_genres"
               name="Genres"

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_comic_auteurs" model="ir.actions.act_window">
+        <field name="name">Auteurs</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('auteur_album_line_ids', '!=', False)]</field>
+        <field name="context">{'default_is_company': False}</field>
+    </record>
+
+</odoo>

@@ -94,3 +94,11 @@ class ComicAlbum(models.Model):
             links = self._build_purchase_links(album.isbn)
             if links:
                 album.write(links)
+
+    def action_toggle_collection(self):
+        self.ensure_one()
+        self.dans_collection = not self.dans_collection
+
+    def action_toggle_wishlist(self):
+        self.ensure_one()
+        self.dans_wishlist = not self.dans_wishlist

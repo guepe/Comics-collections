@@ -19,6 +19,7 @@
         'data/comic_genre_data.xml',
         'views/comic_genre_views.xml',
         'views/comic_editeur_views.xml',
+        'views/comic_auteur_views.xml',
         'views/comic_serie_views.xml',
         'views/comic_album_views.xml',
         'views/comic_import_wizard_views.xml',
