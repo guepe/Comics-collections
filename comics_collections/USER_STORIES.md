@@ -3,9 +3,60 @@
 > Projet Odoo 19 — Gestion de collection de bandes dessinées
 > Format : `US-XXX | En tant que... | Je veux... | Afin de...`
 > **Sources de données :** Google Books API (gratuite) + Open Library (gratuite, sans clé)
->
-> - BnF SRU (gratuite, sans clé) + BDGest scraping (fallback, opt-in légal)
->   **Pas de scraping par défaut** — toutes les sources primaires sont des APIs officielles ouvertes.
+> + BnF SRU (gratuite, sans clé) + BDGest scraping (fallback, opt-in légal)
+> **Pas de scraping par défaut** — toutes les sources primaires sont des APIs officielles ouvertes.
+
+---
+
+## 🗺️ Table des matières — Ce qui reste à faire
+
+> Légende : ✅ Terminé · 🔄 Partiel · ⏳ À faire · 🔴 Priorité haute · 🟠 Moyenne · 🟡 Basse
+
+### Prêt à publier (bloquants levés)
+| US | Titre | État |
+|---|---|---|
+| US-001 → 007 | Infrastructure & Sécurité | ✅ |
+| US-008 | Navigation minimale | ✅ |
+| US-009 | Kanban Séries | ✅ |
+| US-010 | Kanban Albums | ✅ |
+| US-011 | Formulaire album enrichi | ✅ |
+| US-015 | Liens d'achat | ✅ |
+| US-016 | Données de démo | ✅ |
+| US-017 | Infrastructure comic_datasource | ✅ |
+| US-018 | Source Google Books | ✅ |
+| US-023 | Wizard recherche & import | ✅ |
+| US-025 | Génération liens d'achat auto | ✅ |
+| US-030 | Modèle fichier import | ✅ |
+| US-031 | Wizard import CSV/Excel | ✅ |
+| US-033 | Documentation & README | ✅ |
+
+### À faire — Priorité haute 🔴
+| US | Titre | Dépend de |
+|---|---|---|
+| US-008b | Menu Auteurs ✅, Prêts ⏳, Config ⏳ | US-006 pour Prêts |
+| US-006 | Modèle `comic.pret` (prêts) | — |
+| US-014 | Wishlist : bouton "Marquer comme acquis" | — |
+| US-024 | Config UI sources de données (Open Library, BnF, BDGest toggles) | — |
+
+### À faire — Priorité moyenne 🟠
+| US | Titre | Dépend de |
+|---|---|---|
+| US-019 | Source Open Library API | — |
+| US-020 | Source BnF SRU API | — |
+| US-021 | Source BDGest (fallback scraping) | — |
+| US-022 | Aggregateur multi-sources | US-019, 020, 021 |
+| US-012 | Filtres & recherche avancée (partiel) | — |
+| US-034 | Suivi séries — tomes manquants → wishlist | US-014 |
+
+### À faire — Priorité basse 🟡
+| US | Titre | Dépend de |
+|---|---|---|
+| US-026 | Config connecteurs IA | module comic_ai |
+| US-027 | Génération synopsis par IA | US-026 |
+| US-028 | Traduction synopsis par IA | US-026 |
+| US-029 | Découverte IA par profil de goûts | US-026, US-027 |
+| US-013 | Dashboard statistiques | — |
+| US-032 | Tests unitaires | — |
 
 ---
 
@@ -390,19 +441,51 @@ Critères d'acceptance :
 
 ---
 
-**US-029 — Suggestions de BD similaires par IA**
+**US-029 — Découverte IA par profil de goûts**
 
 ```
 En tant que collectionneur
-Je veux que l'IA me suggère des BD similaires à celles que j'ai notées 4-5 étoiles
-Afin de découvrir de nouvelles BD correspondant à mes goûts
+Je veux que l'IA me suggère des séries inconnues basées sur mes séries préférées
+Afin de découvrir de nouvelles BD correspondant à mon profil de goût
+
+Contexte de conception :
+  Deux besoins distincts ont été séparés :
+  - US-029 (ce ticket) : DÉCOUVERTE de séries inconnues via IA
+  - US-034 : SUIVI de séries connues pour détecter les nouveaux tomes
 
 Critères d'acceptance :
-- [ ] Action "Suggérer des BD similaires" dans le wizard IA
-- [ ] L'IA reçoit : genre, auteurs, synopsis, note de l'album
-- [ ] Retourne une liste de 5 suggestions avec titre, auteur, raison
-- [ ] Résultat affiché dans une vue dédiée (non sauvegardé en base)
-- [ ] Bouton "Rechercher sur BDGest" pour chaque suggestion (si module bdgest installé)
+- [ ] Bouton "Découvrir de nouvelles BD" accessible depuis le menu ou dashboard
+- [ ] Wizard : affiche les séries notées 4-5★ comme profil de goût (modifiable)
+- [ ] L'IA reçoit le profil : genres, auteurs, titres des séries appréciées
+- [ ] Retourne 10-15 suggestions de séries inconnues (titre, auteur, genre, pourquoi)
+- [ ] Filtre automatique : exclut les séries déjà présentes dans la collection
+- [ ] Sélection manuelle des suggestions qui intéressent l'utilisateur
+- [ ] Ajout en wishlist des suggestions sélectionnées (comme comic.serie)
+- [ ] Bouton "Vérifier sur le datasource" par suggestion (évite les hallucinations)
+- [ ] Gestion d'erreur si clé API invalide ou timeout
+```
+
+---
+
+**US-034 — Suivi des séries : détection des tomes manquants**
+
+```
+En tant que collectionneur
+Je veux marquer des séries "à suivre" et détecter automatiquement les tomes manquants
+Afin de compléter ma wishlist sans surveiller manuellement chaque série
+
+Contexte de conception :
+  Séparé de US-029 (découverte IA) : pas d'IA ici, uniquement datasource.
+  Idéal pour les séries en cours de publication dont on attend les nouveaux tomes.
+
+Critères d'acceptance :
+- [ ] Champ booléen "À suivre" sur comic.serie (visible dans le form et le kanban)
+- [ ] Vue ou filtre "Séries suivies" dans le menu Ma Collection
+- [ ] Bouton "Vérifier les nouveaux tomes" sur une série suivie
+- [ ] Comparaison entre les tomes en base et les tomes trouvés via datasource (par ISBN ou titre)
+- [ ] Liste des tomes manquants affichée avec confirmation utilisateur avant ajout
+- [ ] Tomes manquants confirmés → ajoutés en wishlist (dans_wishlist = True)
+- [ ] (optionnel) Cron hebdomadaire pour toutes les séries suivies en lot
 ```
 
 ---
