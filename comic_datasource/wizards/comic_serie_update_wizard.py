@@ -1,8 +1,5 @@
-import base64
 import logging
 import re
-
-import requests
 
 from odoo import _, api, fields, models
 
@@ -64,7 +61,7 @@ class ComicSerieUpdateWizard(models.TransientModel):
                     skipped.append(album)
                     continue
 
-                self._apply_data(album, agg.data)
+                album._apply_datasource_data(agg.data)
                 updated.append(album)
 
             except Exception as e:
@@ -82,63 +79,6 @@ class ComicSerieUpdateWizard(models.TransientModel):
                 if r.tome == album.tome:
                     return r
         return results[0] if results else None
-
-    def _apply_data(self, album, data):
-        """Met à jour un album avec les données de l'aggregator."""
-        vals = {}
-
-        if data.get('synopsis'):
-            vals['synopsis'] = data['synopsis']
-        if data.get('nb_pages'):
-            vals['nb_pages'] = data['nb_pages']
-
-        if data.get('isbn') and not album.isbn:
-            vals['isbn'] = _normalize_isbn(data['isbn']) or data['isbn']
-
-        if data.get('date_parution') and not album.date_parution:
-            try:
-                from datetime import date
-                parts = str(data['date_parution'])[:10].split('-')
-                vals['date_parution'] = date(int(parts[0]), int(parts[1]), int(parts[2]))
-            except Exception:
-                pass
-
-        if data.get('date_depot_legal') and not album.date_depot_legal:
-            try:
-                from datetime import date
-                parts = str(data['date_depot_legal'])[:10].split('-')
-                vals['date_depot_legal'] = date(int(parts[0]), int(parts[1]), int(parts[2]))
-            except Exception:
-                pass
-
-        # Couverture : télécharge la version HD (cover_url), ou miniature en fallback
-        cover_url = data.get('cover_url') or data.get('cover_url_small')
-        if cover_url:
-            try:
-                resp = requests.get(cover_url, timeout=10)
-                if resp.status_code == 200 and len(resp.content) > 100:
-                    vals['image_couverture'] = base64.b64encode(resp.content).decode()
-            except Exception as e:
-                _logger.warning('Cover download failed for "%s": %s', album.name, e)
-
-        if vals:
-            album.write(vals)
-
-        # Auteurs : ajoute ceux qui manquent
-        for auteur in data.get('auteurs', []):
-            name = (auteur.get('name') or '').strip()
-            if not name:
-                continue
-            partner = self.env['res.partner'].search([('name', 'ilike', name)], limit=1)
-            if not partner:
-                partner = self.env['res.partner'].create({'name': name})
-            already = album.auteur_line_ids.filtered(lambda l: l.partner_id == partner)
-            if not already:
-                self.env['comic.album.auteur.line'].create({
-                    'album_id': album.id,
-                    'partner_id': partner.id,
-                    'role': auteur.get('role', 'autre'),
-                })
 
     def _build_report(self, updated, skipped, errors):
         lines = []
