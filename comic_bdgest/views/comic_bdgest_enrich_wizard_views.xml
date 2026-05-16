@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_comic_bdgest_enrich_wizard_form" model="ir.ui.view">
+        <field name="name">comic.bdgest.enrich.wizard.form</field>
+        <field name="model">comic.bdgest.enrich.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Enrichir depuis BDGest">
+
+                <!-- En-tête : album en cours -->
+                <group invisible="not album_id">
+                    <field name="album_display" string="Album" readonly="1"/>
+                </group>
+
+                <!-- Étape 1 : recherche -->
+                <group invisible="state != 'search'" string="Rechercher sur BDGest">
+                    <field name="search_type" widget="radio"/>
+                    <field name="search_term"/>
+                </group>
+
+                <!-- Étape 2 : résultats -->
+                <div invisible="state != 'results'">
+                    <field name="result_ids" nolabel="1">
+                        <list string="Résultats" editable="bottom">
+                            <field name="selected" string=""/>
+                            <field name="serie_name" readonly="1"/>
+                            <field name="tome" readonly="1"/>
+                            <field name="titre" readonly="1"/>
+                            <field name="auteur" readonly="1"/>
+                            <field name="editeur" readonly="1"/>
+                        </list>
+                    </field>
+                </div>
+
+                <footer>
+                    <button invisible="state != 'search'"
+                            name="action_search" type="object"
+                            string="Rechercher" class="btn-primary"/>
+                    <button invisible="state != 'results'"
+                            name="action_import" type="object"
+                            string="Importer la sélection" class="btn-primary"/>
+                    <button invisible="state != 'results'"
+                            name="action_back" type="object"
+                            string="Retour"/>
+                    <button special="cancel" string="Annuler"/>
+                    <field name="state" invisible="1"/>
+                    <field name="album_id" invisible="1"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
