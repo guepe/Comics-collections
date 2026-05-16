@@ -142,7 +142,10 @@
                             class="btn-secondary"
                             invisible="state != 'done'"/>
 
-                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                    <button name="action_close_and_return"
+                            string="Fermer"
+                            type="object"
+                            class="btn-secondary"/>
                 </footer>
             </form>
         </field>

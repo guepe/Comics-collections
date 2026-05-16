@@ -156,6 +156,17 @@ class ComicSerieUpdateWizard(models.TransientModel):
             lines.append('</ul>')
         return ''.join(lines) or '<p>Aucun album à traiter.</p>'
 
+    def action_close_and_return(self):
+        """Ferme le wizard et retourne à la fiche série."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'comic.serie',
+            'res_id': self.serie_id.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
     def _reopen(self):
         return {
             'type': 'ir.actions.act_window',

@@ -364,6 +364,19 @@ class ComicDatasourceSearchWizard(models.TransientModel):
             'target': 'new',
         }
 
+    def action_close_and_return(self):
+        """Ferme le wizard et retourne à l'album source si disponible."""
+        self.ensure_one()
+        if self.album_id:
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'comic.album',
+                'res_id': self.album_id.id,
+                'view_mode': 'form',
+                'target': 'current',
+            }
+        return {'type': 'ir.actions.act_window_close'}
+
     def action_view_imported(self):
         """Ouvre la liste des albums après import."""
         return {
