@@ -67,7 +67,9 @@
       "Bash(git -C /Users/phde/Projects/odoo commit -m 'fix: datasource — injecter le bouton dans le button_box existant \\(US-011\\) *)",
       "Bash(git -C /Users/phde/Projects/odoo log --oneline 19.0)",
       "Bash(git -C /Users/phde/Projects/odoo add CHANGES.md)",
-      "Bash(git -C /Users/phde/Projects/odoo commit -m 'docs: CHANGES.md — correctifs post-déploiement 2026-05-16 *)"
+      "Bash(git -C /Users/phde/Projects/odoo commit -m 'docs: CHANGES.md — correctifs post-déploiement 2026-05-16 *)",
+      "Bash(git -C /Users/phde/Projects/odoo add comics_collections/USER_STORIES.md)",
+      "Bash(grep -v \"template\\\\|postgres\\\\|^---\\\\|^$\\\\|rows\\\\|List\")"
     ],
     "additionalDirectories": [
       "/private/tmp/cc_import"

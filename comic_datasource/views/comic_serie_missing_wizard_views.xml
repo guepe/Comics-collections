@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue du wizard de détection des tomes manquants -->
+    <record id="view_comic_serie_missing_wizard_form" model="ir.ui.view">
+        <field name="name">comic.serie.missing.wizard.form</field>
+        <field name="model">comic.serie.missing.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Tomes manquants">
+
+                <!-- Confirmation -->
+                <group invisible="state != 'confirm'">
+                    <group string="Série à analyser">
+                        <field name="serie_id" readonly="1"/>
+                        <field name="nb_existing" readonly="1" string="Albums déjà en base"/>
+                    </group>
+                    <group>
+                        <div class="alert alert-info" role="status">
+                            Cette action interroge Google Books pour trouver les tomes
+                            de la série qui ne sont pas encore dans votre base.
+                            Les tomes détectés pourront être ajoutés à votre wishlist.
+                        </div>
+                    </group>
+                </group>
+
+                <!-- Résultats -->
+                <group invisible="state != 'results'">
+                    <div invisible="nb_missing != 0" class="alert alert-warning" role="status">
+                        Aucun tome manquant détecté pour cette série.
+                        Google Books et BnF n'ont peut-être pas tous les volumes.
+                    </div>
+                    <div class="alert alert-info" role="status" invisible="nb_missing == 0">
+                        Tomes détectés via Google Books et BnF. Les lignes "Attendu" sont des
+                        tomes que la série devrait contenir (selon le total configuré) mais que
+                        les sources n'ont pas retournés — vous pouvez les désélectionner.
+                    </div>
+                    <field name="nb_missing" invisible="1"/>
+                    <field name="line_ids" nolabel="1" invisible="nb_missing == 0">
+                        <list editable="bottom" decoration-muted="source == 'expected'">
+                            <field name="selected" widget="boolean_toggle"/>
+                            <field name="cover_data" widget="image"
+                                   options="{'size': [50, 70]}" optional="show"/>
+                            <field name="tome"/>
+                            <field name="name"/>
+                            <field name="isbn" optional="show"/>
+                            <field name="date_parution" optional="show"/>
+                            <field name="source" widget="badge"
+                                   decoration-success="source == 'google'"
+                                   decoration-primary="source == 'bnf'"
+                                   decoration-warning="source == 'expected'"
+                                   optional="show"/>
+                        </list>
+                    </field>
+                </group>
+
+                <!-- Rapport -->
+                <group invisible="state != 'done'" string="Rapport">
+                    <field name="import_report" nolabel="1" widget="html" readonly="1"/>
+                </group>
+
+                <!-- Champs cachés -->
+                <field name="state" invisible="1"/>
+
+                <footer>
+                    <!-- État : confirmation -->
+                    <button name="action_search"
+                            string="Rechercher les tomes manquants"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'confirm'"/>
+
+                    <!-- État : résultats -->
+                    <button name="action_add_to_wishlist"
+                            string="Ajouter à la wishlist"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'results'"/>
+                    <button name="action_back"
+                            string="Retour"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state != 'results'"/>
+
+                    <!-- État : terminé -->
+                    <button name="action_close_and_return"
+                            string="Retour à la série"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'done'"/>
+
+                    <button name="action_close_and_return"
+                            string="Fermer"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="state == 'done'"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

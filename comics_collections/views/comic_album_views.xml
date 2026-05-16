@@ -220,12 +220,58 @@
         <field name="view_mode">kanban,list,form</field>
     </record>
 
+    <!-- ── Vue liste dédiée Wishlist ──────────────────────────────────────── -->
+    <record id="view_comic_album_wishlist_list" model="ir.ui.view">
+        <field name="name">comic.album.wishlist.list</field>
+        <field name="model">comic.album</field>
+        <field name="arch" type="xml">
+            <list string="Wishlist" default_order="serie_id, tome">
+                <field name="serie_id" optional="show"/>
+                <field name="tome" optional="show"/>
+                <field name="name"/>
+                <field name="isbn" optional="show"/>
+                <field name="url_club_be" widget="url" string="Club.be" optional="show"/>
+                <field name="url_amazon_be" widget="url" string="Amazon.be" optional="show"/>
+                <field name="url_fnac_be" widget="url" string="Fnac.be" optional="hide"/>
+                <button name="action_mark_acquired"
+                        type="object"
+                        string="Acquérir"
+                        icon="fa-check"
+                        class="btn-primary btn-sm"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Kanban : bouton "Acquérir" conditionnel (héritage du kanban principal) ── -->
+    <record id="view_comic_album_kanban_wishlist_btn" model="ir.ui.view">
+        <field name="name">comic.album.kanban.wishlist.btn</field>
+        <field name="model">comic.album</field>
+        <field name="inherit_id" ref="view_comic_album_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_comic_card_info')]" position="inside">
+                <button name="action_mark_acquired"
+                        type="object"
+                        invisible="not dans_wishlist"
+                        class="btn btn-primary btn-sm mt-1 w-100">
+                    ✓ Acquérir
+                </button>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_comic_album" model="ir.actions.act_window">
+        <field name="name">Albums</field>
+        <field name="res_model">comic.album</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
     <record id="action_comic_wishlist" model="ir.actions.act_window">
         <field name="name">Wishlist</field>
         <field name="res_model">comic.album</field>
-        <field name="view_mode">kanban,list,form</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="domain">[('dans_wishlist', '=', True)]</field>
-        <field name="context">{'search_default_wishlist': 1}</field>
+        <field name="context">{'group_by': 'serie_id'}</field>
+        <field name="view_id" ref="view_comic_album_wishlist_list"/>
     </record>
 
 </odoo>

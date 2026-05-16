@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Valeurs par défaut des paramètres de configuration -->
+    <record id="param_openlibrary_enabled" model="ir.config_parameter">
+        <field name="key">comic.openlibrary_enabled</field>
+        <field name="value">True</field>
+    </record>
+    <record id="param_bnf_enabled" model="ir.config_parameter">
+        <field name="key">comic.bnf_enabled</field>
+        <field name="value">True</field>
+    </record>
     <record id="param_bdgest_enabled" model="ir.config_parameter">
         <field name="key">comic.bdgest_enabled</field>
         <field name="value">False</field>

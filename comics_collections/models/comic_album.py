@@ -102,3 +102,7 @@ class ComicAlbum(models.Model):
     def action_toggle_wishlist(self):
         self.ensure_one()
         self.dans_wishlist = not self.dans_wishlist
+
+    def action_mark_acquired(self):
+        """Marque l'album comme acquis : l'ajoute à la collection et le retire de la wishlist."""
+        self.write({'dans_collection': True, 'dans_wishlist': False})

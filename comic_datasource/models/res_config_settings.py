@@ -14,6 +14,20 @@ class ResConfigSettings(models.TransientModel):
              'Sans clé, les requêtes sont limitées à ~100/jour.',
     )
 
+    # ── Open Library (activé par défaut) ─────────────────────────────────────
+    comic_openlibrary_enabled = fields.Boolean(
+        string='Activer Open Library',
+        config_parameter='comic.openlibrary_enabled',
+        help='Source de couvertures et métadonnées. Gratuite, sans clé API.',
+    )
+
+    # ── BnF SRU (activée par défaut) ─────────────────────────────────────────
+    comic_bnf_enabled = fields.Boolean(
+        string='Activer BnF (Bibliothèque nationale de France)',
+        config_parameter='comic.bnf_enabled',
+        help='Données officielles de dépôt légal pour les BD francophones. Gratuite, sans clé API.',
+    )
+
     # ── BDGest (opt-in) ───────────────────────────────────────────────────────
     comic_bdgest_enabled = fields.Boolean(
         string='Activer BDGest (scraping)',
@@ -28,6 +42,11 @@ class ResConfigSettings(models.TransientModel):
     comic_bdgest_password = fields.Char(
         string='Mot de passe BDGest',
         config_parameter='comic.bdgest_password',
+    )
+    comic_bdgest_delay = fields.Integer(
+        string='Délai entre requêtes BDGest (secondes)',
+        config_parameter='comic.bdgest_delay',
+        help='Délai minimum entre deux requêtes BDGest. Minimum 2 secondes (CGU).',
     )
 
     # ── Actions ───────────────────────────────────────────────────────────────

@@ -12,6 +12,11 @@ OL_SEARCH_URL = 'https://openlibrary.org/search.json'
 class OpenLibrarySource(BaseComicSource):
     SOURCE_NAME = 'openlibrary'
 
+    def is_available(self) -> bool:
+        # Activée par défaut ; désactivable via paramètre
+        val = self._get_config('comic.openlibrary_enabled', 'True')
+        return val != 'False'
+
     def _cover_url(self, isbn, size='L'):
         return OL_COVERS_URL.format(isbn=isbn, size=size)
 

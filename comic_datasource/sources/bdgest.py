@@ -39,10 +39,18 @@ class BdgestSource(BaseComicSource):
     def is_available(self) -> bool:
         return self._get_config('comic.bdgest_enabled', 'False') == 'True'
 
+    def _get_delay(self):
+        try:
+            val = int(self._get_config('comic.bdgest_delay', '0') or 0)
+            return max(val, REQUEST_DELAY)  # minimum 2s imposé par CGU
+        except Exception:
+            return REQUEST_DELAY
+
     def _rate_limit(self):
+        delay = self._get_delay()
         elapsed = time.time() - self._last_request_time
-        if elapsed < REQUEST_DELAY:
-            time.sleep(REQUEST_DELAY - elapsed)
+        if elapsed < delay:
+            time.sleep(delay - elapsed)
         self._last_request_time = time.time()
 
     def _get_csrf_token(self):

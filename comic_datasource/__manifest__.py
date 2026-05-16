@@ -19,6 +19,7 @@
         'views/comic_datasource_wizard_views.xml',
         'views/comic_datasource_album_inherit_views.xml',
         'views/comic_datasource_serie_inherit_views.xml',
+        'views/comic_serie_missing_wizard_views.xml',
         'views/comic_datasource_menu.xml',
         'data/comic_datasource_config.xml',
     ],

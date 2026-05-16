@@ -30,6 +30,12 @@ class ComicSerie(models.Model):
         string='Tomes au total', compute='_compute_albums', store=True)
     nb_albums_possedes = fields.Integer(
         string='Tomes possédés', compute='_compute_albums', store=True)
+    a_suivre = fields.Boolean(string='À suivre', default=False, tracking=True)
+    first_album_cover_id = fields.Many2one(
+        'comic.album',
+        compute='_compute_first_album_cover',
+        store=True,
+    )
     active = fields.Boolean(default=True)
     has_cover = fields.Boolean(compute='_compute_has_cover', store=True)
 
@@ -37,6 +43,12 @@ class ComicSerie(models.Model):
     def _compute_has_cover(self):
         for rec in self:
             rec.has_cover = bool(rec.image_couverture)
+
+    @api.depends('album_ids.image_couverture', 'album_ids.tome')
+    def _compute_first_album_cover(self):
+        for serie in self:
+            album = serie.album_ids.filtered('image_couverture').sorted('tome')
+            serie.first_album_cover_id = album[0] if album else False
 
     @api.depends('album_ids', 'album_ids.dans_collection')
     def _compute_albums(self):

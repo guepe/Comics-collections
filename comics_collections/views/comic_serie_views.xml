@@ -40,6 +40,7 @@
                         <group>
                             <field name="nb_albums_total"/>
                             <field name="nb_albums_possedes"/>
+                            <field name="a_suivre"/>
                             <field name="bdgest_id"/>
                             <field name="bedetheque_url" widget="url"/>
                         </group>
@@ -78,6 +79,8 @@
                         domain="[('statut', '=', 'en_cours')]"/>
                 <filter string="Terminées" name="terminee"
                         domain="[('statut', '=', 'terminee')]"/>
+                <filter string="À suivre" name="a_suivre"
+                        domain="[('a_suivre', '=', True)]"/>
                 <separator/>
                 <filter string="BD" name="bd" domain="[('type', '=', 'bd')]"/>
                 <filter string="Manga" name="manga" domain="[('type', '=', 'manga')]"/>
@@ -103,17 +106,23 @@
                 <field name="type"/>
                 <field name="statut"/>
                 <field name="has_cover"/>
+                <field name="first_album_cover_id"/>
                 <field name="nb_albums_total"/>
                 <field name="nb_albums_possedes"/>
                 <field name="editeur_id"/>
                 <templates>
                     <t t-name="card">
                         <div class="o_comic_serie_card">
-                            <!-- Couverture -->
+                            <!-- Couverture : propre > premier album > placeholder -->
                             <div class="o_comic_serie_cover">
                                 <t t-if="record.has_cover.raw_value">
                                     <img loading="lazy"
                                          t-att-src="'/web/image/comic.serie/' + record.id.raw_value + '/image_couverture'"
+                                         t-att-alt="record.name.value"/>
+                                </t>
+                                <t t-elif="record.first_album_cover_id.raw_value">
+                                    <img loading="lazy"
+                                         t-att-src="'/web/image/comic.album/' + record.first_album_cover_id.raw_value + '/image_couverture'"
                                          t-att-alt="record.name.value"/>
                                 </t>
                                 <t t-else="">

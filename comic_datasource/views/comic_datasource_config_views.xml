@@ -41,6 +41,29 @@
                             </div>
                         </setting>
 
+                        <!-- Open Library -->
+                        <setting id="comic_openlibrary_setting"
+                                 title="Couvertures et métadonnées alternatives. Gratuit, sans clé API.">
+                            <field name="comic_openlibrary_enabled"/>
+                            <label for="comic_openlibrary_enabled" class="o_form_label fw-bold"/>
+                            <div class="text-muted mt-1">
+                                Open Library fournit des couvertures et métadonnées pour des millions
+                                d'ouvrages. Activé par défaut.
+                            </div>
+                        </setting>
+
+                        <!-- BnF -->
+                        <setting id="comic_bnf_setting"
+                                 title="Données officielles de dépôt légal. Gratuit, sans clé API.">
+                            <field name="comic_bnf_enabled"/>
+                            <label for="comic_bnf_enabled" class="o_form_label fw-bold"/>
+                            <div class="text-muted mt-1">
+                                La BnF (Bibliothèque nationale de France) indexe l'ensemble des BD
+                                soumises au dépôt légal en France. Prioritaire pour
+                                <code>date_depot_legal</code>. Activée par défaut.
+                            </div>
+                        </setting>
+
                         <!-- BDGest fallback -->
                         <setting id="comic_bdgest_setting"
                                  title="Fallback scraping — uniquement si aucune API officielle ne trouve l'album.">
@@ -50,7 +73,7 @@
                                 <div class="text-muted mt-1">
                                     ⚠️ L'utilisation est soumise aux
                                     <a href="https://www.bedetheque.com" target="_blank">CGU de BDGest</a>.
-                                    Désactivé par défaut. Délai de 2 secondes entre requêtes.
+                                    Désactivé par défaut.
                                 </div>
                                 <div class="mt-2" invisible="not comic_bdgest_enabled">
                                     <field name="comic_bdgest_login"
@@ -58,6 +81,8 @@
                                     <field name="comic_bdgest_password"
                                            placeholder="Mot de passe BDGest"
                                            password="True"/>
+                                    <field name="comic_bdgest_delay"
+                                           string="Délai entre requêtes (secondes, min. 2)"/>
                                 </div>
                             </div>
                         </setting>

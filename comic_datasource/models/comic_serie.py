@@ -14,3 +14,14 @@ class ComicSerie(models.Model):
             'target': 'new',
             'context': {'default_serie_id': self.id},
         }
+
+    def action_search_missing_volumes(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Tomes manquants — ') + self.name,
+            'res_model': 'comic.serie.missing.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_serie_id': self.id},
+        }

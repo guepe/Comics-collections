@@ -29,24 +29,24 @@
 | US-030 | Modèle fichier import | ✅ |
 | US-031 | Wizard import CSV/Excel | ✅ |
 | US-033 | Documentation & README | ✅ |
+| US-034 | Suivi séries — tomes manquants → wishlist | ✅ |
+| US-019 | Source Open Library API | ✅ |
+| US-020 | Source BnF SRU API | ✅ |
+| US-022 | Aggregateur multi-sources | ✅ |
+| US-014 | Wishlist : vue dédiée + bouton "Marquer comme acquis" | ✅ |
+| US-024 | Config UI sources de données | ✅ |
 
 ### À faire — Priorité haute 🔴
 | US | Titre | Dépend de |
 |---|---|---|
 | US-008b | Menu Auteurs ✅, Prêts ⏳, Config ⏳ | US-006 pour Prêts |
 | US-006 | Modèle `comic.pret` (prêts) | — |
-| US-014 | Wishlist : bouton "Marquer comme acquis" | — |
-| US-024 | Config UI sources de données (Open Library, BnF, BDGest toggles) | — |
 
 ### À faire — Priorité moyenne 🟠
 | US | Titre | Dépend de |
 |---|---|---|
-| US-019 | Source Open Library API | — |
-| US-020 | Source BnF SRU API | — |
-| US-021 | Source BDGest (fallback scraping) | — |
-| US-022 | Aggregateur multi-sources | US-019, 020, 021 |
+| US-021 | Source BDGest (fallback scraping, partiel) | — |
 | US-012 | Filtres & recherche avancée (partiel) | — |
-| US-034 | Suivi séries — tomes manquants → wishlist | US-014 |
 
 ### À faire — Priorité basse 🟡
 | US | Titre | Dépend de |
@@ -234,7 +234,7 @@ Critères d'acceptance :
 
 ---
 
-**US-019 — Source Open Library API**
+**US-019 — Source Open Library API ✅**
 
 ```
 En tant que collectionneur
@@ -242,18 +242,18 @@ Je veux que le système récupère les couvertures depuis Open Library
 Afin d'avoir des images de couverture sans avoir besoin d'une clé API
 
 Critères d'acceptance :
-- [ ] Classe OpenLibrarySource opérationnelle
-- [ ] Recherche par ISBN → métadonnées complètes
-- [ ] URL couverture générée directement : covers.openlibrary.org/b/isbn/{ISBN}-L.jpg
-- [ ] Vérification existence couverture avant téléchargement (évite les 404)
-- [ ] Extraction auteurs avec mapping rôles si disponible
-- [ ] Aucune configuration requise (pas de clé API)
-- [ ] Utilisée automatiquement comme source de couverture alternative
+- [x] Classe OpenLibrarySource opérationnelle
+- [x] Recherche par ISBN → métadonnées complètes
+- [x] URL couverture générée directement : covers.openlibrary.org/b/isbn/{ISBN}-L.jpg
+- [x] Vérification existence couverture avant téléchargement (évite les 404)
+- [x] Extraction auteurs avec mapping rôles si disponible
+- [x] Aucune configuration requise (pas de clé API)
+- [x] Utilisée automatiquement comme source de couverture alternative
 ```
 
 ---
 
-**US-020 — Source BnF SRU API**
+**US-020 — Source BnF SRU API ✅**
 
 ```
 En tant que collectionneur
@@ -261,13 +261,14 @@ Je veux que le système interroge la BnF pour les BD francophones
 Afin d'avoir des données officielles de dépôt légal pour les BD FR/BE
 
 Critères d'acceptance :
-- [ ] Classe BnfSource opérationnelle
-- [ ] Recherche par ISBN via API SRU
-- [ ] Parsing XML de la réponse (xmltodict)
-- [ ] Extraction : titre, auteurs, éditeur, date dépôt légal, ISBN
-- [ ] Priorité sur les autres sources pour les champs date_depot_legal
-- [ ] Aucune configuration requise
-- [ ] Gestion timeout (la BnF peut être lente)
+- [x] Classe BnfSource opérationnelle
+- [x] Recherche par ISBN via API SRU
+- [x] Parsing XML de la réponse (xmltodict)
+- [x] Extraction : titre, auteurs, éditeur, date dépôt légal, ISBN
+- [x] Priorité sur les autres sources pour les champs date_depot_legal
+- [x] Aucune configuration requise
+- [x] Gestion timeout (la BnF peut être lente)
+- [x] Recherche par série (bib.serie) pour la détection des tomes manquants (US-034)
 ```
 
 ---
@@ -293,7 +294,7 @@ Critères d'acceptance :
 
 ---
 
-**US-022 — Aggregateur multi-sources**
+**US-022 — Aggregateur multi-sources ✅**
 
 ```
 En tant que développeur
@@ -301,15 +302,15 @@ Je veux un aggregateur qui fusionne intelligemment les données de toutes les so
 Afin d'obtenir la fiche la plus complète possible automatiquement
 
 Critères d'acceptance :
-- [ ] Classe ComicDataAggregator avec méthode search(isbn, title, author)
-- [ ] Cascade dans l'ordre : Google → Open Library → BnF → BDGest
-- [ ] Fusion des champs : prend le premier champ non-vide trouvé
-- [ ] Exception : synopsis priorité Google > BnF > BDGest
-- [ ] Exception : date_depot_legal priorité BnF > autres
-- [ ] Exception : couverture priorité Google Large > OpenLib L > BDGest
-- [ ] Résultat indique quelle source a fourni chaque champ
-- [ ] Cache des résultats en session (évite les appels répétés)
-- [ ] Log des sources interrogées pour debugging
+- [x] Classe ComicDataAggregator avec méthode search(isbn, title, author)
+- [x] Cascade dans l'ordre : Google → Open Library → BnF → BDGest
+- [x] Fusion des champs : prend le premier champ non-vide trouvé
+- [x] Exception : synopsis priorité Google > BnF > BDGest
+- [x] Exception : date_depot_legal priorité BnF > autres
+- [x] Exception : couverture priorité Google Large > OpenLib L > BDGest
+- [x] Résultat indique quelle source a fourni chaque champ
+- [x] Cache des résultats en session (évite les appels répétés)
+- [x] Log des sources interrogées pour debugging
 ```
 
 ---
@@ -337,7 +338,7 @@ Critères d'acceptance :
 
 ---
 
-**US-024 — Configuration des sources de données**
+**US-024 — Configuration des sources de données ✅**
 
 ```
 En tant qu'administrateur
@@ -345,15 +346,15 @@ Je veux configurer les sources de données dans les paramètres Odoo
 Afin de contrôler quelles APIs sont utilisées et dans quel ordre
 
 Critères d'acceptance :
-- [ ] Section "Sources de données BD" dans Paramètres > Configuration
-- [ ] Champ clé API Google Books avec lien vers console.cloud.google.com
-- [ ] Bouton "Tester Google Books" avec retour visuel
-- [ ] Toggle activation Open Library (activé par défaut)
-- [ ] Toggle activation BnF (activé par défaut)
-- [ ] Toggle activation BDGest avec disclaimer légal (désactivé par défaut)
-- [ ] Champs login/mdp BDGest (conditionnels si BDGest activé)
-- [ ] Champ délai BDGest (défaut : 2 secondes)
-- [ ] Ordre de priorité des sources (drag & drop ou sélection)
+- [x] Section "Sources de données BD" dans Paramètres > Configuration
+- [x] Champ clé API Google Books avec lien vers console.cloud.google.com
+- [x] Bouton "Tester Google Books" avec retour visuel
+- [x] Toggle activation Open Library (activé par défaut)
+- [x] Toggle activation BnF (activé par défaut)
+- [x] Toggle activation BDGest avec disclaimer légal (désactivé par défaut)
+- [x] Champs login/mdp BDGest (conditionnels si BDGest activé)
+- [x] Champ délai BDGest (défaut : 2 secondes)
+- [ ] Ordre de priorité des sources (drag & drop — non implémenté, ordre fixe dans l'aggregateur)
 ```
 
 ---
@@ -467,7 +468,7 @@ Critères d'acceptance :
 
 ---
 
-**US-034 — Suivi des séries : détection des tomes manquants**
+**US-034 — Suivi des séries : détection des tomes manquants ✅**
 
 ```
 En tant que collectionneur
@@ -479,12 +480,12 @@ Contexte de conception :
   Idéal pour les séries en cours de publication dont on attend les nouveaux tomes.
 
 Critères d'acceptance :
-- [ ] Champ booléen "À suivre" sur comic.serie (visible dans le form et le kanban)
-- [ ] Vue ou filtre "Séries suivies" dans le menu Ma Collection
-- [ ] Bouton "Vérifier les nouveaux tomes" sur une série suivie
-- [ ] Comparaison entre les tomes en base et les tomes trouvés via datasource (par ISBN ou titre)
-- [ ] Liste des tomes manquants affichée avec confirmation utilisateur avant ajout
-- [ ] Tomes manquants confirmés → ajoutés en wishlist (dans_wishlist = True)
+- [x] Champ booléen "À suivre" sur comic.serie (visible dans le form et le kanban)
+- [x] Vue ou filtre "Séries suivies" dans le menu Ma Collection
+- [x] Bouton "Vérifier les nouveaux tomes" sur une série suivie
+- [x] Comparaison entre les tomes en base et les tomes trouvés via datasource (par ISBN ou titre)
+- [x] Liste des tomes manquants affichée avec confirmation utilisateur avant ajout
+- [x] Tomes manquants confirmés → ajoutés en wishlist (dans_wishlist = True)
 - [ ] (optionnel) Cron hebdomadaire pour toutes les séries suivies en lot
 ```
 
@@ -609,7 +610,7 @@ Critères d'acceptance :
 
 ---
 
-**US-014 — Gestion de la Wishlist**
+**US-014 — Gestion de la Wishlist ✅**
 
 ```
 En tant que collectionneur
@@ -617,10 +618,10 @@ Je veux gérer une liste de souhaits d'albums à acquérir
 Afin de savoir quoi acheter lors de mes prochains passages en librairie
 
 Critères d'acceptance :
-- [ ] Vue dédiée Wishlist (kanban ou list)
-- [ ] Bouton "Marquer comme acquis" → passe dans_collection=True, wishlist=False
-- [ ] Liens rapides vers club.be et amazon.com.be
-- [ ] Tri par série pour grouper les tomes manquants
+- [x] Vue dédiée Wishlist (kanban ou list)
+- [x] Bouton "Marquer comme acquis" → passe dans_collection=True, wishlist=False
+- [x] Liens rapides vers club.be et amazon.com.be
+- [x] Tri par série pour grouper les tomes manquants
 ```
 
 ---

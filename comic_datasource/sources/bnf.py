@@ -12,12 +12,18 @@ BNF_SRU_URL = 'http://catalogue.bnf.fr/api/SRU'
 class BnfSource(BaseComicSource):
     SOURCE_NAME = 'bnf'
 
-    def _sru_query(self, query: str):
+    def is_available(self) -> bool:
+        # Activée par défaut ; désactivable via paramètre
+        val = self._get_config('comic.bnf_enabled', 'True')
+        return val != 'False'
+
+    def _sru_query(self, query: str, max_records: int = 10, start_record: int = 1):
         params = {
             'version': '1.2',
             'operation': 'searchRetrieve',
             'query': query,
-            'maximumRecords': '10',
+            'maximumRecords': str(max_records),
+            'startRecord': str(start_record),
             'recordSchema': 'unimarcxchange',
         }
         try:
@@ -38,6 +44,14 @@ class BnfSource(BaseComicSource):
             return records
         except Exception:
             return []
+
+    def _extract_total(self, data) -> int:
+        """Retourne le nombre total de résultats déclaré par le SRU."""
+        try:
+            root = data.get('srw:searchRetrieveResponse', data)
+            return int(root.get('srw:numberOfRecords', 0))
+        except Exception:
+            return 0
 
     def _parse_unimarc(self, record) -> ComicSourceResult:
         """Parse un enregistrement UNIMARC BnF."""
@@ -101,9 +115,28 @@ class BnfSource(BaseComicSource):
         for name in get_all_subfields('701', 'a'):
             auteurs.append({'name': name, 'role': 'dessinateur'})
 
+        # Numéro de tome : field 225v (volume dans la série) ou 200h (désignation volume)
+        tome = None
+        for tag, sub in [('225', 'v'), ('200', 'h'), ('463', 'v')]:
+            val = get_subfield(tag, sub)
+            if val:
+                m = re.search(r'(\d+)', val)
+                if m:
+                    tome = int(m.group(1))
+                    break
+        # Fallback : cherche un numéro dans le titre lui-même
+        if not tome and title:
+            m = re.search(
+                r'(?:tome|t\.?|vol\.?|volume|n°)\s*\.?\s*(\d+)',
+                title, re.IGNORECASE,
+            )
+            if m:
+                tome = int(m.group(1))
+
         return ComicSourceResult(
             source=self.SOURCE_NAME,
             title=title,
+            tome=tome,
             isbn=isbn,
             date_parution=date_parution,
             date_depot_legal=date_depot,
@@ -121,6 +154,66 @@ class BnfSource(BaseComicSource):
         if not records:
             return None
         return self._parse_unimarc(records[0])
+
+    def search_by_serie(self, serie_name: str, page_size: int = 100) -> list:
+        """Recherche tous les albums d'une série via BnF SRU, avec pagination complète.
+        Essaie bib.serie d'abord, puis bib.title si peu de résultats."""
+        # Essai 1 : champ série (field 225 UNIMARC) — le plus précis
+        results = self._paginate_query(
+            f'bib.serie adj "{serie_name}"', page_size,
+        )
+        # Essai 2 : champ titre (plus large, rattrape les albums non taggués en série)
+        # On cumule uniquement si le premier essai a retourné peu de résultats
+        if len(results) < 5:
+            title_results = self._paginate_query(
+                f'bib.title any "{serie_name}"', page_size,
+            )
+            # Déduplique par ISBN, puis par titre
+            seen_isbns = {r.isbn for r in results if r.isbn}
+            seen_titles = {r.title.lower() for r in results if r.title}
+            for r in title_results:
+                if r.isbn and r.isbn in seen_isbns:
+                    continue
+                if r.title and r.title.lower() in seen_titles:
+                    continue
+                results.append(r)
+                if r.isbn:
+                    seen_isbns.add(r.isbn)
+                if r.title:
+                    seen_titles.add(r.title.lower())
+        return results
+
+    def _paginate_query(self, query: str, page_size: int) -> list:
+        """Exécute une requête SRU avec pagination automatique complète."""
+        results = []
+        start = 1
+        total = None
+
+        while True:
+            data = self._sru_query(query, max_records=page_size, start_record=start)
+            if not data:
+                break
+
+            if total is None:
+                total = self._extract_total(data)
+                if total == 0:
+                    break
+                _logger.info('BnF "%s" : %d résultats', query[:60], total)
+
+            records = self._extract_records(data)
+            if not records:
+                break
+
+            for record in records:
+                parsed = self._parse_unimarc(record)
+                if parsed:
+                    results.append(parsed)
+
+            start += len(records)
+            if start > total or len(records) < page_size:
+                break
+
+        return results
 
     def search_by_title(self, title: str, author: str = None) -> list:
         query = f'bib.title adj "{title}"'
