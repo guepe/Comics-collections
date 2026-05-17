@@ -1,7 +1,7 @@
 """Tests unitaires pour ComicDataAggregator."""
 import unittest
 from unittest.mock import patch, MagicMock
-from comic_datasource.sources.base import ComicSourceResult
+from odoo.addons.comic_datasource.sources.base import ComicSourceResult
 
 
 def _make_result(source, **kwargs):
@@ -11,7 +11,7 @@ def _make_result(source, **kwargs):
 class TestComicDataAggregator(unittest.TestCase):
 
     def setUp(self):
-        from comic_datasource.aggregator import ComicDataAggregator
+        from odoo.addons.comic_datasource.aggregator import ComicDataAggregator
         self.aggregator = ComicDataAggregator(env=None)
 
     def _mock_sources(self, google=None, openlibrary=None, bnf=None, bdgest=None):
