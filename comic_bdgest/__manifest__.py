@@ -8,7 +8,7 @@
     'license': 'LGPL-3',
     'depends': ['comics_collections'],
     'external_dependencies': {
-        'python': ['requests', 'bs4', 'lxml'],
+        'python': ['requests', 'beautifulsoup4', 'lxml'],
     },
     'data': [
         'security/ir.model.access.csv',

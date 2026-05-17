@@ -35,9 +35,9 @@ class ComicImportWizard(models.TransientModel):
         required=True,
     )
     template_file = fields.Binary(string='Fichier généré', readonly=True, attachment=False)
-    template_filename = fields.Char(string='Nom du fichier', readonly=True)
+    template_filename = fields.Char(string='Nom du modèle', readonly=True)
     import_file = fields.Binary(string='Fichier à importer', attachment=False)
-    import_filename = fields.Char(string='Nom du fichier')
+    import_filename = fields.Char(string='Nom du fichier importé')
     import_policy = fields.Selection(
         selection=[
             ('update', 'Mettre à jour si ISBN existant'),
