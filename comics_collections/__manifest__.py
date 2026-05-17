@@ -17,6 +17,7 @@
         'security/comic_security.xml',
         'security/ir.model.access.csv',
         'data/comic_genre_data.xml',
+        'data/comic_cron_data.xml',
         'views/comic_genre_views.xml',
         'views/comic_editeur_views.xml',
         'views/comic_auteur_views.xml',

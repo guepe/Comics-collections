@@ -95,6 +95,33 @@ class ComicAlbum(models.Model):
             if links:
                 album.write(links)
 
+    @api.model
+    def _cron_fill_missing_purchase_links(self):
+        """Complète les liens d'achat manquants pour les albums avec ISBN.
+
+        N'écrase pas les valeurs existantes — applique uniquement les champs vides.
+        Appelé par le cron 'Compléter les liens d'achat manquants'.
+        """
+        link_fields = list(_PURCHASE_LINK_TEMPLATES)
+        domain = [
+            ('isbn', '!=', False),
+            ('isbn', '!=', ''),
+            '|', '|',
+            ('url_club_be', 'in', [False, '']),
+            ('url_amazon_be', 'in', [False, '']),
+            ('url_fnac_be', 'in', [False, '']),
+        ]
+        albums = self.search(domain)
+        for album in albums:
+            links = self._build_purchase_links(album.isbn)
+            missing = {
+                field: url
+                for field, url in links.items()
+                if not getattr(album, field)
+            }
+            if missing:
+                album.write(missing)
+
     def action_toggle_collection(self):
         self.ensure_one()
         self.dans_collection = not self.dans_collection
