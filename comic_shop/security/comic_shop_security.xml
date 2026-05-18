@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="module_category_comic_shop" model="ir.module.category">
+        <field name="name">Comic Shop</field>
+        <field name="sequence">101</field>
+    </record>
+
+    <!-- Privilege (obligatoire Odoo 19) -->
+
+    <record id="privilege_comic_shop" model="res.groups.privilege">
+        <field name="name">Comic Shop</field>
+        <field name="category_id" ref="module_category_comic_shop"/>
+        <field name="placeholder">Aucun accès</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- Groupe Shop Manager : implique le gestionnaire de collection -->
+
+    <record id="group_shop_manager" model="res.groups">
+        <field name="name">Gestionnaire Shop</field>
+        <field name="privilege_id" ref="privilege_comic_shop"/>
+        <field name="implied_ids" eval="[Command.link(ref('comics_collections.group_comic_manager'))]"/>
+        <field name="user_ids" eval="[Command.link(ref('base.user_root')), Command.link(ref('base.user_admin'))]"/>
+    </record>
+
+</odoo>

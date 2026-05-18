@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Héritage du formulaire album pour ajouter les boutons et l'onglet Shop -->
+
+    <record id="view_comic_album_form_shop" model="ir.ui.view">
+        <field name="name">comic.album.form.shop</field>
+        <field name="model">comic.album</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_album_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Boutons dans le button_box -->
+            <div name="button_box" position="inside">
+
+                <!-- Voir le produit — visible si lié, accessible à tous -->
+                <button name="action_view_product"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-shopping-cart"
+                        invisible="not product_tmpl_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Voir le produit</span>
+                    </div>
+                </button>
+
+                <!-- Créer le produit — visible si non lié, managers uniquement -->
+                <button name="action_create_product"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-plus-circle"
+                        invisible="product_tmpl_id"
+                        groups="comics_collections.group_comic_manager">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Créer produit</span>
+                    </div>
+                </button>
+
+                <!-- Resynchroniser — visible si lié, managers uniquement -->
+                <button name="action_resync_product"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-refresh"
+                        invisible="not product_tmpl_id"
+                        groups="comics_collections.group_comic_manager">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Resynchroniser</span>
+                    </div>
+                </button>
+
+                <!-- Dissocier — visible si lié, managers uniquement, avec confirmation -->
+                <button name="action_unlink_product"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-chain-broken"
+                        invisible="not product_tmpl_id"
+                        groups="comics_collections.group_comic_manager"
+                        confirm="Dissocier cet album du produit Odoo ? Le produit ne sera pas supprimé.">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text text-muted">Dissocier</span>
+                    </div>
+                </button>
+
+            </div>
+
+            <!-- Onglet Shop ajouté après l'onglet Synopsis -->
+            <page string="Synopsis" position="after">
+                <page string="Shop" invisible="not product_tmpl_id"
+                      groups="comics_collections.group_comic_manager">
+                    <group>
+                        <group string="Produit lié">
+                            <field name="product_tmpl_id" readonly="1"/>
+                            <field name="sync_product"/>
+                        </group>
+                        <group string="Info">
+                            <div colspan="2" class="text-muted">
+                                La synchronisation auto met à jour le produit
+                                quand l'ISBN change. Utilisez "Resynchroniser"
+                                pour forcer la mise à jour complète (nom,
+                                couverture, synopsis, barcode).
+                            </div>
+                        </group>
+                    </group>
+                </page>
+            </page>
+
+        </field>
+    </record>
+
+</odoo>

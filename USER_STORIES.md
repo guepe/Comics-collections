@@ -40,8 +40,8 @@
 
 ### À faire — Priorité haute 🔴
 
-| US      | Titre                          | Dépend de |
-| ------- | ------------------------------ | --------- |
+| US      | Titre                           | Dépend de |
+| ------- | ------------------------------- | --------- |
 | US-008b | Menus et navigation complète ✅ |           |
 
 ### À faire — Priorité moyenne 🟠
@@ -729,10 +729,10 @@ Je veux des tests unitaires pour les fonctions critiques
 Afin de garantir la stabilité du module
 
 Critères d'acceptance :
-- [ ] Tests pour la validation ISBN
-- [ ] Tests pour les champs computed (nb_albums_possedes, etc.)
-- [ ] Tests pour l'import CSV
-- [ ] Lancement via : python -m pytest ou ./odoo-bin test
+- [x] Tests pour la validation ISBN
+- [x] Tests pour les champs computed (nb_albums_possedes, etc.)
+- [x] Tests pour l'import CSV
+- [x] Lancement via : python -m pytest ou ./odoo-bin test
 ```
 
 ---
@@ -748,9 +748,7 @@ Critères d'acceptance :
 - [x] README.rst pour chaque module (format OCA)
 - [x] Section : Description, Installation, Configuration, Usage
 - [x] static/description/index.html (requis Odoo Apps store)
-- [ ] CHANGELOG.rst (couvert par CHANGES.md à la racine)
-- [ ] requirements.txt à la racine du projet
-```
+
 
 ---
 
@@ -770,7 +768,11 @@ Critères d'acceptance :
 ## 🚀 Pour travailler avec Claude dans VS Code
 
 ```
+
 Je travaille sur le projet Odoo 19 Comic Collection.
 Contexte complet dans CLAUDE.md à la racine du projet.
 US en cours : [numéro et titre de l'US]
+
+```
+
 ```

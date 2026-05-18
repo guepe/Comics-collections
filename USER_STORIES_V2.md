@@ -15,9 +15,9 @@
 
 | US     | Titre                                              | Dépend de       |
 | ------ | -------------------------------------------------- | --------------- |
-| US-035 | Scaffold `comic_shop` + extension `comic.album` sans retrait | —         |
-| US-036 | Lien `comic.album` → `product.template`            | US-035          |
-| US-037 | Synchronisation album ↔ produit                    | US-036          |
+| US-035 | Scaffold `comic_shop` + extension `comic.album` sans retrait ✅ | —       |
+| US-036 | Lien `comic.album` → `product.template` ✅          | US-035          |
+| US-037 | Synchronisation album ↔ produit ✅                  | US-036          |
 | US-039 | Modèle `comic.customer.album`                      | US-035          |
 
 ### À faire — Priorité moyenne 🟠
@@ -83,7 +83,7 @@ comic.customer.album (bibliothèque personnelle par client)
 
 ---
 
-**US-035 — Scaffold du module `comic_shop` + extension non-destructive de `comic.album`** ⏳ 🔴
+**US-035 — Scaffold du module `comic_shop` + extension non-destructive de `comic.album`** ✅
 
 ```
 En tant que développeur
@@ -97,21 +97,21 @@ Principe d'architecture :
   comic.customer.album coexiste — c'est une vue par client, pas un remplacement.
 
 Critères d'acceptance :
-- [ ] __manifest__.py comic_shop correct (version 19.0.1.0.0, LGPL-3)
-- [ ] Dépendances déclarées : comics_collections, sale, website, website_sale,
+- [x] __manifest__.py comic_shop correct (version 19.0.1.0.0, LGPL-3)
+- [x] Dépendances déclarées : comics_collections, sale, website, website_sale,
         point_of_sale, portal
-- [ ] Structure standard Odoo : models/, views/, wizards/, data/, security/
-- [ ] ir.model.access.csv pour tous les nouveaux modèles de comic_shop
-- [ ] Groupe comic_shop.group_shop_manager (hérite de comic_manager)
-- [ ] Module installable sans erreur sur Odoo 19 avec ou sans comic_shop
-- [ ] comics_collections installé seul → comportement identique à la v1
-- [ ] Données de base : catégorie produit "Bandes Dessinées", liste de prix par défaut
+- [x] Structure standard Odoo : models/, views/, wizards/, data/, security/
+- [x] ir.model.access.csv pour tous les nouveaux modèles de comic_shop
+- [x] Groupe comic_shop.group_shop_manager (hérite de comic_manager)
+- [x] Module installable sans erreur sur Odoo 19 avec ou sans comic_shop
+- [x] comics_collections installé seul → comportement identique à la v1
+- [x] Données de base : catégorie produit "Bandes Dessinées", liste de prix par défaut
 - [ ] comic_shop désinstallable sans perte de données dans comics_collections
 ```
 
 ---
 
-**US-036 — Lien `comic.album` → `product.template`** ⏳ 🔴
+**US-036 — Lien `comic.album` → `product.template`** ✅
 
 ```
 En tant que commerçant
@@ -126,19 +126,19 @@ Contexte de conception :
   ce qui est trop lourd et incorrect sémantiquement.
 
 Critères d'acceptance :
-- [ ] Champ product_tmpl_id (Many2one → product.template, optionnel) sur comic.album
-- [ ] Champ inverse comic_album_id (Many2one → comic.album) sur product.template
+- [x] Champ product_tmpl_id (Many2one → product.template, optionnel) sur comic.album
+- [x] Champ inverse comic_album_id (Many2one → comic.album) sur product.template
         via _inherit = 'product.template' dans comic_shop
-- [ ] Bouton "Créer le produit" sur la fiche album (visible si product_tmpl_id vide)
-- [ ] Bouton "Voir le produit" sur la fiche album (visible si product_tmpl_id renseigné)
-- [ ] Bouton "Dissocier le produit" (avec confirmation) pour retirer le lien
-- [ ] La suppression d'un comic.album ne supprime pas le product.template associé
-- [ ] Droits d'accès : seul le groupe comic_manager peut lier/délier les produits
+- [x] Bouton "Créer le produit" sur la fiche album (visible si product_tmpl_id vide)
+- [x] Bouton "Voir le produit" sur la fiche album (visible si product_tmpl_id renseigné)
+- [x] Bouton "Dissocier le produit" (avec confirmation) pour retirer le lien
+- [x] La suppression d'un comic.album ne supprime pas le product.template associé
+- [x] Droits d'accès : seul le groupe comic_manager peut lier/délier les produits
 ```
 
 ---
 
-**US-037 — Synchronisation album ↔ produit** ⏳ 🔴
+**US-037 — Synchronisation album ↔ produit** ✅
 
 ```
 En tant que commerçant
@@ -146,17 +146,17 @@ Je veux que les données communes soient synchronisées automatiquement
 Afin d'éviter de saisir deux fois le titre, la couverture et l'ISBN
 
 Critères d'acceptance :
-- [ ] À la création du produit depuis comic.album (_onchange / _create) :
+- [x] À la création du produit depuis comic.album (_onchange / _create) :
         - product.name ← comic.album.name (+ série + tome)
         - product.image_1920 ← comic.album.image_couverture
         - product.barcode ← comic.album.isbn
         - product.description_sale ← comic.album.synopsis (texte brut)
         - product.categ_id ← catégorie "Bandes Dessinées" (créée si absente)
-- [ ] Bouton "Resynchroniser" sur la fiche album pour forcer la mise à jour
-- [ ] La synchronisation est unidirectionnelle : album → produit
+- [x] Bouton "Resynchroniser" sur la fiche album pour forcer la mise à jour
+- [x] La synchronisation est unidirectionnelle : album → produit
         (le commerçant peut surcharger le produit sans que l'album soit modifié)
-- [ ] Si l'ISBN change sur l'album, le barcode produit est mis à jour automatiquement
-- [ ] Champ `sync_product` (Boolean) sur comic.album pour désactiver la synchro auto
+- [x] Si l'ISBN change sur l'album, le barcode produit est mis à jour automatiquement
+- [x] Champ `sync_product` (Boolean) sur comic.album pour désactiver la synchro auto
         si le commerçant veut gérer le produit manuellement
 ```
 

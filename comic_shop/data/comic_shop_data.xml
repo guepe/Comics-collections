@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Catégorie produit Odoo pour les BD -->
+        <record id="product_category_bd" model="product.category">
+            <field name="name">Bandes Dessinées</field>
+        </record>
+
+        <!-- Liste de prix par défaut pour le shop BD -->
+        <record id="pricelist_bd_default" model="product.pricelist">
+            <field name="name">Tarif Bandes Dessinées</field>
+            <field name="currency_id" ref="base.EUR"/>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>
