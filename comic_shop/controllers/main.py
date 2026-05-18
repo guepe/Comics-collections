@@ -10,8 +10,17 @@ class ComicShopController(WebsiteSale):
     def product(self, product, category='', search='', **kwargs):
         response = super().product(product, category=category, search=search, **kwargs)
 
+        if not hasattr(response, 'qcontext'):
+            return response
+
+        response.qcontext.update({
+            'comic_album': False,
+            'comic_other_tomes': [],
+            'comic_in_library': False,
+        })
+
         album = product.sudo().comic_album_id
-        if not album or not hasattr(response, 'qcontext'):
+        if not album:
             return response
 
         # Autres tomes de la même série ayant un produit (hors tome courant)

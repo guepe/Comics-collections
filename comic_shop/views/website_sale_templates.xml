@@ -7,14 +7,14 @@
         (fourni par ComicShopController.product()), donc sans impact
         sur les produits non-BD.
 
-        ⚠️ XPaths à vérifier sur l'instance Odoo 19 réelle si le layout
-        website_sale a évolué. Les templates ciblent des éléments stables
-        (h1, js_product) mais peuvent nécessiter un ajustement.
+        Odoo 19 place le titre produit dans le sous-template
+        website_sale.product_title. Les injections sont donc séparées
+        pour cibler des ancres stables.
     -->
 
-    <template id="product_bd_enrich" inherit_id="website_sale.product" name="BD — Enrichissement page produit">
+    <template id="product_bd_title_badges" inherit_id="website_sale.product_title" name="BD — Badges page produit">
 
-        <!-- 1. Badge "Tome X de la série Y" + badge "Dans votre bibliothèque" sous le h1 -->
+        <!-- Badge "Tome X de la série Y" + badge "Dans votre bibliothèque" sous le titre -->
         <xpath expr="//h1" position="after">
             <t t-if="comic_album">
                 <div class="mb-2 d-flex flex-wrap gap-2">
@@ -35,84 +35,84 @@
             </t>
         </xpath>
 
-        <!-- 2. Fiche BD détaillée — après le bloc principal js_product -->
-        <xpath expr="//div[hasclass('js_product')]" position="after">
+    </template>
+
+    <template id="product_bd_enrich" inherit_id="website_sale.product" name="BD — Enrichissement page produit">
+
+        <!-- Fiche BD détaillée — dans la colonne détails produit -->
+        <xpath expr="//div[@id='product_details']" position="inside">
             <t t-if="comic_album">
-                <section class="o_comic_bd_details container mt-4 mb-4">
-                    <div class="row">
-                        <div class="col-12">
-                            <h4 class="mb-3">Informations sur l'album</h4>
-                            <div class="row g-2">
-                                <t t-if="comic_album.serie_id">
-                                    <div class="col-md-4">
-                                        <strong>Série :</strong>
-                                        <span t-esc="comic_album.serie_id.name"/>
-                                    </div>
-                                </t>
-                                <t t-if="comic_album.tome">
-                                    <div class="col-md-4">
-                                        <strong>Tome :</strong>
-                                        <span t-esc="comic_album.tome"/>
-                                    </div>
-                                </t>
-                                <t t-if="comic_album.isbn">
-                                    <div class="col-md-4">
-                                        <strong>ISBN :</strong>
-                                        <span t-esc="comic_album.isbn"/>
-                                    </div>
-                                </t>
-                                <t t-if="comic_album.date_parution">
-                                    <div class="col-md-4">
-                                        <strong>Parution :</strong>
-                                        <span t-esc="comic_album.date_parution"/>
-                                    </div>
-                                </t>
-                                <t t-if="comic_album.nb_pages">
-                                    <div class="col-md-4">
-                                        <strong>Pages :</strong>
-                                        <span t-esc="comic_album.nb_pages"/>
-                                    </div>
-                                </t>
-                                <t t-if="comic_album.editeur_id">
-                                    <div class="col-md-4">
-                                        <strong>Éditeur :</strong>
-                                        <span t-esc="comic_album.editeur_id.name"/>
-                                    </div>
-                                </t>
+                <section class="o_comic_bd_details o_wsale_product_details_content_section mt-3 mb-4">
+                    <h4 class="mb-3">Informations sur l'album</h4>
+                    <div class="row g-2">
+                        <t t-if="comic_album.serie_id">
+                            <div class="col-md-6">
+                                <strong>Série :</strong>
+                                <span t-esc="comic_album.serie_id.name"/>
                             </div>
-
-                            <!-- Auteurs avec rôles -->
-                            <t t-if="comic_album.auteur_line_ids">
-                                <div class="mt-3">
-                                    <strong>Auteurs :</strong>
-                                    <ul class="list-unstyled ms-2 mb-0">
-                                        <t t-foreach="comic_album.auteur_line_ids" t-as="line">
-                                            <li>
-                                                <span t-esc="line.partner_id.name"/>
-                                                <span class="text-muted ms-1">
-                                                    (<span t-esc="line.role"/>)
-                                                </span>
-                                            </li>
-                                        </t>
-                                    </ul>
-                                </div>
-                            </t>
-
-                            <!-- Synopsis -->
-                            <t t-if="comic_album.synopsis">
-                                <div class="mt-3">
-                                    <strong>Synopsis :</strong>
-                                    <div class="mt-1" t-out="comic_album.synopsis"/>
-                                </div>
-                            </t>
-                        </div>
+                        </t>
+                        <t t-if="comic_album.tome">
+                            <div class="col-md-6">
+                                <strong>Tome :</strong>
+                                <span t-esc="comic_album.tome"/>
+                            </div>
+                        </t>
+                        <t t-if="comic_album.isbn">
+                            <div class="col-md-6">
+                                <strong>ISBN :</strong>
+                                <span t-esc="comic_album.isbn"/>
+                            </div>
+                        </t>
+                        <t t-if="comic_album.date_parution">
+                            <div class="col-md-6">
+                                <strong>Parution :</strong>
+                                <span t-esc="comic_album.date_parution"/>
+                            </div>
+                        </t>
+                        <t t-if="comic_album.nb_pages">
+                            <div class="col-md-6">
+                                <strong>Pages :</strong>
+                                <span t-esc="comic_album.nb_pages"/>
+                            </div>
+                        </t>
+                        <t t-if="comic_album.serie_id.editeur_id">
+                            <div class="col-md-6">
+                                <strong>Éditeur :</strong>
+                                <span t-esc="comic_album.serie_id.editeur_id.name"/>
+                            </div>
+                        </t>
                     </div>
+
+                    <!-- Auteurs avec rôles -->
+                    <t t-if="comic_album.auteur_line_ids">
+                        <div class="mt-3">
+                            <strong>Auteurs :</strong>
+                            <ul class="list-unstyled ms-2 mb-0">
+                                <t t-foreach="comic_album.auteur_line_ids" t-as="line">
+                                    <li>
+                                        <span t-esc="line.partner_id.name"/>
+                                        <span class="text-muted ms-1">
+                                            (<span t-esc="line.role"/>)
+                                        </span>
+                                    </li>
+                                </t>
+                            </ul>
+                        </div>
+                    </t>
+
+                    <!-- Synopsis -->
+                    <t t-if="comic_album.synopsis">
+                        <div class="mt-3">
+                            <strong>Synopsis :</strong>
+                            <div class="mt-1" t-out="comic_album.synopsis"/>
+                        </div>
+                    </t>
                 </section>
             </t>
         </xpath>
 
-        <!-- 3. Carrousel "Les autres tomes de la série" en bas de page -->
-        <xpath expr="//div[@id='wrap']" position="inside">
+        <!-- Carrousel "Les autres tomes de la série" sous la fiche produit -->
+        <xpath expr="//section[@id='product_detail']" position="after">
             <t t-if="comic_album and comic_other_tomes">
                 <section class="o_comic_other_tomes container mt-4 mb-5">
                     <h4 class="mb-3">
@@ -122,11 +122,11 @@
                     <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-3">
                         <t t-foreach="comic_other_tomes" t-as="other">
                             <div class="col">
-                                <a t-att-href="'/web#model=product.template&amp;id=%d' % other.product_tmpl_id.id"
+                                <a t-att-href="other.product_tmpl_id.website_url or '/shop'"
                                    class="text-decoration-none">
                                     <div class="card h-100 shadow-sm">
-                                        <t t-if="other.image_couverture">
-                                            <img t-att-src="'/web/image/comic.album/%d/image_couverture/200x270' % other.id"
+                                        <t t-if="other.product_tmpl_id.image_512">
+                                            <img t-att-src="'/web/image/product.template/%d/image_512' % other.product_tmpl_id.id"
                                                  class="card-img-top"
                                                  t-att-alt="other.name"
                                                  loading="lazy"/>

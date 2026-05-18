@@ -6,6 +6,36 @@
 
 ---
 
+## 2026-05-18 (suite) — Correctif US-040 XPaths website_sale Odoo 19
+
+### Correctif — Enrichissement page produit BD
+
+Erreur rencontrée au chargement de `comic_shop` :
+
+`Element '<xpath expr="//h1">' cannot be located in parent view`
+
+**Cause :** `comic_shop/views/website_sale_templates.xml` héritait de `website_sale.product` et cherchait directement `//h1`. En Odoo 19, le titre produit est rendu par le sous-template `website_sale.product_title`; le `<h1>` n'est donc pas présent directement dans la vue parent `website_sale.product`.
+
+**Fix appliqué :**
+
+- `comic_shop/views/website_sale_templates.xml` :
+  - séparation de l'injection badges dans un nouveau template `product_bd_title_badges` qui hérite de `website_sale.product_title`;
+  - remplacement de l'ancre `//div[hasclass('js_product')]` par `//div[@id='product_details']`;
+  - remplacement de l'ancre `//div[@id='wrap']` par `//section[@id='product_detail']`;
+  - correction de l'éditeur affiché : `comic_album.serie_id.editeur_id` au lieu de `comic_album.editeur_id`, champ inexistant sur `comic.album`;
+  - liens des autres tomes vers `product_tmpl_id.website_url` au lieu d'une URL backend `/web#...`;
+  - images des autres tomes servies via `product.template.image_512`, accessible côté webshop.
+- `comic_shop/controllers/main.py` :
+  - ajout de valeurs par défaut `comic_album=False`, `comic_other_tomes=[]`, `comic_in_library=False` pour éviter un rendu QWeb fragile sur les produits non-BD.
+
+Validation :
+
+- XPaths vérifiés contre le template officiel Odoo 19 `addons/website_sale/views/templates.xml`.
+- `xmllint --noout comic_shop/views/website_sale_templates.xml` OK
+- `python3 -m py_compile comic_shop/controllers/main.py` OK
+
+---
+
 ## 2026-05-18 (suite) — Correctif US-039 `has_product` searchable
 
 ### Correctif — Filtre "Sans produit shop" sur `comic.customer.album`
