@@ -115,6 +115,32 @@ Décisions techniques :
 - `html2plaintext` (odoo.tools) pour convertir le synopsis HTML en texte brut pour `description_sale`
 - L'onglet "Shop" est invisible si aucun produit n'est lié (évite de polluer l'UI des collectionneurs sans shop)
 
+### US-039 — Modèle `comic.customer.album`
+
+Fichiers créés :
+- `comic_shop/models/comic_customer_album.py` — nouveau modèle `comic.customer.album`
+  - Champs : partner_id, album_id, source, etat_lecture, dans_collection, dans_wishlist,
+    note, commentaire, date_ajout, sale_order_line_id
+  - `_sql_constraints` : unicité (partner_id, album_id)
+  - `has_product` (Boolean, computed+stored via `@api.depends('album_id.product_tmpl_id')`)
+- `comic_shop/views/comic_customer_album_views.xml`
+  - Vue list, form et search
+  - Action `action_comic_customer_album`
+  - Menu "Comic Shop" racine (group_shop_manager) + sous-menu "Bibliothèques clients"
+- `comic_shop/security/ir.model.access.csv` — 3 lignes d'accès :
+  - group_shop_manager : CRUD complet
+  - group_comic_user : lecture/écriture/création (pas de suppression)
+  - base.group_portal : lecture/écriture/création (pas de suppression)
+- `comic_shop/security/comic_shop_security.xml` — 3 record rules :
+  - comic_user : domain `partner_id = user.partner_id`
+  - portal : domain `partner_id = user.partner_id`
+  - shop_manager : domain `(1, '=', 1)` (tout voir)
+
+Décisions techniques :
+- `ondelete='cascade'` sur partner_id (si le client est supprimé, sa bibliothèque l'est aussi)
+- `ondelete='restrict'` sur album_id (on ne peut pas supprimer un album présent dans une bibliothèque)
+- Les utilisateurs portail ne peuvent pas supprimer leurs entrées (perm_unlink=0) — protection contre les pertes accidentelles
+
 ---
 
 ## 2026-05-15

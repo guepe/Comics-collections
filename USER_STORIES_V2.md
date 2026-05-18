@@ -18,7 +18,7 @@
 | US-035 | Scaffold `comic_shop` + extension `comic.album` sans retrait ✅ | —       |
 | US-036 | Lien `comic.album` → `product.template` ✅          | US-035          |
 | US-037 | Synchronisation album ↔ produit ✅                  | US-036          |
-| US-039 | Modèle `comic.customer.album`                      | US-035          |
+| US-039 | Modèle `comic.customer.album` ✅                   | US-035          |
 
 ### À faire — Priorité moyenne 🟠
 
@@ -171,7 +171,7 @@ Critères d'acceptance :
 
 ---
 
-**US-039 — Modèle `comic.customer.album`** ⏳ 🔴
+**US-039 — Modèle `comic.customer.album`** ✅
 
 ```
 En tant que développeur
@@ -179,7 +179,7 @@ Je veux créer le modèle comic.customer.album
 Afin de stocker la bibliothèque personnelle de chaque client
 
 Critères d'acceptance :
-- [ ] Modèle comic.customer.album avec champs :
+- [x] Modèle comic.customer.album avec champs :
         partner_id (Many2one → res.partner, requis)
         album_id (Many2one → comic.album, requis)
         source (Selection : achete_ici / achete_ailleurs / cadeau / inconnu)
@@ -190,14 +190,14 @@ Critères d'acceptance :
         commentaire (Text)
         date_ajout (Date, défaut aujourd'hui)
         sale_order_line_id (Many2one → sale.order.line, optionnel)
-- [ ] Contrainte unique : (partner_id, album_id) — un client ne peut avoir
+- [x] Contrainte unique : (partner_id, album_id) — un client ne peut avoir
         qu'une seule entrée par album
-- [ ] Vue list et form (back-office, accès manager)
-- [ ] Droits d'accès :
+- [x] Vue list et form (back-office, accès manager)
+- [x] Droits d'accès :
         - comic_user : lecture/écriture sur ses propres enregistrements (record rule)
         - comic_manager : accès total
         - portal : lecture/écriture sur ses propres enregistrements (via portail)
-- [ ] Computed field has_product (Boolean) : True si album_id.product_tmpl_id renseigné
+- [x] Computed field has_product (Boolean) : True si album_id.product_tmpl_id renseigné
 ```
 
 ---

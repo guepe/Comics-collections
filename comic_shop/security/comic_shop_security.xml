@@ -24,4 +24,37 @@
         <field name="user_ids" eval="[Command.link(ref('base.user_root')), Command.link(ref('base.user_admin'))]"/>
     </record>
 
+
+    <!-- Record rules : comic.customer.album -->
+
+    <record id="rule_customer_album_user" model="ir.rule">
+        <field name="name">Bibliothèque client : utilisateur voit ses propres entrées</field>
+        <field name="model_id" ref="model_comic_customer_album"/>
+        <field name="groups" eval="[(4, ref('comics_collections.group_comic_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+    </record>
+
+    <record id="rule_customer_album_portal" model="ir.rule">
+        <field name="name">Bibliothèque client : portail voit ses propres entrées</field>
+        <field name="model_id" ref="model_comic_customer_album"/>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+    </record>
+
+    <record id="rule_customer_album_manager" model="ir.rule">
+        <field name="name">Bibliothèque client : gestionnaire shop voit tout</field>
+        <field name="model_id" ref="model_comic_customer_album"/>
+        <field name="groups" eval="[(4, ref('comic_shop.group_shop_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
 </odoo>
+

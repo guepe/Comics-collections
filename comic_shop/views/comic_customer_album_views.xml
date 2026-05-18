@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue liste -->
+
+    <record id="view_comic_customer_album_list" model="ir.ui.view">
+        <field name="name">comic.customer.album.list</field>
+        <field name="model">comic.customer.album</field>
+        <field name="arch" type="xml">
+            <list string="Bibliothèques clients">
+                <field name="partner_id"/>
+                <field name="album_id"/>
+                <field name="source"/>
+                <field name="etat_lecture"/>
+                <field name="dans_collection"/>
+                <field name="dans_wishlist"/>
+                <field name="note"/>
+                <field name="date_ajout"/>
+                <field name="has_product" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire -->
+
+    <record id="view_comic_customer_album_form" model="ir.ui.view">
+        <field name="name">comic.customer.album.form</field>
+        <field name="model">comic.customer.album</field>
+        <field name="arch" type="xml">
+            <form string="Bibliothèque client">
+                <sheet>
+                    <group>
+                        <group string="Identification">
+                            <field name="partner_id"/>
+                            <field name="album_id"/>
+                            <field name="source"/>
+                            <field name="date_ajout"/>
+                        </group>
+                        <group string="Ma collection">
+                            <field name="dans_collection"/>
+                            <field name="dans_wishlist"/>
+                            <field name="etat_lecture"/>
+                            <field name="note"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="commentaire"
+                               placeholder="Notes personnelles du client..."
+                               nolabel="1"/>
+                    </group>
+                    <group string="Commercial" groups="comic_shop.group_shop_manager">
+                        <field name="has_product" readonly="1"/>
+                        <field name="sale_order_line_id" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue recherche -->
+
+    <record id="view_comic_customer_album_search" model="ir.ui.view">
+        <field name="name">comic.customer.album.search</field>
+        <field name="model">comic.customer.album</field>
+        <field name="arch" type="xml">
+            <search string="Bibliothèques clients">
+                <field name="partner_id" string="Client"/>
+                <field name="album_id" string="Album"/>
+                <filter string="Dans la collection" name="collection"
+                        domain="[('dans_collection', '=', True)]"/>
+                <filter string="En wishlist" name="wishlist"
+                        domain="[('dans_wishlist', '=', True)]"/>
+                <filter string="Acheté ici" name="achete_ici"
+                        domain="[('source', '=', 'achete_ici')]"/>
+                <filter string="Sans produit shop" name="sans_produit"
+                        domain="[('has_product', '=', False)]"/>
+                <group name="group_by">
+                    <filter string="Client" name="by_partner"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter string="Source" name="by_source"
+                            context="{'group_by': 'source'}"/>
+                    <filter string="État de lecture" name="by_etat"
+                            context="{'group_by': 'etat_lecture'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action fenêtre -->
+
+    <record id="action_comic_customer_album" model="ir.actions.act_window">
+        <field name="name">Bibliothèques clients</field>
+        <field name="res_model">comic.customer.album</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_comic_customer_album_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune bibliothèque client pour l'instant.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menus Comic Shop -->
+
+    <menuitem id="menu_comic_shop_root"
+              name="Comic Shop"
+              groups="comic_shop.group_shop_manager"
+              sequence="11"/>
+
+    <menuitem id="menu_comic_shop_customers"
+              name="Bibliothèques clients"
+              parent="menu_comic_shop_root"
+              action="action_comic_customer_album"
+              sequence="10"/>
+
+</odoo>

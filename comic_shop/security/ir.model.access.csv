@@ -1,1 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_comic_customer_album_manager,comic.customer.album manager,model_comic_customer_album,comic_shop.group_shop_manager,1,1,1,1
+access_comic_customer_album_user,comic.customer.album user,model_comic_customer_album,comics_collections.group_comic_user,1,1,1,0
+access_comic_customer_album_portal,comic.customer.album portal,model_comic_customer_album,base.group_portal,1,1,1,0

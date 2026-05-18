@@ -25,6 +25,7 @@
         'security/ir.model.access.csv',
         'data/comic_shop_data.xml',
         'views/comic_album_views.xml',
+        'views/comic_customer_album_views.xml',
     ],
     'installable': True,
     'application': False,
