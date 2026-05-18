@@ -455,6 +455,7 @@ Ces changements cassent silencieusement le code Odoo 17/18. À vérifier systém
 | `res.groups` | `users` | **Renommé** en `user_ids` |
 | `ir.actions.server` | `groups_id` | **Renommé** en `group_ids` |
 | Vues search | `<group expand string>` | `expand` et `string` **supprimés** — utiliser `<group name="group_by">` |
+| Vues héritées | `<page string="..." position="...">` | `string` interdit comme sélecteur — utiliser un `<xpath>` stable (`name`, champ enfant, classe) |
 
 ### Syntaxe Many2many en XML
 ```xml
@@ -503,7 +504,7 @@ Ces deux fichiers doivent être maintenus à jour **à la fin de chaque session 
 - Ne jamais cocher par anticipation
 - Si une US est partiellement faite, ne cocher que les cases correspondantes
 
-### `CHANGES.md` (à la racine `/Users/phde/Projects/odoo/`)
+### `CHANGE.md` (à la racine du projet)
 
 **Règle :** Ajouter une entrée datée à chaque fin de session couvrant **tout** ce qui a été fait.
 

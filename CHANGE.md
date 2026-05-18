@@ -6,6 +6,40 @@
 
 ---
 
+## 2026-05-18 (suite) — Correctif Odoo 19 vue héritée `comic_shop`
+
+### Correctif — Sélecteur `string` interdit dans une vue héritée
+
+Erreur rencontrée au chargement de `comic_shop` :
+
+`View inheritance may not use attribute 'string' as a selector`
+
+**Cause :** `comic_shop/views/comic_album_views.xml` ajoutait l'onglet "Shop" avec le raccourci d'héritage :
+
+```xml
+<page string="Synopsis" position="after">
+```
+
+Odoo 19 refuse désormais `string` comme sélecteur dans les vues héritées, car le libellé est traduisible et donc instable.
+
+**Fix appliqué :**
+
+- `comic_shop/views/comic_album_views.xml` : remplacement du sélecteur `page string="Synopsis"` par un XPath stable basé sur le champ enfant `synopsis` :
+
+```xml
+<xpath expr="//notebook/page[field[@name='synopsis']]" position="after">
+```
+
+- `CLAUDE.md` : ajout de cette incompatibilité dans la référence rapide Odoo 19.
+- `CLAUDE.md` : correction de la référence de handoff `CHANGES.md` → `CHANGE.md`.
+
+Validation :
+
+- `xmllint --noout comic_shop/views/comic_album_views.xml` OK
+- Recherche globale des fichiers XML : plus aucun héritage XML ne cible un élément via `string` + `position`
+
+---
+
 ## 2026-05-18 — US-035 Scaffold comic_shop + mise à jour CLAUDE.md
 
 ### CLAUDE.md — Mise à jour pour refléter l'état réel du projet

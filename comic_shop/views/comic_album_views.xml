@@ -63,7 +63,7 @@
             </div>
 
             <!-- Onglet Shop ajouté après l'onglet Synopsis -->
-            <page string="Synopsis" position="after">
+            <xpath expr="//notebook/page[field[@name='synopsis']]" position="after">
                 <page string="Shop" invisible="not product_tmpl_id"
                       groups="comics_collections.group_comic_manager">
                     <group>
@@ -81,7 +81,7 @@
                         </group>
                     </group>
                 </page>
-            </page>
+            </xpath>
 
         </field>
     </record>
