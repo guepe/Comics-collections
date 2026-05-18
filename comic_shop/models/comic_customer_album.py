@@ -58,10 +58,10 @@ class ComicCustomerAlbum(models.Model):
         help="True si l'album est lié à un produit vendable dans le shop.",
     )
 
-    _sql_constraints = [
-        ('unique_partner_album', 'UNIQUE(partner_id, album_id)',
-         "Ce client possède déjà une entrée pour cet album dans sa bibliothèque."),
-    ]
+    _unique_partner_album = models.Constraint(
+        'UNIQUE(partner_id, album_id)',
+        "Ce client possède déjà une entrée pour cet album dans sa bibliothèque.",
+    )
 
     @api.depends('album_id.product_tmpl_id')
     def _compute_has_product(self):

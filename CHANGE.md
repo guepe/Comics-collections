@@ -6,6 +6,36 @@
 
 ---
 
+## 2026-05-18 (suite) — Correctif Odoo 19 `models.Constraint`
+
+### Correctif — Remplacement de `_sql_constraints`
+
+Warning rencontré au chargement :
+
+`Model attribute '_sql_constraints' is no longer supported, please define models.Constraint on the model.`
+
+**Cause :** `comic_shop/models/comic_customer_album.py` utilisait encore l'ancienne API `_sql_constraints` pour l'unicité `(partner_id, album_id)`.
+
+**Fix appliqué :**
+
+- `comic_shop/models/comic_customer_album.py` : remplacement par l'API Odoo 19 :
+
+```python
+_unique_partner_album = models.Constraint(
+    'UNIQUE(partner_id, album_id)',
+    "Ce client possède déjà une entrée pour cet album dans sa bibliothèque.",
+)
+```
+
+- `CLAUDE.md` : ajout de l'incompatibilité Odoo 19 dans la référence rapide.
+
+Validation :
+
+- `python3 -m py_compile comic_shop/models/comic_customer_album.py` OK
+- Recherche globale : plus aucun `_sql_constraints` dans les fichiers Python
+
+---
+
 ## 2026-05-18 (suite) — Correctif US-040 XPaths website_sale Odoo 19
 
 ### Correctif — Enrichissement page produit BD
@@ -173,7 +203,7 @@ Fichiers créés :
 - `comic_shop/models/comic_customer_album.py` — nouveau modèle `comic.customer.album`
   - Champs : partner_id, album_id, source, etat_lecture, dans_collection, dans_wishlist,
     note, commentaire, date_ajout, sale_order_line_id
-  - `_sql_constraints` : unicité (partner_id, album_id)
+  - `models.Constraint` : unicité (partner_id, album_id)
   - `has_product` (Boolean, computed+stored via `@api.depends('album_id.product_tmpl_id')`)
 - `comic_shop/views/comic_customer_album_views.xml`
   - Vue list, form et search

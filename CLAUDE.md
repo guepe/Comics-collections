@@ -454,6 +454,7 @@ Ces changements cassent silencieusement le code Odoo 17/18. À vérifier systém
 | `res.groups` | `category_id` | **Supprimé** — utiliser `res.groups.privilege` (nouveau modèle) |
 | `res.groups` | `users` | **Renommé** en `user_ids` |
 | `ir.actions.server` | `groups_id` | **Renommé** en `group_ids` |
+| Modèles ORM | `_sql_constraints` | **Déprécié/non supporté** — déclarer des attributs `models.Constraint(...)` |
 | Vues search | `<group expand string>` | `expand` et `string` **supprimés** — utiliser `<group name="group_by">` |
 | Vues héritées | `<page string="..." position="...">` | `string` interdit comme sélecteur — utiliser un `<xpath>` stable (`name`, champ enfant, classe) |
 
