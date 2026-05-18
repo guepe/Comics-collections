@@ -17,20 +17,42 @@ Développer un ensemble de modules Odoo 19 (open source) permettant à un utilis
 
 ## 🗂️ Structure des modules
 
+> Les modules sont directement à la racine du projet (pas de dossier `addons/`).
+
 ```
-addons/
-├── comic_collection/        # Module principal
+Comics-collections/
+├── comics_collections/      # Module principal
+│   ├── models/
+│   ├── views/
+│   ├── wizards/
+│   │   └── comic_import_wizard.py   # Import CSV/XLS/XLSX (intégré ici, pas de module séparé)
+│   ├── data/
+│   │   ├── comic_genre_data.xml
+│   │   └── comic_cron_data.xml      # Cron quotidien enrichissement via datasource
+│   ├── demo/
+│   ├── security/
+│   └── static/
 ├── comic_datasource/        # Connecteur multi-sources (Google Books, Open Library, BnF, BDGest)
 │   ├── sources/
+│   │   ├── base.py
 │   │   ├── google_books.py
 │   │   ├── open_library.py
 │   │   ├── bnf.py
 │   │   └── bdgest.py        # fallback scraping
 │   ├── aggregator.py
+│   ├── models/
+│   ├── wizards/
+│   │   ├── comic_datasource_search_wizard.py
+│   │   ├── comic_serie_missing_wizard.py
+│   │   └── comic_serie_update_wizard.py
+│   └── data/
+│       ├── comic_datasource_config.xml
+│       └── comic_serie_cron.xml     # Cron hebdomadaire suivi séries
+├── comic_bdgest/            # Ancien module scraping BDGest (coexiste en attendant migration)
+│   ├── scraper/
+│   ├── models/
 │   └── wizards/
-│       └── search_wizard.py
-├── comic_ai/                # Connecteur IA Claude + OpenAI
-└── comic_import/            # Import CSV/XLS/XLSX
+└── comic_ai/                # Connecteur IA Claude + OpenAI (à implémenter — US-026 à US-029)
 ```
 
 ---
@@ -68,7 +90,7 @@ xmltodict
 
 ---
 
-## 📦 Module 1 — `comic_collection`
+## 📦 Module 1 — `comics_collections`
 
 ### Modèles
 
@@ -284,7 +306,7 @@ La recherche suit cette priorité automatique :
 | `comic_ai_provider` | `claude` / `openai` |
 | `comic_ai_claude_api_key` | Clé API Anthropic (champ password) |
 | `comic_ai_openai_api_key` | Clé API OpenAI (champ password) |
-| `comic_ai_model_claude` | ex: `claude-sonnet-4-20250514` |
+| `comic_ai_model_claude` | ex: `claude-sonnet-4-6` |
 | `comic_ai_model_openai` | ex: `gpt-4o` |
 | `comic_ai_language` | Langue par défaut des résumés (`fr` / `nl` / `en`) |
 
@@ -339,7 +361,7 @@ etat_lecture, note, url_couverture, url_club_be, url_amazon_be
 
 ### Structure d'un module
 ```
-comic_collection/
+comics_collections/
 ├── __init__.py
 ├── __manifest__.py
 ├── models/
@@ -349,19 +371,19 @@ comic_collection/
 │   ├── comic_auteur_line.py
 │   ├── comic_editeur.py
 │   ├── comic_genre.py
-│   └── comic_pret.py
+│   └── res_partner.py
 ├── views/
 │   ├── comic_serie_views.xml
 │   ├── comic_album_views.xml
-│   ├── comic_pret_views.xml
 │   ├── comic_genre_views.xml
 │   ├── comic_editeur_views.xml
 │   ├── comic_menu.xml
 │   └── comic_dashboard.xml
 ├── wizards/
-│   └── (wizards ici)
+│   └── comic_import_wizard.py  # Import CSV/XLS/XLSX
 ├── data/
-│   └── comic_genre_data.xml    # genres de base
+│   ├── comic_genre_data.xml    # genres de base
+│   └── comic_cron_data.xml     # cron enrichissement
 ├── demo/
 │   └── comic_demo.xml
 ├── security/
@@ -391,6 +413,18 @@ comic_collection/
 }
 ```
 
+### Identifiants de module XML
+
+Le module principal s'appelle **`comics_collections`** (avec "s"). Tous les identifiants XML doivent utiliser ce préfixe :
+```xml
+<!-- ✅ correct -->
+comics_collections.group_comic_user
+comics_collections.group_comic_manager
+
+<!-- ❌ incorrect -->
+comic_collection.group_comic_user
+```
+
 ---
 
 ## 🚦 Règles importantes pour Claude
@@ -408,6 +442,52 @@ comic_collection/
 11. Le module `comic_datasource` utilise UNIQUEMENT des APIs publiques et légales en priorité (Google Books, Open Library, BnF) — le scraping BDGest est un fallback de dernier recours avec avertissement légal explicite à l'utilisateur
 12. Les clés API Google Books sont gratuites mais doivent être créées sur console.cloud.google.com par l'utilisateur final — ne jamais hardcoder de clé
 13. L'aggregator fusionne les données de plusieurs sources — en cas de conflit, les métadonnées BnF sont prioritaires pour les BD francophones
+
+---
+
+## ⚠️ Incompatibilités Odoo 19 — référence rapide
+
+Ces changements cassent silencieusement le code Odoo 17/18. À vérifier systématiquement.
+
+| Modèle | Champ/attribut | Changement |
+|---|---|---|
+| `res.groups` | `category_id` | **Supprimé** — utiliser `res.groups.privilege` (nouveau modèle) |
+| `res.groups` | `users` | **Renommé** en `user_ids` |
+| `ir.actions.server` | `groups_id` | **Renommé** en `group_ids` |
+| Vues search | `<group expand string>` | `expand` et `string` **supprimés** — utiliser `<group name="group_by">` |
+
+### Syntaxe Many2many en XML
+```xml
+<!-- ✅ Odoo 19 -->
+<field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
+<field name="user_ids" eval="[Command.link(ref('base.user_root'))]"/>
+
+<!-- ❌ Odoo ≤18 (ne fonctionne plus) -->
+<field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+<field name="users" eval="[(4, ref('base.user_root'))]"/>
+```
+
+### Architecture groupes de sécurité Odoo 19
+```
+ir.module.category  ←  res.groups.privilege  ←  res.groups
+                          (nouveau modèle)
+```
+Les groupes doivent avoir un `privilege_id` pointant vers un `res.groups.privilege`.
+
+### Cache Docker
+Après modification d'un `.py` avec un volume Docker monté, supprimer le cache :
+```bash
+find /chemin/module -name "__pycache__" -exec rm -rf {} +
+```
+
+---
+
+## 🕐 Crons configurés
+
+| Module | Fichier | Fréquence | Action |
+|---|---|---|---|
+| `comics_collections` | `data/comic_cron_data.xml` | Quotidien (2h00) | Enrichissement des albums via datasource |
+| `comic_datasource` | `data/comic_serie_cron.xml` | Hebdomadaire | Vérification nouveaux tomes (séries suivies) |
 
 ---
 
