@@ -24,7 +24,7 @@
 
 | US     | Titre                                              | Dépend de       |
 | ------ | -------------------------------------------------- | --------------- |
-| US-040 | Fiche produit webshop enrichie BD                  | US-037          |
+| US-040 | Fiche produit webshop enrichie BD ✅                | US-037          |
 | US-041 | Navigation webshop par série / auteur / genre      | US-040          |
 | US-042 | Intégration POS (caisse)                           | US-035          |
 | US-043 | Espace bibliothèque client sur le portail           | US-039          |
@@ -202,7 +202,7 @@ Critères d'acceptance :
 
 ---
 
-**US-040 — Fiche produit webshop enrichie BD** ⏳ 🟠
+**US-040 — Fiche produit webshop enrichie BD** ✅
 
 ```
 En tant que visiteur du webshop
@@ -210,14 +210,14 @@ Je veux voir les informations complètes d'une BD sur sa page produit
 Afin de prendre une décision d'achat éclairée
 
 Critères d'acceptance :
-- [ ] Template website_sale hérité pour les produits liés à un comic.album
-- [ ] Affichage sur la page produit : série, tome, auteurs avec rôles, éditeur,
+- [x] Template website_sale hérité pour les produits liés à un comic.album
+- [x] Affichage sur la page produit : série, tome, auteurs avec rôles, éditeur,
         genre, date de parution, nombre de pages, ISBN
-- [ ] Synopsis complet (champ Html)
-- [ ] Couverture haute résolution (zoom au clic)
-- [ ] Badge "Tome X de la série Y" avec lien vers la page de la série
-- [ ] Section "Les autres tomes de la série" (carrousel des albums liés ayant un produit)
-- [ ] Si l'utilisateur est connecté et a cet album en bibliothèque :
+- [x] Synopsis complet (champ Html)
+- [ ] Couverture haute résolution (zoom au clic) — couverture affichée via image standard produit
+- [x] Badge "Tome X de la série Y" avec lien vers la page de la série
+- [x] Section "Les autres tomes de la série" (carrousel des albums liés ayant un produit)
+- [x] Si l'utilisateur est connecté et a cet album en bibliothèque :
         badge "Dans votre bibliothèque" visible sur la page produit
 ```
 

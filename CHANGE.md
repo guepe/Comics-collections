@@ -6,6 +6,28 @@
 
 ---
 
+## 2026-05-18 (suite) — Correctif US-039 `has_product` searchable
+
+### Correctif — Filtre "Sans produit shop" sur `comic.customer.album`
+
+Erreur rencontrée au chargement de `comic_shop` :
+
+`Unsearchable field "has_product" in path "has_product" in domain of <filter name="sans_produit">`
+
+**Cause :** la vue search `comic_shop/views/comic_customer_album_views.xml` filtre sur `has_product`, mais le champ calculé dans `comic_shop/models/comic_customer_album.py` n'était pas stocké en base. Un champ computed non stocké sans méthode `search` n'est pas utilisable dans un domaine de recherche Odoo.
+
+**Fix appliqué :**
+
+- `comic_shop/models/comic_customer_album.py` : ajout de `store=True` et `index=True` sur `has_product`.
+- Le filtre `sans_produit` reste donc fonctionnel sans modifier l'UX prévue par l'US-039.
+
+Validation :
+
+- `python3 -m py_compile comic_shop/models/comic_customer_album.py` OK
+- `xmllint --noout comic_shop/views/comic_customer_album_views.xml` OK
+
+---
+
 ## 2026-05-18 (suite) — Correctif Odoo 19 vue héritée `comic_shop`
 
 ### Correctif — Sélecteur `string` interdit dans une vue héritée
@@ -140,6 +162,26 @@ Décisions techniques :
 - `ondelete='cascade'` sur partner_id (si le client est supprimé, sa bibliothèque l'est aussi)
 - `ondelete='restrict'` sur album_id (on ne peut pas supprimer un album présent dans une bibliothèque)
 - Les utilisateurs portail ne peuvent pas supprimer leurs entrées (perm_unlink=0) — protection contre les pertes accidentelles
+
+### US-040 — Fiche produit webshop enrichie BD
+
+Fichiers créés :
+- `comic_shop/controllers/__init__.py` + `main.py`
+  - Classe `ComicShopController(WebsiteSale)` — hérite du controller website_sale
+  - Override `product()` : si `product.comic_album_id` existe, ajoute au qcontext :
+    - `comic_album` : l'album lié
+    - `comic_other_tomes` : albums de la même série ayant un produit (triés par tome)
+    - `comic_in_library` : booléen, True si le visiteur connecté a cet album en bibliothèque
+  - Guard `hasattr(response, 'qcontext')` pour ne pas planter si le rendu est différent
+- `comic_shop/views/website_sale_templates.xml`
+  - Hérite `website_sale.product`, toutes les injections wrappées en `t-if="comic_album"`
+  - XPath 1 — après `<h1>` : badge "Tome X — Série Y" (bg-primary) + badge "Dans votre bibliothèque" (bg-success, si `comic_in_library`)
+  - XPath 2 — après `div.js_product` : section "Informations sur l'album" (série, tome, ISBN, parution, pages, éditeur, auteurs+rôles, synopsis HTML)
+  - XPath 3 — dans `div#wrap` : section "Les autres tomes de la série" (grille Bootstrap responsive, lien vers page produit, miniature couverture via `/web/image/`)
+
+⚠️ **À valider sur Odoo 19 réel** : les XPaths `div.js_product` et `div#wrap` sont conservateurs mais peuvent nécessiter un ajustement selon la version exacte du template `website_sale.product` en Odoo 19. Si la page produit est rendue en OWL, le controller override peut ne pas fonctionner — à tester.
+
+Non implémenté : "Couverture haute résolution avec zoom au clic" — la couverture standard du produit (`image_1920`) est utilisée par website_sale nativement.
 
 ---
 

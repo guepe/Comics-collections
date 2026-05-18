@@ -53,6 +53,8 @@ class ComicCustomerAlbum(models.Model):
     has_product = fields.Boolean(
         string='Produit disponible',
         compute='_compute_has_product',
+        store=True,
+        index=True,
         help="True si l'album est lié à un produit vendable dans le shop.",
     )
 
