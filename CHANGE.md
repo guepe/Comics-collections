@@ -6,6 +6,55 @@
 
 ---
 
+## 2026-05-20 (suite 2) — US-041 correctif sidebar + US-041b pages auteurs/éditeurs
+
+### Correctif US-041 — Sidebar filtres BD non affichée
+
+**Cause :** `website_sale.products_attributes` en Odoo 19 est un **toggle de vue** (vérifié via `is_view_active()`), pas un template HTML. L'héritage `position="inside"` n'avait aucun effet visible.
+
+**Fix appliqué :**
+- `comic_shop/views/website_sale_shop_templates.xml` :
+  - Changement d'`inherit_id` : `website_sale.products_attributes` → `website_sale.sidebar_dropzone_at_bottom`.
+  - Xpath : `//div[@id='oe_structure_website_sale_sidebar_bottom']` position inside.
+  - Filtres redessinés en **liens `keep()`** (fonction native Odoo website_sale) au lieu de `<select>` → préserve tous les paramètres URL existants (search, attrib, price…) lors du changement de filtre BD.
+  - Interface : liste scrollable pour les séries/auteurs, badges cliquables pour genres/types, lien "Effacer" visible quand un filtre BD est actif.
+
+Structure Odoo 19 confirmée par inspection du container Docker :
+```
+aside#products_grid_before
+  sidebar_dropzone_at_top (oe_structure)
+  div.o_wsale_products_grid_before_rail
+    [catégories] [clear filters] [products_attributes_filters — vide, peuplé en JS]
+    [price filter]
+    sidebar_dropzone_at_bottom (oe_structure) ← notre injection
+```
+
+### US-041b — Pages auteurs et éditeurs ✅
+
+**Fichiers modifiés :**
+- `comic_shop/controllers/main.py` : 4 nouvelles routes :
+  - `GET /shop/auteurs` → liste des auteurs (tous rôles) groupés par partenaire avec nb albums et rôles.
+    Le controller construit un dict `{partner_id: {partner, roles: set, nb_albums, role_labels}}` trié par nom.
+  - `GET /shop/auteurs/<int:auteur_id>` → albums groupés par rôle (`by_role` dict) pour cet auteur.
+  - `GET /shop/editeurs` → liste des éditeurs déduite des séries ayant des albums avec produits.
+    Construit un dict `{editeur_id: {editeur, nb_series, nb_albums}}`.
+  - `GET /shop/editeurs/<int:editeur_id>` → séries de cet éditeur avec tomes disponibles.
+  - Constante `_ROLE_LABELS` au niveau module pour la traduction des rôles (scenariste → Scénariste…).
+- `comic_shop/views/website_sale_shop_templates.xml` : 4 nouveaux templates QWeb :
+  - `shop_auteurs_page` : grille Bootstrap card + avatar initiale si pas de photo.
+  - `shop_auteur_detail_page` : en-tête auteur (avatar, site web) + albums groupés par rôle.
+  - `shop_editeurs_page` : liste cards éditeurs avec pays, nb séries, nb albums.
+  - `shop_editeur_detail_page` : en-tête éditeur (pays, site web) + séries avec grilles de tomes.
+  - Mise à jour `shop_serie_detail_page` : badge éditeur cliquable → `/shop/editeurs/<id>`.
+- `comic_shop/views/website_sale_templates.xml` (page produit) :
+  - Série → lien `/shop/series/<id>`.
+  - Éditeur → lien `/shop/editeurs/<id>`.
+  - Auteurs → liens `/shop/auteurs/<id>` avec rôles en français (dict inline QWeb).
+
+---
+
+## 2026-05-20 — US-041 Navigation webshop par série / auteur / genre
+
 ## 2026-05-20 — US-041 Navigation webshop par série / auteur / genre
 
 ### US-041 — Navigation BD dans le webshop

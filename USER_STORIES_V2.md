@@ -26,6 +26,7 @@
 | ------ | -------------------------------------------------- | --------------- |
 | US-040 | Fiche produit webshop enrichie BD ✅                | US-037          |
 | US-041 | Navigation webshop par série / auteur / genre      | US-040          |
+| US-041b | Pages website auteurs et éditeurs                 | US-040, US-041  |
 | US-042 | Intégration POS (caisse)                           | US-035          |
 | US-043 | Espace bibliothèque client sur le portail           | US-039          |
 | US-044 | Ajout BD hors catalogue à la bibliothèque          | US-039          |
@@ -242,6 +243,31 @@ Critères d'acceptance :
 
 ---
 
+**US-041b — Pages website auteurs et éditeurs** ✅
+
+```
+En tant que visiteur du webshop
+Je veux accéder à des pages dédiées pour les auteurs et les éditeurs
+Afin de découvrir leurs BD disponibles et de naviguer naturellement dans le catalogue
+
+Critères d'acceptance :
+- [x] Page "/shop/auteurs" listant les auteurs ayant au moins une BD vendue sur le webshop
+- [x] Page "/shop/auteurs/<id>" affichant la fiche auteur et la liste de ses BD disponibles
+        avec rôle(s), série, tome, couverture, prix et lien vers la fiche produit
+- [x] Les noms d'auteurs affichés sur les pages produit pointent vers leur page dédiée
+- [x] Page "/shop/editeurs" listant les éditeurs ayant au moins une série ou BD disponible
+        sur le webshop, avec compteur de séries et d'albums
+- [x] Page "/shop/editeurs/<id>" affichant la fiche éditeur et la liste des séries / BD
+        disponibles chez cet éditeur, avec liens vers les séries et produits
+- [x] Les noms d'éditeurs affichés sur les pages produit et série pointent vers leur page dédiée
+- [x] Breadcrumbs cohérents :
+        Boutique > Auteurs > Auteur > BD
+        Boutique > Éditeurs > Éditeur > Série / BD
+- [x] Les pages publiques n'affichent que les albums liés à un product.template (product_tmpl_id != False)
+```
+
+---
+
 **US-042 — Intégration POS (caisse)** ⏳ 🟠
 
 ```
@@ -433,6 +459,7 @@ Critères d'acceptance :
 
 ```
 US-035 (scaffold comic_shop) → US-036 (lien produit) → US-037 (synchro) → US-040 (webshop)
+US-040 → US-041 (navigation webshop) → US-041b (pages auteurs et éditeurs)
 US-035 → US-039 (customer.album) → US-043 (portail) → US-044 (ajout BD)
 US-035 → US-042 (POS), US-045 (import commandes)
 US-039 → US-046 → US-047 → US-048

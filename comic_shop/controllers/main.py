@@ -2,9 +2,18 @@ from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
 
+_ROLE_LABELS = {
+    'scenariste': 'Scénariste',
+    'dessinateur': 'Dessinateur',
+    'coloriste': 'Coloriste',
+    'encreur': 'Encreur',
+    'traducteur': 'Traducteur',
+    'autre': 'Autre',
+}
+
 
 class ComicShopController(WebsiteSale):
-    """Étend website_sale : page produit BD, filtres sidebar, pages séries."""
+    """Étend website_sale : page produit BD, filtres sidebar, pages séries/auteurs/éditeurs."""
 
     # ── Page produit ──────────────────────────────────────────────────────────
 
@@ -55,7 +64,6 @@ class ComicShopController(WebsiteSale):
         bd_auteur_id = params.get('bd_auteur', '')
         bd_type = params.get('bd_type', '')
 
-        # Listes pour les selects de la sidebar
         bd_series = env['comic.serie'].sudo().search([
             ('album_ids.product_tmpl_id', '!=', False),
         ])
@@ -82,7 +90,6 @@ class ComicShopController(WebsiteSale):
             'bd_selected_type': bd_type,
         })
 
-        # Post-filtrage du résultat quand un filtre BD est actif
         if any([bd_serie_id, bd_genre_id, bd_auteur_id, bd_type]):
             album_domain = [('product_tmpl_id', '!=', False)]
             if bd_serie_id:
@@ -103,7 +110,7 @@ class ComicShopController(WebsiteSale):
 
         return response
 
-    # ── Page /shop/series ─────────────────────────────────────────────────────
+    # ── Pages séries ──────────────────────────────────────────────────────────
 
     @http.route('/shop/series', type='http', auth='public', website=True)
     def shop_series(self, **kwargs):
@@ -111,8 +118,6 @@ class ComicShopController(WebsiteSale):
             ('album_ids.product_tmpl_id', '!=', False),
         ])
         return request.render('comic_shop.shop_series_page', {'series': series})
-
-    # ── Page /shop/series/<id> ────────────────────────────────────────────────
 
     @http.route('/shop/series/<int:serie_id>', type='http', auth='public', website=True)
     def shop_serie_detail(self, serie_id, **kwargs):
@@ -126,4 +131,94 @@ class ComicShopController(WebsiteSale):
         return request.render('comic_shop.shop_serie_detail_page', {
             'serie': serie,
             'albums': albums,
+        })
+
+    # ── Pages auteurs ─────────────────────────────────────────────────────────
+
+    @http.route('/shop/auteurs', type='http', auth='public', website=True)
+    def shop_auteurs(self, **kwargs):
+        lines = request.env['comic.album.auteur.line'].sudo().search([
+            ('album_id.product_tmpl_id', '!=', False),
+        ])
+        auteur_map = {}
+        for line in lines:
+            pid = line.partner_id.id
+            if pid not in auteur_map:
+                auteur_map[pid] = {
+                    'partner': line.partner_id,
+                    'roles': set(),
+                    'nb_albums': 0,
+                }
+            auteur_map[pid]['roles'].add(line.role)
+            auteur_map[pid]['nb_albums'] += 1
+        auteurs = []
+        for data in sorted(auteur_map.values(), key=lambda d: (d['partner'].name or '').lower()):
+            data['role_labels'] = ', '.join(
+                _ROLE_LABELS.get(r, r)
+                for r in sorted(data['roles'])
+            )
+            auteurs.append(data)
+        return request.render('comic_shop.shop_auteurs_page', {'auteurs': auteurs})
+
+    @http.route('/shop/auteurs/<int:auteur_id>', type='http', auth='public', website=True)
+    def shop_auteur_detail(self, auteur_id, **kwargs):
+        auteur = request.env['res.partner'].sudo().browse(auteur_id)
+        if not auteur.exists():
+            return request.not_found()
+        lines = request.env['comic.album.auteur.line'].sudo().search([
+            ('partner_id', '=', auteur_id),
+            ('album_id.product_tmpl_id', '!=', False),
+        ], order='album_id.serie_id, album_id.tome')
+        # Regrouper par rôle
+        by_role = {}
+        for line in lines:
+            label = _ROLE_LABELS.get(line.role, line.role)
+            if label not in by_role:
+                by_role[label] = []
+            by_role[label].append(line.album_id)
+        return request.render('comic_shop.shop_auteur_detail_page', {
+            'auteur': auteur,
+            'by_role': by_role,
+            'nb_albums': sum(len(v) for v in by_role.values()),
+        })
+
+    # ── Pages éditeurs ────────────────────────────────────────────────────────
+
+    @http.route('/shop/editeurs', type='http', auth='public', website=True)
+    def shop_editeurs(self, **kwargs):
+        series_with_products = request.env['comic.serie'].sudo().search([
+            ('album_ids.product_tmpl_id', '!=', False),
+            ('editeur_id', '!=', False),
+        ])
+        editeur_map = {}
+        for serie in series_with_products:
+            eid = serie.editeur_id.id
+            if eid not in editeur_map:
+                editeur_map[eid] = {
+                    'editeur': serie.editeur_id,
+                    'nb_series': 0,
+                    'nb_albums': 0,
+                }
+            editeur_map[eid]['nb_series'] += 1
+            editeur_map[eid]['nb_albums'] += len(
+                serie.album_ids.filtered(lambda a: a.product_tmpl_id)
+            )
+        editeurs = sorted(
+            editeur_map.values(),
+            key=lambda d: (d['editeur'].name or '').lower()
+        )
+        return request.render('comic_shop.shop_editeurs_page', {'editeurs': editeurs})
+
+    @http.route('/shop/editeurs/<int:editeur_id>', type='http', auth='public', website=True)
+    def shop_editeur_detail(self, editeur_id, **kwargs):
+        editeur = request.env['comic.editeur'].sudo().browse(editeur_id)
+        if not editeur.exists():
+            return request.not_found()
+        series = request.env['comic.serie'].sudo().search([
+            ('editeur_id', '=', editeur_id),
+            ('album_ids.product_tmpl_id', '!=', False),
+        ])
+        return request.render('comic_shop.shop_editeur_detail_page', {
+            'editeur': editeur,
+            'series': series,
         })

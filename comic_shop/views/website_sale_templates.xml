@@ -64,7 +64,8 @@
                         <t t-if="comic_album.serie_id">
                             <div class="col-md-6">
                                 <strong>Série :</strong>
-                                <span t-esc="comic_album.serie_id.name"/>
+                                <a t-attf-href="/shop/series/{{ comic_album.serie_id.id }}"
+                                   t-esc="comic_album.serie_id.name"/>
                             </div>
                         </t>
                         <t t-if="comic_album.tome">
@@ -94,7 +95,8 @@
                         <t t-if="comic_album.serie_id.editeur_id">
                             <div class="col-md-6">
                                 <strong>Éditeur :</strong>
-                                <span t-esc="comic_album.serie_id.editeur_id.name"/>
+                                <a t-attf-href="/shop/editeurs/{{ comic_album.serie_id.editeur_id.id }}"
+                                   t-esc="comic_album.serie_id.editeur_id.name"/>
                             </div>
                         </t>
                     </div>
@@ -106,9 +108,10 @@
                             <ul class="list-unstyled ms-2 mb-0">
                                 <t t-foreach="comic_album.auteur_line_ids" t-as="line">
                                     <li>
-                                        <span t-esc="line.partner_id.name"/>
+                                        <a t-attf-href="/shop/auteurs/{{ line.partner_id.id }}"
+                                           t-esc="line.partner_id.name"/>
                                         <span class="text-muted ms-1">
-                                            (<span t-esc="line.role"/>)
+                                            (<t t-esc="dict(scenariste='Scénariste', dessinateur='Dessinateur', coloriste='Coloriste', encreur='Encreur', traducteur='Traducteur', autre='Autre').get(line.role, line.role)"/>)
                                         </span>
                                     </li>
                                 </t>
