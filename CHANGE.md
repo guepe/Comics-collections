@@ -6,6 +6,94 @@
 
 ---
 
+## 2026-05-20 (suite 8) — Enrichissement données démo (Thorgal + Complainte)
+
+### Données démo — `comics_collections/demo/comic_demo.xml`
+
+**Contexte :** Le script `tools/load_demo_series.py` contenait des données structurées pour
+Thorgal et Complainte des Landes perdues. Ces données ont été migrées vers le fichier de démo
+XML officiel (`demo/` + déclaration dans le manifest) pour être chargées automatiquement lors
+de l'installation avec l'option "Charger les données de démonstration".
+
+**Ajouts :**
+
+- **9 auteurs** (res.partner) : `partner_rosinski` (Grzegorz Rosinski), `partner_sente`
+  (Yves Sente), `partner_dorison` (Xavier Dorison), `partner_yann` (Yann), `partner_vignaux`
+  (Fred Vignaux), `partner_dufaux` (Jean Dufaux), `partner_delaby` (Philippe Delaby),
+  `partner_tillier` (Béatrice Tillier), `partner_teng` (Paul Teng).
+
+- **1 éditeur** : `editeur_le_lombard` (Le Lombard, Belgique).
+
+- **Série Thorgal** (`serie_thorgal`) : genre aventure, éditeur Le Lombard, avec synopsis.
+  **29 albums** (T5, T10–T12, T15–T16, T18, T20–T22, T24–T43) avec `auteur.line` par arc :
+  - Scénariste : Van Hamme (T5–T29) → Sente (T30–T34) → Dorison (T35) → Yann (T36–T43)
+  - Dessinateur : Rosinski (T5–T36) → Vignaux (T37–T43)
+
+- **Série Complainte des Landes perdues** (`serie_complainte`) : genre fantastique, éditeur
+  Dargaud. **15 albums** (T1–T11, T13–T16) avec `auteur.line` par cycle :
+  - Scénariste : Dufaux (tous les tomes)
+  - Dessinateur : Rosinski (T1–T4) → Delaby (T5–T8) → Tillier (T9–T11) → Teng (T13–T16)
+
+**Conversion ISBN-10 → EAN-13 :** Les albums antérieurs à 2007 (ISBN-10 uniquement) ont eu
+leur EAN-13 calculé manuellement : préfixe "978" + 9 premiers chiffres + chiffre de contrôle
+EAN-13 (algorithme alternance ×1/×3).
+
+---
+
+## 2026-05-20 (suite 7) — Icône portail Ma Bibliothèque BD
+
+### Asset — Icône SVG bibliothèque client
+
+**Fichiers modifiés :**
+- `comic_shop/static/src/img/icon_library.svg` :
+  - remplacement par un SVG standalone en `viewBox="0 0 100 100"` ;
+  - dessin d'une étagère de BD vue de face avec 4 albums, couleurs vives dont le violet
+    Odoo `#875A7B`, planche bois et badge doré `#F5C518` ;
+  - suppression des commentaires et de tout texte visuel pour garder un asset pur et lisible
+    en petite taille ;
+  - validation XML avec `xmllint --noout`.
+
+---
+
+## 2026-05-20 (suite 6) — US-045 auto-ajout bibliothèque à l'achat + correctif CSS assets + bugs portail
+
+### US-045 — Import automatique depuis les commandes client ✅
+
+**Fichiers créés :**
+- `comic_shop/models/comic_sale_order.py` : hérite `sale.order`, override `action_confirm()`.
+  - `_add_comics_to_library()` : vérifie `partner.comic_auto_library`, puis pour chaque ligne
+    liée à un `comic.album` : créer ou mettre à jour `comic.customer.album` (source, sale_order_line).
+  - `_notify_customer_library_added()` : `message_post` sur la commande avec `partner_ids=[partner.id]`
+    → envoie un email au client listant les BD ajoutées avec lien "Voir ma bibliothèque".
+- `comic_shop/models/res_partner.py` : champ `comic_auto_library` (Boolean, default=True) sur
+  `res.partner` — permet au client de désactiver l'ajout automatique.
+- `comic_shop/models/__init__.py` : ajout `from . import comic_sale_order` et `from . import res_partner`.
+
+**Portail (/my/library) :**
+- `comic_shop/controllers/portal.py` :
+  - Route POST `/my/library/preferences` : écrit `comic_auto_library` sur `request.env.user.partner_id`
+    (sudo après vérification implicite via `request.env.user`).
+  - Deux bugs corrigés :
+    1. `_prepare_home_portal_values` ne filtrait pas par partner → compteur affichait tous les clients
+    2. `my_library()` — domain ne filtrait pas par `partner_id` → montrait les albums de TOUS les clients
+- `comic_shop/views/portal_library_templates.xml` : toggle switch "Ajouter automatiquement mes achats"
+  (form POST vers `/my/library/preferences`, `onchange="this.form.submit()"`), inséré juste avant
+  les filtres dans la page `/my/library`.
+
+### Correctif assets CSS (ValueError: External ID not found)
+
+**Cause :** `website_sale_shop_templates.xml` contenait un template héritant de
+`website.assets_frontend` — cet ID XML n'existe pas en Odoo 19 → upgrade bloqué.
+
+**Fix :**
+- `comic_shop/views/website_sale_shop_templates.xml` : suppression du template `shop_bd_assets_css`.
+- `comic_shop/static/src/css/comic_shop.css` : nouveau fichier CSS avec `object-fit:contain`
+  pour les images de la grille shop Odoo.
+- `comic_shop/__manifest__.py` : ajout clé `assets` → `web.assets_frontend` →
+  `'comic_shop/static/src/css/comic_shop.css'`. Méthode correcte pour injecter du CSS en Odoo 19.
+
+---
+
 ## 2026-05-20 (suite 5) — US-043 bibliothèque portail + menus shop + correctifs sidebar/button_box
 
 ### US-043 — Espace bibliothèque client sur le portail ✅

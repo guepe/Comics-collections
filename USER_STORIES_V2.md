@@ -32,7 +32,7 @@
 | US-042 | Intégration POS (caisse)                           | US-035          |
 | US-043 | Espace bibliothèque client sur le portail ✅         | US-039          |
 | US-044 | Ajout BD hors catalogue à la bibliothèque          | US-039          |
-| US-045 | Import automatique depuis commandes client          | US-039, US-035  |
+| US-045 | Import automatique depuis commandes client ✅       | US-039, US-035  |
 
 ### À faire — Priorité basse 🟡
 
@@ -379,7 +379,7 @@ Critères d'acceptance :
 
 ---
 
-**US-045 — Import automatique depuis les commandes client** ⏳ 🟠
+**US-045 — Import automatique depuis les commandes client** ✅
 
 ```
 En tant que client
@@ -387,15 +387,17 @@ Je veux que mes achats dans le shop soient automatiquement ajoutés à ma biblio
 Afin de ne pas avoir à ajouter manuellement ce que j'ai acheté ici
 
 Critères d'acceptance :
-- [ ] À la confirmation d'une commande (état 'sale'), pour chaque ligne de commande
+- [x] À la confirmation d'une commande (état 'sale'), pour chaque ligne de commande
         dont le produit est lié à un comic.album :
         créer (ou mettre à jour) un comic.customer.album avec :
         source = achete_ici, dans_collection = True, sale_order_line_id = ligne
-- [ ] Idem pour les ventes POS (US-042)
-- [ ] Si l'album est déjà dans la bibliothèque du client (acheté ailleurs),
+- [ ] Idem pour les ventes POS (US-042) — dépend de US-042 non implémentée
+- [x] Si l'album est déjà dans la bibliothèque du client (acheté ailleurs),
         mettre à jour source → achete_ici sans écraser note ni commentaire
-- [ ] Email de confirmation d'achat inclut un lien "Voir dans ma bibliothèque"
-- [ ] Le client peut désactiver cette fonctionnalité dans ses préférences portail
+- [x] Email de confirmation d'achat inclut un lien "Voir dans ma bibliothèque"
+        (via message_post sur la commande avec partner_ids → email envoyé au client)
+- [x] Le client peut désactiver cette fonctionnalité dans ses préférences portail
+        (toggle switch dans /my/library, champ comic_auto_library sur res.partner)
 ```
 
 ---

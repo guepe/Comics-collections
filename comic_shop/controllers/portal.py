@@ -8,7 +8,9 @@ class ComicLibraryPortal(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         if 'library_count' in counters:
-            values['library_count'] = request.env['comic.customer.album'].search_count([])
+            values['library_count'] = request.env['comic.customer.album'].search_count([
+                ('partner_id', '=', request.env.user.partner_id.id),
+            ])
         return values
 
     # ── /my/library — index ─────────────────────────────────────────────────
@@ -17,7 +19,7 @@ class ComicLibraryPortal(CustomerPortal):
     def my_library(self, filter='all', sort='date', view='kanban', **kw):
         partner = request.env.user.partner_id
 
-        domain = []
+        domain = [('partner_id', '=', partner.id)]
         if filter == 'collection':
             domain.append(('dans_collection', '=', True))
         elif filter == 'wishlist':
@@ -36,7 +38,9 @@ class ComicLibraryPortal(CustomerPortal):
         else:
             records = records.sorted(key=lambda r: r.date_ajout or '', reverse=True)
 
-        all_records = request.env['comic.customer.album'].search([])
+        all_records = request.env['comic.customer.album'].search([
+            ('partner_id', '=', partner.id),
+        ])
         nb_series = len(all_records.mapped('album_id.serie_id').filtered('id'))
 
         return request.render('comic_shop.portal_library_index', {
@@ -97,4 +101,15 @@ class ComicLibraryPortal(CustomerPortal):
         record = request.env['comic.customer.album'].browse(cust_album_id)
         if record.exists() and record.partner_id == request.env.user.partner_id:
             record.sudo().unlink()
+        return request.redirect('/my/library')
+
+    # ── /my/library/preferences — POST ─────────────────────────────────────
+
+    @http.route(
+        '/my/library/preferences',
+        type='http', auth='user', methods=['POST'], website=True, csrf=True,
+    )
+    def my_library_preferences(self, **post):
+        auto_library = bool(post.get('comic_auto_library'))
+        request.env.user.partner_id.sudo().write({'comic_auto_library': auto_library})
         return request.redirect('/my/library')
