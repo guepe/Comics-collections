@@ -7,8 +7,7 @@
         <field name="model">comic.serie</field>
         <field name="inherit_id" ref="comics_collections.view_comic_serie_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[hasclass('oe_title')]" position="before">
-                <div name="button_box" class="oe_button_box">
+            <xpath expr="//div[@name='button_box']" position="inside">
                     <button name="action_update_albums_from_datasource"
                             type="object"
                             class="oe_stat_button"
@@ -27,7 +26,6 @@
                             <span class="o_stat_text">manquants</span>
                         </div>
                     </button>
-                </div>
             </xpath>
         </field>
     </record>

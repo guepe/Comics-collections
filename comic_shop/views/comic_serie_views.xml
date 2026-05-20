@@ -9,34 +9,27 @@
         <field name="inherit_id" ref="comics_collections.view_comic_serie_form"/>
         <field name="arch" type="xml">
 
-            <!-- Button box avant le titre -->
-            <xpath expr="//div[hasclass('oe_title')]" position="before">
-                <div class="oe_button_box" name="button_box">
-
-                    <!-- Stat : albums avec produit lié -->
+            <!-- Injection dans le button_box déclaré par la vue de base -->
+            <xpath expr="//div[@name='button_box']" position="inside">
                     <button name="action_view_products"
                             type="object"
                             class="oe_stat_button"
                             icon="fa-shopping-cart"
-                            invisible="nb_albums_with_product == 0"
-                            groups="comics_collections.group_comic_manager">
+                            invisible="nb_albums_with_product == 0">
                         <field name="nb_albums_with_product" widget="statinfo"
                                string="Produit(s)"/>
                     </button>
-
-                    <!-- Bouton création en masse -->
                     <button name="action_create_products_from_isbn"
                             type="object"
                             class="oe_stat_button"
                             icon="fa-upload"
                             invisible="nb_albums_isbn_sans_produit == 0"
-                            groups="comics_collections.group_comic_manager"
                             confirm="Créer automatiquement un produit pour chaque album de cette série ayant un ISBN ?">
                         <field name="nb_albums_isbn_sans_produit" widget="statinfo"
                                string="À publier"/>
                     </button>
-
-                </div>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="after">
                 <field name="nb_albums_with_product" invisible="1"/>
                 <field name="nb_albums_isbn_sans_produit" invisible="1"/>
             </xpath>
