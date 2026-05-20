@@ -32,6 +32,11 @@
         'views/website_sale_shop_templates.xml',
         'views/portal_library_templates.xml',
     ],
+    'assets': {
+        'web.assets_frontend': [
+            'comic_shop/static/src/css/comic_shop.css',
+        ],
+    },
     'installable': True,
     'application': False,
     'auto_install': False,

@@ -1,0 +1,6 @@
+/* Couvertures BD non rognées dans la grille shop Odoo */
+.oe_product .oe_product_image img,
+.o_wsale_product_grid .o_product_image img {
+    object-fit: contain !important;
+    background: #f5f5f5;
+}

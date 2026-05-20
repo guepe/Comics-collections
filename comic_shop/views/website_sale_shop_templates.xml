@@ -176,11 +176,18 @@
                                    class="text-decoration-none text-dark">
                                     <div class="card h-100 shadow-sm border-0">
 
-                                        <!-- Couverture de la série -->
+                                        <!-- Couverture de la série (fallback : premier album publié) -->
                                         <t t-if="serie.image_couverture">
                                             <img t-att-src="'/web/image/comic.serie/%d/image_couverture/300x400' % serie.id"
                                                  class="card-img-top"
-                                                 style="object-fit:cover;height:280px;"
+                                                 style="object-fit:contain;background:#f5f5f5;height:280px;"
+                                                 t-att-alt="serie.name"
+                                                 loading="lazy"/>
+                                        </t>
+                                        <t t-elif="cover_urls.get(serie.id)">
+                                            <img t-att-src="cover_urls[serie.id]"
+                                                 class="card-img-top"
+                                                 style="object-fit:contain;background:#f5f5f5;height:280px;"
                                                  t-att-alt="serie.name"
                                                  loading="lazy"/>
                                         </t>
@@ -315,7 +322,7 @@
                                         <t t-if="album.product_tmpl_id.image_512">
                                             <img t-att-src="'/web/image/product.template/%d/image_512' % album.product_tmpl_id.id"
                                                  class="card-img-top"
-                                                 style="object-fit:cover;height:200px;"
+                                                 style="object-fit:contain;background:#f5f5f5;height:200px;"
                                                  t-att-alt="album.name"
                                                  loading="lazy"/>
                                         </t>
@@ -485,7 +492,7 @@
                                             <t t-if="album.product_tmpl_id.image_512">
                                                 <img t-att-src="'/web/image/product.template/%d/image_512' % album.product_tmpl_id.id"
                                                      class="card-img-top"
-                                                     style="object-fit:cover;height:180px;"
+                                                     style="object-fit:contain;background:#f5f5f5;height:180px;"
                                                      t-att-alt="album.name"
                                                      loading="lazy"/>
                                             </t>
@@ -666,7 +673,7 @@
                                                 <t t-if="album.product_tmpl_id.image_512">
                                                     <img t-att-src="'/web/image/product.template/%d/image_512' % album.product_tmpl_id.id"
                                                          class="card-img-top"
-                                                         style="object-fit:cover;height:140px;"
+                                                         style="object-fit:contain;background:#f5f5f5;height:140px;"
                                                          t-att-alt="album.name"
                                                          loading="lazy"/>
                                                 </t>

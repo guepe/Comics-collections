@@ -143,7 +143,20 @@ class ComicShopController(WebsiteSale):
         series = request.env['comic.serie'].sudo().search([
             ('album_ids.product_tmpl_id', '!=', False),
         ])
-        return request.render('comic_shop.shop_series_page', {'series': series})
+        # Fallback cover : premier album publié (tome le plus bas) si la série n'a pas d'image
+        cover_urls = {}
+        for serie in series.filtered(lambda s: not s.image_couverture):
+            first = serie.album_ids.filtered(
+                lambda a: a.product_tmpl_id and a.product_tmpl_id.image_512
+            ).sorted(key=lambda a: a.tome or 0)
+            if first:
+                cover_urls[serie.id] = (
+                    f'/web/image/product.template/{first[0].product_tmpl_id.id}/image_512'
+                )
+        return request.render('comic_shop.shop_series_page', {
+            'series': series,
+            'cover_urls': cover_urls,
+        })
 
     @http.route('/shop/series/<int:serie_id>', type='http', auth='public', website=True)
     def shop_serie_detail(self, serie_id, **kwargs):
