@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Entrée dans le portail home ──────────────────────────────────── -->
+
+    <template id="portal_my_home_library"
+              name="Ma Bibliothèque BD"
+              inherit_id="portal.portal_my_home"
+              customize_show="True"
+              priority="30">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_client_category_enable" t-value="True"/>
+        </xpath>
+        <div id="portal_client_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/web/static/img/icons/fa-book.svg'"/>
+                <t t-set="title">Ma Bibliothèque BD</t>
+                <t t-set="url" t-value="'/my/library'"/>
+                <t t-set="placeholder_count" t-value="'library_count'"/>
+            </t>
+        </div>
+    </template>
+
+    <!-- ── /my/library — page index ─────────────────────────────────────── -->
+
+    <template id="portal_library_index" name="Ma Bibliothèque BD">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Ma Bibliothèque</t>
+            </t>
+
+            <div class="o_portal_wrap">
+                <div class="container mt-4 mb-5">
+
+                    <!-- Compteurs -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-4 col-md-2">
+                            <div class="card border-0 bg-primary text-white text-center py-3 rounded-3 shadow-sm">
+                                <div class="fs-3 fw-bold"><t t-esc="nb_albums"/></div>
+                                <div class="small">Album<t t-if="nb_albums != 1">s</t></div>
+                            </div>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <div class="card border-0 bg-secondary text-white text-center py-3 rounded-3 shadow-sm">
+                                <div class="fs-3 fw-bold"><t t-esc="nb_series"/></div>
+                                <div class="small">Série<t t-if="nb_series != 1">s</t></div>
+                            </div>
+                        </div>
+                        <div class="col-4 col-md-2">
+                            <div class="card border-0 bg-warning text-dark text-center py-3 rounded-3 shadow-sm">
+                                <div class="fs-3 fw-bold"><t t-esc="nb_reading"/></div>
+                                <div class="small">En cours</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtres + tri + vue -->
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+
+                        <!-- Filtres onglets -->
+                        <div class="d-flex gap-1 flex-wrap">
+                            <a t-attf-href="/my/library?filter=all&amp;sort={{ sort }}&amp;view={{ view_mode }}"
+                               t-attf-class="btn btn-sm {{ 'btn-primary' if filter == 'all' else 'btn-outline-secondary' }}">
+                                Tous
+                            </a>
+                            <a t-attf-href="/my/library?filter=collection&amp;sort={{ sort }}&amp;view={{ view_mode }}"
+                               t-attf-class="btn btn-sm {{ 'btn-primary' if filter == 'collection' else 'btn-outline-secondary' }}">
+                                <i class="fa fa-check-circle me-1"/>Ma collection
+                            </a>
+                            <a t-attf-href="/my/library?filter=wishlist&amp;sort={{ sort }}&amp;view={{ view_mode }}"
+                               t-attf-class="btn btn-sm {{ 'btn-primary' if filter == 'wishlist' else 'btn-outline-secondary' }}">
+                                <i class="fa fa-heart me-1"/>Wishlist
+                            </a>
+                            <a t-attf-href="/my/library?filter=reading&amp;sort={{ sort }}&amp;view={{ view_mode }}"
+                               t-attf-class="btn btn-sm {{ 'btn-primary' if filter == 'reading' else 'btn-outline-secondary' }}">
+                                <i class="fa fa-book-open me-1"/>En cours
+                            </a>
+                        </div>
+
+                        <!-- Tri + toggle vue -->
+                        <div class="d-flex gap-2 align-items-center">
+                            <select class="form-select form-select-sm" style="width:auto;"
+                                    t-attf-onchange="window.location='/my/library?filter={{ filter }}&amp;sort='+this.value+'&amp;view={{ view_mode }}'">
+                                <option value="date" t-att-selected="'selected' if sort == 'date' else None">Date d'ajout</option>
+                                <option value="serie" t-att-selected="'selected' if sort == 'serie' else None">Série</option>
+                                <option value="title" t-att-selected="'selected' if sort == 'title' else None">Titre</option>
+                            </select>
+                            <div class="btn-group btn-group-sm">
+                                <a t-attf-href="/my/library?filter={{ filter }}&amp;sort={{ sort }}&amp;view=kanban"
+                                   t-attf-class="btn {{ 'btn-primary' if view_mode == 'kanban' else 'btn-outline-secondary' }}"
+                                   title="Vue grille">
+                                    <i class="fa fa-th-large"/>
+                                </a>
+                                <a t-attf-href="/my/library?filter={{ filter }}&amp;sort={{ sort }}&amp;view=list"
+                                   t-attf-class="btn {{ 'btn-primary' if view_mode == 'list' else 'btn-outline-secondary' }}"
+                                   title="Vue liste">
+                                    <i class="fa fa-list"/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vide -->
+                    <t t-if="not records">
+                        <div class="alert alert-info text-center py-5">
+                            <i class="fa fa-book fa-3x text-muted mb-3 d-block"/>
+                            <p class="mb-2">Votre bibliothèque est vide.</p>
+                            <a href="/shop" class="btn btn-primary">
+                                <i class="fa fa-shopping-cart me-1"/>Découvrir le catalogue
+                            </a>
+                        </div>
+                    </t>
+
+                    <!-- Vue Kanban -->
+                    <t t-if="records and view_mode == 'kanban'">
+                        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
+                            <t t-foreach="records" t-as="rec">
+                                <div class="col">
+                                    <a t-attf-href="/my/library/{{ rec.id }}"
+                                       class="text-decoration-none text-dark d-block h-100">
+                                        <div class="card h-100 shadow-sm border-0 position-relative">
+
+                                            <!-- Badge état lecture -->
+                                            <t t-if="rec.etat_lecture == 'en_cours'">
+                                                <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-1" style="font-size:0.65rem;">En cours</span>
+                                            </t>
+                                            <t t-elif="rec.etat_lecture == 'lu'">
+                                                <span class="badge bg-success position-absolute top-0 end-0 m-1" style="font-size:0.65rem;">Lu ✓</span>
+                                            </t>
+
+                                            <!-- Couverture -->
+                                            <t t-if="rec.album_id.product_tmpl_id and rec.album_id.product_tmpl_id.image_512">
+                                                <img t-att-src="'/web/image/product.template/%d/image_512' % rec.album_id.product_tmpl_id.id"
+                                                     class="card-img-top"
+                                                     style="object-fit:cover;height:200px;"
+                                                     t-att-alt="rec.album_id.name"
+                                                     loading="lazy"/>
+                                            </t>
+                                            <t t-elif="rec.album_id.image_couverture">
+                                                <img t-att-src="'/web/image/comic.album/%d/image_couverture' % rec.album_id.id"
+                                                     class="card-img-top"
+                                                     style="object-fit:cover;height:200px;"
+                                                     t-att-alt="rec.album_id.name"
+                                                     loading="lazy"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="bg-light d-flex align-items-center justify-content-center"
+                                                     style="height:200px;">
+                                                    <i class="fa fa-book fa-2x text-muted"/>
+                                                </div>
+                                            </t>
+
+                                            <div class="card-body p-2">
+                                                <t t-if="rec.album_id.serie_id">
+                                                    <div class="text-muted" style="font-size:0.7rem;">
+                                                        <t t-esc="rec.album_id.serie_id.name"/>
+                                                    </div>
+                                                </t>
+                                                <div class="fw-semibold lh-sm" style="font-size:0.8rem;">
+                                                    <t t-if="rec.album_id.tome">T<t t-esc="rec.album_id.tome"/> — </t>
+                                                    <t t-esc="rec.album_id.name"/>
+                                                </div>
+                                                <!-- Étoiles note -->
+                                                <t t-if="rec.note">
+                                                    <div class="text-warning mt-1" style="font-size:0.7rem;">
+                                                        <t t-set="full_stars" t-value="int(rec.note)"/>
+                                                        <t t-foreach="range(full_stars)" t-as="s">★</t>
+                                                        <t t-foreach="range(5 - full_stars)" t-as="s">☆</t>
+                                                    </div>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+
+                    <!-- Vue Liste -->
+                    <t t-if="records and view_mode == 'list'">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width:60px;"></th>
+                                        <th>Album</th>
+                                        <th>Série</th>
+                                        <th>État</th>
+                                        <th>Note</th>
+                                        <th>Ajouté le</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="records" t-as="rec">
+                                        <tr>
+                                            <td>
+                                                <a t-attf-href="/my/library/{{ rec.id }}">
+                                                    <t t-if="rec.album_id.product_tmpl_id and rec.album_id.product_tmpl_id.image_128">
+                                                        <img t-att-src="'/web/image/product.template/%d/image_128' % rec.album_id.product_tmpl_id.id"
+                                                             style="width:48px;height:48px;object-fit:cover;"
+                                                             class="rounded"/>
+                                                    </t>
+                                                    <t t-elif="rec.album_id.image_couverture">
+                                                        <img t-att-src="'/web/image/comic.album/%d/image_couverture' % rec.album_id.id"
+                                                             style="width:48px;height:48px;object-fit:cover;"
+                                                             class="rounded"/>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="bg-light rounded d-flex align-items-center justify-content-center"
+                                                             style="width:48px;height:48px;">
+                                                            <i class="fa fa-book text-muted"/>
+                                                        </div>
+                                                    </t>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a t-attf-href="/my/library/{{ rec.id }}"
+                                                   class="fw-semibold text-decoration-none text-dark">
+                                                    <t t-if="rec.album_id.tome">T<t t-esc="rec.album_id.tome"/> — </t>
+                                                    <t t-esc="rec.album_id.name"/>
+                                                </a>
+                                            </td>
+                                            <td class="text-muted small">
+                                                <t t-esc="rec.album_id.serie_id.name or '—'"/>
+                                            </td>
+                                            <td>
+                                                <t t-if="rec.etat_lecture == 'non_lu'">
+                                                    <span class="badge bg-light text-dark border">Non lu</span>
+                                                </t>
+                                                <t t-elif="rec.etat_lecture == 'en_cours'">
+                                                    <span class="badge bg-warning text-dark">En cours</span>
+                                                </t>
+                                                <t t-else="">
+                                                    <span class="badge bg-success">Lu ✓</span>
+                                                </t>
+                                            </td>
+                                            <td class="text-warning">
+                                                <t t-if="rec.note">
+                                                    <t t-set="full_stars" t-value="int(rec.note)"/>
+                                                    <t t-foreach="range(full_stars)" t-as="s">★</t>
+                                                    <t t-foreach="range(5 - full_stars)" t-as="s">☆</t>
+                                                </t>
+                                                <t t-else="">—</t>
+                                            </td>
+                                            <td class="text-muted small">
+                                                <t t-esc="rec.date_ajout"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── /my/library/<id> — fiche détail ──────────────────────────────── -->
+
+    <template id="portal_library_detail" name="Détail album — Ma Bibliothèque">
+        <t t-call="portal.portal_layout">
+            <t t-set="o_portal_fullwidth_alert" t-value="False"/>
+
+            <div class="o_portal_wrap">
+                <div class="container mt-4 mb-5">
+
+                    <!-- Fil d'Ariane -->
+                    <nav aria-label="breadcrumb" class="mb-4">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/my/home">Mon compte</a></li>
+                            <li class="breadcrumb-item"><a href="/my/library">Ma Bibliothèque</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <t t-esc="record.album_id.name"/>
+                            </li>
+                        </ol>
+                    </nav>
+
+                    <div class="row g-4">
+
+                        <!-- Colonne couverture -->
+                        <div class="col-md-3 col-lg-2">
+                            <t t-if="record.album_id.product_tmpl_id and record.album_id.product_tmpl_id.image_512">
+                                <img t-att-src="'/web/image/product.template/%d/image_512' % record.album_id.product_tmpl_id.id"
+                                     class="img-fluid rounded shadow w-100"
+                                     t-att-alt="record.album_id.name"/>
+                            </t>
+                            <t t-elif="record.album_id.image_couverture">
+                                <img t-att-src="'/web/image/comic.album/%d/image_couverture' % record.album_id.id"
+                                     class="img-fluid rounded shadow w-100"
+                                     t-att-alt="record.album_id.name"/>
+                            </t>
+                            <t t-else="">
+                                <div class="bg-light rounded shadow d-flex align-items-center justify-content-center"
+                                     style="min-height:200px;">
+                                    <i class="fa fa-book fa-4x text-muted"/>
+                                </div>
+                            </t>
+                            <t t-if="record.album_id.product_tmpl_id">
+                                <a t-att-href="record.album_id.product_tmpl_id.website_url or '/shop'"
+                                   class="btn btn-outline-primary btn-sm w-100 mt-3">
+                                    <i class="fa fa-shopping-cart me-1"/>Voir dans le shop
+                                </a>
+                            </t>
+                        </div>
+
+                        <!-- Colonne infos album -->
+                        <div class="col-md-9 col-lg-10">
+
+                            <!-- Titre -->
+                            <h1 class="mb-1">
+                                <t t-if="record.album_id.tome">
+                                    Tome <t t-esc="record.album_id.tome"/> —
+                                </t>
+                                <t t-esc="record.album_id.name"/>
+                            </h1>
+
+                            <t t-if="record.album_id.serie_id">
+                                <a t-attf-href="/shop/series/{{ record.album_id.serie_id.id }}"
+                                   class="text-muted text-decoration-none fs-5">
+                                    <i class="fa fa-book me-1"/>
+                                    <t t-esc="record.album_id.serie_id.name"/>
+                                </a>
+                            </t>
+
+                            <!-- Métadonnées album -->
+                            <div class="row g-2 mt-3 mb-4">
+                                <t t-if="record.album_id.auteur_line_ids">
+                                    <div class="col-12">
+                                        <span class="text-muted small">Auteurs : </span>
+                                        <t t-foreach="record.album_id.auteur_line_ids" t-as="line">
+                                            <span class="badge bg-light text-dark border">
+                                                <t t-esc="line.partner_id.name"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </t>
+                                <t t-if="record.album_id.date_parution">
+                                    <div class="col-auto">
+                                        <span class="text-muted small">Parution : </span>
+                                        <span class="small"><t t-esc="record.album_id.date_parution"/></span>
+                                    </div>
+                                </t>
+                                <t t-if="record.album_id.nb_pages">
+                                    <div class="col-auto">
+                                        <span class="text-muted small">Pages : </span>
+                                        <span class="small"><t t-esc="record.album_id.nb_pages"/></span>
+                                    </div>
+                                </t>
+                            </div>
+
+                            <!-- Formulaire mes données personnelles -->
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-header bg-light fw-semibold">
+                                    <i class="fa fa-user me-1"/>Mes données personnelles
+                                </div>
+                                <div class="card-body">
+                                    <form t-attf-action="/my/library/{{ record.id }}/update"
+                                          method="post">
+                                        <input type="hidden" name="csrf_token"
+                                               t-att-value="request.csrf_token()"/>
+
+                                        <div class="row g-3">
+
+                                            <!-- État de lecture -->
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold">État de lecture</label>
+                                                <select name="etat_lecture" class="form-select">
+                                                    <option value="non_lu"
+                                                            t-att-selected="'selected' if record.etat_lecture == 'non_lu' else None">
+                                                        Non lu
+                                                    </option>
+                                                    <option value="en_cours"
+                                                            t-att-selected="'selected' if record.etat_lecture == 'en_cours' else None">
+                                                        En cours de lecture
+                                                    </option>
+                                                    <option value="lu"
+                                                            t-att-selected="'selected' if record.etat_lecture == 'lu' else None">
+                                                        Lu ✓
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <!-- Note -->
+                                            <div class="col-md-4">
+                                                <label class="form-label fw-semibold">Ma note (0–5)</label>
+                                                <input type="number" name="note"
+                                                       class="form-control"
+                                                       min="0" max="5" step="0.5"
+                                                       t-att-value="record.note or ''"/>
+                                            </div>
+
+                                            <!-- Checkboxes -->
+                                            <div class="col-md-4 d-flex flex-column justify-content-end gap-2 pb-1">
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="dans_collection"
+                                                           value="1" class="form-check-input"
+                                                           id="chk_collection"
+                                                           t-att-checked="'checked' if record.dans_collection else None"/>
+                                                    <label class="form-check-label" for="chk_collection">
+                                                        Dans ma collection
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="dans_wishlist"
+                                                           value="1" class="form-check-input"
+                                                           id="chk_wishlist"
+                                                           t-att-checked="'checked' if record.dans_wishlist else None"/>
+                                                    <label class="form-check-label" for="chk_wishlist">
+                                                        Sur ma wishlist
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Commentaire -->
+                                            <div class="col-12">
+                                                <label class="form-label fw-semibold">Mon commentaire</label>
+                                                <textarea name="commentaire" class="form-control" rows="3"
+                                                          placeholder="Mes notes personnelles sur cet album…">
+                                                    <t t-esc="record.commentaire or ''"/>
+                                                </textarea>
+                                            </div>
+
+                                            <!-- Bouton enregistrer -->
+                                            <div class="col-12 d-flex justify-content-between align-items-center">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa fa-save me-1"/>Enregistrer
+                                                </button>
+                                                <a href="/my/library" class="btn btn-outline-secondary btn-sm">
+                                                    <i class="fa fa-arrow-left me-1"/>Retour à la bibliothèque
+                                                </a>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Bouton suppression -->
+                            <div class="mt-3">
+                                <form t-attf-action="/my/library/{{ record.id }}/remove"
+                                      method="post"
+                                      onsubmit="return confirm('Supprimer cet album de votre bibliothèque ?')">
+                                    <input type="hidden" name="csrf_token"
+                                           t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fa fa-trash me-1"/>Supprimer de ma bibliothèque
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

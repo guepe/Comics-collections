@@ -6,6 +6,78 @@
 
 ---
 
+## 2026-05-20 (suite 5) — US-043 bibliothèque portail + menus shop + correctifs sidebar/button_box
+
+### US-043 — Espace bibliothèque client sur le portail ✅
+
+**Fichiers créés :**
+- `comic_shop/controllers/portal.py` : hérite `CustomerPortal`, 4 routes :
+  - `GET /my/library` — index avec filtres (`all/collection/wishlist/reading`), tri (`date/serie/title`),
+    toggle vue (`kanban/list`), compteurs albums/séries/en cours.
+  - `GET /my/library/<id>` — fiche détail, vérifie `record.partner_id == request.env.user.partner_id`.
+  - `POST /my/library/<id>/update` — met à jour `etat_lecture`, `note`, `commentaire`,
+    `dans_collection`, `dans_wishlist` via `record.sudo().write(vals)`.
+  - `POST /my/library/<id>/remove` — supprime via `record.sudo().unlink()`
+    (access CSV interdit `unlink` portal → sudo après vérification ownership manuelle).
+- `comic_shop/views/portal_library_templates.xml` : 3 templates QWeb :
+  - `portal_my_home_library` : hérite `portal.portal_my_home` avec le pattern Odoo 19
+    (`portal_client_category_enable` + injection dans `div#portal_client_category` via
+    `portal.portal_docs_entry`). Pas le pattern naïf `//div[hasclass('o_portal_docs')]`.
+  - `portal_library_index` : compteurs colorés, filtres-tabs, sort select + toggle grille/liste,
+    vue kanban (cartes couverture + badge état + étoiles) et vue liste (table Bootstrap).
+  - `portal_library_detail` : info album (auteurs, date, pages), formulaire POST avec CSRF,
+    champs `etat_lecture` (select), `note` (number 0–5 step 0.5), checkboxes, textarea.
+    Bouton "Supprimer" avec `onsubmit="return confirm(…)"`.
+
+**Fichiers modifiés :**
+- `comic_shop/controllers/__init__.py` : ajout `from . import portal`.
+- `comic_shop/__manifest__.py` : ajout `'views/portal_library_templates.xml'`.
+
+**Erreurs rencontrées et solutions :**
+1. **Template non chargé silencieusement** : upgrade via XML-RPC après modification du manifest
+   ne recharge pas les nouveaux fichiers si le worker Odoo garde une copie en mémoire.
+   Solution : `docker restart odoo-web` complet, puis l'upgrade suivant charge le fichier.
+2. **`portal_my_home` pattern Odoo 19** : le pattern simple `//div[hasclass('o_portal_docs')]`
+   position="inside" ne fonctionne pas — Odoo 19 utilise des catégories nommées
+   (`portal_client_category`, `portal_alert_category`…). Il faut activer la catégorie via
+   `<t t-set="portal_client_category_enable" t-value="True"/>` puis injecter dedans.
+3. **`t-attf-onchange` oublié** : le `onchange` du select de tri utilisait `{{ filter }}`
+   sans `t-attf-` → variables non interpolées. Corrigé en `t-attf-onchange`.
+
+### Correctifs menus shop et sidebar
+
+**Menu website "Catalogue BD" :**
+- `comic_shop/data/comic_shop_data.xml` : ajout de 4 `website.menu` records (noupdate=1) :
+  "Catalogue BD" (parent = Top Menu), "Séries", "Auteurs", "Maisons d'édition" en sous-items.
+
+**Sidebar filtres auteurs :**
+- `comic_shop/views/website_sale_shop_templates.xml` : police des auteurs passée de `small`
+  (0.875em dans un contexte déjà petit) à `0.85rem` fixe. Cap à 8 auteurs + lien "+ N de plus".
+  En-tête avec "Tous →" vers `/shop/auteurs`. Boutons bas de sidebar : Séries + Auteurs + Éditeurs.
+
+### Correctif button_box série (double button_box)
+
+**Cause :** `comic_datasource` et `comic_shop` créaient chacun un `<div name="button_box">`
+via leur propre xpath, résultant en deux button_boxes séparés dans la fiche série.
+
+**Fix :**
+- `comics_collections/views/comic_serie_views.xml` : ajout `<div name="button_box" class="oe_button_box"/>` vide dans la vue de base (premier enfant de `<sheet>`).
+- `comic_datasource/views/comic_datasource_serie_inherit_views.xml` : xpath changé en
+  `//div[@name='button_box']` position="inside".
+- `comic_shop/views/comic_serie_views.xml` : idem, plus injection des champs invisibles
+  via `//div[@name='button_box']` position="after".
+
+### Correctif groupes button_box série invisibles
+
+**Cause :** boutons `action_view_products` et `action_create_products_from_isbn` portaient
+`groups="comics_collections.group_comic_manager"` — admin n'étant dans aucun groupe comic,
+les boutons étaient invisibles pour tout le monde en dev.
+**Fix :** suppression des `groups=` sur les stat buttons (sécurité assurée par `invisible=` et
+le droit d'accès modèle). Correction aussi du xpath pour positionner le button_box comme premier
+enfant de `<sheet>` (avant `image_couverture`).
+
+---
+
 ## 2026-05-20 (suite 4) — Sync image album↔produit, smartbuttons, création produits en masse, import démo
 
 ### Correctif — ValueError ORM `order` avec dot-notation dans `shop_auteur_detail`

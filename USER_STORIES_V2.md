@@ -30,7 +30,7 @@
 | US-041 | Navigation webshop par série / auteur / genre ✅    | US-040          |
 | US-041b | Pages website auteurs et éditeurs ✅               | US-040, US-041  |
 | US-042 | Intégration POS (caisse)                           | US-035          |
-| US-043 | Espace bibliothèque client sur le portail           | US-039          |
+| US-043 | Espace bibliothèque client sur le portail ✅         | US-039          |
 | US-044 | Ajout BD hors catalogue à la bibliothèque          | US-039          |
 | US-045 | Import automatique depuis commandes client          | US-039, US-035  |
 
@@ -332,7 +332,7 @@ Critères d'acceptance :
 
 ---
 
-**US-043 — Espace bibliothèque client sur le portail** ⏳ 🟠
+**US-043 — Espace bibliothèque client sur le portail** ✅
 
 ```
 En tant que client connecté sur le portail
@@ -340,15 +340,16 @@ Je veux accéder à ma bibliothèque personnelle de BD
 Afin de gérer ma collection et voir mes albums
 
 Critères d'acceptance :
-- [ ] Menu "Ma Bibliothèque" dans le portail client (/my/library)
-- [ ] Vue liste et vue kanban (couvertures) de mes albums
-- [ ] Filtres : Tous / Dans ma collection / Wishlist / En cours de lecture
-- [ ] Tri : par série, par date d'ajout, par titre
-- [ ] Sur chaque carte : couverture, titre, série, tome, état de lecture, note
-- [ ] Clic sur un album → fiche détail avec mes données personnelles (note, commentaire)
-- [ ] Bouton "Mettre à jour" (état de lecture, note, commentaire)
-- [ ] Bouton "Supprimer de ma bibliothèque" (avec confirmation)
-- [ ] Compteurs en haut de page : X albums / Y séries / Z en cours de lecture
+- [x] Menu "Ma Bibliothèque" dans le portail client (/my/library)
+        entrée "Ma Bibliothèque BD" sur /my/home (pattern portal_client_category Odoo 19)
+- [x] Vue liste et vue kanban (couvertures) de mes albums
+- [x] Filtres : Tous / Dans ma collection / Wishlist / En cours de lecture
+- [x] Tri : par série, par date d'ajout, par titre
+- [x] Sur chaque carte : couverture, titre, série, tome, état de lecture, note (étoiles)
+- [x] Clic sur un album → fiche détail avec mes données personnelles (note, commentaire)
+- [x] Bouton "Mettre à jour" (état de lecture, note, commentaire, dans_collection, dans_wishlist)
+- [x] Bouton "Supprimer de ma bibliothèque" (avec confirmation JS)
+- [x] Compteurs en haut de page : X albums / Y séries / Z en cours de lecture
 ```
 
 ---
