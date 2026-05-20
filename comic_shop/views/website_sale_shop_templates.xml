@@ -121,6 +121,7 @@
     <!-- ── Page /shop/series — toutes les séries disponibles ── -->
     <template id="shop_series_page" name="BD — Toutes les séries">
         <t t-call="website.layout">
+            <t t-set="main_object" t-value="website"/>
             <div id="wrap" class="o_wsale_products_page">
                 <div class="container mt-4 mb-5">
 
@@ -203,6 +204,7 @@
     <!-- ── Page /shop/series/<id> — tomes d'une série ── -->
     <template id="shop_serie_detail_page" name="BD — Détail série">
         <t t-call="website.layout">
+            <t t-set="main_object" t-value="serie"/>
             <div id="wrap">
                 <div class="container mt-4 mb-5">
 
@@ -336,6 +338,7 @@
     <!-- ── Page /shop/auteurs — liste des auteurs ── -->
     <template id="shop_auteurs_page" name="BD — Tous les auteurs">
         <t t-call="website.layout">
+            <t t-set="main_object" t-value="website"/>
             <div id="wrap">
                 <div class="container mt-4 mb-5">
 
@@ -403,6 +406,7 @@
     <!-- ── Page /shop/auteurs/<id> — fiche auteur ── -->
     <template id="shop_auteur_detail_page" name="BD — Fiche auteur">
         <t t-call="website.layout">
+            <t t-set="main_object" t-value="auteur"/>
             <div id="wrap">
                 <div class="container mt-4 mb-5">
 
@@ -502,6 +506,7 @@
     <!-- ── Page /shop/editeurs — liste des éditeurs ── -->
     <template id="shop_editeurs_page" name="BD — Tous les éditeurs">
         <t t-call="website.layout">
+            <t t-set="main_object" t-value="website"/>
             <div id="wrap">
                 <div class="container mt-4 mb-5">
 
@@ -562,6 +567,7 @@
     <!-- ── Page /shop/editeurs/<id> — fiche éditeur ── -->
     <template id="shop_editeur_detail_page" name="BD — Fiche éditeur">
         <t t-call="website.layout">
+            <t t-set="main_object" t-value="editeur"/>
             <div id="wrap">
                 <div class="container mt-4 mb-5">
 

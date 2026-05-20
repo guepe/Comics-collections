@@ -11,6 +11,18 @@ _ROLE_LABELS = {
     'autre': 'Autre',
 }
 
+_BD_FILTER_PARAMS = ('bd_serie_id', 'bd_genre', 'bd_auteur', 'bd_type')
+
+
+def _bd_params(params):
+    """Retourne (serie_id, genre_id, auteur_id, type) depuis les GET params."""
+    return (
+        params.get('bd_serie_id', ''),
+        params.get('bd_genre', ''),
+        params.get('bd_auteur', ''),
+        params.get('bd_type', ''),
+    )
+
 
 class ComicShopController(WebsiteSale):
     """Étend website_sale : page produit BD, filtres sidebar, pages séries/auteurs/éditeurs."""
@@ -48,7 +60,45 @@ class ComicShopController(WebsiteSale):
         })
         return response
 
-    # ── Shop : injection des filtres BD dans le contexte ─────────────────────
+    # ── Filtrage BD : intercepté au bon niveau (avant calcul de bins) ─────────
+
+    def _shop_lookup_products(self, options, post, search, website):
+        """Override pour filtrer par série / genre / auteur / type BD."""
+        fuzzy_term, product_count, search_result = super()._shop_lookup_products(
+            options, post, search, website
+        )
+        bd_serie_id, bd_genre_id, bd_auteur_id, bd_type = _bd_params(request.params)
+        if not any([bd_serie_id, bd_genre_id, bd_auteur_id, bd_type]):
+            return fuzzy_term, product_count, search_result
+
+        album_domain = [('product_tmpl_id', '!=', False)]
+        if bd_serie_id:
+            album_domain.append(('serie_id', '=', int(bd_serie_id)))
+        if bd_genre_id:
+            album_domain.append(('serie_id.genre_id', '=', int(bd_genre_id)))
+        if bd_auteur_id:
+            album_domain.append(('auteur_line_ids.partner_id', '=', int(bd_auteur_id)))
+        if bd_type:
+            album_domain.append(('serie_id.type', '=', bd_type))
+
+        allowed_ids = set(
+            request.env['comic.album'].sudo().search(album_domain).mapped('product_tmpl_id.id')
+        )
+        search_result = search_result.filtered(lambda p: p.id in allowed_ids)
+        return fuzzy_term, len(search_result), search_result
+
+    def _shop_get_query_url_kwargs(self, search, min_price, max_price, order=None, tags=None, **kwargs):
+        """Inclure les params BD dans keep() pour que pagination/tri les préserve."""
+        result = super()._shop_get_query_url_kwargs(
+            search, min_price, max_price, order=order, tags=tags, **kwargs
+        )
+        for key in _BD_FILTER_PARAMS:
+            val = request.params.get(key, '')
+            if val:
+                result[key] = val
+        return result
+
+    # ── Shop : injection des données de filtres BD dans le contexte ───────────
 
     @http.route()
     def shop(self, **kwargs):
@@ -58,21 +108,16 @@ class ComicShopController(WebsiteSale):
 
         env = request.env
         params = request.params
-
-        bd_serie_id = params.get('bd_serie_id', '')
-        bd_genre_id = params.get('bd_genre', '')
-        bd_auteur_id = params.get('bd_auteur', '')
-        bd_type = params.get('bd_type', '')
+        bd_serie_id, bd_genre_id, bd_auteur_id, bd_type = _bd_params(params)
 
         bd_series = env['comic.serie'].sudo().search([
             ('album_ids.product_tmpl_id', '!=', False),
         ])
         bd_genres = env['comic.genre'].sudo().search([])
-        bd_auteur_lines = env['comic.album.auteur.line'].sudo().search([
+        bd_auteurs = env['comic.album.auteur.line'].sudo().search([
             ('album_id.product_tmpl_id', '!=', False),
             ('role', 'in', ['scenariste', 'dessinateur']),
-        ])
-        bd_auteurs = bd_auteur_lines.mapped('partner_id')
+        ]).mapped('partner_id')
 
         response.qcontext.update({
             'bd_series': bd_series,
@@ -89,25 +134,6 @@ class ComicShopController(WebsiteSale):
             'bd_selected_auteur': int(bd_auteur_id) if bd_auteur_id else False,
             'bd_selected_type': bd_type,
         })
-
-        if any([bd_serie_id, bd_genre_id, bd_auteur_id, bd_type]):
-            album_domain = [('product_tmpl_id', '!=', False)]
-            if bd_serie_id:
-                album_domain.append(('serie_id', '=', int(bd_serie_id)))
-            if bd_genre_id:
-                album_domain.append(('serie_id.genre_id', '=', int(bd_genre_id)))
-            if bd_auteur_id:
-                album_domain.append(('auteur_line_ids.partner_id', '=', int(bd_auteur_id)))
-            if bd_type:
-                album_domain.append(('serie_id.type', '=', bd_type))
-            albums = env['comic.album'].sudo().search(album_domain)
-            allowed_ids = set(albums.mapped('product_tmpl_id.id'))
-            ctx = response.qcontext
-            if 'products' in ctx:
-                ctx['products'] = ctx['products'].filtered(
-                    lambda p: p.id in allowed_ids
-                )
-
         return response
 
     # ── Pages séries ──────────────────────────────────────────────────────────
@@ -154,8 +180,7 @@ class ComicShopController(WebsiteSale):
         auteurs = []
         for data in sorted(auteur_map.values(), key=lambda d: (d['partner'].name or '').lower()):
             data['role_labels'] = ', '.join(
-                _ROLE_LABELS.get(r, r)
-                for r in sorted(data['roles'])
+                _ROLE_LABELS.get(r, r) for r in sorted(data['roles'])
             )
             auteurs.append(data)
         return request.render('comic_shop.shop_auteurs_page', {'auteurs': auteurs})
@@ -168,8 +193,8 @@ class ComicShopController(WebsiteSale):
         lines = request.env['comic.album.auteur.line'].sudo().search([
             ('partner_id', '=', auteur_id),
             ('album_id.product_tmpl_id', '!=', False),
-        ], order='album_id.serie_id, album_id.tome')
-        # Regrouper par rôle
+        ])
+        lines = lines.sorted(key=lambda l: (l.album_id.serie_id.name or '', l.album_id.tome or 0))
         by_role = {}
         for line in lines:
             label = _ROLE_LABELS.get(line.role, line.role)

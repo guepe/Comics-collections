@@ -6,6 +6,22 @@
 
 ---
 
+## 2026-05-20 (suite 3) — Correctif filtres BD : bins vs products + keep() propagation
+
+### Correctif US-041 — Filtres séries/genres/auteurs/type ne filtraient rien
+
+**Cause racine 1 — `bins` vs `products` :** Le template shop Odoo 19 rend la grille depuis `bins` (`TableCompute().process(products, ppg, ppr)`), pas depuis `products`. Post-filtrer `ctx['products']` après `super().shop()` ne modifiait pas `bins` déjà calculé → aucun effet visible.
+
+**Cause racine 2 — `keep()` / QueryURL :** La fonction `keep()` dans les templates website_sale n'inclut que les paramètres avec lesquels elle a été initialisée (search, category, attrib, min_price, max_price, order, tags). Nos paramètres `bd_*` n'étaient pas dans sa liste → pagination/tri supprimait les filtres BD à chaque navigation.
+
+**Fix appliqué :**
+- `comic_shop/controllers/main.py` entièrement réécrit :
+  - **`_shop_lookup_products()`** : filtre `search_result` (recordset `product.template`) AVANT que `bins` soit calculé. Construit un domaine sur `comic.album` selon les params BD, récupère les `product_tmpl_id` autorisés, filtre avec `.filtered()`. Retourne `fuzzy_term, len(search_result), search_result`.
+  - **`_shop_get_query_url_kwargs()`** : ajoute les params BD non-vides au dict retourné → `keep()` les inclut automatiquement dans tous les liens pagination/tri.
+  - **`shop()`** : ne fait plus que injecter les données de sidebar (séries, genres, auteurs, types + sélections actives). La logique de filtrage a été retirée de cet override.
+
+---
+
 ## 2026-05-20 (suite 2) — US-041 correctif sidebar + US-041b pages auteurs/éditeurs
 
 ### Correctif US-041 — Sidebar filtres BD non affichée

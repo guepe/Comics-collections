@@ -70,11 +70,13 @@ class ComicAlbum(models.Model):
 
     # --- Synchro auto sur write ---------------------------------------------
 
+    _SYNC_TRIGGER_FIELDS = {'isbn', 'image_couverture', 'name', 'tome', 'serie_id', 'synopsis'}
+
     def write(self, vals):
         res = super().write(vals)
-        if 'isbn' in vals:
+        if self._SYNC_TRIGGER_FIELDS & set(vals):
             for album in self.filtered(lambda a: a.product_tmpl_id and a.sync_product):
-                album.product_tmpl_id.barcode = album.isbn or False
+                album._sync_to_product()
         return res
 
     # --- Helpers ------------------------------------------------------------
