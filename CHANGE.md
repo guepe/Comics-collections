@@ -6,6 +6,45 @@
 
 ---
 
+## 2026-05-20 — US-041 Navigation webshop par série / auteur / genre
+
+### US-041 — Navigation BD dans le webshop
+
+**Fichiers créés :**
+- `comic_shop/views/website_sale_shop_templates.xml` — 3 templates QWeb :
+  - `shop_bd_sidebar_filters` : hérite `website_sale.products_attributes`, injecte des selects
+    Série / Genre / Auteur / Type à la fin de la sidebar via `<xpath expr="." position="inside">`.
+    Les selects déclenchent un `this.form.submit()` et sont donc dans le même formulaire GET
+    que les filtres natifs Odoo (attributs produit). Un lien "Parcourir par série" est ajouté sous les filtres.
+  - `shop_series_page` : page `/shop/series` — grille kanban Bootstrap des séries ayant au moins
+    un tome avec produit (couverture 280px, badges genre/type, compteur de tomes).
+  - `shop_serie_detail_page` : page `/shop/series/<id>` — en-tête série + grille des tomes disponibles
+    avec prix et bouton "Voir" vers le produit Odoo.
+
+**Fichiers modifiés :**
+- `comic_shop/controllers/main.py` :
+  - `shop()` override : injecte `bd_series`, `bd_genres`, `bd_auteurs`, `bd_types` +
+    valeurs sélectionnées dans le qcontext. Post-filtre le recordset `products` via `.filtered()`
+    quand un paramètre GET BD est présent (`bd_serie_id`, `bd_genre`, `bd_auteur`, `bd_type`).
+    Note : la pagination Odoo reflète le count pré-filtre (limitation V1 acceptable).
+  - Nouvelle route `GET /shop/series` → `ComicShopController.shop_series()`
+  - Nouvelle route `GET /shop/series/<int:serie_id>` → `ComicShopController.shop_serie_detail()`
+- `comic_shop/views/website_sale_templates.xml` :
+  - Ajout du breadcrumb `Boutique > [Nom série] > Tome X` au-dessus des badges dans le template
+    `product_bd_title_badges` (hérite `website_sale.product_title`, ancre `//h1` position after).
+    Le lien série pointe vers `/shop/series/<serie.id>`.
+- `comic_shop/__manifest__.py` : ajout de `views/website_sale_shop_templates.xml` dans `data`.
+
+**Décisions techniques :**
+- Filtres sidebar dans `website_sale.products_attributes` (position inside) : partage le formulaire
+  GET natif donc les filtres BD et les filtres attributs Odoo coexistent dans la même soumission.
+- Route `/shop/series/<int:serie_id>` (ID entier) plutôt que slug Odoo : `comic.serie` n'hérite
+  pas `website.published.mixin`, donc pas de slug natif disponible.
+- Post-filtrage dans le controller (`.filtered()`) plutôt qu'override de `_get_search_domain()`
+  (signature instable entre versions Odoo 19).
+
+---
+
 ## 2026-05-18 (suite) — Correctif Odoo 19 `models.Constraint`
 
 ### Correctif — Remplacement de `_sql_constraints`

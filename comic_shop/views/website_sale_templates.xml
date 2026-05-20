@@ -14,9 +14,25 @@
 
     <template id="product_bd_title_badges" inherit_id="website_sale.product_title" name="BD — Badges page produit">
 
-        <!-- Badge "Tome X de la série Y" + badge "Dans votre bibliothèque" sous le titre -->
+        <!-- Fil d'Ariane + badges BD sous le titre produit -->
         <xpath expr="//h1" position="after">
             <t t-if="comic_album">
+                <!-- Breadcrumb : Boutique > Série > Tome -->
+                <t t-if="comic_album.serie_id">
+                    <nav aria-label="breadcrumb" class="mb-1 mt-2">
+                        <ol class="breadcrumb small mb-0">
+                            <li class="breadcrumb-item"><a href="/shop">Boutique</a></li>
+                            <li class="breadcrumb-item">
+                                <a t-attf-href="/shop/series/{{ comic_album.serie_id.id }}">
+                                    <t t-esc="comic_album.serie_id.name"/>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Tome <t t-esc="comic_album.tome"/>
+                            </li>
+                        </ol>
+                    </nav>
+                </t>
                 <div class="mb-2 d-flex flex-wrap gap-2">
                     <!-- Badge série/tome -->
                     <t t-if="comic_album.serie_id and comic_album.tome">

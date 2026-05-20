@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        US-041 — Navigation webshop par série / auteur / genre
+
+        Filtres BD injectés à la fin du template website_sale.products_attributes
+        (sidebar du shop). Les variables bd_series, bd_genres, bd_auteurs, bd_types
+        sont injectées par ComicShopController.shop() dans le qcontext.
+
+        Note : si website_sale.products_attributes change d'ID dans une future version
+        d'Odoo 19, ajuster l'inherit_id ci-dessous.
+    -->
+
+    <!-- ── Filtres BD dans la sidebar ── -->
+    <template id="shop_bd_sidebar_filters"
+              inherit_id="website_sale.products_attributes"
+              name="BD — Filtres sidebar">
+        <xpath expr="." position="inside">
+            <t t-if="bd_series or bd_genres or bd_auteurs">
+                <div class="o_comic_bd_filters mt-4 pt-3 border-top">
+                    <h6 class="text-uppercase fw-bold mb-3 small text-muted">
+                        <i class="fa fa-book me-1"/> Filtres BD
+                    </h6>
+
+                    <!-- Filtre Série -->
+                    <t t-if="bd_series">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small mb-1">Série</label>
+                            <select name="bd_serie_id"
+                                    class="form-select form-select-sm"
+                                    onchange="this.form.submit()">
+                                <option value="">Toutes les séries</option>
+                                <t t-foreach="bd_series" t-as="serie">
+                                    <option t-att-value="serie.id"
+                                            t-att-selected="bd_selected_serie == serie.id">
+                                        <t t-esc="serie.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                    </t>
+
+                    <!-- Filtre Genre -->
+                    <t t-if="bd_genres">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small mb-1">Genre</label>
+                            <select name="bd_genre"
+                                    class="form-select form-select-sm"
+                                    onchange="this.form.submit()">
+                                <option value="">Tous les genres</option>
+                                <t t-foreach="bd_genres" t-as="genre">
+                                    <option t-att-value="genre.id"
+                                            t-att-selected="bd_selected_genre == genre.id">
+                                        <t t-esc="genre.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                    </t>
+
+                    <!-- Filtre Auteur -->
+                    <t t-if="bd_auteurs">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold small mb-1">Auteur</label>
+                            <select name="bd_auteur"
+                                    class="form-select form-select-sm"
+                                    onchange="this.form.submit()">
+                                <option value="">Tous les auteurs</option>
+                                <t t-foreach="bd_auteurs" t-as="auteur">
+                                    <option t-att-value="auteur.id"
+                                            t-att-selected="bd_selected_auteur == auteur.id">
+                                        <t t-esc="auteur.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                    </t>
+
+                    <!-- Filtre Type -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small mb-1">Type</label>
+                        <select name="bd_type"
+                                class="form-select form-select-sm"
+                                onchange="this.form.submit()">
+                            <option value="">Tous les types</option>
+                            <t t-foreach="bd_types" t-as="bdt">
+                                <option t-att-value="bdt[0]"
+                                        t-att-selected="bd_selected_type == bdt[0]">
+                                    <t t-esc="bdt[1]"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+
+                    <!-- Réinitialiser les filtres BD -->
+                    <t t-if="bd_selected_serie or bd_selected_genre or bd_selected_auteur or bd_selected_type">
+                        <a href="/shop" class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                            <i class="fa fa-times me-1"/>Réinitialiser les filtres BD
+                        </a>
+                    </t>
+
+                    <!-- Raccourci vers la page des séries -->
+                    <a href="/shop/series" class="btn btn-outline-primary btn-sm w-100">
+                        <i class="fa fa-th-large me-1"/>Parcourir par série
+                    </a>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ── Page /shop/series — toutes les séries disponibles ── -->
+    <template id="shop_series_page" name="BD — Toutes les séries">
+        <t t-call="website.layout">
+            <div id="wrap" class="o_wsale_products_page">
+                <div class="container mt-4 mb-5">
+
+                    <!-- Fil d'Ariane -->
+                    <nav aria-label="breadcrumb" class="mb-4">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/shop">Boutique</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Séries</li>
+                        </ol>
+                    </nav>
+
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h1 class="mb-0">Toutes les séries</h1>
+                        <a href="/shop" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-arrow-left me-1"/>Retour à la boutique
+                        </a>
+                    </div>
+
+                    <t t-if="not series">
+                        <div class="alert alert-info">
+                            Aucune série n'est disponible à la vente pour le moment.
+                        </div>
+                    </t>
+
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+                        <t t-foreach="series" t-as="serie">
+                            <div class="col">
+                                <a t-attf-href="/shop/series/{{ serie.id }}"
+                                   class="text-decoration-none text-dark">
+                                    <div class="card h-100 shadow-sm border-0 o_wsale_product_grid_wrapper">
+
+                                        <!-- Couverture de la série -->
+                                        <div class="o_wsale_product_image_wrapper">
+                                            <t t-if="serie.image_couverture">
+                                                <img t-att-src="'/web/image/comic.serie/%d/image_couverture/300x400' % serie.id"
+                                                     class="card-img-top"
+                                                     style="object-fit:cover;height:280px;"
+                                                     t-att-alt="serie.name"
+                                                     loading="lazy"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="bg-light d-flex align-items-center justify-content-center"
+                                                     style="height:280px;">
+                                                    <i class="fa fa-book fa-4x text-muted"/>
+                                                </div>
+                                            </t>
+                                        </div>
+
+                                        <div class="card-body pb-1">
+                                            <h6 class="card-title fw-bold mb-2 lh-sm">
+                                                <t t-esc="serie.name"/>
+                                            </h6>
+                                            <div class="d-flex flex-wrap gap-1 mb-1">
+                                                <t t-if="serie.genre_id">
+                                                    <span class="badge bg-primary small">
+                                                        <t t-esc="serie.genre_id.name"/>
+                                                    </span>
+                                                </t>
+                                                <t t-if="serie.type">
+                                                    <span class="badge bg-secondary small">
+                                                        <t t-esc="dict(bd='BD', manga='Manga', comics='Comics', one_shot='One-shot').get(serie.type, serie.type)"/>
+                                                    </span>
+                                                </t>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-footer bg-transparent text-muted small py-2">
+                                            <t t-set="nb_tomes" t-value="len(serie.album_ids.filtered(lambda a: a.product_tmpl_id))"/>
+                                            <i class="fa fa-clone me-1"/>
+                                            <t t-esc="nb_tomes"/> tome<t t-if="nb_tomes &gt; 1">s</t> disponible<t t-if="nb_tomes &gt; 1">s</t>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── Page /shop/series/<id> — tomes d'une série ── -->
+    <template id="shop_serie_detail_page" name="BD — Détail série">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container mt-4 mb-5">
+
+                    <!-- Fil d'Ariane -->
+                    <nav aria-label="breadcrumb" class="mb-4">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/shop">Boutique</a></li>
+                            <li class="breadcrumb-item"><a href="/shop/series">Séries</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                <t t-esc="serie.name"/>
+                            </li>
+                        </ol>
+                    </nav>
+
+                    <!-- En-tête de la série -->
+                    <div class="row align-items-start mb-5 g-4">
+                        <div class="col-md-3 col-lg-2">
+                            <t t-if="serie.image_couverture">
+                                <img t-att-src="'/web/image/comic.serie/%d/image_couverture' % serie.id"
+                                     class="img-fluid rounded shadow"
+                                     t-att-alt="serie.name"/>
+                            </t>
+                            <t t-else="">
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center shadow"
+                                     style="height:200px;">
+                                    <i class="fa fa-book fa-4x text-muted"/>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="col-md-9 col-lg-10">
+                            <h1 class="mb-3"><t t-esc="serie.name"/></h1>
+                            <div class="d-flex flex-wrap gap-2 mb-3">
+                                <t t-if="serie.genre_id">
+                                    <span class="badge bg-primary fs-6">
+                                        <t t-esc="serie.genre_id.name"/>
+                                    </span>
+                                </t>
+                                <t t-if="serie.type">
+                                    <span class="badge bg-secondary fs-6">
+                                        <t t-esc="dict(bd='BD', manga='Manga', comics='Comics', one_shot='One-shot').get(serie.type, serie.type)"/>
+                                    </span>
+                                </t>
+                                <t t-if="serie.statut">
+                                    <t t-set="statut_class" t-value="'success' if serie.statut == 'terminee' else 'warning' if serie.statut == 'en_cours' else 'secondary'"/>
+                                    <span t-attf-class="badge bg-{{ statut_class }} fs-6">
+                                        <t t-esc="dict(en_cours='En cours', terminee='Terminée', abandonnee='Abandonnée').get(serie.statut, serie.statut)"/>
+                                    </span>
+                                </t>
+                            </div>
+                            <t t-if="serie.synopsis">
+                                <div class="text-muted" t-out="serie.synopsis"/>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Grille des tomes disponibles -->
+                    <div class="d-flex align-items-center mb-4">
+                        <h3 class="mb-0 me-3">
+                            Tomes disponibles
+                        </h3>
+                        <span class="badge bg-light text-dark border fs-6">
+                            <t t-esc="len(albums)"/>
+                        </span>
+                    </div>
+
+                    <t t-if="not albums">
+                        <div class="alert alert-info">
+                            Aucun tome de cette série n'est disponible à la vente pour le moment.
+                        </div>
+                    </t>
+
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+                        <t t-foreach="albums" t-as="album">
+                            <div class="col">
+                                <a t-att-href="album.product_tmpl_id.website_url or '/shop'"
+                                   class="text-decoration-none text-dark">
+                                    <div class="card h-100 shadow-sm border-0">
+
+                                        <!-- Couverture via le produit Odoo -->
+                                        <t t-if="album.product_tmpl_id.image_512">
+                                            <img t-att-src="'/web/image/product.template/%d/image_512' % album.product_tmpl_id.id"
+                                                 class="card-img-top"
+                                                 style="object-fit:cover;height:200px;"
+                                                 t-att-alt="album.name"
+                                                 loading="lazy"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                                 style="height:200px;">
+                                                <i class="fa fa-book fa-2x text-muted"/>
+                                            </div>
+                                        </t>
+
+                                        <div class="card-body p-2 text-center">
+                                            <div class="fw-bold small">
+                                                Tome <t t-esc="album.tome"/>
+                                            </div>
+                                            <div class="text-muted text-truncate"
+                                                 style="font-size:0.75rem;"
+                                                 t-att-title="album.name">
+                                                <t t-esc="album.name"/>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-footer p-2 text-center bg-transparent border-top">
+                                            <t t-if="album.product_tmpl_id.list_price">
+                                                <strong class="text-primary">
+                                                    <t t-esc="'%.2f €' % album.product_tmpl_id.list_price"/>
+                                                </strong>
+                                                <br/>
+                                            </t>
+                                            <span class="btn btn-primary btn-sm mt-1">Voir</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </t>
+                    </div>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

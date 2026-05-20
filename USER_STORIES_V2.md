@@ -223,7 +223,7 @@ Critères d'acceptance :
 
 ---
 
-**US-041 — Navigation webshop par série / auteur / genre** ⏳ 🟠
+**US-041 — Navigation webshop par série / auteur / genre** ✅
 
 ```
 En tant que visiteur du webshop
@@ -231,13 +231,13 @@ Je veux naviguer dans le catalogue de BD par série, auteur ou genre
 Afin de trouver facilement les BD qui m'intéressent
 
 Critères d'acceptance :
-- [ ] Page "/shop/series" listant toutes les séries disponibles (kanban couvertures)
-- [ ] Page "/shop/series/<slug>" listant tous les tomes disponibles d'une série
-- [ ] Filtre "Série" dans la sidebar du webshop standard
-- [ ] Filtre "Auteur" dans la sidebar (scénariste ou dessinateur)
-- [ ] Filtre "Genre" dans la sidebar
-- [ ] Filtre "Type" (BD / Manga / Comics / One-shot)
-- [ ] Breadcrumb : Boutique > Série > Tome
+- [x] Page "/shop/series" listant toutes les séries disponibles (kanban couvertures)
+- [x] Page "/shop/series/<id>" listant tous les tomes disponibles d'une série
+- [x] Filtre "Série" dans la sidebar du webshop standard
+- [x] Filtre "Auteur" dans la sidebar (scénariste ou dessinateur)
+- [x] Filtre "Genre" dans la sidebar
+- [x] Filtre "Type" (BD / Manga / Comics / One-shot)
+- [x] Breadcrumb : Boutique > Série > Tome
 ```
 
 ---

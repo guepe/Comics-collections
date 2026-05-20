@@ -27,6 +27,7 @@
         'views/comic_album_views.xml',
         'views/comic_customer_album_views.xml',
         'views/website_sale_templates.xml',
+        'views/website_sale_shop_templates.xml',
     ],
     'installable': True,
     'application': False,
