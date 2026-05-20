@@ -72,20 +72,35 @@
                         </div>
                     </t>
 
-                    <!-- Filtre Auteur -->
+                    <!-- Filtre Auteur — 8 premiers + lien vers page complète -->
                     <t t-if="bd_auteurs">
                         <div class="mb-3">
-                            <div class="fw-semibold small mb-1">Auteur</div>
-                            <div class="d-flex flex-column gap-1 ps-1"
-                                 style="max-height:140px;overflow-y:auto;">
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <span class="fw-semibold small">Auteur</span>
+                                <a href="/shop/auteurs" class="text-muted text-decoration-none"
+                                   style="font-size:0.75rem;">Tous →</a>
+                            </div>
+                            <div class="d-flex flex-column gap-1 ps-1">
                                 <a t-att-href="keep(bd_auteur=0)"
-                                   t-attf-class="small text-decoration-none {{ 'fw-bold text-primary' if not bd_selected_auteur else 'text-muted' }}">
+                                   t-attf-class="text-decoration-none {{ 'fw-bold text-primary' if not bd_selected_auteur else 'text-muted' }}"
+                                   style="font-size:0.85rem;">
                                     Tous les auteurs
                                 </a>
                                 <t t-foreach="bd_auteurs" t-as="auteur">
-                                    <a t-att-href="keep(bd_auteur=auteur.id)"
-                                       t-attf-class="small text-decoration-none text-truncate {{ 'fw-bold text-primary' if bd_selected_auteur == auteur.id else 'text-dark' }}">
-                                        <t t-esc="auteur.name"/>
+                                    <t t-if="auteur_index &lt; 8 or bd_selected_auteur == auteur.id">
+                                        <a t-att-href="keep(bd_auteur=auteur.id)"
+                                           t-attf-class="text-decoration-none text-truncate {{ 'fw-bold text-primary' if bd_selected_auteur == auteur.id else 'text-dark' }}"
+                                           style="font-size:0.85rem;"
+                                           t-att-title="auteur.name">
+                                            <t t-esc="auteur.name"/>
+                                        </a>
+                                    </t>
+                                </t>
+                                <t t-if="len(bd_auteurs) &gt; 8">
+                                    <a href="/shop/auteurs"
+                                       class="text-muted text-decoration-none"
+                                       style="font-size:0.8rem;">
+                                        + <t t-esc="len(bd_auteurs) - 8"/> de plus…
                                     </a>
                                 </t>
                             </div>
@@ -109,10 +124,18 @@
                         </div>
                     </div>
 
-                    <!-- Lien vers la page des séries -->
-                    <a href="/shop/series" class="btn btn-outline-primary btn-sm w-100 mt-1">
-                        <i class="fa fa-th-large me-1"/>Parcourir par série
-                    </a>
+                    <!-- Liens vers les pages catalogue -->
+                    <div class="d-flex flex-column gap-1 mt-2">
+                        <a href="/shop/series" class="btn btn-outline-primary btn-sm">
+                            <i class="fa fa-th-large me-1"/>Séries
+                        </a>
+                        <a href="/shop/auteurs" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-users me-1"/>Auteurs
+                        </a>
+                        <a href="/shop/editeurs" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-building me-1"/>Maisons d'édition
+                        </a>
+                    </div>
                 </div>
             </t>
         </xpath>
