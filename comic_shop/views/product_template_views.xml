@@ -16,10 +16,8 @@
                         class="oe_stat_button"
                         icon="fa-book"
                         invisible="not comic_album_id">
-                    <div class="o_field_widget o_stat_info">
+                    <div class="o_stat_info">
                         <span class="o_stat_text">Album BD</span>
-                        <span class="o_stat_value"
-                              t-out="comic_album_id and comic_album_id.display_name or ''"/>
                     </div>
                 </button>
             </div>
