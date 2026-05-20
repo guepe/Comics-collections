@@ -18,6 +18,8 @@
 | US-035 | Scaffold `comic_shop` + extension `comic.album` sans retrait ✅ | —       |
 | US-036 | Lien `comic.album` → `product.template` ✅          | US-035          |
 | US-037 | Synchronisation album ↔ produit ✅                  | US-036          |
+| US-037b | Smartbutton album BD + sync sur product.template ✅ | US-037         |
+| US-037c | Création produits en masse depuis la fiche série ✅ | US-037         |
 | US-039 | Modèle `comic.customer.album` ✅                   | US-035          |
 
 ### À faire — Priorité moyenne 🟠
@@ -25,8 +27,8 @@
 | US     | Titre                                              | Dépend de       |
 | ------ | -------------------------------------------------- | --------------- |
 | US-040 | Fiche produit webshop enrichie BD ✅                | US-037          |
-| US-041 | Navigation webshop par série / auteur / genre      | US-040          |
-| US-041b | Pages website auteurs et éditeurs                 | US-040, US-041  |
+| US-041 | Navigation webshop par série / auteur / genre ✅    | US-040          |
+| US-041b | Pages website auteurs et éditeurs ✅               | US-040, US-041  |
 | US-042 | Intégration POS (caisse)                           | US-035          |
 | US-043 | Espace bibliothèque client sur le portail           | US-039          |
 | US-044 | Ajout BD hors catalogue à la bibliothèque          | US-039          |
@@ -159,6 +161,50 @@ Critères d'acceptance :
 - [x] Si l'ISBN change sur l'album, le barcode produit est mis à jour automatiquement
 - [x] Champ `sync_product` (Boolean) sur comic.album pour désactiver la synchro auto
         si le commerçant veut gérer le produit manuellement
+- [x] Si l'image_couverture change, image_1920 du produit est mise à jour automatiquement
+        (_SYNC_TRIGGER_FIELDS couvre : isbn, image_couverture, name, tome, serie_id, synopsis)
+```
+
+---
+
+**US-037b — Smartbutton album BD et bouton sync sur product.template** ✅
+
+```
+En tant que commerçant
+Je veux naviguer depuis la fiche produit vers l'album BD associé et pouvoir
+resynchroniser les données depuis l'album
+Afin de ne pas avoir à chercher l'album manuellement
+
+Critères d'acceptance :
+- [x] Smartbutton "Album BD" (icône fa-book) dans le button_box de product.template
+        → ouvre la fiche comic.album correspondante (invisible si pas de lien)
+- [x] Bouton "Sync depuis album" dans le header de product.template avec
+        confirmation → force _sync_to_product() (restreint au groupe comic_manager)
+- [x] Champ comic_album_id visible en lecture sur la fiche produit (invisible technique)
+- [x] Fichiers : comic_shop/views/product_template_views.xml (nouveau),
+        comic_shop/models/product_template.py (méthodes action_view_comic_album,
+        action_sync_from_album)
+```
+
+---
+
+**US-037c — Création de produits en masse depuis la fiche série** ✅
+
+```
+En tant que commerçant
+Je veux pouvoir créer en un clic tous les produits manquants pour une série entière
+Afin de publier rapidement plusieurs tomes sans les traiter un par un
+
+Critères d'acceptance :
+- [x] Stat button "X Produits liés" sur la fiche série (cliquable → liste filtrée)
+- [x] Stat button "Y Albums à publier" visible si au moins un album avec ISBN sans produit
+        → déclenche action_create_products_from_isbn()
+- [x] action_create_products_from_isbn() : crée un product.template par album éligible
+        (isbn renseigné et product_tmpl_id vide), appelle _sync_to_product() sur chacun
+- [x] action_view_products() : ouvre la liste des produits liés à la série
+- [x] Colonnes ISBN et "Produit lié" ajoutées à la liste inline des albums sur la fiche série
+- [x] Fichiers : comic_shop/models/comic_serie.py (nouveau),
+        comic_shop/views/comic_serie_views.xml (nouveau)
 ```
 
 ---

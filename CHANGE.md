@@ -6,6 +6,67 @@
 
 ---
 
+## 2026-05-20 (suite 4) — Sync image album↔produit, smartbuttons, création produits en masse, import démo
+
+### Correctif — ValueError ORM `order` avec dot-notation dans `shop_auteur_detail`
+
+**Cause :** `order='album_id.serie_id, album_id.tome'` n'est pas une syntaxe ORM valide (dot-notation uniquement autorisée dans les domaines `search`, pas dans `order=`).
+**Fix :** Suppression du `order=` dans le `search()`, remplacement par `.sorted(key=lambda l: (l.album_id.serie_id.name or '', l.album_id.tome or 0))` en Python.
+- Fichier : `comic_shop/controllers/main.py` — méthode `shop_auteur_detail`
+
+### Amélioration US-037 — Sync album → produit étendue aux images et métadonnées
+
+**Avant :** `_SYNC_TRIGGER_FIELDS` ne contenait que `isbn` → seul un changement d'ISBN déclenchait la sync auto.
+**Après :** Jeu de champs élargi : `{'isbn', 'image_couverture', 'name', 'tome', 'serie_id', 'synopsis'}`.
+- Fichier : `comic_shop/models/comic_album.py` — constante `_SYNC_TRIGGER_FIELDS` + `write()`
+
+### US-037b — Smartbutton "Album BD" et bouton "Sync depuis album" sur product.template
+
+Fichiers créés / modifiés :
+- `comic_shop/views/product_template_views.xml` *(nouveau)* :
+  - Smartbutton `fa-book` "Album BD" dans le button_box → ouvre la fiche album (invisible si pas d'album lié).
+  - Bouton `<header>` "Sync depuis album" avec confirmation → force `_sync_to_product()`. Restreint au groupe `comic_manager`.
+  - Champ `comic_album_id` invisible pour le contrôle de visibilité.
+  - **Note Odoo 19 :** `t-out` interdit dans les vues backend → remplacé par `<span class="o_stat_text">Album BD</span>` statique (correctif appliqué après erreur `Forbidden owl directive`).
+- `comic_shop/models/product_template.py` : méthodes `action_view_comic_album()` et `action_sync_from_album()`.
+- `comic_shop/__manifest__.py` : ajout de `'views/product_template_views.xml'`.
+
+### US-037c — Bouton création de produits en masse sur la fiche série
+
+Fichiers créés / modifiés :
+- `comic_shop/models/comic_serie.py` *(nouveau)* :
+  - Hérite `comic.serie`, ajoute `nb_albums_with_product` (Integer stored) et `nb_albums_isbn_sans_produit` (Integer stored).
+  - `@api.depends('album_ids.product_tmpl_id', 'album_ids.isbn')`.
+  - `action_create_products_from_isbn()` : crée un `product.template` pour chaque album ayant un ISBN sans produit, puis appelle `_sync_to_product()`. Retourne une notification succès/warning.
+  - `action_view_products()` : ouvre la liste des produits liés à la série.
+- `comic_shop/views/comic_serie_views.xml` *(nouveau)* :
+  - Hérite `comics_collections.view_comic_serie_form`.
+  - Stat button "Produits liés" (cliquable → liste filtrée).
+  - Stat button "À publier" (visible si `nb_albums_isbn_sans_produit > 0`, cliquable → `action_create_products_from_isbn`).
+  - Colonnes ISBN et produit ajoutées à la liste inline des albums.
+- `comic_shop/models/__init__.py` : ajout `from . import comic_serie`.
+- `comic_shop/__manifest__.py` : ajout de `'views/comic_serie_views.xml'`.
+
+### Infrastructure démo — Import Excel / CSV → Odoo
+
+Fichiers créés dans `tools/` :
+- `tools/create_demo_template.py` : génère `tools/demo_template.xlsx` avec 16 albums d'exemple (Tintin, Astérix, Thorgal, Lucky Luke, Largo Winch, Blacksad) pour illustrer le format attendu.
+- `tools/import_demo.py` : import générique depuis fichier Excel vers Odoo via XML-RPC. Colonnes flexibles (insensible accents/casse), récupération couvertures via Open Library, création produits website. Usage : `python tools/import_demo.py --file mesbd.xlsx`.
+- `tools/load_demo_series.py` : import hardcodé de deux séries extraites du CSV BDGest réel de l'utilisateur.
+  - **Thorgal** : 29 albums (T05–T43), Le Lombard, scénaristes Van Hamme/Sente/Dorison/Yann, dessinateurs Rosinski/Vignaux.
+  - **Complainte des Landes perdues** : 15 albums (T01–T16), Dargaud, scénariste Dufaux, dessinateurs Rosinski/Delaby/Tillier/Teng.
+  - Résultat : 37 albums créés, 45 produits publiés, 36 couvertures Open Library.
+
+**Erreurs rencontrées et solutions :**
+
+1. **Mauvaise base de données** : `guepe-comics-collections-19-0-32453836` n'existe pas localement. Vraie BDD : `odoo` (trouvée via `docker exec odoo-postgres psql -U odoo -c "\l"`).
+
+2. **ISBN-10 rejeté par Odoo** (`'L'ISBN "280360549X" n'est pas un EAN-13 valide'`) : les tomes Thorgal antérieurs à 2007 ont un ISBN-10. Ajout de `isbn_to_ean13()` : préfixe `978` aux 9 premiers chiffres, recalcule le check digit EAN-13 (`total = sum(int(d) * (1 if i%2==0 else 3) for i,d in enumerate(body)); check = (10 - total%10)%10`).
+
+3. **Encodage CSV BDGest** : mojibake UTF-8 lu en Latin-1 (`"Ã©"` → `"é"`). Contourné en hardcodant les données propres dans le script.
+
+---
+
 ## 2026-05-20 (suite 3) — Correctif filtres BD : bins vs products + keep() propagation
 
 ### Correctif US-041 — Filtres séries/genres/auteurs/type ne filtraient rien
