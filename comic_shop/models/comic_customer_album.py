@@ -49,6 +49,19 @@ class ComicCustomerAlbum(models.Model):
         help="Ligne de commande à l'origine de l'ajout automatique.",
     )
 
+    work_id = fields.Many2one(
+        'comic.work',
+        string='Œuvre',
+        compute='_compute_work_id',
+        store=True,
+        index=True,
+    )
+
+    @api.depends('edition_id.work_id')
+    def _compute_work_id(self):
+        for rec in self:
+            rec.work_id = rec.edition_id.work_id if rec.edition_id else False
+
     has_product = fields.Boolean(
         string='Produit disponible',
         compute='_compute_has_product',

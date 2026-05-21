@@ -569,6 +569,7 @@ comic_collection.group_comic_user
 11. Le module `comic_datasource` utilise UNIQUEMENT des APIs publiques et légales en priorité (Google Books, Open Library, BnF) — le scraping BDGest est un fallback de dernier recours avec avertissement légal explicite à l'utilisateur
 12. Les clés API Google Books sont gratuites mais doivent être créées sur console.cloud.google.com par l'utilisateur final — ne jamais hardcoder de clé
 13. L'aggregator fusionne les données de plusieurs sources — en cas de conflit, les métadonnées BnF sont prioritaires pour les BD francophones
+14. **Vocabulaire technique vs utilisateur** : le modèle canonique est `comic.work` / `comic.edition` / `comic.isbn`, mais l'interface utilisateur doit toujours parler d'**albums**, **tomes** et **séries**. Les termes "Œuvre" et "Édition" sont réservés au référentiel avancé (menu Configuration > Référentiel avancé, visible managers uniquement). Dans les vues, boutons et labels visibles par les utilisateurs standard, utiliser systématiquement "album" ou "fiche BD" à la place de "édition".
 
 ---
 

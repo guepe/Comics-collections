@@ -57,13 +57,12 @@
                         <page string="Synopsis">
                             <field name="synopsis"/>
                         </page>
-                        <page string="Œuvres">
+                        <page string="Albums / Tomes">
                             <field name="work_ids">
                                 <list>
-                                    <field name="tome"/>
-                                    <field name="titre_canonique"/>
-                                    <field name="edition_ids" widget="many2many_tags" readonly="1"
-                                           string="Éditions" optional="hide"/>
+                                    <field name="tome" string="T°"/>
+                                    <field name="titre_canonique" string="Titre"/>
+                                    <field name="nb_editions" string="Éditions" optional="hide"/>
                                 </list>
                             </field>
                         </page>

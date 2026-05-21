@@ -278,7 +278,7 @@
 
     <!-- ── /my/library/<id> — fiche détail ──────────────────────────────────── -->
 
-    <template id="portal_library_detail" name="Détail édition — Ma Bibliothèque">
+    <template id="portal_library_detail" name="Détail album — Ma Bibliothèque">
         <t t-call="portal.portal_layout">
             <t t-set="o_portal_fullwidth_alert" t-value="False"/>
 
@@ -436,7 +436,7 @@
                                             <div class="col-12">
                                                 <label class="form-label fw-semibold">Mon commentaire</label>
                                                 <textarea name="commentaire" class="form-control" rows="3"
-                                                          placeholder="Mes notes personnelles sur cette édition…">
+                                                          placeholder="Mes notes personnelles sur cet album…">
                                                     <t t-esc="record.commentaire or ''"/>
                                                 </textarea>
                                             </div>
@@ -460,7 +460,7 @@
                             <div class="mt-3">
                                 <form t-attf-action="/my/library/{{ record.id }}/remove"
                                       method="post"
-                                      onsubmit="return confirm('Supprimer cette édition de votre bibliothèque ?')">
+                                      onsubmit="return confirm('Supprimer cet album de votre bibliothèque ?')">
                                     <input type="hidden" name="csrf_token"
                                            t-att-value="request.csrf_token()"/>
                                     <button type="submit" class="btn btn-outline-danger btn-sm">

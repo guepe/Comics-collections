@@ -17,7 +17,7 @@
                         icon="fa-book"
                         invisible="not comic_edition_id">
                     <div class="o_stat_info">
-                        <span class="o_stat_text">Édition BD</span>
+                        <span class="o_stat_text">Album BD</span>
                     </div>
                 </button>
             </div>
@@ -26,11 +26,11 @@
             <xpath expr="//sheet" position="before">
                 <header>
                     <button name="action_sync_from_edition"
-                            string="Sync depuis édition"
+                            string="Sync depuis album"
                             type="object"
                             class="btn-secondary"
                             invisible="not comic_edition_id"
-                            confirm="Écraser les données du produit (nom, image, barcode, description) depuis l'édition BD ?"
+                            confirm="Écraser les données du produit (nom, image, barcode, description) depuis la fiche album BD ?"
                             groups="comics_collections.group_comic_manager"/>
                 </header>
             </xpath>

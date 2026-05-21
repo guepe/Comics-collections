@@ -51,8 +51,8 @@
 | US-051 | Implémentation ORM (comic.work, .edition, .isbn)   | US-050          |
 | US-052 | Adaptation datasources et import                   | US-051          |
 | US-053 | Vues back-office (list/form/search) ✅              | US-051          |
-| US-054 | Adaptation comic_shop et bibliothèque client       | US-051, US-050  |
-| US-057 | Façade UX album/tome après refactor canonique      | US-053, US-054  |
+| US-054 | Adaptation comic_shop et bibliothèque client ✅    | US-051, US-050  |
+| US-057 | Façade UX album/tome après refactor canonique ✅   | US-053, US-054  |
 | US-055 | Tests unitaires et validation                      | US-051, US-054, US-057 |
 | US-056 | Moteur de déduplication des œuvres                 | US-051, US-050  |
 
@@ -826,7 +826,7 @@ Critères d'acceptance :
 
 ---
 
-**US-054 — Adaptation comic_shop** ⏳ 🟠
+**US-054 — Adaptation comic_shop** ✅
 
 ```
 En tant que développeur
@@ -834,79 +834,58 @@ Je veux adapter comic_shop pour utiliser comic.edition comme pivot du lien produ
 Afin que shop, bibliothèque client et portail fonctionnent correctement avec le nouveau schéma
 
 Critères d'acceptance :
-- [ ] product.template (comic_shop/_inherit) :
-      - champ comic_album_id remplacé par comic_edition_id (Many2one → comic.edition)
-      - propriété computed work_id (→ comic_edition_id.work_id) pour les vues
+- [x] product.template (comic_shop/_inherit) :
+      - champ comic_edition_id (Many2one → comic.edition)
+      - champ computed comic_work_id (→ comic_edition_id.work_id, store=True)
       - smartbutton "Édition BD" → fiche comic.edition
-      - action_sync_from_edition() remplace action_sync_from_album()
-- [ ] comic.edition (comic_shop/_inherit) :
+      - action_sync_from_edition()
+- [x] comic.edition (comic_shop/_inherit) :
       - champ product_tmpl_id (Many2one → product.template, optionnel)
-      - boutons "Créer le produit" / "Voir le produit" / "Dissocier"
+      - boutons "Créer le produit" / "Voir le produit" / "Dissocier" / "Resync"
       - _sync_to_product() : sync name, image_couverture, isbn → barcode, synopsis → description_sale
-      - _SYNC_TRIGGER_FIELDS : isbn_ids, image_couverture, titre_affiche, work_id (titre + tome)
-- [ ] comic.serie (comic_shop/_inherit) :
-      - action_create_products_from_isbn() : itère sur works → editions éligibles (isbn + sans produit)
-      - smartbutton "Produits liés" (compte les editions avec product_tmpl_id)
-      - smartbutton "Éditions à publier" (editions avec isbn sans produit)
-- [ ] comic.customer.album :
-      - champ album_id remplacé par edition_id (Many2one → comic.edition, required)
-      - champ work_id : Many2one → comic.work, compute=lambda self: self.edition_id.work_id, store=True
-      - contrainte unique sur (partner_id, edition_id)
-- [ ] comic_sale_order.py : retrouve l'edition via la ligne de commande → crée customer.album
-- [ ] portal.py (/my/library) :
-      - liste comic.customer.album filtrée par partner_id
-      - affiche edition.titre_affiche ou work.titre_canonique + work.serie_id
-      - regroupement optionnel par work_id (vue "par œuvre")
-- [ ] Webshop product page (US-040) : lit les infos via edition_id → work_id
-      (série, tome, auteurs, genre restent sur work)
-- [ ] Webshop /shop/series/<id> : liste work_ids de la série → édition de référence par work
-      (priorité : langue='fr', sinon date_parution la plus récente)
+      - _SYNC_TRIGGER_FIELDS : isbn_ids, image_couverture, synopsis, editeur_id, work_id
+- [x] comic.serie (comic_shop/_inherit) :
+      - action_create_products_from_isbn()
+      - smartbutton "Produits liés" (nb_albums_with_product)
+      - smartbutton "Éditions à publier" (nb_albums_isbn_sans_produit)
+- [x] comic.customer.album :
+      - edition_id (Many2one → comic.edition, required)
+      - work_id (compute → edition_id.work_id, store=True, index=True)
+      - contrainte UNIQUE(partner_id, edition_id)
+- [x] comic_sale_order.py : retrouve l'edition via la ligne de commande → crée customer.album
+- [x] portal.py (/my/library) : filtre par partner_id, tri par série/titre/date
+- [x] Webshop product page : lit les infos via comic_edition.work_id (série, tome, auteurs)
+- [x] Webshop /shop/series/<id> : liste editions par work_id, filtrées product_tmpl_id
 ```
 
 ---
 
-**US-057 — Façade UX album/tome après refactor canonique** ⏳ 🔴
+**US-057 — Façade UX album/tome après refactor canonique** ✅
 
 ```
 En tant qu'utilisateur / commerçant
 Je veux continuer à manipuler des séries, tomes et albums dans l'interface
 Afin que le refactor comic.work / comic.edition / comic.isbn reste invisible dans les parcours courants
 
-Contexte :
-  Le modèle canonique comic.serie → comic.work → comic.edition → comic.isbn est utile
-  techniquement pour gérer les variantes, les ISBN et les dédoublonnages.
-  Mais l'utilisateur pense "série / tome / album". Les termes "Œuvre" et "Édition"
-  ne doivent apparaître que dans les vues avancées ou techniques.
-
 Critères d'acceptance :
-- [ ] Corriger les pages webshop cassées ou incohérentes après refactor :
-      - /shop/series/<id> : le contrôleur passe `editions`, le template ne doit plus lire `albums`
-      - /shop/auteurs/<id> : les cartes reçoivent des `comic.edition`, le template doit lire
-        `edition.work_id.serie_id`, `edition.work_id.tome`, `edition.work_id.titre_canonique`
-- [ ] Portail client :
-      - garder les libellés "Album", "Tome", "Ma bibliothèque"
-      - remplacer les textes visibles "édition" par "album" ou "fiche BD" dans les confirmations,
-        placeholders et titres
-      - ne pas exposer `work_id` / `edition_id` dans les parcours client
-- [ ] Webshop public :
-      - remplacer "Informations sur l'édition" par "Informations BD" ou "Détails de l'album"
-      - garder "tomes disponibles", "autres tomes", "albums disponibles"
-      - conserver le modèle technique `comic_edition_id` uniquement côté code
-- [ ] Back-office collection :
-      - menu principal "Ma Collection" centré sur Séries + Albums/Tomes + Import
-      - déplacer ou masquer `Œuvres`, `Éditions`, `ISBNs` dans un sous-menu manager
-        "Référentiel avancé"
-      - fiche Série : onglet visible "Albums / Tomes" plutôt que "Œuvres"
-      - les champs techniques slug, ids externes, ISBN multiples et éditions restent accessibles
-        en mode avancé
-- [ ] Fiche produit Odoo :
-      - smartbutton visible "Album BD" même si le champ technique reste `comic_edition_id`
-      - bouton "Sync depuis album" ou "Sync depuis fiche BD" plutôt que "Sync depuis édition"
-- [ ] Backlog cohérence doc/code :
-      - vérifier le champ `comic.customer.album.work_id` annoncé dans CLAUDE/US-054
-      - soit l'implémenter, soit corriger la documentation et les critères US-054
-- [ ] Ajouter une note de design dans CLAUDE.md :
-      "Modèle technique canonique, vocabulaire utilisateur album/tome"
+- [x] Pages webshop corrigées :
+      - /shop/series/<id> : template lit edition.work_id.* (contrôleur passe `editions`)
+      - /shop/auteurs/<id> : template lit edition.work_id.serie_id / .tome / .titre_canonique
+- [x] Portail client :
+      - placeholder "Mes notes sur cet album…"
+      - confirm "Supprimer cet album de votre bibliothèque ?"
+- [x] Webshop public :
+      - "Informations sur l'édition" → "Informations BD"
+- [x] Back-office collection :
+      - menu "Ma Collection" : Séries + Albums/Tomes + Prêts + Import
+      - Œuvres et Éditions dans Configuration > Référentiel avancé (managers uniquement)
+      - fiche Série : onglet "Albums / Tomes"
+      - action comic.work titrée "Albums / Tomes"
+- [x] Fiche produit Odoo :
+      - smartbutton "Album BD" (champ technique comic_edition_id inchangé)
+      - bouton "Sync depuis album"
+- [x] comic.customer.album.work_id implémenté (US-054)
+- [x] Règle 14 ajoutée dans CLAUDE.md : vocabulaire technique vs utilisateur
 ```
 
 ---

@@ -69,7 +69,7 @@ class ComicEdition(models.Model):
 
     # --- Auto-sync on write -------------------------------------------------
 
-    _SYNC_TRIGGER_FIELDS = {'image_couverture', 'synopsis', 'editeur_id'}
+    _SYNC_TRIGGER_FIELDS = {'image_couverture', 'synopsis', 'editeur_id', 'isbn_ids', 'work_id'}
 
     def write(self, vals):
         res = super().write(vals)

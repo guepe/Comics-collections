@@ -8,7 +8,7 @@
               groups="comics_collections.group_comic_user"
               sequence="50"/>
 
-    <!-- Ma Collection -->
+    <!-- Ma Collection — parcours utilisateur courant -->
     <menuitem id="menu_comic_collection"
               name="Ma Collection"
               parent="menu_comic_root"
@@ -22,19 +22,12 @@
               groups="comics_collections.group_comic_user"
               sequence="10"/>
 
-    <menuitem id="menu_comic_works"
-              name="Œuvres"
+    <menuitem id="menu_comic_albums"
+              name="Albums / Tomes"
               parent="menu_comic_collection"
               action="action_comic_work"
               groups="comics_collections.group_comic_user"
               sequence="20"/>
-
-    <menuitem id="menu_comic_editions"
-              name="Éditions"
-              parent="menu_comic_collection"
-              action="action_comic_edition"
-              groups="comics_collections.group_comic_user"
-              sequence="25"/>
 
     <menuitem id="menu_comic_prets"
               name="Prêts"
@@ -76,13 +69,34 @@
               parent="menu_comic_catalogues"
               action="action_comic_genre"
               groups="comics_collections.group_comic_user"
-              sequence="20"/>
+              sequence="30"/>
 
-    <!-- Configuration (gestionnaire uniquement, actions ajoutées en Phase 2 et 3) -->
+    <!-- Configuration (gestionnaire uniquement) -->
     <menuitem id="menu_comic_config_root"
               name="Configuration"
               parent="menu_comic_root"
               groups="comics_collections.group_comic_manager"
               sequence="90"/>
+
+    <!-- Référentiel avancé — visible managers uniquement -->
+    <menuitem id="menu_comic_referentiel"
+              name="Référentiel avancé"
+              parent="menu_comic_config_root"
+              groups="comics_collections.group_comic_manager"
+              sequence="10"/>
+
+    <menuitem id="menu_comic_works"
+              name="Œuvres"
+              parent="menu_comic_referentiel"
+              action="action_comic_work"
+              groups="comics_collections.group_comic_manager"
+              sequence="10"/>
+
+    <menuitem id="menu_comic_editions"
+              name="Éditions"
+              parent="menu_comic_referentiel"
+              action="action_comic_edition"
+              groups="comics_collections.group_comic_manager"
+              sequence="20"/>
 
 </odoo>

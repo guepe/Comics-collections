@@ -60,6 +60,62 @@
 
 ---
 
+## 2026-05-21 — US-057 : Façade UX album/tome
+
+### US-057 — Cohérence vocabulaire utilisateur ✅
+
+**comic_shop/views/website_sale_templates.xml**
+- "Informations sur l'édition" → "Informations BD"
+
+**comic_shop/views/product_template_views.xml**
+- Smartbutton "Édition BD" → "Album BD"
+- Bouton "Sync depuis édition" → "Sync depuis album" + confirmation mise à jour
+
+**comic_shop/views/portal_library_templates.xml**
+- Template renommé "Détail album — Ma Bibliothèque"
+- Placeholder "Mes notes sur cet album…"
+- Confirm "Supprimer cet album de votre bibliothèque ?"
+
+**comics_collections/views/comic_menu.xml** (réécrit)
+- Menu "Ma Collection" : Séries + Albums/Tomes + Prêts + Import (utilisateurs)
+- Entrée "Albums / Tomes" remplace "Œuvres" pour les utilisateurs standard
+- Nouveau sous-menu "Configuration > Référentiel avancé" (managers uniquement)
+  avec Œuvres et Éditions dedans
+
+**comics_collections/views/comic_work_views.xml**
+- Action `action_comic_work` renommée "Albums / Tomes"
+
+**comics_collections/views/comic_serie_views.xml**
+- Onglet "Œuvres" → "Albums / Tomes" sur la fiche série
+- Colonne "Éditions" (nb_editions) dans la liste inline au lieu de many2many_tags
+
+**CLAUDE.md**
+- Règle 14 ajoutée : vocabulaire technique (comic.work/edition) vs utilisateur (album/tome)
+
+---
+
+## 2026-05-21 — US-054 : Adaptation comic_shop (complétion)
+
+### US-054 — Champs manquants + sync triggers ✅
+
+**comic_shop/models/product_template.py**
+- Ajout champ `comic_work_id` (Many2one → comic.work, compute sur `comic_edition_id.work_id`, store=True)
+- Utile pour les vues back-office et les filtres search
+
+**comic_shop/models/comic_album.py** (inherit comic.edition)
+- `_SYNC_TRIGGER_FIELDS` étendu : ajout `isbn_ids` (barcode) et `work_id` (nom produit)
+- Le nom du produit se re-synchronise automatiquement si le titre canonique ou le tome de l'œuvre change
+
+**comic_shop/models/comic_customer_album.py**
+- Ajout champ `work_id` (Many2one → comic.work, compute sur `edition_id.work_id`, store=True, index=True)
+- Permet filtres et groupements par œuvre dans les vues back-office
+
+_Note : le reste de US-054 était déjà implémenté lors des sessions précédentes :_
+_`comic_edition_id` sur product.template, smartbuttons série, portal.py, webshop templates,_
+_comic_sale_order.py, et la contrainte UNIQUE sur comic.customer.album._
+
+---
+
 ## 2026-05-21 — US-052 : Adaptation datasources et import
 
 ### US-052 — Entrées de données vers work / edition / isbn ✅
