@@ -13,7 +13,7 @@
     'data': [
         'security/ir.model.access.csv',
         'views/comic_bdgest_enrich_wizard_views.xml',
-        'views/comic_album_inherit_views.xml',
+        'views/comic_edition_inherit_views.xml',
     ],
     'demo': [],
     'installable': True,

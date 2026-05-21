@@ -217,7 +217,7 @@
                                         </div>
 
                                         <div class="card-footer bg-transparent text-muted small py-2">
-                                            <t t-set="nb_tomes" t-value="len(serie.album_ids.filtered(lambda a: a.product_tmpl_id))"/>
+                                            <t t-set="nb_tomes" t-value="len(serie.work_ids.edition_ids.filtered(lambda e: e.product_tmpl_id))"/>
                                             <i class="fa fa-clone me-1"/>
                                             <t t-esc="nb_tomes"/> tome<t t-if="nb_tomes &gt; 1">s</t> disponible<t t-if="nb_tomes &gt; 1">s</t>
                                         </div>
@@ -301,29 +301,29 @@
                     <div class="d-flex align-items-center mb-4">
                         <h3 class="mb-0 me-3">Tomes disponibles</h3>
                         <span class="badge bg-light text-dark border fs-6">
-                            <t t-esc="len(albums)"/>
+                            <t t-esc="len(editions)"/>
                         </span>
                     </div>
 
-                    <t t-if="not albums">
+                    <t t-if="not editions">
                         <div class="alert alert-info">
                             Aucun tome de cette série n'est disponible à la vente pour le moment.
                         </div>
                     </t>
 
                     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
-                        <t t-foreach="albums" t-as="album">
+                        <t t-foreach="editions" t-as="edition">
                             <div class="col">
-                                <a t-att-href="album.product_tmpl_id.website_url or '/shop'"
+                                <a t-att-href="edition.product_tmpl_id.website_url or '/shop'"
                                    class="text-decoration-none text-dark">
                                     <div class="card h-100 shadow-sm border-0">
 
                                         <!-- Couverture via le produit Odoo -->
-                                        <t t-if="album.product_tmpl_id.image_512">
-                                            <img t-att-src="'/web/image/product.template/%d/image_512' % album.product_tmpl_id.id"
+                                        <t t-if="edition.product_tmpl_id.image_512">
+                                            <img t-att-src="'/web/image/product.template/%d/image_512' % edition.product_tmpl_id.id"
                                                  class="card-img-top"
                                                  style="object-fit:contain;background:#f5f5f5;height:200px;"
-                                                 t-att-alt="album.name"
+                                                 t-att-alt="edition.work_id.titre_canonique"
                                                  loading="lazy"/>
                                         </t>
                                         <t t-else="">
@@ -335,19 +335,19 @@
 
                                         <div class="card-body p-2 text-center">
                                             <div class="fw-bold small">
-                                                Tome <t t-esc="album.tome"/>
+                                                Tome <t t-esc="edition.work_id.tome"/>
                                             </div>
                                             <div class="text-muted text-truncate"
                                                  style="font-size:0.75rem;"
-                                                 t-att-title="album.name">
-                                                <t t-esc="album.name"/>
+                                                 t-att-title="edition.work_id.titre_canonique">
+                                                <t t-esc="edition.work_id.titre_canonique"/>
                                             </div>
                                         </div>
 
                                         <div class="card-footer p-2 text-center bg-transparent border-top">
-                                            <t t-if="album.product_tmpl_id.list_price">
+                                            <t t-if="edition.product_tmpl_id.list_price">
                                                 <strong class="text-primary">
-                                                    <t t-esc="'%.2f €' % album.product_tmpl_id.list_price"/>
+                                                    <t t-esc="'%.2f €' % edition.product_tmpl_id.list_price"/>
                                                 </strong>
                                                 <br/>
                                             </t>
@@ -663,18 +663,18 @@
                             </div>
 
                             <!-- Tomes disponibles pour cette série -->
-                            <t t-set="serie_albums" t-value="serie.album_ids.filtered(lambda a: a.product_tmpl_id).sorted(key=lambda a: a.tome or 0)"/>
+                            <t t-set="serie_albums" t-value="serie.work_ids.edition_ids.filtered(lambda e: e.product_tmpl_id).sorted(key=lambda e: e.work_id.tome or 0)"/>
                             <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-2">
-                                <t t-foreach="serie_albums" t-as="album">
+                                <t t-foreach="serie_albums" t-as="edition">
                                     <div class="col">
-                                        <a t-att-href="album.product_tmpl_id.website_url or '/shop'"
+                                        <a t-att-href="edition.product_tmpl_id.website_url or '/shop'"
                                            class="text-decoration-none text-dark">
                                             <div class="card border-0 shadow-sm h-100">
-                                                <t t-if="album.product_tmpl_id.image_512">
-                                                    <img t-att-src="'/web/image/product.template/%d/image_512' % album.product_tmpl_id.id"
+                                                <t t-if="edition.product_tmpl_id.image_512">
+                                                    <img t-att-src="'/web/image/product.template/%d/image_512' % edition.product_tmpl_id.id"
                                                          class="card-img-top"
                                                          style="object-fit:contain;background:#f5f5f5;height:140px;"
-                                                         t-att-alt="album.name"
+                                                         t-att-alt="edition.work_id.titre_canonique"
                                                          loading="lazy"/>
                                                 </t>
                                                 <t t-else="">
@@ -684,7 +684,7 @@
                                                     </div>
                                                 </t>
                                                 <div class="card-body p-1 text-center">
-                                                    <small class="fw-bold">T<t t-esc="album.tome"/></small>
+                                                    <small class="fw-bold">T<t t-esc="edition.work_id.tome"/></small>
                                                 </div>
                                             </div>
                                         </a>

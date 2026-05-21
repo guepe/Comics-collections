@@ -168,15 +168,15 @@ Table de liaison album ↔ auteur avec rôle.
 
 #### `comic.pret`
 
-| Champ                   | Type     | Description                      |
-| ----------------------- | -------- | -------------------------------- |
+| Champ                   | Type     | Description                                        |
+| ----------------------- | -------- | -------------------------------------------------- |
 | `edition_id`            | Many2one | → `comic.edition` (remplace album_id après US-051) |
-| `partner_id`            | Many2one | → `res.partner` (l'ami)          |
-| `date_pret`             | Date     | Date du prêt                     |
-| `date_retour_prevue`    | Date     | Date retour prévue               |
-| `date_retour_effective` | Date     | Date retour réelle               |
-| `retourne`              | Boolean  | Retourné ?                       |
-| `notes`                 | Text     | Notes libres                     |
+| `partner_id`            | Many2one | → `res.partner` (l'ami)                            |
+| `date_pret`             | Date     | Date du prêt                                       |
+| `date_retour_prevue`    | Date     | Date retour prévue                                 |
+| `date_retour_effective` | Date     | Date retour réelle                                 |
+| `retourne`              | Boolean  | Retourné ?                                         |
+| `notes`                 | Text     | Notes libres                                       |
 
 ---
 
@@ -184,6 +184,11 @@ Table de liaison album ↔ auteur avec rôle.
 
 > **Décision US-050 :** `comic.album` est remplacé par trois modèles distincts.
 > `comic.album.auteur.line` est remplacé par `comic.work.auteur.line`.
+>
+> **Décision UX associée :** le modèle technique expose `comic.work` et `comic.edition`,
+> mais les parcours courants doivent continuer à parler de **séries**, **tomes** et
+> **albums**. Les termes "Œuvre" et "Édition" sont réservés aux vues avancées,
+> au référentiel technique et aux diagnostics.
 
 ```
 comic.serie ──────────────────────────────────────────────────────────────────
@@ -255,19 +260,20 @@ comic.pret ───────────────────────
 
 #### Algorithme de détection de doublons (US-056)
 
-| Score              | Critère                                                             | Action                              |
-| ------------------ | ------------------------------------------------------------------- | ----------------------------------- |
-| **Conflit certain**  | Même `(serie_id, tome)` → Constraint UNIQUE bloque                | Erreur bloquante                    |
-| **Doublon probable** | Même `serie_id` + même `tome` + `titre_normalise` identique       | Popup "Fusionner ou créer ?"        |
-| **Doublon possible** | `SequenceMatcher(titre_norm_A, titre_norm_B).ratio() ≥ 0.85`      | Popup de confirmation               |
-| **OK**               | Aucun candidat trouvé                                              | Création normale                    |
+| Score                | Critère                                                      | Action                       |
+| -------------------- | ------------------------------------------------------------ | ---------------------------- |
+| **Conflit certain**  | Même `(serie_id, tome)` → Constraint UNIQUE bloque           | Erreur bloquante             |
+| **Doublon probable** | Même `serie_id` + même `tome` + `titre_normalise` identique  | Popup "Fusionner ou créer ?" |
+| **Doublon possible** | `SequenceMatcher(titre_norm_A, titre_norm_B).ratio() ≥ 0.85` | Popup de confirmation        |
+| **OK**               | Aucun candidat trouvé                                        | Création normale             |
 
 > Algorithme retenu : `difflib.SequenceMatcher` (stdlib Python, seuil 0.85) — pas de dépendance externe.
 
 ### Vues à créer
 
 - `comic.serie` : list, form, kanban (avec couverture), search
-- `comic.album` : list, form, kanban (avec couverture + étoiles), search
+- façade utilisateur "Albums / Tomes" : basée sur `comic.work` + édition de référence,
+  avec vues techniques `comic.work`, `comic.edition`, `comic.isbn` pour les managers
 - `comic.pret` : list, form
 - `comic.genre` : list, form
 - `comic.editeur` : list, form
@@ -279,7 +285,7 @@ comic.pret ───────────────────────
 Bandes Dessinées
 ├── Ma Collection
 │   ├── Séries
-│   ├── Albums
+│   ├── Albums / Tomes
 │   └── Prêts
 ├── Catalogues
 │   ├── Auteurs (res.partner filtré)
@@ -288,6 +294,7 @@ Bandes Dessinées
 ├── Wishlist
 └── Configuration
     ├── Paramètres IA
+    ├── Référentiel avancé (Œuvres / Éditions / ISBNs)
     └── BDGest
 ```
 
@@ -605,6 +612,10 @@ Après modification d'un `.py` avec un volume Docker monté, supprimer le cache 
 
 ```bash
 find /chemin/module -name "__pycache__" -exec rm -rf {} +
+docker logs -f odoo-web
+
+ou les logs /var/lib/docker/containers/1a1388a3d44137e1d6807a00a76dae51ce907c08b0c704523a271b9b21a7bd48/1a1388a3d44137e1d6807a00a76dae51ce907c08b0c704523a271b9b21a7bd48-json.log
+
 ```
 
 ---

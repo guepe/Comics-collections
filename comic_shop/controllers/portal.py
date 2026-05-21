@@ -31,17 +31,17 @@ class ComicLibraryPortal(CustomerPortal):
 
         if sort == 'serie':
             records = records.sorted(
-                key=lambda r: (r.album_id.serie_id.name or '', r.album_id.tome or 0)
+                key=lambda r: (r.edition_id.work_id.serie_id.name or '', r.edition_id.work_id.tome or 0)
             )
         elif sort == 'title':
-            records = records.sorted(key=lambda r: r.album_id.name or '')
+            records = records.sorted(key=lambda r: r.edition_id.work_id.titre_canonique or '')
         else:
             records = records.sorted(key=lambda r: r.date_ajout or '', reverse=True)
 
         all_records = request.env['comic.customer.album'].search([
             ('partner_id', '=', partner.id),
         ])
-        nb_series = len(all_records.mapped('album_id.serie_id').filtered('id'))
+        nb_series = len(all_records.mapped('edition_id.work_id.serie_id').filtered('id'))
 
         return request.render('comic_shop.portal_library_index', {
             'records': records,

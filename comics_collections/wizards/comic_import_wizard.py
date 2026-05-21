@@ -1,6 +1,7 @@
 import base64
 import csv
 import re
+import unicodedata
 from datetime import date, datetime, timedelta, timezone
 from io import BytesIO, StringIO
 from xml.etree import ElementTree as ET
@@ -272,6 +273,11 @@ class ComicImportWizard(models.TransientModel):
                 if any(values.values()):
                     normalised.append(values)
 
+        # BDGest files contain multiple record types after the ALBUM rows
+        # (REVUE, PARABDE headers). Keep only rows where _table == 'album'.
+        if any('_table' in row for row in normalised):
+            normalised = [r for r in normalised if r.get('_table', '').strip().lower() == 'album']
+
         if not normalised:
             raise UserError("Aucune ligne exploitable n'a été trouvée dans le fichier.")
         return normalised
@@ -281,11 +287,36 @@ class ComicImportWizard(models.TransientModel):
         value = str(value or '').strip().lower()
         value = value.replace('°', '').replace(' ', '_').replace('-', '_')
         aliases = {
+            # Generic
             'serie': 'serie_name',
             'série': 'serie_name',
-            'titre': 'titre_album',
-            'titre_de_l_album': 'titre_album',
+            'titre': 'titre_canonique',
+            'titre_album': 'titre_canonique',
+            'titre_canonique': 'titre_canonique',
+            'titre_de_l_album': 'titre_canonique',
+            'name': 'titre_canonique',
             'contenu': 'contenu',
+            # BDGest export columns
+            'num': 'tome',
+            'dl': 'date_parution',          # Date de dépôt légal/parution (MM/YYYY)
+            'lu': 'etat_lecture',           # 0=non lu, 1=lu
+            'wishlist': 'dans_wishlist',
+            # BDGest columns to ignore
+            'idalbum': '',
+            'numa': '',                     # Suffixe édition spéciale (INT, HS…)
+            'collection': '',
+            'eo': '',
+            'ai': '',
+            'cote': '',
+            'etat': '',                     # État physique (pas état de lecture)
+            'dateachat': '',
+            'prixachat': '',
+            'avendre': '',
+            'perso1': '', 'perso2': '', 'perso3': '', 'perso4': '',
+            'suivi': '',
+            'datedu': '', 'datelu': '',
+            'dedicace': '', 'datededicace': '',
+            'table': '_table',              # Garde la colonne Table pour filtrage
         }
         return aliases.get(value, value)
 
@@ -316,7 +347,7 @@ class ComicImportWizard(models.TransientModel):
         return {
             'serie_name': serie_name,
             'tome': tome,
-            'titre_album': titre_album,
+            'titre_canonique': titre_album,
             'date_parution': date_parution,
             'editeur': editeur,
             'etat_lecture': 'non_lu',
@@ -521,7 +552,12 @@ class ComicImportWizard(models.TransientModel):
         return (date(1899, 12, 30) + timedelta(days=int(serial))).isoformat()
 
     def _import_row(self, row):
-        title = (row.get('titre_album') or row.get('name') or '').strip()
+        title = (
+            row.get('titre_canonique')
+            or row.get('titre_album')
+            or row.get('name')
+            or ''
+        ).strip()
         serie_name = (row.get('serie_name') or '').strip()
         if not title and not serie_name:
             raise UserError("le titre ou la série est obligatoire")
@@ -529,40 +565,148 @@ class ComicImportWizard(models.TransientModel):
             title = serie_name
 
         isbn = self._clean_isbn(row.get('isbn'))
-        values = self._album_values(row, title, serie_name)
-        album = self.env['comic.album']
-        existing = album.browse()
-        if self.import_policy == 'update' and isbn:
-            existing = album.search(
-                ['|', ('isbn', '=', isbn), ('isbn', '=', row.get('isbn', '').strip())],
-                limit=1
-            )
-        if existing:
-            existing.write(values)
-            return 'updated'
-        album.create(values)
-        return 'created'
+        tome = self._parse_integer(row.get('tome'))
 
-    def _album_values(self, row, title, serie_name):
-        isbn = self._clean_isbn(row.get('isbn'))
-        values = {
-            'name': title,
-            'isbn': isbn,
-            'tome': self._parse_integer(row.get('tome')),
-            'date_parution': self._parse_date(row.get('date_parution')),
-            'nb_pages': self._parse_integer(row.get('nb_pages')),
-            'etat_lecture': self._parse_reading_state(row.get('etat_lecture')),
-            'note': self._parse_float(row.get('note')),
-            'dans_collection': True,
-            'url_club_be': self._clean_text(row.get('url_club_be')),
-            'url_amazon_be': self._clean_text(row.get('url_amazon_be')),
+        existing_edition = self._find_edition_by_isbn(isbn)
+        serie = self._get_or_create_serie(serie_name, row) if serie_name else self.env['comic.serie'].browse()
+
+        if existing_edition:
+            work = existing_edition.work_id
+            work_vals = {'titre_canonique': title}
+            if tome or not work.tome:
+                work_vals['tome'] = tome
+            if serie and not work.serie_id:
+                work_vals['serie_id'] = serie.id
+            work.write(work_vals)
+            action = 'updated'
+        else:
+            work = self._find_work(serie, tome, title)
+            if not work:
+                work = self.env['comic.work'].create({
+                    'titre_canonique': title,
+                    'tome': tome,
+                    'serie_id': serie.id if serie else False,
+                })
+            else:
+                missing_vals = {}
+                if title and not work.titre_canonique:
+                    missing_vals['titre_canonique'] = title
+                if tome and not work.tome:
+                    missing_vals['tome'] = tome
+                if serie and not work.serie_id:
+                    missing_vals['serie_id'] = serie.id
+                if missing_vals:
+                    work.write(missing_vals)
+            action = 'created'
+
+        self._sync_work_authors(work, row)
+
+        edition_vals = self._edition_values(row, work)
+        if existing_edition:
+            write_vals = {key: value for key, value in edition_vals.items() if key != 'work_id'}
+            if write_vals:
+                existing_edition.write(write_vals)
+            edition = existing_edition
+        else:
+            edition = self.env['comic.edition'].create(edition_vals)
+
+        if isbn and not self.env['comic.isbn'].search([('isbn_13', '=', isbn)], limit=1):
+            self.env['comic.isbn'].create({'edition_id': edition.id, 'isbn_13': isbn})
+
+        self._sync_customer_album(edition, row)
+        return action
+
+    def _find_edition_by_isbn(self, isbn):
+        if not isbn:
+            return self.env['comic.edition'].browse()
+        isbn_rec = self.env['comic.isbn'].search([('isbn_13', '=', isbn)], limit=1)
+        return isbn_rec.edition_id if isbn_rec else self.env['comic.edition'].browse()
+
+    def _find_work(self, serie, tome, title):
+        Work = self.env['comic.work']
+        if serie:
+            work = Work.search([('serie_id', '=', serie.id), ('tome', '=', tome)], limit=1)
+            if work:
+                return work
+        if serie and title:
+            work = Work.search(
+                [('serie_id', '=', serie.id), ('titre_canonique', '=', title)],
+                limit=1,
+            )
+            if work:
+                return work
+        if title:
+            return Work.search([('titre_canonique', '=', title)], limit=1)
+        return Work.browse()
+
+    def _edition_values(self, row, work):
+        values = {'work_id': work.id}
+        editeur_name = self._clean_text(row.get('editeur'))
+        if editeur_name:
+            values['editeur_id'] = self._get_or_create_by_name('comic.editeur', editeur_name).id
+
+        field_parsers = {
+            'date_parution': self._parse_date,
+            'date_depot_legal': self._parse_date,
+            'langue': self._parse_language,
+            'format': self._parse_format,
+            'nb_pages': self._parse_integer,
+            'synopsis': self._clean_text,
+            'url_club_be': self._clean_text,
+            'url_amazon_be': self._clean_text,
+            'url_fnac_be': self._clean_text,
         }
-        if serie_name:
-            values['serie_id'] = self._get_or_create_serie(serie_name, row).id
-        author_commands = self._author_commands(row)
-        if author_commands:
-            values['auteur_line_ids'] = author_commands
+        for field, parser in field_parsers.items():
+            value = parser(row.get(field))
+            if value:
+                values[field] = value
         return values
+
+    def _sync_work_authors(self, work, row):
+        for column, role in [
+            ('scenariste', 'scenariste'),
+            ('dessinateur', 'dessinateur'),
+            ('coloriste', 'coloriste'),
+        ]:
+            for name in self._split_names(row.get(column)):
+                partner = self._get_or_create_by_name('res.partner', name)
+                already = work.auteur_line_ids.filtered(
+                    lambda l: l.partner_id == partner and l.role == role
+                )
+                if already:
+                    continue
+                self.env['comic.work.auteur.line'].create({
+                    'work_id': work.id,
+                    'partner_id': partner.id,
+                    'role': role,
+                })
+
+    def _sync_customer_album(self, edition, row):
+        CustomerAlbum = self.env.get('comic.customer.album')
+        if CustomerAlbum is None:
+            return
+        partner_id = self.env.user.partner_id.id
+        etat_lecture = self._parse_reading_state(row.get('etat_lecture', ''))
+        dans_wishlist = bool(self._parse_integer(row.get('dans_wishlist', '0')))
+        note = max(0.0, min(5.0, self._parse_float(row.get('note', ''))))
+        existing_cust = CustomerAlbum.search([
+            ('partner_id', '=', partner_id),
+            ('edition_id', '=', edition.id),
+        ], limit=1)
+        cust_vals = {
+            'etat_lecture': etat_lecture,
+            'dans_wishlist': dans_wishlist,
+            'dans_collection': not dans_wishlist,
+            'note': note,
+        }
+        if existing_cust:
+            existing_cust.write(cust_vals)
+        else:
+            CustomerAlbum.create({
+                'partner_id': partner_id,
+                'edition_id': edition.id,
+                **cust_vals,
+            })
 
     def _get_or_create_serie(self, serie_name, row):
         serie = self.env['comic.serie'].search([('name', '=', serie_name)], limit=1)
@@ -669,6 +813,8 @@ class ComicImportWizard(models.TransientModel):
         value = value.replace(' ', '_').replace('-', '_')
         aliases = {
             '': 'non_lu',
+            '0': 'non_lu',              # BDGest: Lu=0
+            '1': 'lu',                  # BDGest: Lu=1
             'non_lu': 'non_lu',
             'non_lu(e)': 'non_lu',
             'nonlu': 'non_lu',
@@ -680,6 +826,58 @@ class ComicImportWizard(models.TransientModel):
             'lue': 'lu',
         }
         return aliases.get(value, 'non_lu')
+
+    @classmethod
+    def _parse_language(cls, value):
+        token = cls._selection_token(value)
+        aliases = {
+            '': False,
+            'fr': 'fr',
+            'francais': 'fr',
+            'french': 'fr',
+            'nl': 'nl',
+            'neerlandais': 'nl',
+            'nederlands': 'nl',
+            'dutch': 'nl',
+            'en': 'en',
+            'anglais': 'en',
+            'english': 'en',
+            'de': 'de',
+            'allemand': 'de',
+            'german': 'de',
+            'autre': 'autre',
+            'other': 'autre',
+        }
+        return aliases.get(token, token if token in {'fr', 'nl', 'en', 'de', 'autre'} else 'autre')
+
+    @classmethod
+    def _parse_format(cls, value):
+        token = cls._selection_token(value)
+        aliases = {
+            '': False,
+            'broche': 'broche',
+            'brochee': 'broche',
+            'paperback': 'broche',
+            'cartonne': 'cartonne',
+            'cartonnee': 'cartonne',
+            'hardcover': 'cartonne',
+            'integrale': 'integrale',
+            'collector': 'collector',
+            'numerique': 'numerique',
+            'digital': 'numerique',
+            'ebook': 'numerique',
+            'autre': 'autre',
+            'other': 'autre',
+        }
+        allowed = {'broche', 'cartonne', 'integrale', 'collector', 'numerique', 'autre'}
+        return aliases.get(token, token if token in allowed else 'autre')
+
+    @staticmethod
+    def _selection_token(value):
+        value = str(value or '').strip().lower()
+        value = unicodedata.normalize('NFKD', value)
+        value = ''.join(char for char in value if not unicodedata.combining(char))
+        return value.replace(' ', '_').replace('-', '_')
 
     @staticmethod
     def _parse_date(value):
@@ -762,14 +960,19 @@ class ComicImportWizard(models.TransientModel):
                 'example': '5',
             },
             {
-                'name': 'titre_album',
-                'description': "Titre de l'album",
+                'name': 'titre_canonique',
+                'description': "Titre canonique de l'œuvre",
                 'example': 'Poulet aux amendes',
             },
             {
-                'name': 'isbn',
-                'description': 'ISBN EAN-13, sans tirets de préférence',
-                'example': '',
+                'name': 'langue',
+                'description': 'Langue : fr, nl, en, de ou autre',
+                'example': 'fr',
+            },
+            {
+                'name': 'editeur',
+                'description': "Nom de l'éditeur",
+                'example': 'Dupuis',
             },
             {
                 'name': 'date_parution',
@@ -777,14 +980,24 @@ class ComicImportWizard(models.TransientModel):
                 'example': '1985-05-01',
             },
             {
+                'name': 'date_depot_legal',
+                'description': 'Date de dépôt légal au format YYYY-MM-DD',
+                'example': '',
+            },
+            {
                 'name': 'nb_pages',
                 'description': 'Nombre de pages',
                 'example': '',
             },
             {
-                'name': 'editeur',
-                'description': "Nom de l'éditeur",
-                'example': 'Dupuis',
+                'name': 'isbn',
+                'description': 'ISBN EAN-13, sans tirets de préférence',
+                'example': '',
+            },
+            {
+                'name': 'format',
+                'description': 'Format : broche, cartonne, integrale, collector, numerique ou autre',
+                'example': 'cartonne',
             },
             {
                 'name': 'scenariste',
@@ -805,6 +1018,11 @@ class ComicImportWizard(models.TransientModel):
                 'name': 'genre',
                 'description': 'Genre principal',
                 'example': 'Humour',
+            },
+            {
+                'name': 'synopsis',
+                'description': "Résumé ou quatrième de couverture",
+                'example': '',
             },
             {
                 'name': 'etat_lecture',
@@ -830,6 +1048,16 @@ class ComicImportWizard(models.TransientModel):
                 'name': 'url_amazon_be',
                 'description': "URL d'achat Amazon.com.be",
                 'example': '',
+            },
+            {
+                'name': 'url_fnac_be',
+                'description': "URL d'achat FNAC.be",
+                'example': '',
+            },
+            {
+                'name': 'dans_wishlist',
+                'description': 'Wishlist : 1 = à acquérir, 0 = déjà possédé',
+                'example': '0',
             },
         ]
 
@@ -908,7 +1136,7 @@ class ComicImportWizard(models.TransientModel):
                 'xl/styles.xml': cls._xlsx_styles(),
                 'xl/worksheets/sheet1.xml': cls._xlsx_sheet(
                     album_rows,
-                    column_widths=[18, 10, 24, 18, 16, 12, 18, 22, 22, 22, 16, 16, 10, 28, 28, 28],
+                    column_widths=[18, 10, 28, 12, 18, 16, 16, 12, 18, 16, 22, 22, 22, 16, 32, 16, 10, 28, 28, 28, 28, 14],
                 ),
                 'xl/worksheets/sheet2.xml': cls._xlsx_sheet(
                     instruction_rows,

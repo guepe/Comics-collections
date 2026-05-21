@@ -5,28 +5,28 @@ from odoo.exceptions import UserError
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    comic_album_id = fields.Many2one(
-        'comic.album',
-        string='Album BD',
+    comic_edition_id = fields.Many2one(
+        'comic.edition',
+        string='Édition BD',
         ondelete='set null',
         copy=False,
-        help="Album BD lié à ce produit. Géré via la fiche album.",
+        help="Édition BD liée à ce produit. Gérée via la fiche édition.",
     )
 
-    def action_view_comic_album(self):
+    def action_view_comic_edition(self):
         self.ensure_one()
-        if not self.comic_album_id:
-            raise UserError(_("Aucun album BD lié à ce produit."))
+        if not self.comic_edition_id:
+            raise UserError(_("Aucune édition BD liée à ce produit."))
         return {
             'type': 'ir.actions.act_window',
-            'res_model': 'comic.album',
-            'res_id': self.comic_album_id.id,
+            'res_model': 'comic.edition',
+            'res_id': self.comic_edition_id.id,
             'view_mode': 'form',
             'target': 'current',
         }
 
-    def action_sync_from_album(self):
+    def action_sync_from_edition(self):
         self.ensure_one()
-        if not self.comic_album_id:
-            raise UserError(_("Aucun album BD lié à ce produit."))
-        self.comic_album_id._sync_to_product()
+        if not self.comic_edition_id:
+            raise UserError(_("Aucune édition BD liée à ce produit."))
+        self.comic_edition_id._sync_to_product()

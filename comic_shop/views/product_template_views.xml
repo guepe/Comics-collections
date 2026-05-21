@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Héritage du formulaire produit pour ajouter le lien album BD -->
+    <!-- Héritage du formulaire produit pour ajouter le lien édition BD -->
 
     <record id="view_product_template_form_comic_shop" model="ir.ui.view">
         <field name="name">product.template.form.comic.shop</field>
@@ -9,35 +9,35 @@
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
 
-            <!-- Smartbutton Album BD dans le button_box -->
+            <!-- Smartbutton Édition BD dans le button_box -->
             <div name="button_box" position="inside">
-                <button name="action_view_comic_album"
+                <button name="action_view_comic_edition"
                         type="object"
                         class="oe_stat_button"
                         icon="fa-book"
-                        invisible="not comic_album_id">
+                        invisible="not comic_edition_id">
                     <div class="o_stat_info">
-                        <span class="o_stat_text">Album BD</span>
+                        <span class="o_stat_text">Édition BD</span>
                     </div>
                 </button>
             </div>
 
-            <!-- Bouton "Sync depuis album" dans le header -->
+            <!-- Bouton "Sync depuis édition" dans le header -->
             <xpath expr="//sheet" position="before">
                 <header>
-                    <button name="action_sync_from_album"
-                            string="Sync depuis album"
+                    <button name="action_sync_from_edition"
+                            string="Sync depuis édition"
                             type="object"
                             class="btn-secondary"
-                            invisible="not comic_album_id"
-                            confirm="Écraser les données du produit (nom, image, barcode, description) depuis l'album BD ?"
+                            invisible="not comic_edition_id"
+                            confirm="Écraser les données du produit (nom, image, barcode, description) depuis l'édition BD ?"
                             groups="comics_collections.group_comic_manager"/>
                 </header>
             </xpath>
 
-            <!-- Champ comic_album_id caché (pour les conditions invisible) -->
+            <!-- Champ comic_edition_id caché (pour les conditions invisible) -->
             <xpath expr="//sheet/field[@name='product_variant_count']" position="before">
-                <field name="comic_album_id" invisible="1"/>
+                <field name="comic_edition_id" invisible="1"/>
             </xpath>
 
         </field>

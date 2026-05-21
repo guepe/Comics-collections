@@ -7,9 +7,9 @@
         <field name="arch" type="xml">
             <form string="Enrichir depuis BDGest">
 
-                <!-- En-tête : album en cours -->
-                <group invisible="not album_id">
-                    <field name="album_display" string="Album" readonly="1"/>
+                <!-- En-tête : édition en cours -->
+                <group invisible="not edition_id">
+                    <field name="edition_display" string="Édition" readonly="1"/>
                 </group>
 
                 <!-- Étape 1 : recherche -->
@@ -44,7 +44,7 @@
                             string="Retour"/>
                     <button special="cancel" string="Annuler"/>
                     <field name="state" invisible="1"/>
-                    <field name="album_id" invisible="1"/>
+                    <field name="edition_id" invisible="1"/>
                 </footer>
             </form>
         </field>

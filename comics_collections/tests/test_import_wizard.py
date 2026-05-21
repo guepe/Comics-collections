@@ -65,6 +65,8 @@ _parse_date = ComicImportWizard._parse_date
 _parse_integer = ComicImportWizard._parse_integer
 _parse_float = ComicImportWizard._parse_float
 _parse_reading_state = ComicImportWizard._parse_reading_state
+_parse_language = ComicImportWizard._parse_language
+_parse_format = ComicImportWizard._parse_format
 _normalise_header = ComicImportWizard._normalise_header
 _read_csv_rows = ComicImportWizard._read_csv_rows
 _split_series_title = ComicImportWizard._split_series_title
@@ -178,6 +180,23 @@ class TestParseReadingState(unittest.TestCase):
         self.assertEqual(_parse_reading_state('LU'), 'lu')
 
 
+# ── Tests _parse_language / _parse_format ────────────────────────────────────
+
+class TestCanonicalSelections(unittest.TestCase):
+
+    def test_parse_language_french_label(self):
+        self.assertEqual(_parse_language('Français'), 'fr')
+
+    def test_parse_language_unknown(self):
+        self.assertEqual(_parse_language('esperanto'), 'autre')
+
+    def test_parse_format_accented(self):
+        self.assertEqual(_parse_format('Cartonné'), 'cartonne')
+
+    def test_parse_format_unknown(self):
+        self.assertEqual(_parse_format('souple luxe'), 'autre')
+
+
 # ── Tests _normalise_header ───────────────────────────────────────────────────
 
 class TestNormaliseHeader(unittest.TestCase):
@@ -189,7 +208,13 @@ class TestNormaliseHeader(unittest.TestCase):
         self.assertEqual(_normalise_header('série'), 'serie_name')
 
     def test_titre_alias(self):
-        self.assertEqual(_normalise_header('titre'), 'titre_album')
+        self.assertEqual(_normalise_header('titre'), 'titre_canonique')
+
+    def test_titre_album_alias(self):
+        self.assertEqual(_normalise_header('titre_album'), 'titre_canonique')
+
+    def test_format_kept(self):
+        self.assertEqual(_normalise_header('format'), 'format')
 
     def test_lowercase(self):
         self.assertEqual(_normalise_header('ISBN'), 'isbn')
@@ -273,7 +298,7 @@ class TestParseCollectionContent(unittest.TestCase):
         )
         self.assertEqual(result['serie_name'], "Agent 212 (L')")
         self.assertEqual(result['tome'], '5')
-        self.assertEqual(result['titre_album'], 'Poulet aux amendes')
+        self.assertEqual(result['titre_canonique'], 'Poulet aux amendes')
         self.assertEqual(result['date_parution'], '1985-05-01')
         self.assertEqual(result['editeur'], 'Dupuis')
         self.assertEqual(result['etat_lecture'], 'non_lu')
@@ -333,7 +358,7 @@ class TestNormaliseImportRows(unittest.TestCase):
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]['serie_name'], 'Astérix')
         self.assertEqual(result[0]['tome'], '1')
-        self.assertEqual(result[1]['titre_album'], "La Serpe d'Or")
+        self.assertEqual(result[1]['titre_canonique'], "La Serpe d'Or")
 
     def test_header_aliases_resolved(self):
         rows = [
@@ -342,11 +367,11 @@ class TestNormaliseImportRows(unittest.TestCase):
         ]
         result = _normalise_import_rows(rows)
         self.assertIn('serie_name', result[0])
-        self.assertIn('titre_album', result[0])
+        self.assertIn('titre_canonique', result[0])
 
     def test_empty_rows_skipped(self):
         rows = [
-            ['serie_name', 'titre_album'],
+            ['serie_name', 'titre_canonique'],
             ['', ''],
             ['Astérix', 'Le Gaulois'],
         ]

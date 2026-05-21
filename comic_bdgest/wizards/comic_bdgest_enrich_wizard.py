@@ -10,8 +10,8 @@ class ComicBdgestEnrichWizard(models.TransientModel):
     _name = 'comic.bdgest.enrich.wizard'
     _description = 'Enrichissement depuis BDGest'
 
-    album_id = fields.Many2one('comic.album', readonly=True)
-    album_display = fields.Char(compute='_compute_album_display')
+    edition_id = fields.Many2one('comic.edition', readonly=True)
+    edition_display = fields.Char(compute='_compute_edition_display')
     search_type = fields.Selection([
         ('isbn', 'Par ISBN'),
         ('titre', 'Par titre'),
@@ -24,32 +24,33 @@ class ComicBdgestEnrichWizard(models.TransientModel):
     result_ids = fields.One2many(
         'comic.bdgest.result.line', 'wizard_id', string='Résultats')
 
-    @api.depends('album_id')
-    def _compute_album_display(self):
+    @api.depends('edition_id')
+    def _compute_edition_display(self):
         for rec in self:
-            a = rec.album_id
-            if not a:
-                rec.album_display = ''
+            e = rec.edition_id
+            if not e:
+                rec.edition_display = ''
                 continue
             parts = []
-            if a.serie_id:
-                parts.append(a.serie_id.name)
-            if a.tome:
-                parts.append(f'T{a.tome}')
-            if a.name:
-                parts.append(a.name)
-            rec.album_display = ' – '.join(parts)
+            if e.work_id.serie_id:
+                parts.append(e.work_id.serie_id.name)
+            if e.work_id.tome:
+                parts.append(f'T{e.work_id.tome}')
+            if e.work_id.titre_canonique:
+                parts.append(e.work_id.titre_canonique)
+            rec.edition_display = ' – '.join(parts)
 
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
-        album_id = self.env.context.get('default_album_id')
-        if album_id:
-            album = self.env['comic.album'].browse(album_id)
-            if album.isbn:
-                res.update({'search_type': 'isbn', 'search_term': album.isbn})
-            elif album.name:
-                res.update({'search_type': 'titre', 'search_term': album.name})
+        edition_id = self.env.context.get('default_edition_id')
+        if edition_id:
+            edition = self.env['comic.edition'].browse(edition_id)
+            isbn = edition._get_primary_isbn()
+            if isbn:
+                res.update({'search_type': 'isbn', 'search_term': isbn})
+            elif edition.work_id.titre_canonique:
+                res.update({'search_type': 'titre', 'search_term': edition.work_id.titre_canonique})
         return res
 
     def action_search(self):
@@ -59,11 +60,10 @@ class ComicBdgestEnrichWizard(models.TransientModel):
         try:
             scraper = BdgestScraper(request_delay=2.0)
             if self.search_type == 'isbn':
-                # Flux ISBN : search → 1er résultat → fiche complète → import direct
                 detail = scraper.search_by_isbn(self.search_term)
                 if not detail:
                     raise UserError("Aucun album trouvé pour cet ISBN sur BDGest.")
-                self.album_id._bdgest_apply_detail(detail, scraper)
+                self.edition_id._bdgest_apply_detail(detail, scraper)
                 return {'type': 'ir.actions.act_window_close'}
             else:
                 raw = scraper.search_by_title(self.search_term)[:20]
@@ -96,7 +96,7 @@ class ComicBdgestEnrichWizard(models.TransientModel):
         if len(selected) > 1:
             raise UserError("Sélectionnez un seul résultat.")
         line = selected[0]
-        self.album_id._bdgest_import_from_id(
+        self.edition_id._bdgest_import_from_id(
             line.bdgest_album_id,
             bdgest_serie_id=line.bdgest_serie_id,
             serie_name=line.serie_name,

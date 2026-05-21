@@ -11,11 +11,11 @@
         <field name="active" eval="False"/>
     </record>
 
-    <record id="ir_cron_update_albums" model="ir.cron">
-        <field name="name">BD — Enrichissement quotidien des albums incomplets</field>
-        <field name="model_id" ref="comics_collections.model_comic_album"/>
+    <record id="ir_cron_update_editions" model="ir.cron">
+        <field name="name">BD — Enrichissement quotidien des éditions incomplètes</field>
+        <field name="model_id" ref="comics_collections.model_comic_edition"/>
         <field name="state">code</field>
-        <field name="code">model._cron_update_albums()</field>
+        <field name="code">model._cron_update_editions()</field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
         <field name="active" eval="False"/>

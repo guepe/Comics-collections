@@ -9,7 +9,7 @@
         <field name="arch" type="xml">
             <list string="Bibliothèques clients">
                 <field name="partner_id"/>
-                <field name="album_id"/>
+                <field name="edition_id"/>
                 <field name="source"/>
                 <field name="etat_lecture"/>
                 <field name="dans_collection"/>
@@ -32,7 +32,7 @@
                     <group>
                         <group string="Identification">
                             <field name="partner_id"/>
-                            <field name="album_id"/>
+                            <field name="edition_id"/>
                             <field name="source"/>
                             <field name="date_ajout"/>
                         </group>
@@ -65,7 +65,7 @@
         <field name="arch" type="xml">
             <search string="Bibliothèques clients">
                 <field name="partner_id" string="Client"/>
-                <field name="album_id" string="Album"/>
+                <field name="edition_id" string="Édition"/>
                 <filter string="Dans la collection" name="collection"
                         domain="[('dans_collection', '=', True)]"/>
                 <filter string="En wishlist" name="wishlist"

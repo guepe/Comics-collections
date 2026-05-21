@@ -15,7 +15,7 @@ _BD_FILTER_PARAMS = ('bd_serie_id', 'bd_genre', 'bd_auteur', 'bd_type')
 
 
 def _bd_params(params):
-    """Retourne (serie_id, genre_id, auteur_id, type) depuis les GET params."""
+    """Returns (serie_id, genre_id, auteur_id, type) from GET params."""
     return (
         params.get('bd_serie_id', ''),
         params.get('bd_genre', ''),
@@ -25,9 +25,9 @@ def _bd_params(params):
 
 
 class ComicShopController(WebsiteSale):
-    """Étend website_sale : page produit BD, filtres sidebar, pages séries/auteurs/éditeurs."""
+    """Extends website_sale: BD product page, filters sidebar, series/author/publisher pages."""
 
-    # ── Page produit ──────────────────────────────────────────────────────────
+    # ── Product page ─────────────────────────────────────────────────────────
 
     @http.route()
     def product(self, product, category='', search='', **kwargs):
@@ -35,35 +35,39 @@ class ComicShopController(WebsiteSale):
         if not hasattr(response, 'qcontext'):
             return response
         response.qcontext.update({
-            'comic_album': False,
+            'comic_edition': False,
             'comic_other_tomes': [],
             'comic_in_library': False,
+            'comic_isbn': False,
         })
-        album = product.sudo().comic_album_id
-        if not album:
+        edition = product.sudo().comic_edition_id
+        if not edition:
             return response
-        other_tomes = request.env['comic.album'].sudo().search([
-            ('serie_id', '=', album.serie_id.id),
-            ('product_tmpl_id', '!=', False),
-            ('id', '!=', album.id),
-        ], order='tome') if album.serie_id else []
+        other_tomes = []
+        if edition.work_id.serie_id:
+            other_tomes = request.env['comic.edition'].sudo().search([
+                ('work_id.serie_id', '=', edition.work_id.serie_id.id),
+                ('product_tmpl_id', '!=', False),
+                ('id', '!=', edition.id),
+            ], order='work_id')
         in_library = False
         if not request.website.is_public_user():
             in_library = bool(request.env['comic.customer.album'].search_count([
-                ('album_id', '=', album.id),
+                ('edition_id', '=', edition.id),
                 ('partner_id', '=', request.env.user.partner_id.id),
             ]))
         response.qcontext.update({
-            'comic_album': album,
+            'comic_edition': edition,
             'comic_other_tomes': other_tomes,
             'comic_in_library': in_library,
+            'comic_isbn': edition._get_primary_isbn() or False,
         })
         return response
 
-    # ── Filtrage BD : intercepté au bon niveau (avant calcul de bins) ─────────
+    # ── BD filter: overridden before bins calculation ─────────────────────────
 
     def _shop_lookup_products(self, options, post, search, website):
-        """Override pour filtrer par série / genre / auteur / type BD."""
+        """Override to filter by series / genre / author / type."""
         fuzzy_term, product_count, search_result = super()._shop_lookup_products(
             options, post, search, website
         )
@@ -71,24 +75,24 @@ class ComicShopController(WebsiteSale):
         if not any([bd_serie_id, bd_genre_id, bd_auteur_id, bd_type]):
             return fuzzy_term, product_count, search_result
 
-        album_domain = [('product_tmpl_id', '!=', False)]
+        edition_domain = [('product_tmpl_id', '!=', False)]
         if bd_serie_id:
-            album_domain.append(('serie_id', '=', int(bd_serie_id)))
+            edition_domain.append(('work_id.serie_id', '=', int(bd_serie_id)))
         if bd_genre_id:
-            album_domain.append(('serie_id.genre_id', '=', int(bd_genre_id)))
+            edition_domain.append(('work_id.serie_id.genre_id', '=', int(bd_genre_id)))
         if bd_auteur_id:
-            album_domain.append(('auteur_line_ids.partner_id', '=', int(bd_auteur_id)))
+            edition_domain.append(('work_id.auteur_line_ids.partner_id', '=', int(bd_auteur_id)))
         if bd_type:
-            album_domain.append(('serie_id.type', '=', bd_type))
+            edition_domain.append(('work_id.serie_id.type', '=', bd_type))
 
         allowed_ids = set(
-            request.env['comic.album'].sudo().search(album_domain).mapped('product_tmpl_id.id')
+            request.env['comic.edition'].sudo().search(edition_domain).mapped('product_tmpl_id.id')
         )
         search_result = search_result.filtered(lambda p: p.id in allowed_ids)
         return fuzzy_term, len(search_result), search_result
 
     def _shop_get_query_url_kwargs(self, search, min_price, max_price, order=None, tags=None, **kwargs):
-        """Inclure les params BD dans keep() pour que pagination/tri les préserve."""
+        """Include BD params in keep() so pagination/sorting preserves them."""
         result = super()._shop_get_query_url_kwargs(
             search, min_price, max_price, order=order, tags=tags, **kwargs
         )
@@ -98,7 +102,7 @@ class ComicShopController(WebsiteSale):
                 result[key] = val
         return result
 
-    # ── Shop : injection des données de filtres BD dans le contexte ───────────
+    # ── Shop: inject BD filter data into context ──────────────────────────────
 
     @http.route()
     def shop(self, **kwargs):
@@ -111,11 +115,11 @@ class ComicShopController(WebsiteSale):
         bd_serie_id, bd_genre_id, bd_auteur_id, bd_type = _bd_params(params)
 
         bd_series = env['comic.serie'].sudo().search([
-            ('album_ids.product_tmpl_id', '!=', False),
+            ('work_ids.edition_ids.product_tmpl_id', '!=', False),
         ])
         bd_genres = env['comic.genre'].sudo().search([])
-        bd_auteurs = env['comic.album.auteur.line'].sudo().search([
-            ('album_id.product_tmpl_id', '!=', False),
+        bd_auteurs = env['comic.work.auteur.line'].sudo().search([
+            ('work_id.edition_ids.product_tmpl_id', '!=', False),
             ('role', 'in', ['scenariste', 'dessinateur']),
         ]).mapped('partner_id')
 
@@ -136,19 +140,18 @@ class ComicShopController(WebsiteSale):
         })
         return response
 
-    # ── Pages séries ──────────────────────────────────────────────────────────
+    # ── Series pages ──────────────────────────────────────────────────────────
 
     @http.route('/shop/series', type='http', auth='public', website=True)
     def shop_series(self, **kwargs):
         series = request.env['comic.serie'].sudo().search([
-            ('album_ids.product_tmpl_id', '!=', False),
+            ('work_ids.edition_ids.product_tmpl_id', '!=', False),
         ])
-        # Fallback cover : premier album publié (tome le plus bas) si la série n'a pas d'image
         cover_urls = {}
         for serie in series.filtered(lambda s: not s.image_couverture):
-            first = serie.album_ids.filtered(
-                lambda a: a.product_tmpl_id and a.product_tmpl_id.image_512
-            ).sorted(key=lambda a: a.tome or 0)
+            first = serie.work_ids.edition_ids.filtered(
+                lambda e: e.product_tmpl_id and e.product_tmpl_id.image_512
+            ).sorted(key=lambda e: e.work_id.tome or 0)
             if first:
                 cover_urls[serie.id] = (
                     f'/web/image/product.template/{first[0].product_tmpl_id.id}/image_512'
@@ -163,21 +166,21 @@ class ComicShopController(WebsiteSale):
         serie = request.env['comic.serie'].sudo().browse(serie_id)
         if not serie.exists():
             return request.not_found()
-        albums = request.env['comic.album'].sudo().search([
-            ('serie_id', '=', serie.id),
+        editions = request.env['comic.edition'].sudo().search([
+            ('work_id.serie_id', '=', serie.id),
             ('product_tmpl_id', '!=', False),
-        ], order='tome')
+        ], order='work_id')
         return request.render('comic_shop.shop_serie_detail_page', {
             'serie': serie,
-            'albums': albums,
+            'editions': editions,
         })
 
-    # ── Pages auteurs ─────────────────────────────────────────────────────────
+    # ── Author pages ──────────────────────────────────────────────────────────
 
     @http.route('/shop/auteurs', type='http', auth='public', website=True)
     def shop_auteurs(self, **kwargs):
-        lines = request.env['comic.album.auteur.line'].sudo().search([
-            ('album_id.product_tmpl_id', '!=', False),
+        lines = request.env['comic.work.auteur.line'].sudo().search([
+            ('work_id.edition_ids.product_tmpl_id', '!=', False),
         ])
         auteur_map = {}
         for line in lines:
@@ -203,29 +206,31 @@ class ComicShopController(WebsiteSale):
         auteur = request.env['res.partner'].sudo().browse(auteur_id)
         if not auteur.exists():
             return request.not_found()
-        lines = request.env['comic.album.auteur.line'].sudo().search([
+        lines = request.env['comic.work.auteur.line'].sudo().search([
             ('partner_id', '=', auteur_id),
-            ('album_id.product_tmpl_id', '!=', False),
+            ('work_id.edition_ids.product_tmpl_id', '!=', False),
         ])
-        lines = lines.sorted(key=lambda l: (l.album_id.serie_id.name or '', l.album_id.tome or 0))
+        lines = lines.sorted(key=lambda l: (l.work_id.serie_id.name or '', l.work_id.tome or 0))
         by_role = {}
         for line in lines:
             label = _ROLE_LABELS.get(line.role, line.role)
             if label not in by_role:
                 by_role[label] = []
-            by_role[label].append(line.album_id)
+            edition = line.work_id.edition_ids.filtered('product_tmpl_id')[:1]
+            if edition:
+                by_role[label].append(edition)
         return request.render('comic_shop.shop_auteur_detail_page', {
             'auteur': auteur,
             'by_role': by_role,
             'nb_albums': sum(len(v) for v in by_role.values()),
         })
 
-    # ── Pages éditeurs ────────────────────────────────────────────────────────
+    # ── Publisher pages ───────────────────────────────────────────────────────
 
     @http.route('/shop/editeurs', type='http', auth='public', website=True)
     def shop_editeurs(self, **kwargs):
         series_with_products = request.env['comic.serie'].sudo().search([
-            ('album_ids.product_tmpl_id', '!=', False),
+            ('work_ids.edition_ids.product_tmpl_id', '!=', False),
             ('editeur_id', '!=', False),
         ])
         editeur_map = {}
@@ -239,7 +244,7 @@ class ComicShopController(WebsiteSale):
                 }
             editeur_map[eid]['nb_series'] += 1
             editeur_map[eid]['nb_albums'] += len(
-                serie.album_ids.filtered(lambda a: a.product_tmpl_id)
+                serie.work_ids.edition_ids.filtered(lambda e: e.product_tmpl_id)
             )
         editeurs = sorted(
             editeur_map.values(),
@@ -254,7 +259,7 @@ class ComicShopController(WebsiteSale):
             return request.not_found()
         series = request.env['comic.serie'].sudo().search([
             ('editeur_id', '=', editeur_id),
-            ('album_ids.product_tmpl_id', '!=', False),
+            ('work_ids.edition_ids.product_tmpl_id', '!=', False),
         ])
         return request.render('comic_shop.shop_editeur_detail_page', {
             'editeur': editeur,

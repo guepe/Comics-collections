@@ -1,6 +1,7 @@
 import base64
 import logging
 import re
+from datetime import date
 
 import requests
 
@@ -19,13 +20,11 @@ def _normalize_isbn(isbn):
     return raw
 
 
-class ComicAlbum(models.Model):
-    _inherit = 'comic.album'
-
-    # ── Mise à jour depuis les sources de données ──────────────────────────────
+class ComicEdition(models.Model):
+    _inherit = 'comic.edition'
 
     def _apply_datasource_data(self, data):
-        """Met à jour self (un album) avec un dict normalisé venant de l'aggregator."""
+        """Updates self (a comic.edition) with a normalized dict from the aggregator."""
         self.ensure_one()
         vals = {}
 
@@ -33,17 +32,21 @@ class ComicAlbum(models.Model):
             vals['synopsis'] = data['synopsis']
         if data.get('nb_pages'):
             vals['nb_pages'] = data['nb_pages']
-        if data.get('isbn') and not self.isbn:
-            vals['isbn'] = _normalize_isbn(data['isbn']) or data['isbn']
 
         for field, key in [('date_parution', 'date_parution'), ('date_depot_legal', 'date_depot_legal')]:
             if data.get(key) and not getattr(self, field):
                 try:
-                    from datetime import date
                     parts = str(data[key])[:10].split('-')
                     vals[field] = date(int(parts[0]), int(parts[1]), int(parts[2]))
                 except Exception:
                     pass
+
+        isbn_raw = data.get('isbn')
+        if isbn_raw:
+            isbn_norm = _normalize_isbn(isbn_raw) or isbn_raw
+            existing_isbn = self.env['comic.isbn'].search([('isbn_13', '=', isbn_norm)], limit=1)
+            if isbn_norm and not existing_isbn:
+                self.env['comic.isbn'].create({'edition_id': self.id, 'isbn_13': isbn_norm})
 
         cover_url = data.get('cover_url') or data.get('cover_url_small')
         if cover_url and not self.image_couverture:
@@ -52,11 +55,12 @@ class ComicAlbum(models.Model):
                 if resp.status_code == 200 and len(resp.content) > 100:
                     vals['image_couverture'] = base64.b64encode(resp.content).decode()
             except Exception as e:
-                _logger.warning('Cover download failed for "%s": %s', self.name, e)
+                _logger.warning('Cover download failed for "%s": %s', self.display_name, e)
 
         if vals:
             self.write(vals)
 
+        work = self.work_id
         for auteur in data.get('auteurs', []):
             name = (auteur.get('name') or '').strip()
             if not name:
@@ -64,50 +68,44 @@ class ComicAlbum(models.Model):
             partner = self.env['res.partner'].search([('name', 'ilike', name)], limit=1)
             if not partner:
                 partner = self.env['res.partner'].create({'name': name})
-            if not self.auteur_line_ids.filtered(lambda l: l.partner_id == partner):
-                self.env['comic.album.auteur.line'].create({
-                    'album_id': self.id,
+            role = auteur.get('role', 'autre')
+            if not work.auteur_line_ids.filtered(lambda l: l.partner_id == partner and l.role == role):
+                self.env['comic.work.auteur.line'].create({
+                    'work_id': work.id,
                     'partner_id': partner.id,
-                    'role': auteur.get('role', 'autre'),
+                    'role': role,
                 })
 
-    def _cron_update_albums(self, batch_size=30):
-        """Cron : enrichit les albums incomplets (sans synopsis, couverture ou ISBN).
-
-        Règle : on ne traite un album que si une source externe retourne un résultat
-        avec un ISBN. Sans ISBN confirmé, on passe — cela évite d'appliquer des
-        données ambiguës issues d'une simple correspondance de titre.
-        """
+    def _cron_update_editions(self, batch_size=30):
+        """Cron: enriches incomplete editions (missing synopsis, cover, or isbn)."""
         from ..aggregator import ComicDataAggregator
 
         domain = [
             '|', '|',
             ('synopsis', 'in', [False, '']),
             ('image_couverture', '=', False),
-            ('isbn', 'in', [False, '']),
+            ('isbn_ids', '=', False),
         ]
-        albums = self.search(domain, limit=batch_size, order='dans_collection desc, write_date asc')
-        if not albums:
-            _logger.info('Cron mise à jour albums : aucun album incomplet.')
+        editions = self.search(domain, limit=batch_size, order='write_date asc')
+        if not editions:
+            _logger.info('Cron éditions : aucune édition incomplète.')
             return
 
-        _logger.info('Cron mise à jour albums : %d album(s) à traiter.', len(albums))
+        _logger.info('Cron éditions : %d édition(s) à enrichir.', len(editions))
         aggregator = ComicDataAggregator(env=self.env)
         updated = 0
 
-        for album in albums:
+        for edition in editions:
             try:
                 agg = None
-                if album.isbn:
-                    agg = aggregator.search(isbn=album.isbn)
-                elif album.name:
-                    results = aggregator.search_list(title=album.name)
+                isbn = edition._get_primary_isbn()
+                if isbn:
+                    agg = aggregator.search(isbn=isbn)
+                elif edition.work_id.titre_canonique:
+                    results = aggregator.search_list(title=edition.work_id.titre_canonique)
                     if results:
-                        # Prend le premier résultat avec ISBN (tome exact en priorité,
-                        # puis n'importe quel résultat avec ISBN toutes sources confondues).
-                        # Sans ISBN confirmé, on ignore cet album.
                         best = next(
-                            (r for r in results if r.isbn and r.tome == album.tome),
+                            (r for r in results if r.isbn and r.tome == edition.work_id.tome),
                             next((r for r in results if r.isbn), None),
                         )
                         if best:
@@ -116,24 +114,26 @@ class ComicAlbum(models.Model):
                 if not agg or not agg.data:
                     continue
 
-                album._apply_datasource_data(agg.data)
+                edition._apply_datasource_data(agg.data)
                 updated += 1
             except Exception:
-                _logger.exception('Cron album update: erreur sur "%s"', album.name)
+                _logger.exception('Cron édition : erreur sur "%s"', edition.display_name)
 
-        _logger.info(
-            'Cron mise à jour albums terminé : %d/%d album(s) enrichi(s).',
-            updated, len(albums),
-        )
+        _logger.info('Cron éditions terminé : %d/%d enrichie(s).', updated, len(editions))
+
+    def _cron_update_albums(self, batch_size=30):
+        """Backward-compatible entrypoint for older cron records."""
+        return self._cron_update_editions(batch_size=batch_size)
 
     def action_search_datasource(self):
-        """Ouvre le wizard de recherche multi-sources pré-rempli avec l'ISBN ou le titre."""
+        """Opens the multi-source search wizard pre-filled with this edition's ISBN or title."""
         self.ensure_one()
-        ctx = {'default_album_id': self.id}
-        if self.isbn:
-            ctx['default_search_term'] = self.isbn
-        elif self.name:
-            ctx['default_search_term'] = self.name
+        ctx = {'default_edition_id': self.id}
+        isbn = self._get_primary_isbn()
+        if isbn:
+            ctx['default_search_term'] = isbn
+        elif self.work_id.titre_canonique:
+            ctx['default_search_term'] = self.work_id.titre_canonique
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'comic.datasource.search.wizard',

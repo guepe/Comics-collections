@@ -34,11 +34,6 @@
                 <field name="nb_albums_isbn_sans_produit" invisible="1"/>
             </xpath>
 
-            <!-- Colonne ISBN + produit dans la liste des albums -->
-            <xpath expr="//field[@name='album_ids']//list/field[@name='dans_collection']" position="before">
-                <field name="isbn" optional="hide"/>
-                <field name="product_tmpl_id" string="Produit" optional="hide" readonly="1"/>
-            </xpath>
 
         </field>
     </record>

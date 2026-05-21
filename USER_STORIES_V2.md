@@ -52,7 +52,8 @@
 | US-052 | Adaptation datasources et import                   | US-051          |
 | US-053 | Vues back-office (list/form/search)                | US-051          |
 | US-054 | Adaptation comic_shop et bibliothèque client       | US-051, US-050  |
-| US-055 | Tests unitaires et validation                      | US-051, US-054  |
+| US-057 | Façade UX album/tome après refactor canonique      | US-053, US-054  |
+| US-055 | Tests unitaires et validation                      | US-051, US-054, US-057 |
 | US-056 | Moteur de déduplication des œuvres                 | US-051, US-050  |
 
 ---
@@ -577,12 +578,12 @@ Toutes les relations vers `comic.album` doivent être mises à jour lors de l'im
 | `comic.customer.album` | `album_id → comic.album` | `edition_id → comic.edition` + `work_id` (computed) | La bibliothèque référence l'édition possédée ; le groupement par œuvre se fait via `work_id` |
 | `product.template` (comic_shop) | `comic_album_id → comic.album` | `comic_edition_id → comic.edition` | Option A — une édition = un produit (FR vs NL, collector vs standard) |
 | `sale.order.line` | via product → album | via product → edition | Lien indirect, logique inchangée |
-| `ComicDataAggregator` | crée `comic.album` | crée `comic.work` + `comic.edition` + `comic.isbn` | À adapter dans US-052 |
-| Import wizard (CSV/XLS/XLSX) | importe vers `comic.album` | importe vers `comic.work` + `comic.edition` + `comic.isbn` | À adapter dans US-052 |
+| `ComicDataAggregator` | crée `comic.album` | crée `comic.work` + `comic.edition` + `comic.isbn` | Adapté dans US-052 |
+| Import wizard (CSV/XLS/XLSX) | importe vers `comic.album` | importe vers `comic.work` + `comic.edition` + `comic.isbn` | Adapté dans US-052 |
 | Portal `/my/library` | liste `customer.album.album_id` | liste `customer.album.edition_id` + regroupement par `work_id` | Groupement par œuvre possible en vue liste |
 | Webshop `/shop` | `product_tmpl_id` sur `comic.album` | `comic_edition_id` sur `product.template` | Logique inchangée, modèle pivot changé |
 | Webshop `/shop/series/<id>` | albums d'une série | works d'une série + édition de référence par work | Affiche la première édition `fr` ou la plus récente |
-| Cron enrichissement (`comic_cron_data.xml`) | enrichit `comic.album` | enrichit `comic.edition` | À adapter lors de US-052 |
+| Cron enrichissement (`comic_cron_data.xml`) | enrichit `comic.album` | enrichit `comic.edition` | Adapté lors de US-052 |
 
 ---
 
@@ -660,6 +661,11 @@ Problèmes identifiés :
       comic.work.titre_normalise (Char, compute, store=True, index=True)
       comic.serie.name_normalise  (Char, compute, store=True, index=True)
       Ces champs sont calculés automatiquement à chaque write, non modifiables par l'utilisateur
+- [x] Décision UX documentée :
+      Le modèle canonique technique est `comic.work` / `comic.edition` / `comic.isbn`,
+      mais les interfaces courantes gardent le vocabulaire utilisateur "album / tome".
+      Les vues "Œuvres" et "Éditions" sont réservées au référentiel avancé.
+      → Détails opérationnels dans US-057.
 - [x] Cas particulier "album incomplet" :
       Un comic.work peut exister sans comic.edition (tome connu mais aucune édition disponible)
       Un comic.edition peut exister sans comic.isbn (édition connue mais ISBN non trouvé)
@@ -762,7 +768,7 @@ Critères d'acceptance :
 
 ---
 
-**US-052 — Adaptation des datasources et de l'import** ⏳ 🔴
+**US-052 — Adaptation des datasources et de l'import** ✅
 
 ```
 En tant que développeur
@@ -771,22 +777,22 @@ créent les bons modèles dès le départ
 Afin que toute entrée de données produise des comic.work + comic.edition + comic.isbn
 
 Critères d'acceptance :
-- [ ] `ComicDataAggregator.search()` adapté :
+- [x] `ComicDataAggregator.search()` adapté :
       - au lieu de créer/retourner un comic.album, retourne un dict normalisé inchangé
         (le dict normalisé existant est déjà compatible — seul le mapping ORM change)
-- [ ] `action_import_selected()` du wizard datasource :
+- [x] `action_import_selected()` du wizard datasource :
       - cherche d'abord comic.isbn existant → retrouve edition + work sans doublon
       - sinon : cherche comic.work (serie_id, tome) existant → crée une nouvelle edition liée
       - sinon : crée comic.work + comic.edition + comic.isbn en cascade
       - migre les auteurs vers comic.work.auteur.line
-- [ ] Import wizard (CSV/XLS/XLSX) adapté :
+- [x] Import wizard (CSV/XLS/XLSX) adapté :
       - colonnes cibles : serie_name, tome, titre_canonique, langue, editeur, date_parution,
         nb_pages, isbn, format, scenariste, dessinateur, coloriste, genre
       - même logique de déduplication (isbn → edition → work) que le wizard datasource
-- [ ] Cron `comic_cron_data.xml` (enrichissement quotidien) adapté :
+- [x] Cron `comic_cron_data.xml` (enrichissement quotidien) adapté :
       - itère sur comic.edition au lieu de comic.album
       - met à jour edition.synopsis, edition.image_couverture, etc.
-- [ ] Cron `comic_serie_cron.xml` (suivi séries) : inchangé — itère déjà sur comic.serie
+- [x] Cron `comic_serie_cron.xml` (suivi séries) : inchangé — itère déjà sur comic.serie
 ```
 
 ---
@@ -855,6 +861,52 @@ Critères d'acceptance :
       (série, tome, auteurs, genre restent sur work)
 - [ ] Webshop /shop/series/<id> : liste work_ids de la série → édition de référence par work
       (priorité : langue='fr', sinon date_parution la plus récente)
+```
+
+---
+
+**US-057 — Façade UX album/tome après refactor canonique** ⏳ 🔴
+
+```
+En tant qu'utilisateur / commerçant
+Je veux continuer à manipuler des séries, tomes et albums dans l'interface
+Afin que le refactor comic.work / comic.edition / comic.isbn reste invisible dans les parcours courants
+
+Contexte :
+  Le modèle canonique comic.serie → comic.work → comic.edition → comic.isbn est utile
+  techniquement pour gérer les variantes, les ISBN et les dédoublonnages.
+  Mais l'utilisateur pense "série / tome / album". Les termes "Œuvre" et "Édition"
+  ne doivent apparaître que dans les vues avancées ou techniques.
+
+Critères d'acceptance :
+- [ ] Corriger les pages webshop cassées ou incohérentes après refactor :
+      - /shop/series/<id> : le contrôleur passe `editions`, le template ne doit plus lire `albums`
+      - /shop/auteurs/<id> : les cartes reçoivent des `comic.edition`, le template doit lire
+        `edition.work_id.serie_id`, `edition.work_id.tome`, `edition.work_id.titre_canonique`
+- [ ] Portail client :
+      - garder les libellés "Album", "Tome", "Ma bibliothèque"
+      - remplacer les textes visibles "édition" par "album" ou "fiche BD" dans les confirmations,
+        placeholders et titres
+      - ne pas exposer `work_id` / `edition_id` dans les parcours client
+- [ ] Webshop public :
+      - remplacer "Informations sur l'édition" par "Informations BD" ou "Détails de l'album"
+      - garder "tomes disponibles", "autres tomes", "albums disponibles"
+      - conserver le modèle technique `comic_edition_id` uniquement côté code
+- [ ] Back-office collection :
+      - menu principal "Ma Collection" centré sur Séries + Albums/Tomes + Import
+      - déplacer ou masquer `Œuvres`, `Éditions`, `ISBNs` dans un sous-menu manager
+        "Référentiel avancé"
+      - fiche Série : onglet visible "Albums / Tomes" plutôt que "Œuvres"
+      - les champs techniques slug, ids externes, ISBN multiples et éditions restent accessibles
+        en mode avancé
+- [ ] Fiche produit Odoo :
+      - smartbutton visible "Album BD" même si le champ technique reste `comic_edition_id`
+      - bouton "Sync depuis album" ou "Sync depuis fiche BD" plutôt que "Sync depuis édition"
+- [ ] Backlog cohérence doc/code :
+      - vérifier le champ `comic.customer.album.work_id` annoncé dans CLAUDE/US-054
+      - soit l'implémenter, soit corriger la documentation et les critères US-054
+- [ ] Ajouter une note de design dans CLAUDE.md :
+      "Modèle technique canonique, vocabulaire utilisateur album/tome"
 ```
 
 ---
@@ -953,7 +1005,8 @@ US-050 (analyse + décisions + stratégie dédup) → US-051 (nouveaux modèles 
 US-051 → US-052 (adaptation datasources + import)
 US-051 → US-053 (vues back-office)
 US-051 + US-052 → US-054 (adaptation comic_shop)
-US-051 + US-054 → US-055 (tests)
+US-053 + US-054 → US-057 (façade UX album/tome)
+US-051 + US-054 + US-057 → US-055 (tests)
 US-051 + US-050 → US-056 (moteur déduplication) — peut être fait en parallèle de US-053/054
 ```
 
@@ -975,7 +1028,7 @@ US-051 + US-050 → US-056 (moteur déduplication) — peut être fait en parall
 | Phase 7  | Catalogue & Lien Produit       | US-035 à US-038  | 🔴 Must Have    |
 | Phase 8  | Bibliothèque Client            | US-039 à US-045  | 🔴 / 🟠 Must    |
 | Phase 9  | Business Intelligence          | US-046 à US-049  | 🟡 Nice to Have |
-| Phase 10 | Refactoring modèle canonique   | US-050 à US-055  | 🔴 Structurant  |
+| Phase 10 | Refactoring modèle canonique   | US-050 à US-057  | 🔴 Structurant  |
 
 ### Dépendances critiques
 
@@ -987,7 +1040,7 @@ US-035 → US-042 (POS), US-045 (import commandes)
 US-039 → US-046 → US-047 → US-048
 
 US-050 (analyse) → US-051 (ORM) → US-052 (migration) → US-054 (comic_shop)
-US-051 → US-053 (vues) + US-055 (tests)
+US-051 → US-053 (vues) → US-057 (façade UX) → US-055 (tests)
 ⚠️  US-050 doit décider Option A/B avant US-051 (voir EPIC 11)
 ```
 

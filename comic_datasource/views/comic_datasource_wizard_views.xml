@@ -23,7 +23,7 @@
                        decoration-warning="source == 'bdgest'"/>
                 <field name="is_duplicate" widget="boolean"
                        column_invisible="True"/>
-                <field name="existing_album_id" optional="show"
+                <field name="existing_edition_id" optional="show"
                        invisible="not is_duplicate"/>
             </list>
         </field>
@@ -92,7 +92,7 @@
                                    decoration-warning="source == 'bdgest'"/>
                             <field name="is_duplicate" column_invisible="True"/>
                             <field name="title_conflict" column_invisible="True"/>
-                            <field name="existing_album_id" optional="show"
+                            <field name="existing_edition_id" optional="show"
                                    invisible="not is_duplicate"/>
                         </list>
                     </field>
@@ -105,7 +105,7 @@
 
                 <!-- Champs cachés -->
                 <field name="state" invisible="1"/>
-                <field name="album_id" invisible="1"/>
+                <field name="edition_id" invisible="1"/>
                 <field name="has_duplicates" invisible="1"/>
                 <field name="has_title_conflicts" invisible="1"/>
                 <field name="bdgest_enabled" invisible="1"/>
@@ -157,7 +157,7 @@
         <field name="res_model">comic.datasource.search.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="binding_model_id" ref="comics_collections.model_comic_album"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_edition"/>
         <field name="binding_view_types">list</field>
     </record>
 

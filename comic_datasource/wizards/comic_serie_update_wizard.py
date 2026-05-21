@@ -28,10 +28,10 @@ class ComicSerieUpdateWizard(models.TransientModel):
     )
     import_report = fields.Html(string='Rapport', readonly=True)
 
-    @api.depends('serie_id.album_ids')
+    @api.depends('serie_id.work_ids')
     def _compute_nb_albums(self):
         for rec in self:
-            rec.nb_albums = len(rec.serie_id.album_ids)
+            rec.nb_albums = len(rec.serie_id.work_ids)
 
     def action_run(self):
         self.ensure_one()
@@ -40,43 +40,43 @@ class ComicSerieUpdateWizard(models.TransientModel):
         aggregator = ComicDataAggregator(env=self.env)
         updated, skipped, errors = [], [], []
 
-        for album in self.serie_id.album_ids.sorted('tome'):
+        for work in self.serie_id.work_ids.sorted('tome'):
             try:
                 agg = None
+                edition = work.edition_ids[:1]
+                isbn = edition._get_primary_isbn() if edition else False
 
-                if album.isbn:
-                    clean = _normalize_isbn(album.isbn)
-                    agg = aggregator.search(isbn=clean or album.isbn)
-                elif album.name:
-                    results = aggregator.search_list(title=album.name)
+                if isbn:
+                    clean = _normalize_isbn(isbn)
+                    agg = aggregator.search(isbn=clean or isbn)
+                elif work.titre_canonique:
+                    results = aggregator.search_list(title=work.titre_canonique)
                     if results:
-                        best = self._best_match_with_isbn(results, album)
+                        best = self._best_match_with_isbn(results, work)
                         if best:
                             agg = aggregator.search(isbn=best.isbn)
 
                 if not agg or not agg.data:
-                    skipped.append(album)
+                    skipped.append(work)
                     continue
 
-                album._apply_datasource_data(agg.data)
-                updated.append(album)
+                if edition:
+                    edition._apply_datasource_data(agg.data)
+                updated.append(work)
 
             except Exception as e:
-                _logger.error('Serie update error on "%s": %s', album.name, e)
-                errors.append(album)
+                _logger.error('Serie update error on "%s": %s', work.titre_canonique, e)
+                errors.append(work)
 
         self.import_report = self._build_report(updated, skipped, errors)
         self.state = 'done'
         return self._reopen()
 
-    def _best_match_with_isbn(self, results, album):
-        """Retourne le meilleur résultat ayant un ISBN (tome exact en priorité).
-
-        On ne retourne rien si aucune source n'a produit un ISBN confirmé.
-        """
-        if album.tome:
+    def _best_match_with_isbn(self, results, work):
+        """Returns the best result with an ISBN (exact tome match first)."""
+        if work.tome:
             for r in results:
-                if r.isbn and r.tome == album.tome:
+                if r.isbn and r.tome == work.tome:
                     return r
         return next((r for r in results if r.isbn), None)
 
@@ -84,17 +84,17 @@ class ComicSerieUpdateWizard(models.TransientModel):
         lines = []
         if updated:
             lines.append(f'<b>✅ {len(updated)} mis à jour :</b><ul>')
-            lines += [f'<li>{a.name}</li>' for a in updated]
+            lines += [f'<li>{w.titre_canonique}</li>' for w in updated]
             lines.append('</ul>')
         if skipped:
             lines.append(f'<b>⏭️ {len(skipped)} ignoré(s) (non trouvé ou déjà à jour) :</b><ul>')
-            lines += [f'<li>{a.name}</li>' for a in skipped]
+            lines += [f'<li>{w.titre_canonique}</li>' for w in skipped]
             lines.append('</ul>')
         if errors:
             lines.append(f'<b>❌ {len(errors)} erreur(s) :</b><ul>')
-            lines += [f'<li>{a.name}</li>' for a in errors]
+            lines += [f'<li>{w.titre_canonique}</li>' for w in errors]
             lines.append('</ul>')
-        return ''.join(lines) or '<p>Aucun album à traiter.</p>'
+        return ''.join(lines) or '<p>Aucune œuvre à traiter.</p>'
 
     def action_close_and_return(self):
         """Ferme le wizard et retourne à la fiche série."""

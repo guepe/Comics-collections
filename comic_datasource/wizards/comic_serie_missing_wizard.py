@@ -50,10 +50,10 @@ class ComicSerieMissingWizard(models.TransientModel):
     nb_missing = fields.Integer(compute='_compute_nb_missing')
     import_report = fields.Html(readonly=True)
 
-    @api.depends('serie_id.album_ids')
+    @api.depends('serie_id.work_ids')
     def _compute_nb_existing(self):
         for rec in self:
-            rec.nb_existing = len(rec.serie_id.album_ids)
+            rec.nb_existing = len(rec.serie_id.work_ids)
 
     @api.depends('line_ids')
     def _compute_nb_missing(self):
@@ -70,10 +70,16 @@ class ComicSerieMissingWizard(models.TransientModel):
         serie_name = self.serie_id.name
 
         # --- Données existantes (3 axes de déduplication) ---
-        existing_albums = self.serie_id.album_ids
-        existing_tomes = {t for t in existing_albums.mapped('tome') if t}
-        existing_isbns = {_normalize_isbn(i) for i in existing_albums.mapped('isbn') if i}
-        existing_titles = {_normalize_title(a.name) for a in existing_albums if a.name}
+        existing_works = self.serie_id.work_ids
+        existing_tomes = {t for t in existing_works.mapped('tome') if t}
+        existing_isbns = {
+            _normalize_isbn(isbn.isbn_13)
+            for work in existing_works
+            for edition in work.edition_ids
+            for isbn in edition.isbn_ids
+            if isbn.isbn_13
+        }
+        existing_titles = {_normalize_title(w.titre_canonique) for w in existing_works if w.titre_canonique}
 
         # candidates: tome -> {'name', 'isbn', 'cover_url', 'date_parution', 'source'}
         candidates = {}
@@ -109,10 +115,10 @@ class ComicSerieMissingWizard(models.TransientModel):
         # --- Vérification globale ISBN (une requête pour tous les candidats) ---
         candidate_isbns = [c['isbn'] for c in candidates.values() if c.get('isbn')]
         if candidate_isbns:
-            already_in_db = self.env['comic.album'].search_read(
-                [('isbn', 'in', candidate_isbns)], ['isbn'],
+            already_in_db = self.env['comic.isbn'].search_read(
+                [('isbn_13', 'in', candidate_isbns)], ['isbn_13'],
             )
-            db_isbns = {_normalize_isbn(r['isbn']) for r in already_in_db if r.get('isbn')}
+            db_isbns = {_normalize_isbn(r['isbn_13']) for r in already_in_db if r.get('isbn_13')}
             candidates = {
                 t: c for t, c in candidates.items()
                 if not (c.get('isbn') and _normalize_isbn(c['isbn']) in db_isbns)
@@ -126,8 +132,8 @@ class ComicSerieMissingWizard(models.TransientModel):
             # Titres existants : mots de ≥3 chars pour éviter les faux positifs
             existing_words = {
                 word
-                for a in existing_albums if a.name
-                for word in re.findall(r'\w{3,}', a.name.lower())
+                for w in existing_works if w.titre_canonique
+                for word in re.findall(r'\w{3,}', w.titre_canonique.lower())
             }
             for t in no_isbn:
                 cand_words = set(re.findall(r'\w{3,}', candidates[t]['name'].lower()))
@@ -140,8 +146,8 @@ class ComicSerieMissingWizard(models.TransientModel):
                 candidates[t]['isbn_unverified'] = True
 
         # --- Stubs pour les tomes attendus mais introuvables ---
-        if self.serie_id.nb_albums_total:
-            for t in range(1, self.serie_id.nb_albums_total + 1):
+        if self.serie_id.nb_works_total:
+            for t in range(1, self.serie_id.nb_works_total + 1):
                 if t not in existing_tomes and t not in candidates:
                     candidates[t] = {
                         'name': f'{serie_name} - Tome {t}',
@@ -282,18 +288,45 @@ class ComicSerieMissingWizard(models.TransientModel):
         selected = self.line_ids.filtered('selected')
         added = []
         for line in selected:
-            vals = {
-                'name': line.name,
-                'serie_id': self.serie_id.id,
-                'tome': line.tome,
-                'dans_wishlist': True,
-                'dans_collection': False,
-            }
-            if line.isbn:
-                vals['isbn'] = line.isbn
-            if line.date_parution:
-                vals['date_parution'] = line.date_parution
-            self.env['comic.album'].create(vals)
+            isbn = _normalize_isbn(line.isbn) if line.isbn else False
+            isbn_rec = self.env['comic.isbn'].search([('isbn_13', '=', isbn)], limit=1) if isbn else False
+
+            if isbn_rec:
+                edition = isbn_rec.edition_id
+                work = edition.work_id
+                missing_vals = {}
+                if not work.serie_id:
+                    missing_vals['serie_id'] = self.serie_id.id
+                if line.tome and not work.tome:
+                    missing_vals['tome'] = line.tome
+                if line.name and not work.titre_canonique:
+                    missing_vals['titre_canonique'] = line.name
+                if missing_vals:
+                    work.write(missing_vals)
+                added.append(line)
+                continue
+
+            work = self.env['comic.work'].search(
+                [('serie_id', '=', self.serie_id.id), ('tome', '=', line.tome)],
+                limit=1,
+            )
+            if not work:
+                work = self.env['comic.work'].create({
+                    'titre_canonique': line.name,
+                    'serie_id': self.serie_id.id,
+                    'tome': line.tome,
+                })
+
+            edition = work.edition_ids[:1]
+            if not edition or isbn:
+                ed_vals = {'work_id': work.id}
+                if line.date_parution:
+                    ed_vals['date_parution'] = line.date_parution
+                if line.cover_data:
+                    ed_vals['image_couverture'] = line.cover_data
+                edition = self.env['comic.edition'].create(ed_vals)
+            if isbn:
+                self.env['comic.isbn'].create({'edition_id': edition.id, 'isbn_13': isbn})
             added.append(line)
 
         if added:

@@ -4,9 +4,9 @@ import datetime
 
 class ComicCustomerAlbum(models.Model):
     _name = 'comic.customer.album'
-    _description = 'Bibliothèque client — album'
-    _order = 'partner_id, album_id'
-    _rec_name = 'album_id'
+    _description = 'Bibliothèque client — édition'
+    _order = 'partner_id, edition_id'
+    _rec_name = 'edition_id'
 
     partner_id = fields.Many2one(
         'res.partner',
@@ -15,9 +15,9 @@ class ComicCustomerAlbum(models.Model):
         ondelete='cascade',
         index=True,
     )
-    album_id = fields.Many2one(
-        'comic.album',
-        string='Album',
+    edition_id = fields.Many2one(
+        'comic.edition',
+        string='Édition',
         required=True,
         ondelete='restrict',
         index=True,
@@ -38,7 +38,7 @@ class ComicCustomerAlbum(models.Model):
     note = fields.Float(string='Note', digits=(2, 1))
     commentaire = fields.Text(string='Commentaire')
     date_ajout = fields.Date(
-        string='Date d\'ajout',
+        string="Date d'ajout",
         default=lambda self: datetime.date.today(),
     )
     sale_order_line_id = fields.Many2one(
@@ -49,21 +49,20 @@ class ComicCustomerAlbum(models.Model):
         help="Ligne de commande à l'origine de l'ajout automatique.",
     )
 
-    # Champ calculé
     has_product = fields.Boolean(
         string='Produit disponible',
         compute='_compute_has_product',
         store=True,
         index=True,
-        help="True si l'album est lié à un produit vendable dans le shop.",
+        help="True si l'édition est liée à un produit vendable dans le shop.",
     )
 
-    _unique_partner_album = models.Constraint(
-        'UNIQUE(partner_id, album_id)',
-        "Ce client possède déjà une entrée pour cet album dans sa bibliothèque.",
+    _unique_partner_edition = models.Constraint(
+        'UNIQUE(partner_id, edition_id)',
+        "Ce client possède déjà une entrée pour cette édition dans sa bibliothèque.",
     )
 
-    @api.depends('album_id.product_tmpl_id')
+    @api.depends('edition_id.product_tmpl_id')
     def _compute_has_product(self):
         for rec in self:
-            rec.has_product = bool(rec.album_id.product_tmpl_id)
+            rec.has_product = bool(rec.edition_id.product_tmpl_id)

@@ -6,6 +6,37 @@
 
 ---
 
+## 2026-05-21 — US-052 : Adaptation datasources et import
+
+### US-052 — Entrées de données vers work / edition / isbn ✅
+
+**comic_datasource** — Adaptation des créations ORM :
+- Le wizard de recherche datasource déduplique maintenant dans l'ordre `comic.isbn`
+  → `comic.edition` → `comic.work` avant de créer une nouvelle édition.
+- Si le couple série/tome existe déjà, l'import crée une `comic.edition` liée au
+  `comic.work` existant au lieu de recréer une œuvre.
+- Les auteurs issus des sources sont ajoutés sur `comic.work.auteur.line` sans écraser
+  les lignes existantes.
+- L'enrichissement quotidien cible `comic.edition` via `_cron_update_editions()`, avec
+  alias de compatibilité `_cron_update_albums()`.
+- La vue héritée datasource est rattachée au formulaire `comic.edition` et rechargée
+  dans le manifest.
+
+**comics_collections / import CSV-XLS-XLSX** — Import canonique :
+- Colonnes cibles alignées sur le nouveau modèle : `serie_name`, `tome`,
+  `titre_canonique`, `langue`, `editeur`, `date_parution`, `nb_pages`, `isbn`,
+  `format`, `scenariste`, `dessinateur`, `coloriste`, `genre`.
+- Déduplication import alignée sur datasource : ISBN existant d'abord, puis œuvre
+  série/tome, puis création `comic.work` + `comic.edition` + `comic.isbn`.
+- Les anciens alias (`titre_album`, exports BDGest, colonne `Contenu`) restent supportés.
+
+**USER_STORIES_V2.md** — US-052 cochée.
+
+**Tests** — Tests purs du wizard d'import alignés sur `titre_canonique` et sur la
+normalisation `langue` / `format`.
+
+---
+
 ## 2026-05-21 — US-050 : Analyse + décisions architecturales + stratégie déduplication
 
 ### US-050 — Inventaire + ERD + stratégie anti-doublons ✅
@@ -33,6 +64,8 @@ Fichiers référençant `comic.album` ou `comic.album.auteur.line` : 35 fichiers
 - Webshop : série → works → édition de référence (fr / date la plus récente)
 - Algorithme déduplication : `difflib.SequenceMatcher` (stdlib, seuil 0.85, pas de dépendance externe)
 - Cas incomplets : `comic.work` sans édition et `comic.edition` sans ISBN sont valides
+- Façade UX validée : conserver le vocabulaire "album / tome" dans les parcours courants ;
+  réserver "Œuvre / Édition / ISBN" au référentiel avancé et aux vues techniques (détaillé en US-057)
 
 ---
 

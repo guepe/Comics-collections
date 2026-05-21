@@ -10,63 +10,62 @@ class ComicSerie(models.Model):
         store=True,
     )
     nb_albums_isbn_sans_produit = fields.Integer(
-        string='Albums à publier',
+        string='Éditions à publier',
         compute='_compute_nb_albums_with_product',
         store=True,
     )
 
-    @api.depends('album_ids.product_tmpl_id', 'album_ids.isbn')
+    @api.depends('work_ids.edition_ids.product_tmpl_id', 'work_ids.edition_ids.isbn_ids')
     def _compute_nb_albums_with_product(self):
         for serie in self:
-            serie.nb_albums_with_product = len(
-                serie.album_ids.filtered('product_tmpl_id')
-            )
+            all_editions = serie.work_ids.edition_ids
+            serie.nb_albums_with_product = len(all_editions.filtered('product_tmpl_id'))
             serie.nb_albums_isbn_sans_produit = len(
-                serie.album_ids.filtered(lambda a: a.isbn and not a.product_tmpl_id)
+                all_editions.filtered(lambda e: e.isbn_ids and not e.product_tmpl_id)
             )
 
     def action_create_products_from_isbn(self):
-        """Crée un produit pour chaque album de la série qui a un ISBN mais pas encore de produit."""
+        """Creates a product for each edition with an ISBN but no linked product."""
         self.ensure_one()
-        albums = self.album_ids.filtered(lambda a: a.isbn and not a.product_tmpl_id)
-        if not albums:
+        editions = self.work_ids.edition_ids.filtered(lambda e: e.isbn_ids and not e.product_tmpl_id)
+        if not editions:
             return {
                 'type': 'ir.actions.client',
                 'tag': 'display_notification',
                 'params': {
                     'title': _("Rien à faire"),
-                    'message': _("Tous les albums avec ISBN ont déjà un produit lié."),
+                    'message': _("Toutes les éditions avec ISBN ont déjà un produit lié."),
                     'type': 'warning',
                     'sticky': False,
                 },
             }
 
         category = self.env.ref('comic_shop.product_category_bd', raise_if_not_found=False)
-        for album in albums:
+        for edition in editions:
             product = self.env['product.template'].create({
-                'name': album._get_product_name(),
+                'name': edition._get_product_name(),
                 'type': 'consu',
-                'comic_album_id': album.id,
+                'comic_edition_id': edition.id,
                 'categ_id': category.id if category else False,
             })
-            album.product_tmpl_id = product
-            album._sync_to_product()
+            edition.product_tmpl_id = product
+            edition._sync_to_product()
 
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'title': _("Produits créés"),
-                'message': _("%d produit(s) créé(s) pour « %s ».") % (len(albums), self.name),
+                'message': _("%d produit(s) créé(s) pour « %s ».") % (len(editions), self.name),
                 'type': 'success',
                 'sticky': False,
             },
         }
 
     def action_view_products(self):
-        """Ouvre la liste des produits liés aux albums de cette série."""
+        """Opens the list of products linked to editions of this series."""
         self.ensure_one()
-        product_ids = self.album_ids.filtered('product_tmpl_id').mapped('product_tmpl_id').ids
+        product_ids = self.work_ids.edition_ids.filtered('product_tmpl_id').mapped('product_tmpl_id').ids
         return {
             'type': 'ir.actions.act_window',
             'name': _("Produits — %s") % self.name,
