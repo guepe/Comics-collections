@@ -6,6 +6,36 @@
 
 ---
 
+## 2026-05-21 — US-050 : Analyse + décisions architecturales + stratégie déduplication
+
+### US-050 — Inventaire + ERD + stratégie anti-doublons ✅
+
+**Inventaire exhaustif** réalisé par grep récursif sur toute la codebase.
+Fichiers référençant `comic.album` ou `comic.album.auteur.line` : 35 fichiers dans 4 modules
+(`comics_collections`, `comic_datasource`, `comic_bdgest`, `comic_shop`) + 2 outils scripts.
+
+**CLAUDE.md** — Section "ERD final — Architecture canonique (Phase 10)" ajoutée :
+- Diagramme ASCII complet : `comic.serie` → `comic.work` → `comic.edition` → `comic.isbn`
+- `comic.work.auteur.line` (remplace `comic.album.auteur.line`)
+- `comic.customer.album` mis à jour : `edition_id` + `work_id` computed
+- `comic.pret` mis à jour : `edition_id` remplace `album_id`
+- Règles de normalisation de titre documentées (unicodedata + articles + suffixes catalogue)
+- Tableau algorithme de détection doublons (SequenceMatcher seuil 0.85)
+
+**USER_STORIES_V2.md** — Toutes les cases US-050 cochées + inventaire complet inséré dans le corps de l'US.
+
+**Décisions architecturales validées :**
+- Option A : `product.template` lié à `comic.edition` (1 édition = 1 SKU)
+- `comic.pret.edition_id` (on prête un exemplaire physique d'une édition)
+- `comic.customer.album.edition_id` + `work_id` computed
+- `comic.work.auteur.line` : authorship sur l'œuvre, pas l'édition
+- Slug : `{serie.slug}-t{tome:02d}` (ex. `thorgal-t05`)
+- Webshop : série → works → édition de référence (fr / date la plus récente)
+- Algorithme déduplication : `difflib.SequenceMatcher` (stdlib, seuil 0.85, pas de dépendance externe)
+- Cas incomplets : `comic.work` sans édition et `comic.edition` sans ISBN sont valides
+
+---
+
 ## 2026-05-20 (suite 8) — Enrichissement données démo (Thorgal + Complainte)
 
 ### Données démo — `comics_collections/demo/comic_demo.xml`

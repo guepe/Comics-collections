@@ -8,6 +8,7 @@
 ## 🎯 Objectif du projet
 
 Développer un ensemble de modules Odoo 19 (open source) permettant à un utilisateur de gérer sa collection personnelle de bandes dessinées, avec :
+
 - Un module principal de gestion de collection
 - Un connecteur de scraping vers BDGest / Bedetheque
 - Un connecteur IA (Claude + OpenAI) pour enrichir les fiches
@@ -59,16 +60,17 @@ Comics-collections/
 
 ## ⚙️ Environnement technique
 
-| Paramètre | Valeur |
-|---|---|
-| Version Odoo | **19.0** |
-| Licence | LGPL-3 (OCA style) |
-| Python | 3.12+ |
-| Base de données | PostgreSQL 16 |
-| Style de code | PEP8, OCA guidelines |
-| Branche Git | `19.0` |
+| Paramètre       | Valeur               |
+| --------------- | -------------------- |
+| Version Odoo    | **19.0**             |
+| Licence         | LGPL-3 (OCA style)   |
+| Python          | 3.12+                |
+| Base de données | PostgreSQL 16        |
+| Style de code   | PEP8, OCA guidelines |
+| Branche Git     | `19.0`               |
 
 ### Dépendances Python externes
+
 ```
 requests
 beautifulsoup4
@@ -81,12 +83,13 @@ xmltodict
 ```
 
 ### APIs externes utilisées (sans scraping)
-| API | Auth | Usage | Limite |
-|---|---|---|---|
-| Google Books API | Clé API gratuite | Métadonnées + synopsis + couvertures | 1000 req/jour gratuit |
-| Open Library API | Aucune | Couvertures + métadonnées + auteurs | Illimitée |
-| BnF SRU API | Aucune | BD francophones (dépôt légal) | Illimitée |
-| BDGest (scraping) | Login optionnel | Fallback uniquement | Délai 2s obligatoire |
+
+| API               | Auth             | Usage                                | Limite                |
+| ----------------- | ---------------- | ------------------------------------ | --------------------- |
+| Google Books API  | Clé API gratuite | Métadonnées + synopsis + couvertures | 1000 req/jour gratuit |
+| Open Library API  | Aucune           | Couvertures + métadonnées + auteurs  | Illimitée             |
+| BnF SRU API       | Aucune           | BD francophones (dépôt légal)        | Illimitée             |
+| BDGest (scraping) | Login optionnel  | Fallback uniquement                  | Délai 2s obligatoire  |
 
 ---
 
@@ -95,81 +98,174 @@ xmltodict
 ### Modèles
 
 #### `comic.serie`
-| Champ | Type | Description |
-|---|---|---|
-| `name` | Char | Titre de la série |
-| `type` | Selection | `bd` / `manga` / `comics` / `one_shot` |
-| `statut` | Selection | `en_cours` / `terminee` / `abandonnee` |
-| `genre_id` | Many2one | → `comic.genre` |
-| `editeur_id` | Many2one | → `comic.editeur` |
-| `image_couverture` | Image | Couverture de la série |
-| `synopsis` | Html | Résumé (peut être généré par IA) |
-| `bdgest_id` | Integer | ID BDGest de la série |
-| `bedetheque_url` | Char | URL Bedetheque |
-| `album_ids` | One2many | → `comic.album` |
-| `nb_albums_total` | Integer | Nombre total de tomes (computed) |
-| `nb_albums_possedes` | Integer | Tomes possédés (computed) |
-| `active` | Boolean | Archivage standard Odoo |
+
+| Champ                | Type      | Description                            |
+| -------------------- | --------- | -------------------------------------- |
+| `name`               | Char      | Titre de la série                      |
+| `type`               | Selection | `bd` / `manga` / `comics` / `one_shot` |
+| `statut`             | Selection | `en_cours` / `terminee` / `abandonnee` |
+| `genre_id`           | Many2one  | → `comic.genre`                        |
+| `editeur_id`         | Many2one  | → `comic.editeur`                      |
+| `image_couverture`   | Image     | Couverture de la série                 |
+| `synopsis`           | Html      | Résumé (peut être généré par IA)       |
+| `bdgest_id`          | Integer   | ID BDGest de la série                  |
+| `bedetheque_url`     | Char      | URL Bedetheque                         |
+| `album_ids`          | One2many  | → `comic.album`                        |
+| `nb_albums_total`    | Integer   | Nombre total de tomes (computed)       |
+| `nb_albums_possedes` | Integer   | Tomes possédés (computed)              |
+| `active`             | Boolean   | Archivage standard Odoo                |
 
 #### `comic.album`
-| Champ | Type | Description |
-|---|---|---|
-| `name` | Char | Titre de l'album |
-| `serie_id` | Many2one | → `comic.serie` |
-| `tome` | Integer | Numéro du tome |
-| `isbn` | Char | ISBN (validé format EAN-13) |
-| `date_depot_legal` | Date | Date dépôt légal |
-| `date_parution` | Date | Date de parution |
-| `nb_pages` | Integer | Nombre de pages |
-| `image_couverture` | Image | Couverture de l'album |
-| `synopsis` | Html | Résumé (peut être généré par IA) |
-| `note` | Float | Note 0.0 à 5.0 |
-| `etat_lecture` | Selection | `non_lu` / `en_cours` / `lu` |
-| `dans_collection` | Boolean | Album physiquement possédé |
-| `dans_wishlist` | Boolean | Album sur liste de souhaits |
-| `url_club_be` | Char | Lien achat club.be |
-| `url_amazon_be` | Char | Lien achat amazon.com.be |
-| `bdgest_album_id` | Integer | ID album sur BDGest |
-| `auteur_line_ids` | One2many | → `comic.album.auteur.line` |
-| `active` | Boolean | Archivage standard Odoo |
+
+| Champ              | Type      | Description                      |
+| ------------------ | --------- | -------------------------------- |
+| `name`             | Char      | Titre de l'album                 |
+| `serie_id`         | Many2one  | → `comic.serie`                  |
+| `tome`             | Integer   | Numéro du tome                   |
+| `isbn`             | Char      | ISBN (validé format EAN-13)      |
+| `date_depot_legal` | Date      | Date dépôt légal                 |
+| `date_parution`    | Date      | Date de parution                 |
+| `nb_pages`         | Integer   | Nombre de pages                  |
+| `image_couverture` | Image     | Couverture de l'album            |
+| `synopsis`         | Html      | Résumé (peut être généré par IA) |
+| `note`             | Float     | Note 0.0 à 5.0                   |
+| `etat_lecture`     | Selection | `non_lu` / `en_cours` / `lu`     |
+| `dans_collection`  | Boolean   | Album physiquement possédé       |
+| `dans_wishlist`    | Boolean   | Album sur liste de souhaits      |
+| `url_club_be`      | Char      | Lien achat club.be               |
+| `url_amazon_be`    | Char      | Lien achat amazon.com.be         |
+| `bdgest_album_id`  | Integer   | ID album sur BDGest              |
+| `auteur_line_ids`  | One2many  | → `comic.album.auteur.line`      |
+| `active`           | Boolean   | Archivage standard Odoo          |
 
 #### `comic.album.auteur.line`
+
 Table de liaison album ↔ auteur avec rôle.
 
-| Champ | Type | Description |
-|---|---|---|
-| `album_id` | Many2one | → `comic.album` |
-| `partner_id` | Many2one | → `res.partner` (contacts Odoo natifs) |
-| `role` | Selection | `scenariste` / `dessinateur` / `coloriste` / `encreur` / `traducteur` / `autre` |
+| Champ        | Type      | Description                                                                     |
+| ------------ | --------- | ------------------------------------------------------------------------------- |
+| `album_id`   | Many2one  | → `comic.album`                                                                 |
+| `partner_id` | Many2one  | → `res.partner` (contacts Odoo natifs)                                          |
+| `role`       | Selection | `scenariste` / `dessinateur` / `coloriste` / `encreur` / `traducteur` / `autre` |
 
 #### `comic.editeur`
-| Champ | Type | Description |
-|---|---|---|
-| `name` | Char | Nom de l'éditeur |
-| `partner_id` | Many2one | → `res.partner` (optionnel) |
-| `pays_id` | Many2one | → `res.country` |
-| `site_web` | Char | Site web |
-| `bdgest_editeur_id` | Integer | ID BDGest |
+
+| Champ               | Type     | Description                 |
+| ------------------- | -------- | --------------------------- |
+| `name`              | Char     | Nom de l'éditeur            |
+| `partner_id`        | Many2one | → `res.partner` (optionnel) |
+| `pays_id`           | Many2one | → `res.country`             |
+| `site_web`          | Char     | Site web                    |
+| `bdgest_editeur_id` | Integer  | ID BDGest                   |
 
 #### `comic.genre`
-| Champ | Type | Description |
-|---|---|---|
-| `name` | Char | Nom du genre |
-| `description` | Text | Description |
-| `color` | Integer | Couleur (kanban color widget) |
+
+| Champ         | Type    | Description                   |
+| ------------- | ------- | ----------------------------- |
+| `name`        | Char    | Nom du genre                  |
+| `description` | Text    | Description                   |
+| `color`       | Integer | Couleur (kanban color widget) |
 
 #### `comic.pret`
-| Champ | Type | Description |
-|---|---|---|
-| `album_id` | Many2one | → `comic.album` |
-| `partner_id` | Many2one | → `res.partner` (l'ami) |
-| `date_pret` | Date | Date du prêt |
-| `date_retour_prevue` | Date | Date retour prévue |
-| `date_retour_effective` | Date | Date retour réelle |
-| `retourne` | Boolean | Retourné ? |
-| `notes` | Text | Notes libres |
+
+| Champ                   | Type     | Description                      |
+| ----------------------- | -------- | -------------------------------- |
+| `edition_id`            | Many2one | → `comic.edition` (remplace album_id après US-051) |
+| `partner_id`            | Many2one | → `res.partner` (l'ami)          |
+| `date_pret`             | Date     | Date du prêt                     |
+| `date_retour_prevue`    | Date     | Date retour prévue               |
+| `date_retour_effective` | Date     | Date retour réelle               |
+| `retourne`              | Boolean  | Retourné ?                       |
+| `notes`                 | Text     | Notes libres                     |
+
+---
+
+### ERD final — Architecture canonique (Phase 10 — US-050 → US-055)
+
+> **Décision US-050 :** `comic.album` est remplacé par trois modèles distincts.
+> `comic.album.auteur.line` est remplacé par `comic.work.auteur.line`.
+
+```
+comic.serie ──────────────────────────────────────────────────────────────────
+  │  name, type, statut, genre_id, editeur_id, image_couverture, synopsis    │
+  │  slug: Char (unique, indexé) — auto-généré                               │
+  │  name_normalise: Char (compute, store=True, index=True)                  │
+  └──< comic.work  ──────────────────────────────────────────────────────────┘
+         │  titre_canonique: Char (required)                                 │
+         │  tome: Integer                                                    │
+         │  slug: Char (unique, indexé) — ex. "thorgal-t05"                 │
+         │  titre_normalise: Char (compute, store=True, index=True)         │
+         │  wikidata_id, openlibrary_id, bedetheque_id, comicvine_id: Char  │
+         │  Constraint UNIQUE(serie_id, tome)                                │
+         │  hérite mail.thread + mail.activity.mixin                        │
+         ├──< comic.work.auteur.line  ─────────────────────────────────────  │
+         │      work_id → comic.work (required, cascade)                    │
+         │      partner_id → res.partner                                    │
+         │      role: Selection (scenariste/dessinateur/coloriste/…)        │
+         └──< comic.edition ───────────────────────────────────────────────  │
+                │  work_id → comic.work (required, restrict)               │
+                │  editeur_id → comic.editeur                              │
+                │  date_parution: Date                                     │
+                │  langue: Selection (fr/nl/en/de/autre)                   │
+                │  format: Selection (broche/cartonne/integrale/           │
+                │           collector/numerique/autre)                     │
+                │  image_couverture: Image                                 │
+                │  synopsis: Html                                          │
+                │  nb_pages: Integer                                       │
+                │  url_club_be, url_amazon_be, url_fnac_be: Char           │
+                │  product_tmpl_id → product.template (One2one-like)       │
+                │  hérite mail.thread + mail.activity.mixin                │
+                └──< comic.isbn ──────────────────────────────────────────
+                       edition_id → comic.edition (required, cascade)
+                       isbn_13: Char (EAN-13 validé, UNIQUE)
+                       isbn_10: Char (optionnel, validé si renseigné)
+                       normalisation auto (tirets/espaces supprimés)
+
+comic.customer.album ──────────────────────────────────────────────────────────
+  partner_id → res.partner (required)
+  edition_id → comic.edition (required — remplace album_id)
+  work_id: Many2one compute (edition_id.work_id, store=True)
+  source, etat_lecture, dans_collection, dans_wishlist, note, commentaire
+  Constraint UNIQUE(partner_id, edition_id)
+
+comic.pret ─────────────────────────────────────────────────────────────────
+  edition_id → comic.edition (required — remplace album_id)
+  partner_id → res.partner
+  date_pret, date_retour_prevue, date_retour_effective, retourne, notes
+```
+
+#### Règles de normalisation de titre (stratégie anti-doublons — US-050 B)
+
+```python
+# Appliquées sur comic.work.titre_normalise et comic.serie.name_normalise
+# 1. unicodedata.normalize('NFD') + suppression des accents (catégorie Mn)
+# 2. lower()
+# 3. Suppression des articles définis en tête :
+#    FR : le / la / les / l'   |   NL : de / het / een   |   EN : the / a / an
+# 4. Suppression des suffixes de catalogue : " (les)" / " (de)" / " (the)" en fin de chaîne
+# 5. Suppression des ponctuations non significatives : tirets, points, virgules, guillemets
+# 6. Normalisation des espaces multiples → strip()
+
+# Exemples :
+# "Les Landes perdues"          → "landes perdues"
+# "Landes perdues (Les)"        → "landes perdues"   ✓ identiques
+# "Thorgal (Les aventures de)"  → "thorgal"
+# "l'Enfant des étoiles"        → "enfant des etoiles"
+```
+
+#### Algorithme de détection de doublons (US-056)
+
+| Score              | Critère                                                             | Action                              |
+| ------------------ | ------------------------------------------------------------------- | ----------------------------------- |
+| **Conflit certain**  | Même `(serie_id, tome)` → Constraint UNIQUE bloque                | Erreur bloquante                    |
+| **Doublon probable** | Même `serie_id` + même `tome` + `titre_normalise` identique       | Popup "Fusionner ou créer ?"        |
+| **Doublon possible** | `SequenceMatcher(titre_norm_A, titre_norm_B).ratio() ≥ 0.85`      | Popup de confirmation               |
+| **OK**               | Aucun candidat trouvé                                              | Création normale                    |
+
+> Algorithme retenu : `difflib.SequenceMatcher` (stdlib Python, seuil 0.85) — pas de dépendance externe.
 
 ### Vues à créer
+
 - `comic.serie` : list, form, kanban (avec couverture), search
 - `comic.album` : list, form, kanban (avec couverture + étoiles), search
 - `comic.pret` : list, form
@@ -178,6 +274,7 @@ Table de liaison album ↔ auteur avec rôle.
 - Dashboard : statistiques de la collection
 
 ### Menus
+
 ```
 Bandes Dessinées
 ├── Ma Collection
@@ -202,11 +299,13 @@ Bandes Dessinées
 > Agrège plusieurs sources de données ouvertes + BDGest en fallback.
 
 ### Dépend de
+
 `comic_collection`
 
 ### Architecture — Cascade de sources
 
 La recherche suit cette priorité automatique :
+
 1. **Google Books API** → synopsis, couverture HD, métadonnées générales
 2. **Open Library API** → couverture alternative, auteurs, éditions multiples
 3. **BnF SRU API** → données officielles BD francophones (dépôt légal)
@@ -215,6 +314,7 @@ La recherche suit cette priorité automatique :
 ### Sous-modules
 
 #### `comic_datasource/sources/google_books.py`
+
 - Classe `GoogleBooksSource`
 - Méthode `search_by_isbn(isbn)` → dict normalisé
 - Méthode `search_by_title(title, author=None)` → liste de résultats
@@ -223,6 +323,7 @@ La recherche suit cette priorité automatique :
 - Clé API stockée en `ir.config_parameter` : `comic.google_books_api_key`
 
 #### `comic_datasource/sources/open_library.py`
+
 - Classe `OpenLibrarySource`
 - Méthode `search_by_isbn(isbn)` → dict normalisé
 - Méthode `get_cover_url(isbn, size='L')` → URL directe (S/M/L)
@@ -231,6 +332,7 @@ La recherche suit cette priorité automatique :
 - Aucune clé API requise
 
 #### `comic_datasource/sources/bnf.py`
+
 - Classe `BnfSource`
 - Méthode `search_by_isbn(isbn)` → dict normalisé
 - Méthode `search_by_title(title)` → liste de résultats
@@ -239,6 +341,7 @@ La recherche suit cette priorité automatique :
 - Aucune clé API requise
 
 #### `comic_datasource/sources/bdgest.py`
+
 - Classe `BdgestSource` (scraping — fallback uniquement)
 - AVERTISSEMENT : afficher disclaimer légal avant activation
 - Méthode `search_by_isbn(isbn)` → dict normalisé
@@ -248,6 +351,7 @@ La recherche suit cette priorité automatique :
 - Credentials optionnels : `comic.bdgest_login` / `comic.bdgest_password`
 
 #### `comic_datasource/aggregator.py`
+
 - Classe `ComicDataAggregator`
 - Méthode `search(isbn=None, title=None, author=None)` → résultat fusionné
 - Logique de cascade : tente chaque source dans l'ordre, fusionne les champs
@@ -256,6 +360,7 @@ La recherche suit cette priorité automatique :
 - Priorité métadonnées BD FR : BnF > Google > Open Library
 
 ### Modèle normalisé retourné par chaque source
+
 ```python
 {
     'title': str,
@@ -276,6 +381,7 @@ La recherche suit cette priorité automatique :
 ```
 
 ### Wizard `comic.datasource.search.wizard`
+
 - Champ `search_term` (isbn ou titre)
 - Champ `search_type` : `isbn` / `title`
 - Bouton `action_search()` → appelle l'aggregator, affiche résultats fusionnés
@@ -285,35 +391,40 @@ La recherche suit cette priorité automatique :
 - `action_import_selected()` → crée les enregistrements Odoo
 
 ### Configuration (`res.config.settings`)
-| Paramètre | ir.config_parameter key | Description |
-|---|---|---|
+
+| Paramètre        | ir.config_parameter key      | Description                           |
+| ---------------- | ---------------------------- | ------------------------------------- |
 | Clé Google Books | `comic.google_books_api_key` | Gratuite sur console.cloud.google.com |
-| Login BDGest | `comic.bdgest_login` | Optionnel |
-| MDP BDGest | `comic.bdgest_password` | Optionnel, champ password |
-| Sources actives | `comic.datasource_order` | Ordre de priorité (JSON list) |
-| Délai BDGest | `comic.bdgest_delay` | Délai en secondes (défaut: 2) |
+| Login BDGest     | `comic.bdgest_login`         | Optionnel                             |
+| MDP BDGest       | `comic.bdgest_password`      | Optionnel, champ password             |
+| Sources actives  | `comic.datasource_order`     | Ordre de priorité (JSON list)         |
+| Délai BDGest     | `comic.bdgest_delay`         | Délai en secondes (défaut: 2)         |
 
 ---
 
 ## 📦 Module 3 — `comic_ai`
 
 ### Dépend de
+
 `comic_collection`
 
 ### Configuration (`res.config.settings`)
-| Paramètre | Description |
-|---|---|
-| `comic_ai_provider` | `claude` / `openai` |
-| `comic_ai_claude_api_key` | Clé API Anthropic (champ password) |
-| `comic_ai_openai_api_key` | Clé API OpenAI (champ password) |
-| `comic_ai_model_claude` | ex: `claude-sonnet-4-6` |
-| `comic_ai_model_openai` | ex: `gpt-4o` |
-| `comic_ai_language` | Langue par défaut des résumés (`fr` / `nl` / `en`) |
+
+| Paramètre                 | Description                                        |
+| ------------------------- | -------------------------------------------------- |
+| `comic_ai_provider`       | `claude` / `openai`                                |
+| `comic_ai_claude_api_key` | Clé API Anthropic (champ password)                 |
+| `comic_ai_openai_api_key` | Clé API OpenAI (champ password)                    |
+| `comic_ai_model_claude`   | ex: `claude-sonnet-4-6`                            |
+| `comic_ai_model_openai`   | ex: `gpt-4o`                                       |
+| `comic_ai_language`       | Langue par défaut des résumés (`fr` / `nl` / `en`) |
 
 ### Actions IA sur `comic.album`
+
 Bouton "✨ Générer avec l'IA" dans le formulaire album, ouvrant un wizard :
 
 `comic.ai.wizard` :
+
 - `album_id`
 - `action_type` : `synopsis` / `translate` / `suggest_similar` / `full_sheet`
 - `target_language` : pour la traduction
@@ -322,6 +433,7 @@ Bouton "✨ Générer avec l'IA" dans le formulaire album, ouvrant un wizard :
 - `action_regenerate()` : relance la génération
 
 ### Prompts (dans `comic_ai/prompts/`)
+
 - `prompt_synopsis.txt`
 - `prompt_translate.txt`
 - `prompt_suggest_similar.txt`
@@ -332,10 +444,13 @@ Bouton "✨ Générer avec l'IA" dans le formulaire album, ouvrant un wizard :
 ## 📦 Module 4 — `comic_import`
 
 ### Dépend de
+
 `comic_collection`
 
 ### Format CSV/XLS/XLSX
+
 Colonnes attendues (ordre flexible, mapping configurable) :
+
 ```
 serie_name, tome, titre_album, isbn, date_parution, nb_pages,
 editeur, scenariste, dessinateur, coloriste, genre,
@@ -343,6 +458,7 @@ etat_lecture, note, url_couverture, url_club_be, url_amazon_be
 ```
 
 ### Wizard `comic.import.wizard`
+
 - Upload du fichier (CSV, XLS ou XLSX)
 - Détection automatique du séparateur CSV
 - Étape 1 : mapping des colonnes
@@ -354,12 +470,14 @@ etat_lecture, note, url_couverture, url_club_be, url_amazon_be
 ## 🧑‍💻 Conventions de code
 
 ### Nommage
+
 - Modèles : `comic.xxx` (snake_case avec point)
 - Classes Python : `ComicXxx` (PascalCase)
 - Fichiers XML : `views/comic_xxx_views.xml`
 - Fichiers Python : `models/comic_xxx.py`
 
 ### Structure d'un module
+
 ```
 comics_collections/
 ├── __init__.py
@@ -396,6 +514,7 @@ comics_collections/
 ```
 
 ### `__manifest__.py` type
+
 ```python
 {
     'name': 'Comic Collection',
@@ -416,6 +535,7 @@ comics_collections/
 ### Identifiants de module XML
 
 Le module principal s'appelle **`comics_collections`** (avec "s"). Tous les identifiants XML doivent utiliser ce préfixe :
+
 ```xml
 <!-- ✅ correct -->
 comics_collections.group_comic_user
@@ -449,16 +569,17 @@ comic_collection.group_comic_user
 
 Ces changements cassent silencieusement le code Odoo 17/18. À vérifier systématiquement.
 
-| Modèle | Champ/attribut | Changement |
-|---|---|---|
-| `res.groups` | `category_id` | **Supprimé** — utiliser `res.groups.privilege` (nouveau modèle) |
-| `res.groups` | `users` | **Renommé** en `user_ids` |
-| `ir.actions.server` | `groups_id` | **Renommé** en `group_ids` |
-| Modèles ORM | `_sql_constraints` | **Déprécié/non supporté** — déclarer des attributs `models.Constraint(...)` |
-| Vues search | `<group expand string>` | `expand` et `string` **supprimés** — utiliser `<group name="group_by">` |
-| Vues héritées | `<page string="..." position="...">` | `string` interdit comme sélecteur — utiliser un `<xpath>` stable (`name`, champ enfant, classe) |
+| Modèle              | Champ/attribut                       | Changement                                                                                      |
+| ------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `res.groups`        | `category_id`                        | **Supprimé** — utiliser `res.groups.privilege` (nouveau modèle)                                 |
+| `res.groups`        | `users`                              | **Renommé** en `user_ids`                                                                       |
+| `ir.actions.server` | `groups_id`                          | **Renommé** en `group_ids`                                                                      |
+| Modèles ORM         | `_sql_constraints`                   | **Déprécié/non supporté** — déclarer des attributs `models.Constraint(...)`                     |
+| Vues search         | `<group expand string>`              | `expand` et `string` **supprimés** — utiliser `<group name="group_by">`                         |
+| Vues héritées       | `<page string="..." position="...">` | `string` interdit comme sélecteur — utiliser un `<xpath>` stable (`name`, champ enfant, classe) |
 
 ### Syntaxe Many2many en XML
+
 ```xml
 <!-- ✅ Odoo 19 -->
 <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
@@ -470,14 +591,18 @@ Ces changements cassent silencieusement le code Odoo 17/18. À vérifier systém
 ```
 
 ### Architecture groupes de sécurité Odoo 19
+
 ```
 ir.module.category  ←  res.groups.privilege  ←  res.groups
                           (nouveau modèle)
 ```
+
 Les groupes doivent avoir un `privilege_id` pointant vers un `res.groups.privilege`.
 
 ### Cache Docker
+
 Après modification d'un `.py` avec un volume Docker monté, supprimer le cache :
+
 ```bash
 find /chemin/module -name "__pycache__" -exec rm -rf {} +
 ```
@@ -486,10 +611,10 @@ find /chemin/module -name "__pycache__" -exec rm -rf {} +
 
 ## 🕐 Crons configurés
 
-| Module | Fichier | Fréquence | Action |
-|---|---|---|---|
-| `comics_collections` | `data/comic_cron_data.xml` | Quotidien (2h00) | Enrichissement des albums via datasource |
-| `comic_datasource` | `data/comic_serie_cron.xml` | Hebdomadaire | Vérification nouveaux tomes (séries suivies) |
+| Module               | Fichier                     | Fréquence        | Action                                       |
+| -------------------- | --------------------------- | ---------------- | -------------------------------------------- |
+| `comics_collections` | `data/comic_cron_data.xml`  | Quotidien (2h00) | Enrichissement des albums via datasource     |
+| `comic_datasource`   | `data/comic_serie_cron.xml` | Hebdomadaire     | Vérification nouveaux tomes (séries suivies) |
 
 ---
 
@@ -510,6 +635,7 @@ Ces deux fichiers doivent être maintenus à jour **à la fin de chaque session 
 **Règle :** Ajouter une entrée datée à chaque fin de session couvrant **tout** ce qui a été fait.
 
 Format d'une entrée :
+
 ```
 ## YYYY-MM-DD (suite N) — Titre court
 
@@ -523,3 +649,4 @@ Description du bug et du fix.
 - Inclure : fichiers créés/modifiés, méthodes ajoutées, bugs corrigés, décisions techniques
 - Inclure les **erreurs rencontrées et leurs solutions** (précieux pour les sessions suivantes)
 - Ne pas résumer ce qui est déjà dans `USER_STORIES.md` — aller dans le détail technique
+- ne pas relire tout le fichier, just append.

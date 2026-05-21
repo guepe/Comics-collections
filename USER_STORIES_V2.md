@@ -43,6 +43,18 @@
 | US-048 | Notification CRM à la mise en catalogue             | US-047          |
 | US-049 | Dashboard commerçant — vue marché                   | US-046, US-047  |
 
+### EPIC 11 — Refactoring modèle canonique (Œuvre / Édition / ISBN)
+
+| US     | Titre                                              | Dépend de       |
+| ------ | -------------------------------------------------- | --------------- |
+| US-050 | Analyse + décisions architecturales + déduplication | —              |
+| US-051 | Implémentation ORM (comic.work, .edition, .isbn)   | US-050          |
+| US-052 | Adaptation datasources et import                   | US-051          |
+| US-053 | Vues back-office (list/form/search)                | US-051          |
+| US-054 | Adaptation comic_shop et bibliothèque client       | US-051, US-050  |
+| US-055 | Tests unitaires et validation                      | US-051, US-054  |
+| US-056 | Moteur de déduplication des œuvres                 | US-051, US-050  |
+
 ---
 
 ## 🏗️ ARCHITECTURE V2 — Vue d'ensemble
@@ -496,13 +508,472 @@ Critères d'acceptance :
 
 ---
 
+## 🏗️ EPIC 11 — Refactoring modèle canonique : Œuvre / Édition / ISBN
+
+> **Motivation :** Un ISBN identifie une édition commerciale précise, pas l'œuvre elle-même.
+> La même BD peut avoir des dizaines d'ISBN selon le pays, la langue, l'éditeur, le format ou
+> la réédition. Utiliser l'ISBN comme identifiant principal de `comic.album` crée des doublons
+> et rend impossible de relier les éditions d'une même œuvre.
+>
+> **Contexte :** Projet neuf — aucune donnée existante à préserver. Le refactoring est un
+> remplacement propre et complet : `comic.album` et `comic.album.auteur.line` sont supprimés
+> et remplacés par `comic.work` + `comic.work.auteur.line` + `comic.edition` + `comic.isbn`.
+> Toutes les relations (prêts, bibliothèque client, shop, datasource, portail, webshop) doivent
+> être adaptées dès l'implémentation initiale — aucune couche de compatibilité temporaire.
+
+### Nouveau schéma cible
+
+```
+comic.serie (inchangé comme parent)
+  └── comic.work  (œuvre canonique — un par tome)
+        ├── serie_id          → comic.serie
+        ├── tome              → Integer
+        ├── titre_canonique   → Char
+        ├── slug              → Char (unique, indexé)
+        ├── auteur_line_ids   → One2many → comic.work.auteur.line
+        ├── refs: wikidata_id, openlibrary_id, bedetheque_id, comicvine_id
+        └── edition_ids       → One2many → comic.edition
+
+comic.work.auteur.line  (remplace comic.album.auteur.line)
+  ├── work_id    → comic.work (Many2one, required)
+  ├── partner_id → res.partner (Many2one, required)
+  └── role       → Selection (scenariste / dessinateur / coloriste / encreur / traducteur / autre)
+
+comic.edition  (édition commerciale — un produit = une édition)
+  ├── work_id          → comic.work (Many2one, required)
+  ├── titre_affiche    → Char
+  ├── langue           → Selection (fr / nl / en / de / es / autre)
+  ├── pays_id          → Many2one → res.country
+  ├── editeur_id       → Many2one → comic.editeur
+  ├── date_parution    → Date
+  ├── format           → Selection (broche / cartonne / integrale / collector / numerique / autre)
+  ├── nb_pages         → Integer
+  ├── image_couverture → Image
+  ├── synopsis         → Html
+  ├── isbn_ids         → One2many → comic.isbn
+  └── notes_edition    → Text
+
+comic.isbn
+  ├── edition_id → comic.edition (Many2one, required)
+  ├── isbn_13    → Char (unique, indexé, normalisé)
+  ├── isbn_10    → Char (optionnel)
+  └── [contrainte unicité isbn_13 + validation checksum EAN-13]
+```
+
+### Modèles supprimés
+
+| Supprimé | Remplacé par |
+|---|---|
+| `comic.album` | `comic.work` (métadonnées œuvre) + `comic.edition` (données édition physique) |
+| `comic.album.auteur.line` | `comic.work.auteur.line` |
+
+### Interactions avec les autres modèles
+
+Toutes les relations vers `comic.album` doivent être mises à jour lors de l'implémentation.
+
+| Modèle | Relation actuelle | Nouvelle relation | Justification |
+|---|---|---|---|
+| `comic.pret` | `album_id → comic.album` | `edition_id → comic.edition` | On prête un exemplaire physique = édition précise |
+| `comic.customer.album` | `album_id → comic.album` | `edition_id → comic.edition` + `work_id` (computed) | La bibliothèque référence l'édition possédée ; le groupement par œuvre se fait via `work_id` |
+| `product.template` (comic_shop) | `comic_album_id → comic.album` | `comic_edition_id → comic.edition` | Option A — une édition = un produit (FR vs NL, collector vs standard) |
+| `sale.order.line` | via product → album | via product → edition | Lien indirect, logique inchangée |
+| `ComicDataAggregator` | crée `comic.album` | crée `comic.work` + `comic.edition` + `comic.isbn` | À adapter dans US-052 |
+| Import wizard (CSV/XLS/XLSX) | importe vers `comic.album` | importe vers `comic.work` + `comic.edition` + `comic.isbn` | À adapter dans US-052 |
+| Portal `/my/library` | liste `customer.album.album_id` | liste `customer.album.edition_id` + regroupement par `work_id` | Groupement par œuvre possible en vue liste |
+| Webshop `/shop` | `product_tmpl_id` sur `comic.album` | `comic_edition_id` sur `product.template` | Logique inchangée, modèle pivot changé |
+| Webshop `/shop/series/<id>` | albums d'une série | works d'une série + édition de référence par work | Affiche la première édition `fr` ou la plus récente |
+| Cron enrichissement (`comic_cron_data.xml`) | enrichit `comic.album` | enrichit `comic.edition` | À adapter lors de US-052 |
+
+---
+
+**US-050 — Analyse + décisions architecturales + stratégie de déduplication** ✅
+
+```
+En tant que développeur
+Je veux inventorier toutes les références à comic.album, valider les décisions d'architecture
+et concevoir la stratégie anti-doublons
+Afin de ne rien manquer lors du remplacement et de garantir la qualité des données dès le départ
+
+── A. INVENTAIRE ET DÉCISIONS ARCHITECTURALES ────────────────────────────────
+
+- [x] Inventaire exhaustif de tous les fichiers référençant comic.album et comic.album.auteur.line
+      (models, views, controllers, wizards, data XML, security CSV, templates Qweb)
+      → Voir inventaire complet ci-dessous (section "Inventaire US-050")
+- [x] Décision documentée : Option A validée — product.template lié à comic.edition
+        Raison : une édition = un SKU distinct (langue, format, éditeur différents = produits différents)
+- [x] Décision documentée : comic.pret → edition_id
+        Raison : on prête un exemplaire physique d'une édition spécifique
+- [x] Décision documentée : comic.customer.album → edition_id + work_id computed
+        Raison : on possède une édition, mais les vues "par œuvre" nécessitent work_id
+- [x] Décision documentée : comic.work.auteur.line remplace comic.album.auteur.line
+        (authorship appartient à l'œuvre, pas à une édition commerciale)
+- [x] Stratégie d'affichage webshop validée : série → works → édition de référence (fr/date la plus récente)
+- [x] Choix de slug validé : `{serie.slug}-t{tome:02d}` ex. `thorgal-t05`
+- [x] ERD final mis à jour dans CLAUDE.md (section "ERD final — Architecture canonique")
+
+── B. ANALYSE DES RISQUES DE DOUBLONS ────────────────────────────────────────
+
+Problèmes identifiés :
+  1. Même tome, ISBN différents selon l'édition/pays/format (déjà géré par comic.work + comic.edition)
+  2. Même tome, titre légèrement différent selon la source
+       ex. "Landes Perdues" ≠ "Les Landes perdues" ≠ "Les landes perdues (Les)"
+       → risque de créer 2 comic.work distincts pour le même tome
+  3. Même série, nom de série variant selon la source
+       ex. "Thorgal" vs "Thorgal (Les aventures de)"
+  4. Albums incomplets dans les datasources (champs manquants : tome absent,
+       ISBN absent, titre tronqué) → entrées orphelines ou impossibles à rattacher
+
+- [x] Recenser les cas de variation observés dans les sources (Google Books, Open Library,
+      BnF, BDGest) et documenter les patterns les plus fréquents (articles définis,
+      casse, accents, suffixes entre parenthèses, abréviations)
+      → Patterns recensés : articles en tête (le/la/les/l'/de/het/een/the/a/an),
+        suffixes catalogue (Les)/(De)/(The), casse, accents, tirets
+- [x] Définir les règles de normalisation de titre retenues :
+      - Passage en minuscules + suppression des accents (unicodedata, catégorie Mn)
+      - Suppression des articles définis en tête de chaîne :
+          FR : le / la / les / l'
+          NL : de / het / een
+          EN : the / a / an
+      - Suppression des suffixes "(Les)" / "(De)" / "(The)" en fin de chaîne (variante catalogue)
+      - Suppression des caractères de ponctuation non significatifs (tirets, points, virgules)
+      - Normalisation des espaces multiples
+      Exemple : "Les Landes perdues" → "landes perdues"
+                "Landes perdues (Les)" → "landes perdues"  → identiques ✓
+- [x] Définir les règles de normalisation de nom de série (mêmes règles)
+- [x] Choisir et documenter l'algorithme de similarité pour la détection de candidats :
+      - Ratio SequenceMatcher (stdlib Python, ratio ≥ 0.85 recommandé)
+      - ou distance Levenshtein ≤ 3 (bibliothèque python-Levenshtein ou rapidfuzz)
+      - Décision : ratio SequenceMatcher (pas de dépendance externe) avec seuil 0.85
+        → "conflit certain" si même (serie_id, tome) + titre normalisé identique
+        → "doublon probable" si même serie_id + ratio ≥ 0.85 + tome identique
+        → "doublon possible" si ratio ≥ 0.85 sur titre ET série normalisés
+
+── C. STRATÉGIE DE RÉSOLUTION DES DOUBLONS ───────────────────────────────────
+
+- [x] Décision documentée sur le workflow de détection (applicable dans US-056) :
+      Lors de la création d'un comic.work (import datasource OU saisie manuelle) :
+        1. Chercher d'abord par (serie_id, tome) → conflit certain → bloquer avec message
+        2. Chercher par titre normalisé + série normalisée + tome → doublon probable
+           → afficher une popup "Ce tome ressemble à [X]. Fusionner ou créer séparément ?"
+        3. Si aucun candidat → création normale
+- [x] Décision documentée sur le champ d'index anti-doublons :
+      comic.work.titre_normalise (Char, compute, store=True, index=True)
+      comic.serie.name_normalise  (Char, compute, store=True, index=True)
+      Ces champs sont calculés automatiquement à chaque write, non modifiables par l'utilisateur
+- [x] Cas particulier "album incomplet" :
+      Un comic.work peut exister sans comic.edition (tome connu mais aucune édition disponible)
+      Un comic.edition peut exister sans comic.isbn (édition connue mais ISBN non trouvé)
+      → les deux cas sont valides et ne doivent pas être bloqués
+      → vue back-office : filtre "Œuvres sans édition" et "Éditions sans ISBN" pour revue manuelle
+- [x] Note : la fiabilisation des sources de données (confiance par source, réconciliation
+      automatique de conflits entre sources) est hors périmètre US-050 — à traiter dans
+      une EPIC dédiée ultérieure
+
+── INVENTAIRE US-050 — Fichiers référençant comic.album ──────────────────────
+
+Module comics_collections (module principal) :
+  models/comic_album.py            — définition _name = 'comic.album'
+  models/comic_auteur_line.py      — définition _name = 'comic.album.auteur.line'
+  models/comic_serie.py            — album_ids One2many, first_album_cover_id computed
+  models/res_partner.py            — auteur_line_ids One2many
+  views/comic_album_views.xml      — list, form, kanban, search, wishlist
+  views/comic_serie_views.xml      — URL couverture /web/image/comic.album/
+  views/comic_menu.xml             — menu Albums
+  security/comic_security.xml      — record rules comic.album
+  security/ir.model.access.csv     — droits comic.album + comic.album.auteur.line
+  wizards/comic_import_wizard.py   — création comic.album
+  data/comic_cron_data.xml         — cron référence model_comic_album
+  demo/comic_demo.xml              — données démo comic.album + comic.album.auteur.line
+  tests/test_computed_fields.py    — tests unitaires champs computed
+
+Module comic_datasource :
+  models/comic_album.py                      — _inherit = 'comic.album'
+  models/__init__.py                         — import comic_album
+  views/comic_datasource_album_inherit_views.xml — hérite vue form comic.album
+  views/comic_datasource_wizard_views.xml    — binding_model comic.album
+  wizards/comic_datasource_search_wizard.py  — crée comic.album + comic.album.auteur.line
+  wizards/comic_serie_missing_wizard.py      — crée comic.album
+  data/comic_serie_cron.xml                  — cron référence model_comic_album
+
+Module comic_bdgest :
+  models/comic_album.py                  — _inherit = 'comic.album'
+  models/__init__.py                     — import comic_album
+  views/comic_album_inherit_views.xml    — hérite form + server action
+  wizards/comic_bdgest_enrich_wizard.py  — album_id Many2one comic.album
+  __manifest__.py                        — liste comic_album_inherit_views.xml
+
+Module comic_shop :
+  models/comic_album.py            — _inherit = 'comic.album' (ajoute product_tmpl_id)
+  models/comic_customer_album.py   — album_id Many2one → comic.album
+  models/comic_sale_order.py       — uses comic.album
+  models/comic_serie.py            — création produits depuis albums
+  models/product_template.py      — comic_album_id Many2one → comic.album
+  models/__init__.py               — import comic_album
+  controllers/main.py              — recherches comic.album + comic.album.auteur.line
+  views/comic_album_views.xml      — hérite form comic.album
+  views/portal_library_templates.xml    — URL /web/image/comic.album/.../image_couverture
+  views/product_template_views.xml      — smart button comic_album_id
+  views/website_sale_templates.xml      — variable comic_album (toutes les infos produit)
+  __manifest__.py                       — liste comic_album_views.xml
+
+Outils externes (tools/) :
+  tools/import_demo.py       — appels RPC comic.album + comic.album.auteur.line
+  tools/load_demo_series.py  — appels RPC comic.album + comic.album.auteur.line
+```
+
+---
+
+**US-051 — Implémentation ORM + remplacement de comic.album** ⏳ 🔴
+
+```
+En tant que développeur
+Je veux créer les nouveaux modèles et supprimer comic.album et comic.album.auteur.line
+Afin d'avoir un schéma propre et cohérent dès le départ
+
+Critères d'acceptance :
+- [ ] `comic.work` créé dans models/comic_work.py :
+      - hérite mail.thread + mail.activity.mixin
+      - _description, _rec_name = 'titre_canonique'
+      - display_name = "{serie} T{tome:02d} — {titre_canonique}"
+      - models.Constraint unicité (serie_id, tome) — pas _sql_constraints (déprécié Odoo 19)
+      - slug : Char unique, indexé ; auto-généré à la création si vide
+      - champs refs : wikidata_id, openlibrary_id, bedetheque_id, comicvine_id (Char, optional)
+      - edition_ids, auteur_line_ids en One2many
+- [ ] `comic.work.auteur.line` créé (même fichier ou models/comic_work_auteur_line.py) :
+      - work_id, partner_id, role — même structure que l'ancien comic.album.auteur.line
+- [ ] `comic.edition` créé dans models/comic_edition.py :
+      - hérite mail.thread + mail.activity.mixin
+      - display_name = "{work.display_name} ({langue} — {editeur_id.name}, {date_parution.year})"
+      - format : Selection broche/cartonne/integrale/collector/numerique/autre
+      - isbn_ids One2many → comic.isbn
+- [ ] `comic.isbn` créé dans models/comic_isbn.py :
+      - @api.constrains('isbn_13') : validation checksum EAN-13 (algorithme ×1/×3)
+      - @api.constrains('isbn_10') : validation ISBN-10 si renseigné
+      - normalisation automatique : suppression tirets et espaces avant stockage (_write ou @api.onchange)
+      - models.Constraint unicité isbn_13
+- [ ] `comic.pret` : champ `album_id` remplacé par `edition_id` (Many2one → comic.edition)
+- [ ] `comic.album` et `comic.album.auteur.line` supprimés (fichiers Python et vues XML)
+- [ ] `ir.model.access.csv` mis à jour : 4 nouveaux modèles, 2 anciens retirés
+- [ ] `__init__.py` (module et models/) mis à jour
+- [ ] Module installable sans erreur sur une base vierge
+```
+
+---
+
+**US-052 — Adaptation des datasources et de l'import** ⏳ 🔴
+
+```
+En tant que développeur
+Je veux que le ComicDataAggregator, les wizards datasource et l'import CSV/XLSX
+créent les bons modèles dès le départ
+Afin que toute entrée de données produise des comic.work + comic.edition + comic.isbn
+
+Critères d'acceptance :
+- [ ] `ComicDataAggregator.search()` adapté :
+      - au lieu de créer/retourner un comic.album, retourne un dict normalisé inchangé
+        (le dict normalisé existant est déjà compatible — seul le mapping ORM change)
+- [ ] `action_import_selected()` du wizard datasource :
+      - cherche d'abord comic.isbn existant → retrouve edition + work sans doublon
+      - sinon : cherche comic.work (serie_id, tome) existant → crée une nouvelle edition liée
+      - sinon : crée comic.work + comic.edition + comic.isbn en cascade
+      - migre les auteurs vers comic.work.auteur.line
+- [ ] Import wizard (CSV/XLS/XLSX) adapté :
+      - colonnes cibles : serie_name, tome, titre_canonique, langue, editeur, date_parution,
+        nb_pages, isbn, format, scenariste, dessinateur, coloriste, genre
+      - même logique de déduplication (isbn → edition → work) que le wizard datasource
+- [ ] Cron `comic_cron_data.xml` (enrichissement quotidien) adapté :
+      - itère sur comic.edition au lieu de comic.album
+      - met à jour edition.synopsis, edition.image_couverture, etc.
+- [ ] Cron `comic_serie_cron.xml` (suivi séries) : inchangé — itère déjà sur comic.serie
+```
+
+---
+
+**US-053 — Vues back-office** ⏳ 🟠
+
+```
+En tant qu'administrateur
+Je veux des vues list/form/search pour comic.work, comic.edition et comic.isbn
+Afin de gérer le nouveau schéma depuis l'interface Odoo
+
+Critères d'acceptance :
+- [ ] views/comic_work_views.xml :
+      - List : titre canonique, série, tome, nb éditions (computed), nb auteurs (computed)
+      - Form : onglet "Œuvre" (titre_canonique, serie_id, tome, slug, refs externes)
+               onglet "Auteurs" (auteur_line_ids avec partner_id et role)
+               onglet "Éditions" (edition_ids inline list : langue, éditeur, date, format, nb ISBN)
+      - Search : par titre, série, tome, auteur, slug, wikidata_id
+      - Kanban (optionnel) : image de la première édition fr, titre, série, tome
+- [ ] views/comic_edition_views.xml :
+      - List : titre affiché, langue, éditeur, date, format, nb ISBN
+      - Form : champs édition + sous-liste isbn_ids inline (isbn_13, isbn_10)
+               smartbutton "Produit lié" si product_tmpl_id renseigné (comic_shop uniquement)
+- [ ] Menu mis à jour :
+      "Ma Collection > Œuvres" (remplace Albums) + "Ma Collection > Éditions"
+- [ ] Vue comic.serie : smartbutton/compteur "nb_works" (computed via work_ids)
+- [ ] Vue comic.pret : affiche edition_id avec lien vers l'œuvre parente
+- [ ] Recherche globale par ISBN : remonte comic.isbn → comic.edition → comic.work
+- [ ] Vues comic.album et comic.album.auteur.line supprimées (plus de modèle)
+```
+
+---
+
+**US-054 — Adaptation comic_shop** ⏳ 🟠
+
+```
+En tant que développeur
+Je veux adapter comic_shop pour utiliser comic.edition comme pivot du lien produit
+Afin que shop, bibliothèque client et portail fonctionnent correctement avec le nouveau schéma
+
+Critères d'acceptance :
+- [ ] product.template (comic_shop/_inherit) :
+      - champ comic_album_id remplacé par comic_edition_id (Many2one → comic.edition)
+      - propriété computed work_id (→ comic_edition_id.work_id) pour les vues
+      - smartbutton "Édition BD" → fiche comic.edition
+      - action_sync_from_edition() remplace action_sync_from_album()
+- [ ] comic.edition (comic_shop/_inherit) :
+      - champ product_tmpl_id (Many2one → product.template, optionnel)
+      - boutons "Créer le produit" / "Voir le produit" / "Dissocier"
+      - _sync_to_product() : sync name, image_couverture, isbn → barcode, synopsis → description_sale
+      - _SYNC_TRIGGER_FIELDS : isbn_ids, image_couverture, titre_affiche, work_id (titre + tome)
+- [ ] comic.serie (comic_shop/_inherit) :
+      - action_create_products_from_isbn() : itère sur works → editions éligibles (isbn + sans produit)
+      - smartbutton "Produits liés" (compte les editions avec product_tmpl_id)
+      - smartbutton "Éditions à publier" (editions avec isbn sans produit)
+- [ ] comic.customer.album :
+      - champ album_id remplacé par edition_id (Many2one → comic.edition, required)
+      - champ work_id : Many2one → comic.work, compute=lambda self: self.edition_id.work_id, store=True
+      - contrainte unique sur (partner_id, edition_id)
+- [ ] comic_sale_order.py : retrouve l'edition via la ligne de commande → crée customer.album
+- [ ] portal.py (/my/library) :
+      - liste comic.customer.album filtrée par partner_id
+      - affiche edition.titre_affiche ou work.titre_canonique + work.serie_id
+      - regroupement optionnel par work_id (vue "par œuvre")
+- [ ] Webshop product page (US-040) : lit les infos via edition_id → work_id
+      (série, tome, auteurs, genre restent sur work)
+- [ ] Webshop /shop/series/<id> : liste work_ids de la série → édition de référence par work
+      (priorité : langue='fr', sinon date_parution la plus récente)
+```
+
+---
+
+**US-055 — Tests unitaires et validation** ⏳ 🟡
+
+```
+En tant que développeur
+Je veux des tests couvrant les nouveaux modèles et leurs interactions
+Afin de garantir la robustesse du schéma refactorisé
+
+Critères d'acceptance :
+- [ ] tests/test_comic_isbn.py :
+      - Validation EAN-13 : cas valide, checksum incorrect, mauvaise longueur, tirets acceptés
+      - Validation ISBN-10 si renseigné
+      - Normalisation : "978-2-205-07567-7" → "9782205075677"
+      - Contrainte unicité : deux comic.isbn avec le même isbn_13 → UserError
+- [ ] tests/test_comic_work.py :
+      - Contrainte unique (serie_id, tome)
+      - Génération slug : serie "Thorgal" tome 5 → "thorgal-t05", conflit → "thorgal-t05-2"
+      - display_name : format "{serie} T05 — {titre}" correct
+      - auteur_line_ids : ajout/suppression d'un auteur avec rôle
+- [ ] tests/test_comic_edition.py :
+      - Création edition liée à un work : vérifier display_name complet
+      - Plusieurs editions pour un même work (fr + nl + collector) : toutes accessibles via work.edition_ids
+      - edition sans isbn : valide (champ optionnel)
+      - Lien edition → product.template (comic_shop) : _sync_to_product() copie les bons champs
+- [ ] tests/test_comic_customer_album.py :
+      - Contrainte unique (partner_id, edition_id)
+      - work_id computed = edition_id.work_id
+      - Import automatique depuis commande : customer.album créé avec source='achete_ici'
+- [ ] Tous les tests passent : `./odoo-bin -d test -i comics_collections,comic_shop --test-tags refactor`
+```
+
+---
+
+---
+
+**US-056 — Moteur de déduplication des œuvres** ⏳ 🟠
+
+```
+En tant que développeur / administrateur
+Je veux un mécanisme automatique de détection et de résolution des doublons de comic.work
+Afin d'éviter que les imports et saisies manuelles créent des entrées dupliquées
+
+Contexte : stratégie définie en US-050 section B & C. À implémenter après US-051
+(les champs titre_normalise et name_normalise nécessitent les nouveaux modèles).
+
+Critères d'acceptance :
+- [ ] Champ compute + store sur comic.work :
+      titre_normalise (Char) : lowercase + strip accents + suppression articles + strip ponctuation
+      Algorithme de normalisation centralisé dans un helper comics_collections/utils/normalize.py
+- [ ] Champ compute + store sur comic.serie :
+      name_normalise (Char) : même algorithme
+- [ ] Méthode comic.work._find_duplicate_candidates(serie_id, tome, titre) :
+      1. Retourne une liste de comic.work candidats avec leur score de similarité
+      2. Conflit certain   : même (serie_id, tome) → score = 1.0
+      3. Doublon probable  : même serie_id + ratio SequenceMatcher(titre_normalise) ≥ 0.85 + même tome
+      4. Doublon possible  : ratio SequenceMatcher sur titre ET série normalisés ≥ 0.85
+- [ ] Contrainte ORM renforcée :
+      @api.constrains déclenche _find_duplicate_candidates → UserError si conflit certain
+      (la contrainte models.Constraint sur (serie_id, tome) couvre le cas exact ; l'IA
+      de similarité couvre les variations de titre)
+- [ ] Popup de confirmation lors de la création manuelle d'un comic.work :
+      Si doublon probable détecté → wizard rapide "Ce tome ressemble à [X — titre — éditeur].
+      Créer quand même / Fusionner / Voir l'existant"
+- [ ] Wizard back-office "Revue des doublons" (menu Configuration > Doublons potentiels) :
+      - Liste toutes les paires (work_a, work_b) avec ratio ≥ 0.85 non encore résolues
+      - Colonnes : titre A, titre B, série, tome, nb éditions chacun, score
+      - Bouton "Fusionner A → B" : transfère les editions et customer.album de A vers B,
+        puis archive A
+      - Bouton "Pas un doublon" : marque la paire comme ignorée (champ Many2many blacklist)
+- [ ] Vues de diagnostic (filtre dans les vues list existantes) :
+      - comic.work : filtre "Sans édition"
+      - comic.edition : filtre "Sans ISBN"
+      - comic.edition : filtre "Sans image couverture"
+- [ ] Méthode de fusion sécurisée comic.work._merge_into(target_work) :
+      - Transfère edition_ids vers target_work
+      - Transfère les comic.customer.album (via edition_id → work_id)
+      - Transfère les auteur_line_ids (dédupliqués)
+      - Archive self (active=False)
+      - Log dans le chatter de target_work
+- [ ] Tests :
+      - normalize("Les Landes perdues") == normalize("Landes perdues (Les)") == "landes perdues"
+      - normalize("Thorgal") == normalize("THORGAL") == "thorgal"
+      - _find_duplicate_candidates retourne le bon score pour cas certain / probable / possible
+      - Fusion : vérifier que les editions et customer.album sont bien sur target_work après merge
+```
+
+---
+
+### Dépendances EPIC 11
+
+```
+US-050 (analyse + décisions + stratégie dédup) → US-051 (nouveaux modèles ORM + suppression comic.album)
+US-051 → US-052 (adaptation datasources + import)
+US-051 → US-053 (vues back-office)
+US-051 + US-052 → US-054 (adaptation comic_shop)
+US-051 + US-054 → US-055 (tests)
+US-051 + US-050 → US-056 (moteur déduplication) — peut être fait en parallèle de US-053/054
+```
+
+> ⚠️ **Point d'attention :** US-054 est un breaking change complet sur `comic_shop` (tous les
+> champs `comic_album_id` deviennent `comic_edition_id`). Traiter US-051 et US-054 dans la même
+> session pour éviter un état intermédiaire incohérent. L'option A (edition = pivot produit) est
+> la décision retenue — pas de choix à faire en cours d'implémentation.
+>
+> 📌 **Hors périmètre EPIC 11 (déféré) :** Fiabilisation des sources de données — confiance par
+> source, réconciliation automatique des conflits entre Google Books / BnF / BDGest, scoring de
+> qualité par champ. À traiter dans une EPIC dédiée après US-056.
+
+---
+
 ## 📋 Récapitulatif V2
 
-| Phase   | Epic                    | US              | Priorité        |
-| ------- | ----------------------- | --------------- | --------------- |
-| Phase 7 | Catalogue & Lien Produit | US-035 à US-038 | 🔴 Must Have    |
-| Phase 8 | Bibliothèque Client      | US-039 à US-045 | 🔴 / 🟠 Must    |
-| Phase 9 | Business Intelligence    | US-046 à US-049 | 🟡 Nice to Have |
+| Phase    | Epic                           | US               | Priorité        |
+| -------- | ------------------------------ | ---------------- | --------------- |
+| Phase 7  | Catalogue & Lien Produit       | US-035 à US-038  | 🔴 Must Have    |
+| Phase 8  | Bibliothèque Client            | US-039 à US-045  | 🔴 / 🟠 Must    |
+| Phase 9  | Business Intelligence          | US-046 à US-049  | 🟡 Nice to Have |
+| Phase 10 | Refactoring modèle canonique   | US-050 à US-055  | 🔴 Structurant  |
 
 ### Dépendances critiques
 
@@ -512,6 +983,10 @@ US-040 → US-041 (navigation webshop) → US-041b (pages auteurs et éditeurs)
 US-035 → US-039 (customer.album) → US-043 (portail) → US-044 (ajout BD)
 US-035 → US-042 (POS), US-045 (import commandes)
 US-039 → US-046 → US-047 → US-048
+
+US-050 (analyse) → US-051 (ORM) → US-052 (migration) → US-054 (comic_shop)
+US-051 → US-053 (vues) + US-055 (tests)
+⚠️  US-050 doit décider Option A/B avant US-051 (voir EPIC 11)
 ```
 
 ---
