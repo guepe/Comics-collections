@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Vue liste comic.work ─────────────────────────────────────────────── -->
+    <record id="view_comic_work_list" model="ir.ui.view">
+        <field name="name">comic.work.list</field>
+        <field name="model">comic.work</field>
+        <field name="arch" type="xml">
+            <list string="Œuvres" default_order="serie_id,tome">
+                <field name="serie_id"/>
+                <field name="tome"/>
+                <field name="titre_canonique"/>
+                <field name="auteur_line_ids" widget="many2many_tags"
+                       options="{'color_field': 'role'}"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Vue formulaire comic.work ───────────────────────────────────────── -->
+    <record id="view_comic_work_form" model="ir.ui.view">
+        <field name="name">comic.work.form</field>
+        <field name="model">comic.work</field>
+        <field name="arch" type="xml">
+            <form string="Œuvre BD">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="titre_canonique" placeholder="Titre canonique"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="serie_id"/>
+                            <field name="tome"/>
+                            <field name="slug"/>
+                        </group>
+                        <group string="Références externes">
+                            <field name="wikidata_id"/>
+                            <field name="openlibrary_id"/>
+                            <field name="bedetheque_id"/>
+                            <field name="comicvine_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Auteurs">
+                            <field name="auteur_line_ids">
+                                <list editable="bottom">
+                                    <field name="partner_id"/>
+                                    <field name="role"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Éditions">
+                            <field name="edition_ids">
+                                <list>
+                                    <field name="langue"/>
+                                    <field name="format"/>
+                                    <field name="editeur_id"/>
+                                    <field name="date_parution"/>
+                                    <field name="nb_pages"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Vue recherche comic.work ────────────────────────────────────────── -->
+    <record id="view_comic_work_search" model="ir.ui.view">
+        <field name="name">comic.work.search</field>
+        <field name="model">comic.work</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une œuvre">
+                <field name="titre_canonique"/>
+                <field name="serie_id"/>
+                <field name="tome"/>
+                <group name="group_by">
+                    <filter string="Série" name="groupby_serie" context="{'group_by': 'serie_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action comic.work ───────────────────────────────────────────────── -->
+    <record id="action_comic_work" model="ir.actions.act_window">
+        <field name="name">Œuvres</field>
+        <field name="res_model">comic.work</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_comic_work_search"/>
+    </record>
+
+    <!-- ── Vue formulaire comic.edition ────────────────────────────────────── -->
+    <record id="view_comic_edition_form" model="ir.ui.view">
+        <field name="name">comic.edition.form</field>
+        <field name="model">comic.edition</field>
+        <field name="arch" type="xml">
+            <form string="Édition">
+                <sheet>
+                    <field name="image_couverture" widget="image"
+                           class="oe_avatar" options="{'preview_image': 'image_couverture'}"/>
+                    <div class="oe_title">
+                        <h1><field name="work_id"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="editeur_id"/>
+                            <field name="langue"/>
+                            <field name="format"/>
+                            <field name="date_parution"/>
+                            <field name="date_depot_legal"/>
+                            <field name="nb_pages"/>
+                        </group>
+                        <group string="Liens d'achat">
+                            <field name="url_club_be" widget="url"/>
+                            <field name="url_amazon_be" widget="url"/>
+                            <field name="url_fnac_be" widget="url"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="ISBNs">
+                            <field name="isbn_ids">
+                                <list editable="bottom">
+                                    <field name="isbn_13"/>
+                                    <field name="isbn_10"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Synopsis">
+                            <field name="synopsis"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Vue liste comic.edition ─────────────────────────────────────────── -->
+    <record id="view_comic_edition_list" model="ir.ui.view">
+        <field name="name">comic.edition.list</field>
+        <field name="model">comic.edition</field>
+        <field name="arch" type="xml">
+            <list string="Éditions">
+                <field name="work_id"/>
+                <field name="langue"/>
+                <field name="format"/>
+                <field name="editeur_id"/>
+                <field name="date_parution"/>
+                <field name="nb_pages"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Action comic.edition ─────────────────────────────────────────────  -->
+    <record id="action_comic_edition" model="ir.actions.act_window">
+        <field name="name">Éditions</field>
+        <field name="res_model">comic.edition</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

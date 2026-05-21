@@ -168,1224 +168,1595 @@
         ]]></field>
     </record>
 
-    <!-- ===== ALBUMS — Astérix ===== -->
+    <!-- ===== ŒUVRES ET ÉDITIONS — Astérix ===== -->
 
-    <record id="album_asterix_01" model="comic.album">
-        <field name="name">Astérix le Gaulois</field>
+    <record id="work_asterix_01" model="comic.work">
         <field name="serie_id" ref="serie_asterix"/>
+        <field name="titre_canonique">Astérix le Gaulois</field>
         <field name="tome">1</field>
-        <field name="isbn">9782012101302</field>
+    </record>
+    <record id="edition_asterix_01" model="comic.edition">
+        <field name="work_id" ref="work_asterix_01"/>
+        <field name="editeur_id" ref="editeur_albert_rene"/>
         <field name="date_parution">1961-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">5.0</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_asterix_01_goscinny" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_01"/>
+    <record id="isbn_asterix_01" model="comic.isbn">
+        <field name="edition_id" ref="edition_asterix_01"/>
+        <field name="isbn_13">9782012101302</field>
+    </record>
+    <record id="auteur_asterix_01_goscinny" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_01"/>
         <field name="partner_id" ref="partner_goscinny"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_asterix_01_uderzo" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_01"/>
+    <record id="auteur_asterix_01_uderzo" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_01"/>
         <field name="partner_id" ref="partner_uderzo"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_asterix_02" model="comic.album">
-        <field name="name">La Serpe d'Or</field>
+    <record id="work_asterix_02" model="comic.work">
         <field name="serie_id" ref="serie_asterix"/>
+        <field name="titre_canonique">La Serpe d'Or</field>
         <field name="tome">2</field>
+    </record>
+    <record id="edition_asterix_02" model="comic.edition">
+        <field name="work_id" ref="work_asterix_02"/>
+        <field name="editeur_id" ref="editeur_albert_rene"/>
         <field name="date_parution">1962-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">4.5</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_asterix_02_goscinny" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_02"/>
+    <record id="auteur_asterix_02_goscinny" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_02"/>
         <field name="partner_id" ref="partner_goscinny"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_asterix_02_uderzo" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_02"/>
+    <record id="auteur_asterix_02_uderzo" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_02"/>
         <field name="partner_id" ref="partner_uderzo"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_asterix_03" model="comic.album">
-        <field name="name">Astérix et les Goths</field>
+    <record id="work_asterix_03" model="comic.work">
         <field name="serie_id" ref="serie_asterix"/>
+        <field name="titre_canonique">Astérix et les Goths</field>
         <field name="tome">3</field>
+    </record>
+    <record id="edition_asterix_03" model="comic.edition">
+        <field name="work_id" ref="work_asterix_03"/>
+        <field name="editeur_id" ref="editeur_albert_rene"/>
         <field name="date_parution">1963-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">4.0</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_asterix_03_goscinny" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_03"/>
+    <record id="auteur_asterix_03_goscinny" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_03"/>
         <field name="partner_id" ref="partner_goscinny"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_asterix_03_uderzo" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_03"/>
+    <record id="auteur_asterix_03_uderzo" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_03"/>
         <field name="partner_id" ref="partner_uderzo"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_asterix_04" model="comic.album">
-        <field name="name">Astérix Gladiateur</field>
+    <record id="work_asterix_04" model="comic.work">
         <field name="serie_id" ref="serie_asterix"/>
+        <field name="titre_canonique">Astérix Gladiateur</field>
         <field name="tome">4</field>
+    </record>
+    <record id="edition_asterix_04" model="comic.edition">
+        <field name="work_id" ref="work_asterix_04"/>
+        <field name="editeur_id" ref="editeur_albert_rene"/>
         <field name="date_parution">1964-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">4.5</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_asterix_04_goscinny" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_04"/>
+    <record id="auteur_asterix_04_goscinny" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_04"/>
         <field name="partner_id" ref="partner_goscinny"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_asterix_04_uderzo" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_04"/>
+    <record id="auteur_asterix_04_uderzo" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_04"/>
         <field name="partner_id" ref="partner_uderzo"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_asterix_05" model="comic.album">
-        <field name="name">Le Tour de Gaule d'Astérix</field>
+    <record id="work_asterix_05" model="comic.work">
         <field name="serie_id" ref="serie_asterix"/>
+        <field name="titre_canonique">Le Tour de Gaule d'Astérix</field>
         <field name="tome">5</field>
+    </record>
+    <record id="edition_asterix_05" model="comic.edition">
+        <field name="work_id" ref="work_asterix_05"/>
+        <field name="editeur_id" ref="editeur_albert_rene"/>
         <field name="date_parution">1965-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">en_cours</field>
-        <field name="note">4.0</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_asterix_05_goscinny" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_05"/>
+    <record id="auteur_asterix_05_goscinny" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_05"/>
         <field name="partner_id" ref="partner_goscinny"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_asterix_05_uderzo" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_asterix_05"/>
+    <record id="auteur_asterix_05_uderzo" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_asterix_05"/>
         <field name="partner_id" ref="partner_uderzo"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <!-- ===== ALBUMS — Blacksad ===== -->
 
-    <record id="album_blacksad_01" model="comic.album">
-        <field name="name">Quelque part entre les ombres</field>
+    <!-- ===== ŒUVRES ET ÉDITIONS — Blacksad ===== -->
+
+    <record id="work_blacksad_01" model="comic.work">
         <field name="serie_id" ref="serie_blacksad"/>
+        <field name="titre_canonique">Quelque part entre les ombres</field>
         <field name="tome">1</field>
+    </record>
+    <record id="edition_blacksad_01" model="comic.edition">
+        <field name="work_id" ref="work_blacksad_01"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2000-11-01</field>
         <field name="nb_pages">56</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">5.0</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_blacksad_01_canales" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_01"/>
+    <record id="auteur_blacksad_01_canales" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_01"/>
         <field name="partner_id" ref="partner_canales"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_blacksad_01_guarnido" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_01"/>
+    <record id="auteur_blacksad_01_guarnido" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_01"/>
         <field name="partner_id" ref="partner_guarnido"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_blacksad_02" model="comic.album">
-        <field name="name">Arctic-Nation</field>
+    <record id="work_blacksad_02" model="comic.work">
         <field name="serie_id" ref="serie_blacksad"/>
+        <field name="titre_canonique">Arctic-Nation</field>
         <field name="tome">2</field>
+    </record>
+    <record id="edition_blacksad_02" model="comic.edition">
+        <field name="work_id" ref="work_blacksad_02"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2003-03-01</field>
         <field name="nb_pages">56</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">5.0</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_blacksad_02_canales" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_02"/>
+    <record id="auteur_blacksad_02_canales" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_02"/>
         <field name="partner_id" ref="partner_canales"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_blacksad_02_guarnido" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_02"/>
+    <record id="auteur_blacksad_02_guarnido" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_02"/>
         <field name="partner_id" ref="partner_guarnido"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_blacksad_03" model="comic.album">
-        <field name="name">Âme rouge</field>
+    <record id="work_blacksad_03" model="comic.work">
         <field name="serie_id" ref="serie_blacksad"/>
+        <field name="titre_canonique">Âme rouge</field>
         <field name="tome">3</field>
+    </record>
+    <record id="edition_blacksad_03" model="comic.edition">
+        <field name="work_id" ref="work_blacksad_03"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2005-06-01</field>
         <field name="nb_pages">56</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">4.5</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_blacksad_03_canales" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_03"/>
+    <record id="auteur_blacksad_03_canales" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_03"/>
         <field name="partner_id" ref="partner_canales"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_blacksad_03_guarnido" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_03"/>
+    <record id="auteur_blacksad_03_guarnido" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_03"/>
         <field name="partner_id" ref="partner_guarnido"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_blacksad_04" model="comic.album">
-        <field name="name">L'Enfer, le silence</field>
+    <record id="work_blacksad_04" model="comic.work">
         <field name="serie_id" ref="serie_blacksad"/>
+        <field name="titre_canonique">L'Enfer, le silence</field>
         <field name="tome">4</field>
+    </record>
+    <record id="edition_blacksad_04" model="comic.edition">
+        <field name="work_id" ref="work_blacksad_04"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2010-11-01</field>
         <field name="nb_pages">56</field>
-        <field name="etat_lecture">non_lu</field>
-        <field name="dans_wishlist" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_blacksad_04_canales" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_04"/>
+    <record id="auteur_blacksad_04_canales" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_04"/>
         <field name="partner_id" ref="partner_canales"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_blacksad_04_guarnido" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_04"/>
+    <record id="auteur_blacksad_04_guarnido" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_04"/>
         <field name="partner_id" ref="partner_guarnido"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_blacksad_05" model="comic.album">
-        <field name="name">Amarillo</field>
+    <record id="work_blacksad_05" model="comic.work">
         <field name="serie_id" ref="serie_blacksad"/>
+        <field name="titre_canonique">Amarillo</field>
         <field name="tome">5</field>
+    </record>
+    <record id="edition_blacksad_05" model="comic.edition">
+        <field name="work_id" ref="work_blacksad_05"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2013-11-01</field>
         <field name="nb_pages">56</field>
-        <field name="etat_lecture">non_lu</field>
-        <field name="dans_wishlist" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_blacksad_05_canales" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_05"/>
+    <record id="auteur_blacksad_05_canales" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_05"/>
         <field name="partner_id" ref="partner_canales"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_blacksad_05_guarnido" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_blacksad_05"/>
+    <record id="auteur_blacksad_05_guarnido" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_blacksad_05"/>
         <field name="partner_id" ref="partner_guarnido"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <!-- ===== ALBUMS — Largo Winch ===== -->
 
-    <record id="album_largo_01" model="comic.album">
-        <field name="name">L'Héritier</field>
+    <!-- ===== ŒUVRES ET ÉDITIONS — Largo Winch ===== -->
+
+    <record id="work_largo_01" model="comic.work">
         <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="titre_canonique">L'Héritier</field>
         <field name="tome">1</field>
+    </record>
+    <record id="edition_largo_01" model="comic.edition">
+        <field name="work_id" ref="work_largo_01"/>
+        <field name="editeur_id" ref="editeur_dupuis"/>
         <field name="date_parution">1990-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">4.0</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_largo_01_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_01"/>
+    <record id="auteur_largo_01_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_01"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_largo_01_francq" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_01"/>
+    <record id="auteur_largo_01_francq" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_01"/>
         <field name="partner_id" ref="partner_francq"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_largo_02" model="comic.album">
-        <field name="name">Le Groupe W</field>
+    <record id="work_largo_02" model="comic.work">
         <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="titre_canonique">Le Groupe W</field>
         <field name="tome">2</field>
+    </record>
+    <record id="edition_largo_02" model="comic.edition">
+        <field name="work_id" ref="work_largo_02"/>
+        <field name="editeur_id" ref="editeur_dupuis"/>
         <field name="date_parution">1992-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">lu</field>
-        <field name="note">4.0</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_largo_02_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_02"/>
+    <record id="auteur_largo_02_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_02"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_largo_02_francq" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_02"/>
+    <record id="auteur_largo_02_francq" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_02"/>
         <field name="partner_id" ref="partner_francq"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_largo_03" model="comic.album">
-        <field name="name">O.P.A.</field>
+    <record id="work_largo_03" model="comic.work">
         <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="titre_canonique">O.P.A.</field>
         <field name="tome">3</field>
+    </record>
+    <record id="edition_largo_03" model="comic.edition">
+        <field name="work_id" ref="work_largo_03"/>
+        <field name="editeur_id" ref="editeur_dupuis"/>
         <field name="date_parution">1994-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">en_cours</field>
-        <field name="note">3.5</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_largo_03_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_03"/>
+    <record id="auteur_largo_03_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_03"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_largo_03_francq" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_03"/>
+    <record id="auteur_largo_03_francq" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_03"/>
         <field name="partner_id" ref="partner_francq"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_largo_04" model="comic.album">
-        <field name="name">Business Blues</field>
+    <record id="work_largo_04" model="comic.work">
         <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="titre_canonique">Business Blues</field>
         <field name="tome">4</field>
+    </record>
+    <record id="edition_largo_04" model="comic.edition">
+        <field name="work_id" ref="work_largo_04"/>
+        <field name="editeur_id" ref="editeur_dupuis"/>
         <field name="date_parution">1996-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">non_lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_largo_04_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_04"/>
+    <record id="auteur_largo_04_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_04"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_largo_04_francq" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_04"/>
+    <record id="auteur_largo_04_francq" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_04"/>
         <field name="partner_id" ref="partner_francq"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_largo_05" model="comic.album">
-        <field name="name">Sans Merci</field>
+    <record id="work_largo_05" model="comic.work">
         <field name="serie_id" ref="serie_largo_winch"/>
+        <field name="titre_canonique">Sans Merci</field>
         <field name="tome">5</field>
+    </record>
+    <record id="edition_largo_05" model="comic.edition">
+        <field name="work_id" ref="work_largo_05"/>
+        <field name="editeur_id" ref="editeur_dupuis"/>
         <field name="date_parution">1998-01-01</field>
         <field name="nb_pages">48</field>
-        <field name="etat_lecture">non_lu</field>
-        <field name="dans_wishlist" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_largo_05_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_05"/>
+    <record id="auteur_largo_05_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_05"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_largo_05_francq" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_largo_05"/>
+    <record id="auteur_largo_05_francq" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_largo_05"/>
         <field name="partner_id" ref="partner_francq"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <!-- ===== ALBUMS — Thorgal ===== -->
-    <!-- ISBN-10 convertis en EAN-13 (check digit recalculé selon algorithme EAN-13) -->
 
-    <record id="album_thorgal_05" model="comic.album">
-        <field name="name">Au-delà des ombres</field>
+    <!-- ===== ŒUVRES ET ÉDITIONS — Thorgal ===== -->
+
+    <record id="work_thorgal_05" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Au-delà des ombres</field>
         <field name="tome">5</field>
-        <field name="isbn">9782803604074</field>
+    </record>
+    <record id="edition_thorgal_05" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_05"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1983-08-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_05_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_05"/>
+    <record id="isbn_thorgal_05" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_05"/>
+        <field name="isbn_13">9782803604074</field>
+    </record>
+    <record id="auteur_thorgal_05_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_05"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_05_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_05"/>
+    <record id="auteur_thorgal_05_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_05"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_10" model="comic.album">
-        <field name="name">Le pays Qâ</field>
+    <record id="work_thorgal_10" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le pays Qâ</field>
         <field name="tome">10</field>
-        <field name="isbn">9782803605491</field>
+    </record>
+    <record id="edition_thorgal_10" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_10"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1986-04-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_10_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_10"/>
+    <record id="isbn_thorgal_10" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_10"/>
+        <field name="isbn_13">9782803605491</field>
+    </record>
+    <record id="auteur_thorgal_10_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_10"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_10_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_10"/>
+    <record id="auteur_thorgal_10_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_10"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_11" model="comic.album">
-        <field name="name">Les yeux de Tanatloc</field>
+    <record id="work_thorgal_11" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Les yeux de Tanatloc</field>
         <field name="tome">11</field>
-        <field name="isbn">9782803605767</field>
+    </record>
+    <record id="edition_thorgal_11" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_11"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1986-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_11_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_11"/>
+    <record id="isbn_thorgal_11" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_11"/>
+        <field name="isbn_13">9782803605767</field>
+    </record>
+    <record id="auteur_thorgal_11_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_11"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_11_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_11"/>
+    <record id="auteur_thorgal_11_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_11"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_12" model="comic.album">
-        <field name="name">La cité du dieu perdu</field>
+    <record id="work_thorgal_12" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">La cité du dieu perdu</field>
         <field name="tome">12</field>
-        <field name="isbn">9782803606399</field>
+    </record>
+    <record id="edition_thorgal_12" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_12"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1987-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_12_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_12"/>
+    <record id="isbn_thorgal_12" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_12"/>
+        <field name="isbn_13">9782803606399</field>
+    </record>
+    <record id="auteur_thorgal_12_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_12"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_12_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_12"/>
+    <record id="auteur_thorgal_12_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_12"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_15" model="comic.album">
-        <field name="name">Le maître des montagnes</field>
+    <record id="work_thorgal_15" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le maître des montagnes</field>
         <field name="tome">15</field>
-        <field name="isbn">9782803607549</field>
+    </record>
+    <record id="edition_thorgal_15" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_15"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1989-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_15_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_15"/>
+    <record id="isbn_thorgal_15" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_15"/>
+        <field name="isbn_13">9782803607549</field>
+    </record>
+    <record id="auteur_thorgal_15_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_15"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_15_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_15"/>
+    <record id="auteur_thorgal_15_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_15"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_16" model="comic.album">
-        <field name="name">Louve</field>
+    <record id="work_thorgal_16" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Louve</field>
         <field name="tome">16</field>
-        <field name="isbn">9782803608454</field>
+    </record>
+    <record id="edition_thorgal_16" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_16"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1990-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_16_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_16"/>
+    <record id="isbn_thorgal_16" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_16"/>
+        <field name="isbn_13">9782803608454</field>
+    </record>
+    <record id="auteur_thorgal_16_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_16"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_16_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_16"/>
+    <record id="auteur_thorgal_16_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_16"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_18" model="comic.album">
-        <field name="name">L'Épée-Soleil</field>
+    <record id="work_thorgal_18" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">L'Épée-Soleil</field>
         <field name="tome">18</field>
-        <field name="isbn">9782803609888</field>
+    </record>
+    <record id="edition_thorgal_18" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_18"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1992-04-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_18_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_18"/>
+    <record id="isbn_thorgal_18" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_18"/>
+        <field name="isbn_13">9782803609888</field>
+    </record>
+    <record id="auteur_thorgal_18_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_18"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_18_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_18"/>
+    <record id="auteur_thorgal_18_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_18"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_20" model="comic.album">
-        <field name="name">La marque des bannis</field>
+    <record id="work_thorgal_20" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">La marque des bannis</field>
         <field name="tome">20</field>
-        <field name="isbn">9782803611010</field>
+    </record>
+    <record id="edition_thorgal_20" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_20"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1995-01-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_20_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_20"/>
+    <record id="isbn_thorgal_20" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_20"/>
+        <field name="isbn_13">9782803611010</field>
+    </record>
+    <record id="auteur_thorgal_20_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_20"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_20_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_20"/>
+    <record id="auteur_thorgal_20_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_20"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_21" model="comic.album">
-        <field name="name">La couronne d'Ogotaï</field>
+    <record id="work_thorgal_21" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">La couronne d'Ogotaï</field>
         <field name="tome">21</field>
-        <field name="isbn">9782803611614</field>
+    </record>
+    <record id="edition_thorgal_21" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_21"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1995-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_21_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_21"/>
+    <record id="isbn_thorgal_21" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_21"/>
+        <field name="isbn_13">9782803611614</field>
+    </record>
+    <record id="auteur_thorgal_21_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_21"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_21_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_21"/>
+    <record id="auteur_thorgal_21_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_21"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_22" model="comic.album">
-        <field name="name">Géants</field>
+    <record id="work_thorgal_22" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Géants</field>
         <field name="tome">22</field>
-        <field name="isbn">9782803612208</field>
+    </record>
+    <record id="edition_thorgal_22" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_22"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1996-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_22_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_22"/>
+    <record id="isbn_thorgal_22" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_22"/>
+        <field name="isbn_13">9782803612208</field>
+    </record>
+    <record id="auteur_thorgal_22_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_22"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_22_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_22"/>
+    <record id="auteur_thorgal_22_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_22"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_24" model="comic.album">
-        <field name="name">Arachnéa</field>
+    <record id="work_thorgal_24" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Arachnéa</field>
         <field name="tome">24</field>
-        <field name="isbn">9782803613625</field>
+    </record>
+    <record id="edition_thorgal_24" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_24"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1999-04-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_24_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_24"/>
+    <record id="isbn_thorgal_24" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_24"/>
+        <field name="isbn_13">9782803613625</field>
+    </record>
+    <record id="auteur_thorgal_24_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_24"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_24_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_24"/>
+    <record id="auteur_thorgal_24_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_24"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_25" model="comic.album">
-        <field name="name">Le Mal bleu</field>
+    <record id="work_thorgal_25" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le Mal bleu</field>
         <field name="tome">25</field>
-        <field name="isbn">9782803614141</field>
+    </record>
+    <record id="edition_thorgal_25" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_25"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">1999-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_25_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_25"/>
+    <record id="isbn_thorgal_25" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_25"/>
+        <field name="isbn_13">9782803614141</field>
+    </record>
+    <record id="auteur_thorgal_25_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_25"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_25_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_25"/>
+    <record id="auteur_thorgal_25_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_25"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_26" model="comic.album">
-        <field name="name">Le Royaume sous le Sable</field>
+    <record id="work_thorgal_26" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le Royaume sous le Sable</field>
         <field name="tome">26</field>
-        <field name="isbn">9782803616657</field>
+    </record>
+    <record id="edition_thorgal_26" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_26"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2001-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_26_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_26"/>
+    <record id="isbn_thorgal_26" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_26"/>
+        <field name="isbn_13">9782803616657</field>
+    </record>
+    <record id="auteur_thorgal_26_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_26"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_26_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_26"/>
+    <record id="auteur_thorgal_26_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_26"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_27" model="comic.album">
-        <field name="name">Le Barbare</field>
+    <record id="work_thorgal_27" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le Barbare</field>
         <field name="tome">27</field>
-        <field name="isbn">9782803617753</field>
+    </record>
+    <record id="edition_thorgal_27" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_27"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2002-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_27_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_27"/>
+    <record id="isbn_thorgal_27" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_27"/>
+        <field name="isbn_13">9782803617753</field>
+    </record>
+    <record id="auteur_thorgal_27_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_27"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_27_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_27"/>
+    <record id="auteur_thorgal_27_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_27"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_28" model="comic.album">
-        <field name="name">Kriss de Valnor</field>
+    <record id="work_thorgal_28" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Kriss de Valnor</field>
         <field name="tome">28</field>
-        <field name="isbn">9782803620036</field>
+    </record>
+    <record id="edition_thorgal_28" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_28"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2004-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_28_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_28"/>
+    <record id="isbn_thorgal_28" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_28"/>
+        <field name="isbn_13">9782803620036</field>
+    </record>
+    <record id="auteur_thorgal_28_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_28"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_28_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_28"/>
+    <record id="auteur_thorgal_28_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_28"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_29" model="comic.album">
-        <field name="name">Le Sacrifice</field>
+    <record id="work_thorgal_29" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le Sacrifice</field>
         <field name="tome">29</field>
-        <field name="isbn">9782803621989</field>
-        <field name="date_parution">2006-11-01</field>
-        <field name="etat_lecture">non_lu</field>
     </record>
-    <record id="auteur_thorgal_29_vanhamme" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_29"/>
+    <record id="edition_thorgal_29" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_29"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
+        <field name="date_parution">2006-11-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_thorgal_29" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_29"/>
+        <field name="isbn_13">9782803621989</field>
+    </record>
+    <record id="auteur_thorgal_29_vanhamme" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_29"/>
         <field name="partner_id" ref="partner_vanhamme"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_29_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_29"/>
+    <record id="auteur_thorgal_29_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_29"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_30" model="comic.album">
-        <field name="name">Moi, Jolan</field>
+    <record id="work_thorgal_30" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Moi, Jolan</field>
         <field name="tome">30</field>
-        <field name="isbn">9782803622658</field>
+    </record>
+    <record id="edition_thorgal_30" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_30"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2007-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_30_sente" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_30"/>
+    <record id="isbn_thorgal_30" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_30"/>
+        <field name="isbn_13">9782803622658</field>
+    </record>
+    <record id="auteur_thorgal_30_sente" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_30"/>
         <field name="partner_id" ref="partner_sente"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_30_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_30"/>
+    <record id="auteur_thorgal_30_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_30"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_31" model="comic.album">
-        <field name="name">Le Bouclier de Thor</field>
+    <record id="work_thorgal_31" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le Bouclier de Thor</field>
         <field name="tome">31</field>
-        <field name="isbn">9782803624867</field>
+    </record>
+    <record id="edition_thorgal_31" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_31"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2008-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_31_sente" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_31"/>
+    <record id="isbn_thorgal_31" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_31"/>
+        <field name="isbn_13">9782803624867</field>
+    </record>
+    <record id="auteur_thorgal_31_sente" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_31"/>
         <field name="partner_id" ref="partner_sente"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_31_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_31"/>
+    <record id="auteur_thorgal_31_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_31"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_32" model="comic.album">
-        <field name="name">La Bataille d'Asgard</field>
+    <record id="work_thorgal_32" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">La Bataille d'Asgard</field>
         <field name="tome">32</field>
-        <field name="isbn">9782803627547</field>
+    </record>
+    <record id="edition_thorgal_32" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_32"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2010-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_32_sente" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_32"/>
+    <record id="isbn_thorgal_32" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_32"/>
+        <field name="isbn_13">9782803627547</field>
+    </record>
+    <record id="auteur_thorgal_32_sente" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_32"/>
         <field name="partner_id" ref="partner_sente"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_32_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_32"/>
+    <record id="auteur_thorgal_32_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_32"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_33" model="comic.album">
-        <field name="name">Le Bateau-Sabre</field>
+    <record id="work_thorgal_33" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le Bateau-Sabre</field>
         <field name="tome">33</field>
-        <field name="isbn">9782803629954</field>
+    </record>
+    <record id="edition_thorgal_33" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_33"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2011-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_33_sente" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_33"/>
+    <record id="isbn_thorgal_33" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_33"/>
+        <field name="isbn_13">9782803629954</field>
+    </record>
+    <record id="auteur_thorgal_33_sente" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_33"/>
         <field name="partner_id" ref="partner_sente"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_33_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_33"/>
+    <record id="auteur_thorgal_33_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_33"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_34" model="comic.album">
-        <field name="name">Kah-Aniel</field>
+    <record id="work_thorgal_34" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Kah-Aniel</field>
         <field name="tome">34</field>
-        <field name="isbn">9782803632992</field>
-        <field name="date_parution">2013-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
     </record>
-    <record id="auteur_thorgal_34_sente" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_34"/>
+    <record id="edition_thorgal_34" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_34"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
+        <field name="date_parution">2013-11-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_thorgal_34" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_34"/>
+        <field name="isbn_13">9782803632992</field>
+    </record>
+    <record id="auteur_thorgal_34_sente" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_34"/>
         <field name="partner_id" ref="partner_sente"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_34_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_34"/>
+    <record id="auteur_thorgal_34_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_34"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_35" model="comic.album">
-        <field name="name">Le feu écarlate</field>
+    <record id="work_thorgal_35" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Le feu écarlate</field>
         <field name="tome">35</field>
-        <field name="isbn">9782803635481</field>
-        <field name="date_parution">2016-11-01</field>
-        <field name="etat_lecture">non_lu</field>
     </record>
-    <record id="auteur_thorgal_35_dorison" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_35"/>
+    <record id="edition_thorgal_35" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_35"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
+        <field name="date_parution">2016-11-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_thorgal_35" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_35"/>
+        <field name="isbn_13">9782803635481</field>
+    </record>
+    <record id="auteur_thorgal_35_dorison" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_35"/>
         <field name="partner_id" ref="partner_dorison"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_35_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_35"/>
+    <record id="auteur_thorgal_35_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_35"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_36" model="comic.album">
-        <field name="name">Aniel</field>
+    <record id="work_thorgal_36" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Aniel</field>
         <field name="tome">36</field>
-        <field name="isbn">9782803672172</field>
+    </record>
+    <record id="edition_thorgal_36" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_36"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2018-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_36_yann" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_36"/>
+    <record id="isbn_thorgal_36" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_36"/>
+        <field name="isbn_13">9782803672172</field>
+    </record>
+    <record id="auteur_thorgal_36_yann" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_36"/>
         <field name="partner_id" ref="partner_yann"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_36_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_36"/>
+    <record id="auteur_thorgal_36_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_36"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_37" model="comic.album">
-        <field name="name">L'Ermite de Skellingar</field>
+    <record id="work_thorgal_37" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">L'Ermite de Skellingar</field>
         <field name="tome">37</field>
-        <field name="isbn">9782803673728</field>
+    </record>
+    <record id="edition_thorgal_37" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_37"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2019-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_37_yann" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_37"/>
+    <record id="isbn_thorgal_37" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_37"/>
+        <field name="isbn_13">9782803673728</field>
+    </record>
+    <record id="auteur_thorgal_37_yann" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_37"/>
         <field name="partner_id" ref="partner_yann"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_37_vignaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_37"/>
+    <record id="auteur_thorgal_37_vignaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_37"/>
         <field name="partner_id" ref="partner_vignaux"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_38" model="comic.album">
-        <field name="name">La Selkie</field>
+    <record id="work_thorgal_38" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">La Selkie</field>
         <field name="tome">38</field>
-        <field name="isbn">9782803677184</field>
+    </record>
+    <record id="edition_thorgal_38" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_38"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2020-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_38_yann" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_38"/>
+    <record id="isbn_thorgal_38" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_38"/>
+        <field name="isbn_13">9782803677184</field>
+    </record>
+    <record id="auteur_thorgal_38_yann" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_38"/>
         <field name="partner_id" ref="partner_yann"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_38_vignaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_38"/>
+    <record id="auteur_thorgal_38_vignaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_38"/>
         <field name="partner_id" ref="partner_vignaux"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_39" model="comic.album">
-        <field name="name">Neokóra</field>
+    <record id="work_thorgal_39" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Neokóra</field>
         <field name="tome">39</field>
-        <field name="isbn">9782803680313</field>
+    </record>
+    <record id="edition_thorgal_39" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_39"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2021-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_39_yann" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_39"/>
+    <record id="isbn_thorgal_39" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_39"/>
+        <field name="isbn_13">9782803680313</field>
+    </record>
+    <record id="auteur_thorgal_39_yann" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_39"/>
         <field name="partner_id" ref="partner_yann"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_39_vignaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_39"/>
+    <record id="auteur_thorgal_39_vignaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_39"/>
         <field name="partner_id" ref="partner_vignaux"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_40" model="comic.album">
-        <field name="name">Tupilaks</field>
+    <record id="work_thorgal_40" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Tupilaks</field>
         <field name="tome">40</field>
-        <field name="isbn">9782808203470</field>
+    </record>
+    <record id="edition_thorgal_40" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_40"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2022-11-01</field>
-        <field name="etat_lecture">non_lu</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_40_yann" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_40"/>
+    <record id="isbn_thorgal_40" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_40"/>
+        <field name="isbn_13">9782808203470</field>
+    </record>
+    <record id="auteur_thorgal_40_yann" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_40"/>
         <field name="partner_id" ref="partner_yann"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_40_vignaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_40"/>
+    <record id="auteur_thorgal_40_vignaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_40"/>
         <field name="partner_id" ref="partner_vignaux"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_41" model="comic.album">
-        <field name="name">Mille yeux</field>
+    <record id="work_thorgal_41" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Mille yeux</field>
         <field name="tome">41</field>
-        <field name="isbn">9782808210850</field>
+    </record>
+    <record id="edition_thorgal_41" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_41"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
         <field name="date_parution">2023-11-01</field>
-        <field name="etat_lecture">non_lu</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_thorgal_41_yann" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_41"/>
+    <record id="isbn_thorgal_41" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_41"/>
+        <field name="isbn_13">9782808210850</field>
+    </record>
+    <record id="auteur_thorgal_41_yann" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_41"/>
         <field name="partner_id" ref="partner_yann"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_41_vignaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_41"/>
+    <record id="auteur_thorgal_41_vignaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_41"/>
         <field name="partner_id" ref="partner_vignaux"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_42" model="comic.album">
-        <field name="name">Ézurr le Varègue</field>
+    <record id="work_thorgal_42" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">Ézurr le Varègue</field>
         <field name="tome">42</field>
-        <field name="isbn">9782808212939</field>
-        <field name="date_parution">2024-11-01</field>
-        <field name="etat_lecture">non_lu</field>
     </record>
-    <record id="auteur_thorgal_42_yann" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_42"/>
+    <record id="edition_thorgal_42" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_42"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
+        <field name="date_parution">2024-11-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_thorgal_42" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_42"/>
+        <field name="isbn_13">9782808212939</field>
+    </record>
+    <record id="auteur_thorgal_42_yann" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_42"/>
         <field name="partner_id" ref="partner_yann"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_42_vignaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_42"/>
+    <record id="auteur_thorgal_42_vignaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_42"/>
         <field name="partner_id" ref="partner_vignaux"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_thorgal_43" model="comic.album">
-        <field name="name">La vengeance de la déesse Skædhi</field>
+    <record id="work_thorgal_43" model="comic.work">
         <field name="serie_id" ref="serie_thorgal"/>
+        <field name="titre_canonique">La vengeance de la déesse Skædhi</field>
         <field name="tome">43</field>
-        <field name="isbn">9782808214865</field>
-        <field name="date_parution">2025-11-01</field>
-        <field name="etat_lecture">non_lu</field>
     </record>
-    <record id="auteur_thorgal_43_yann" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_43"/>
+    <record id="edition_thorgal_43" model="comic.edition">
+        <field name="work_id" ref="work_thorgal_43"/>
+        <field name="editeur_id" ref="editeur_le_lombard"/>
+        <field name="date_parution">2025-11-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_thorgal_43" model="comic.isbn">
+        <field name="edition_id" ref="edition_thorgal_43"/>
+        <field name="isbn_13">9782808214865</field>
+    </record>
+    <record id="auteur_thorgal_43_yann" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_43"/>
         <field name="partner_id" ref="partner_yann"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_thorgal_43_vignaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_thorgal_43"/>
+    <record id="auteur_thorgal_43_vignaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_thorgal_43"/>
         <field name="partner_id" ref="partner_vignaux"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <!-- ===== ALBUMS — Complainte des Landes perdues ===== -->
-    <!-- Cycle Sioban (T1-T4) : Rosinski au dessin -->
 
-    <record id="album_complainte_01" model="comic.album">
-        <field name="name">Sioban</field>
+    <!-- ===== ŒUVRES ET ÉDITIONS — Complainte des Landes perdues ===== -->
+
+    <record id="work_complainte_01" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Sioban</field>
         <field name="tome">1</field>
-        <field name="isbn">9782871290711</field>
+    </record>
+    <record id="edition_complainte_01" model="comic.edition">
+        <field name="work_id" ref="work_complainte_01"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">1993-01-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_01_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_01"/>
+    <record id="isbn_complainte_01" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_01"/>
+        <field name="isbn_13">9782871290711</field>
+    </record>
+    <record id="auteur_complainte_01_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_01"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_01_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_01"/>
+    <record id="auteur_complainte_01_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_01"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_02" model="comic.album">
-        <field name="name">Sioban 2 — Blackmore</field>
+    <record id="work_complainte_02" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Sioban 2 — Blackmore</field>
         <field name="tome">2</field>
-        <field name="isbn">9782871290780</field>
+    </record>
+    <record id="edition_complainte_02" model="comic.edition">
+        <field name="work_id" ref="work_complainte_02"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">1994-01-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_02_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_02"/>
+    <record id="isbn_complainte_02" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_02"/>
+        <field name="isbn_13">9782871290780</field>
+    </record>
+    <record id="auteur_complainte_02_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_02"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_02_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_02"/>
+    <record id="auteur_complainte_02_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_02"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_03" model="comic.album">
-        <field name="name">Sioban 3 — Dame Gerfaut</field>
+    <record id="work_complainte_03" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Sioban 3 — Dame Gerfaut</field>
         <field name="tome">3</field>
-        <field name="isbn">9782871291008</field>
+    </record>
+    <record id="edition_complainte_03" model="comic.edition">
+        <field name="work_id" ref="work_complainte_03"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">1996-01-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_03_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_03"/>
+    <record id="isbn_complainte_03" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_03"/>
+        <field name="isbn_13">9782871291008</field>
+    </record>
+    <record id="auteur_complainte_03_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_03"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_03_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_03"/>
+    <record id="auteur_complainte_03_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_03"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_04" model="comic.album">
-        <field name="name">Sioban 4 — Kyle of Klanach</field>
+    <record id="work_complainte_04" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Sioban 4 — Kyle of Klanach</field>
         <field name="tome">4</field>
-        <field name="isbn">9782871291695</field>
-        <field name="date_parution">1998-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
     </record>
-    <record id="auteur_complainte_04_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_04"/>
+    <record id="edition_complainte_04" model="comic.edition">
+        <field name="work_id" ref="work_complainte_04"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
+        <field name="date_parution">1998-10-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_complainte_04" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_04"/>
+        <field name="isbn_13">9782871291695</field>
+    </record>
+    <record id="auteur_complainte_04_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_04"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_04_rosinski" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_04"/>
+    <record id="auteur_complainte_04_rosinski" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_04"/>
         <field name="partner_id" ref="partner_rosinski"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <!-- Cycle Les Chevaliers du Pardon (T5-T8) : Delaby au dessin -->
-
-    <record id="album_complainte_05" model="comic.album">
-        <field name="name">Les Chevaliers du Pardon 1 — Moriganes</field>
+    <record id="work_complainte_05" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Chevaliers du Pardon 1 — Moriganes</field>
         <field name="tome">5</field>
-        <field name="isbn">9782871296836</field>
+    </record>
+    <record id="edition_complainte_05" model="comic.edition">
+        <field name="work_id" ref="work_complainte_05"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2004-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_05_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_05"/>
+    <record id="isbn_complainte_05" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_05"/>
+        <field name="isbn_13">9782871296836</field>
+    </record>
+    <record id="auteur_complainte_05_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_05"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_05_delaby" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_05"/>
+    <record id="auteur_complainte_05_delaby" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_05"/>
         <field name="partner_id" ref="partner_delaby"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_06" model="comic.album">
-        <field name="name">Les Chevaliers du Pardon 2 — Le Guinea Lord</field>
+    <record id="work_complainte_06" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Chevaliers du Pardon 2 — Le Guinea Lord</field>
         <field name="tome">6</field>
-        <field name="isbn">9782505004646</field>
+    </record>
+    <record id="edition_complainte_06" model="comic.edition">
+        <field name="work_id" ref="work_complainte_06"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2008-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_06_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_06"/>
+    <record id="isbn_complainte_06" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_06"/>
+        <field name="isbn_13">9782505004646</field>
+    </record>
+    <record id="auteur_complainte_06_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_06"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_06_delaby" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_06"/>
+    <record id="auteur_complainte_06_delaby" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_06"/>
         <field name="partner_id" ref="partner_delaby"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_07" model="comic.album">
-        <field name="name">Les Chevaliers du Pardon 3 — La Fée Sanctus</field>
+    <record id="work_complainte_07" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Chevaliers du Pardon 3 — La Fée Sanctus</field>
         <field name="tome">7</field>
-        <field name="isbn">9782505013877</field>
+    </record>
+    <record id="edition_complainte_07" model="comic.edition">
+        <field name="work_id" ref="work_complainte_07"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2012-06-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_07_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_07"/>
+    <record id="isbn_complainte_07" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_07"/>
+        <field name="isbn_13">9782505013877</field>
+    </record>
+    <record id="auteur_complainte_07_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_07"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_07_delaby" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_07"/>
+    <record id="auteur_complainte_07_delaby" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_07"/>
         <field name="partner_id" ref="partner_delaby"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_08" model="comic.album">
-        <field name="name">Les Chevaliers du Pardon 4 — Sill Valt</field>
+    <record id="work_complainte_08" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Chevaliers du Pardon 4 — Sill Valt</field>
         <field name="tome">8</field>
-        <field name="isbn">9782505019794</field>
-        <field name="date_parution">2014-11-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
     </record>
-    <record id="auteur_complainte_08_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_08"/>
+    <record id="edition_complainte_08" model="comic.edition">
+        <field name="work_id" ref="work_complainte_08"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
+        <field name="date_parution">2014-11-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_complainte_08" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_08"/>
+        <field name="isbn_13">9782505019794</field>
+    </record>
+    <record id="auteur_complainte_08_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_08"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_08_delaby" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_08"/>
+    <record id="auteur_complainte_08_delaby" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_08"/>
         <field name="partner_id" ref="partner_delaby"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <!-- Cycle Les Sorcières (T9-T11) : Tillier au dessin -->
-
-    <record id="album_complainte_09" model="comic.album">
-        <field name="name">Les Sorcières 1 — Tête noire</field>
+    <record id="work_complainte_09" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Sorcières 1 — Tête noire</field>
         <field name="tome">9</field>
-        <field name="isbn">9782505063506</field>
+    </record>
+    <record id="edition_complainte_09" model="comic.edition">
+        <field name="work_id" ref="work_complainte_09"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2015-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_09_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_09"/>
+    <record id="isbn_complainte_09" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_09"/>
+        <field name="isbn_13">9782505063506</field>
+    </record>
+    <record id="auteur_complainte_09_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_09"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_09_tillier" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_09"/>
+    <record id="auteur_complainte_09_tillier" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_09"/>
         <field name="partner_id" ref="partner_tillier"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_10" model="comic.album">
-        <field name="name">Les Sorcières 2 — Inferno</field>
+    <record id="work_complainte_10" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Sorcières 2 — Inferno</field>
         <field name="tome">10</field>
-        <field name="isbn">9782505063995</field>
+    </record>
+    <record id="edition_complainte_10" model="comic.edition">
+        <field name="work_id" ref="work_complainte_10"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2019-01-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_10_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_10"/>
+    <record id="isbn_complainte_10" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_10"/>
+        <field name="isbn_13">9782505063995</field>
+    </record>
+    <record id="auteur_complainte_10_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_10"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_10_tillier" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_10"/>
+    <record id="auteur_complainte_10_tillier" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_10"/>
         <field name="partner_id" ref="partner_tillier"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_11" model="comic.album">
-        <field name="name">Les Sorcières 3 — Regina Obscura</field>
+    <record id="work_complainte_11" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Sorcières 3 — Regina Obscura</field>
         <field name="tome">11</field>
-        <field name="isbn">9782505078197</field>
-        <field name="date_parution">2023-03-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
     </record>
-    <record id="auteur_complainte_11_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_11"/>
+    <record id="edition_complainte_11" model="comic.edition">
+        <field name="work_id" ref="work_complainte_11"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
+        <field name="date_parution">2023-03-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_complainte_11" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_11"/>
+        <field name="isbn_13">9782505078197</field>
+    </record>
+    <record id="auteur_complainte_11_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_11"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_11_tillier" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_11"/>
+    <record id="auteur_complainte_11_tillier" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_11"/>
         <field name="partner_id" ref="partner_tillier"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <!-- Cycle Les Sudenne (T13-T16) : Paul Teng au dessin -->
-
-    <record id="album_complainte_13" model="comic.album">
-        <field name="name">Les Sudenne 1 — Lord Heron</field>
+    <record id="work_complainte_13" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Sudenne 1 — Lord Heron</field>
         <field name="tome">13</field>
-        <field name="isbn">9782505082682</field>
+    </record>
+    <record id="edition_complainte_13" model="comic.edition">
+        <field name="work_id" ref="work_complainte_13"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2021-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_13_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_13"/>
+    <record id="isbn_complainte_13" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_13"/>
+        <field name="isbn_13">9782505082682</field>
+    </record>
+    <record id="auteur_complainte_13_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_13"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_13_teng" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_13"/>
+    <record id="auteur_complainte_13_teng" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_13"/>
         <field name="partner_id" ref="partner_teng"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_14" model="comic.album">
-        <field name="name">Les Sudenne 2 — Aylissa</field>
+    <record id="work_complainte_14" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Sudenne 2 — Aylissa</field>
         <field name="tome">14</field>
-        <field name="isbn">9782505111542</field>
+    </record>
+    <record id="edition_complainte_14" model="comic.edition">
+        <field name="work_id" ref="work_complainte_14"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
         <field name="date_parution">2022-10-01</field>
-        <field name="etat_lecture">lu</field>
-        <field name="dans_collection" eval="True"/>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
     </record>
-    <record id="auteur_complainte_14_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_14"/>
+    <record id="isbn_complainte_14" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_14"/>
+        <field name="isbn_13">9782505111542</field>
+    </record>
+    <record id="auteur_complainte_14_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_14"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_14_teng" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_14"/>
+    <record id="auteur_complainte_14_teng" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_14"/>
         <field name="partner_id" ref="partner_teng"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_15" model="comic.album">
-        <field name="name">Les Sudenne 3 — La Folie Seamus</field>
+    <record id="work_complainte_15" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Sudenne 3 — La Folie Seamus</field>
         <field name="tome">15</field>
-        <field name="isbn">9782505113607</field>
-        <field name="date_parution">2023-10-01</field>
-        <field name="etat_lecture">non_lu</field>
     </record>
-    <record id="auteur_complainte_15_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_15"/>
+    <record id="edition_complainte_15" model="comic.edition">
+        <field name="work_id" ref="work_complainte_15"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
+        <field name="date_parution">2023-10-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_complainte_15" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_15"/>
+        <field name="isbn_13">9782505113607</field>
+    </record>
+    <record id="auteur_complainte_15_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_15"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_15_teng" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_15"/>
+    <record id="auteur_complainte_15_teng" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_15"/>
         <field name="partner_id" ref="partner_teng"/>
         <field name="role">dessinateur</field>
     </record>
 
-    <record id="album_complainte_16" model="comic.album">
-        <field name="name">Les Sudenne 4 — Lady O'Mara</field>
+    <record id="work_complainte_16" model="comic.work">
         <field name="serie_id" ref="serie_complainte"/>
+        <field name="titre_canonique">Les Sudenne 4 — Lady O'Mara</field>
         <field name="tome">16</field>
-        <field name="isbn">9782505122739</field>
-        <field name="date_parution">2024-11-01</field>
-        <field name="etat_lecture">non_lu</field>
     </record>
-    <record id="auteur_complainte_16_dufaux" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_16"/>
+    <record id="edition_complainte_16" model="comic.edition">
+        <field name="work_id" ref="work_complainte_16"/>
+        <field name="editeur_id" ref="editeur_dargaud"/>
+        <field name="date_parution">2024-11-01</field>
+        <field name="langue">fr</field>
+        <field name="format">cartonne</field>
+    </record>
+    <record id="isbn_complainte_16" model="comic.isbn">
+        <field name="edition_id" ref="edition_complainte_16"/>
+        <field name="isbn_13">9782505122739</field>
+    </record>
+    <record id="auteur_complainte_16_dufaux" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_16"/>
         <field name="partner_id" ref="partner_dufaux"/>
         <field name="role">scenariste</field>
     </record>
-    <record id="auteur_complainte_16_teng" model="comic.album.auteur.line">
-        <field name="album_id" ref="album_complainte_16"/>
+    <record id="auteur_complainte_16_teng" model="comic.work.auteur.line">
+        <field name="work_id" ref="work_complainte_16"/>
         <field name="partner_id" ref="partner_teng"/>
         <field name="role">dessinateur</field>
     </record>

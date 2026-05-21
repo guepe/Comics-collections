@@ -25,15 +25,13 @@ class ComicSerie(models.Model):
     synopsis = fields.Html(string='Synopsis')
     bdgest_id = fields.Integer(string='ID BDGest')
     bedetheque_url = fields.Char(string='URL Bedetheque')
-    album_ids = fields.One2many('comic.album', 'serie_id', string='Albums')
-    nb_albums_total = fields.Integer(
-        string='Tomes au total', compute='_compute_albums', store=True)
-    nb_albums_possedes = fields.Integer(
-        string='Tomes possédés', compute='_compute_albums', store=True)
+    work_ids = fields.One2many('comic.work', 'serie_id', string='Œuvres')
+    nb_works_total = fields.Integer(
+        string='Tomes au total', compute='_compute_works', store=True)
     a_suivre = fields.Boolean(string='À suivre', default=False, tracking=True)
-    first_album_cover_id = fields.Many2one(
-        'comic.album',
-        compute='_compute_first_album_cover',
+    first_edition_cover_id = fields.Many2one(
+        'comic.edition',
+        compute='_compute_first_edition_cover',
         store=True,
     )
     active = fields.Boolean(default=True)
@@ -44,14 +42,18 @@ class ComicSerie(models.Model):
         for rec in self:
             rec.has_cover = bool(rec.image_couverture)
 
-    @api.depends('album_ids.image_couverture', 'album_ids.tome')
-    def _compute_first_album_cover(self):
+    @api.depends('work_ids.edition_ids.image_couverture', 'work_ids.tome')
+    def _compute_first_edition_cover(self):
         for serie in self:
-            album = serie.album_ids.filtered('image_couverture').sorted('tome')
-            serie.first_album_cover_id = album[0] if album else False
+            edition = False
+            for work in serie.work_ids.sorted('tome'):
+                ed = work.edition_ids.filtered('image_couverture')
+                if ed:
+                    edition = ed[0]
+                    break
+            serie.first_edition_cover_id = edition
 
-    @api.depends('album_ids', 'album_ids.dans_collection')
-    def _compute_albums(self):
+    @api.depends('work_ids')
+    def _compute_works(self):
         for serie in self:
-            serie.nb_albums_total = len(serie.album_ids)
-            serie.nb_albums_possedes = len(serie.album_ids.filtered('dans_collection'))
+            serie.nb_works_total = len(serie.work_ids)

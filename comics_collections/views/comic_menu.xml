@@ -22,17 +22,17 @@
               groups="comics_collections.group_comic_user"
               sequence="10"/>
 
-    <menuitem id="menu_comic_albums"
-              name="Albums"
+    <menuitem id="menu_comic_works"
+              name="Œuvres"
               parent="menu_comic_collection"
-              action="action_comic_album"
+              action="action_comic_work"
               groups="comics_collections.group_comic_user"
               sequence="20"/>
 
-    <menuitem id="menu_comic_wishlist"
-              name="Wishlist"
+    <menuitem id="menu_comic_editions"
+              name="Éditions"
               parent="menu_comic_collection"
-              action="action_comic_wishlist"
+              action="action_comic_edition"
               groups="comics_collections.group_comic_user"
               sequence="25"/>
 

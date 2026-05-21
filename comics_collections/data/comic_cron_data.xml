@@ -4,7 +4,7 @@
 
         <record id="cron_fill_missing_purchase_links" model="ir.cron">
             <field name="name">BD — Compléter les liens d'achat manquants</field>
-            <field name="model_id" ref="model_comic_album"/>
+            <field name="model_id" ref="model_comic_edition"/>
             <field name="state">code</field>
             <field name="code">model._cron_fill_missing_purchase_links()</field>
             <field name="interval_number">1</field>

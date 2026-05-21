@@ -1,4 +1,4 @@
-"""Tests unitaires pour les champs computed de comic.serie et comic.album.
+"""Tests unitaires pour les champs computed de comic.serie et comic.work.
 
 On injecte des faux recordsets afin de tester la logique sans base de données.
 """

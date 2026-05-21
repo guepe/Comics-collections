@@ -120,23 +120,22 @@
                 <field name="type"/>
                 <field name="statut"/>
                 <field name="has_cover"/>
-                <field name="first_album_cover_id"/>
-                <field name="nb_albums_total"/>
-                <field name="nb_albums_possedes"/>
+                <field name="first_edition_cover_id"/>
+                <field name="nb_works_total"/>
                 <field name="editeur_id"/>
                 <templates>
                     <t t-name="card">
                         <div class="o_comic_serie_card">
-                            <!-- Couverture : propre > premier album > placeholder -->
+                            <!-- Couverture : propre > première édition > placeholder -->
                             <div class="o_comic_serie_cover">
                                 <t t-if="record.has_cover.raw_value">
                                     <img loading="lazy"
                                          t-att-src="'/web/image/comic.serie/' + record.id.raw_value + '/image_couverture'"
                                          t-att-alt="record.name.value"/>
                                 </t>
-                                <t t-elif="record.first_album_cover_id.raw_value">
+                                <t t-elif="record.first_edition_cover_id.raw_value">
                                     <img loading="lazy"
-                                         t-att-src="'/web/image/comic.album/' + record.first_album_cover_id.raw_value + '/image_couverture'"
+                                         t-att-src="'/web/image/comic.edition/' + record.first_edition_cover_id.raw_value + '/image_couverture'"
                                          t-att-alt="record.name.value"/>
                                 </t>
                                 <t t-else="">
@@ -154,16 +153,8 @@
                                 <div class="o_comic_serie_meta">
                                     <t t-esc="record.editeur_id.value || ''"/>
                                 </div>
-                                <!-- Barre de progression -->
-                                <div class="o_comic_progress_wrap">
-                                    <div class="o_comic_progress_bar">
-                                        <div class="o_comic_progress_fill"
-                                             t-attf-style="width: #{record.nb_albums_total.raw_value ? Math.round(record.nb_albums_possedes.raw_value / record.nb_albums_total.raw_value * 100) : 0}%"/>
-                                    </div>
-                                    <div class="o_comic_progress_label">
-                                        <span><t t-esc="record.nb_albums_possedes.raw_value"/> possédés</span>
-                                        <span><t t-esc="record.nb_albums_total.raw_value"/> tomes</span>
-                                    </div>
+                                <div class="o_comic_progress_label">
+                                    <span><t t-esc="record.nb_works_total.raw_value"/> tomes</span>
                                 </div>
                             </div>
                         </div>

@@ -723,7 +723,7 @@ Outils externes (tools/) :
 
 ---
 
-**US-051 — Implémentation ORM + remplacement de comic.album** ⏳ 🔴
+**US-051 — Implémentation ORM + remplacement de comic.album** ✅
 
 ```
 En tant que développeur
@@ -731,7 +731,7 @@ Je veux créer les nouveaux modèles et supprimer comic.album et comic.album.aut
 Afin d'avoir un schéma propre et cohérent dès le départ
 
 Critères d'acceptance :
-- [ ] `comic.work` créé dans models/comic_work.py :
+- [x] `comic.work` créé dans models/comic_work.py :
       - hérite mail.thread + mail.activity.mixin
       - _description, _rec_name = 'titre_canonique'
       - display_name = "{serie} T{tome:02d} — {titre_canonique}"
@@ -739,23 +739,25 @@ Critères d'acceptance :
       - slug : Char unique, indexé ; auto-généré à la création si vide
       - champs refs : wikidata_id, openlibrary_id, bedetheque_id, comicvine_id (Char, optional)
       - edition_ids, auteur_line_ids en One2many
-- [ ] `comic.work.auteur.line` créé (même fichier ou models/comic_work_auteur_line.py) :
+- [x] `comic.work.auteur.line` créé (même fichier models/comic_work.py) :
       - work_id, partner_id, role — même structure que l'ancien comic.album.auteur.line
-- [ ] `comic.edition` créé dans models/comic_edition.py :
+- [x] `comic.edition` créé dans models/comic_edition.py :
       - hérite mail.thread + mail.activity.mixin
       - display_name = "{work.display_name} ({langue} — {editeur_id.name}, {date_parution.year})"
       - format : Selection broche/cartonne/integrale/collector/numerique/autre
       - isbn_ids One2many → comic.isbn
-- [ ] `comic.isbn` créé dans models/comic_isbn.py :
+- [x] `comic.isbn` créé dans models/comic_isbn.py :
       - @api.constrains('isbn_13') : validation checksum EAN-13 (algorithme ×1/×3)
       - @api.constrains('isbn_10') : validation ISBN-10 si renseigné
-      - normalisation automatique : suppression tirets et espaces avant stockage (_write ou @api.onchange)
+      - normalisation automatique : suppression tirets et espaces avant stockage (create/write)
       - models.Constraint unicité isbn_13
-- [ ] `comic.pret` : champ `album_id` remplacé par `edition_id` (Many2one → comic.edition)
-- [ ] `comic.album` et `comic.album.auteur.line` supprimés (fichiers Python et vues XML)
-- [ ] `ir.model.access.csv` mis à jour : 4 nouveaux modèles, 2 anciens retirés
-- [ ] `__init__.py` (module et models/) mis à jour
-- [ ] Module installable sans erreur sur une base vierge
+- [x] `comic.pret` créé dans models/comic_pret.py avec edition_id (Many2one → comic.edition)
+- [x] `comic.album` et `comic.album.auteur.line` supprimés (fichiers Python et vues XML)
+- [x] `ir.model.access.csv` mis à jour : 6 nouveaux modèles (work, work.auteur.line, edition, isbn, pret + wizard), 2 anciens retirés
+- [x] `__init__.py` (module et models/) mis à jour
+- [x] Module installable sans erreur sur une base vierge
+      Note : comic_datasource, comic_bdgest et comic_shop référencent encore comic.album
+      → ces modules seront adaptés dans US-052 et US-054
 ```
 
 ---
