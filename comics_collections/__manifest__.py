@@ -23,6 +23,8 @@
         'views/comic_auteur_views.xml',
         'views/comic_serie_views.xml',
         'views/comic_work_views.xml',
+        'views/comic_edition_views.xml',
+        'views/comic_pret_views.xml',
         'views/comic_import_wizard_views.xml',
         'views/comic_menu.xml',
         'views/comic_fonts_template.xml',

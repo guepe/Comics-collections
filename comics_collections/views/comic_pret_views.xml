@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Vue liste comic.pret ─────────────────────────────────────────────── -->
+    <record id="view_comic_pret_list" model="ir.ui.view">
+        <field name="name">comic.pret.list</field>
+        <field name="model">comic.pret</field>
+        <field name="arch" type="xml">
+            <list string="Prêts" default_order="date_pret desc"
+                  decoration-danger="not retourne and date_retour_prevue and date_retour_prevue &lt; current_date"
+                  decoration-success="retourne">
+                <field name="edition_id" string="Album"/>
+                <field name="partner_id" string="Prêté à"/>
+                <field name="date_pret"/>
+                <field name="date_retour_prevue"/>
+                <field name="date_retour_effective" optional="hide"/>
+                <field name="retourne" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Vue formulaire comic.pret ────────────────────────────────────────── -->
+    <record id="view_comic_pret_form" model="ir.ui.view">
+        <field name="name">comic.pret.form</field>
+        <field name="model">comic.pret</field>
+        <field name="arch" type="xml">
+            <form string="Prêt">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="edition_id" string="Album prêté"/>
+                            <field name="partner_id" string="Prêté à"/>
+                        </group>
+                        <group>
+                            <field name="date_pret"/>
+                            <field name="date_retour_prevue"/>
+                            <field name="date_retour_effective"/>
+                            <field name="retourne"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes libres…"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Vue recherche comic.pret ─────────────────────────────────────────── -->
+    <record id="view_comic_pret_search" model="ir.ui.view">
+        <field name="name">comic.pret.search</field>
+        <field name="model">comic.pret</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un prêt">
+                <field name="edition_id" string="Album"/>
+                <field name="partner_id" string="Emprunté par"/>
+                <separator/>
+                <filter string="En cours" name="en_cours" domain="[('retourne', '=', False)]"/>
+                <filter string="Retournés" name="retournes" domain="[('retourne', '=', True)]"/>
+                <filter string="En retard" name="en_retard"
+                        domain="[('retourne', '=', False), ('date_retour_prevue', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action comic.pret ─────────────────────────────────────────────────  -->
+    <record id="action_comic_pret" model="ir.actions.act_window">
+        <field name="name">Prêts</field>
+        <field name="res_model">comic.pret</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_comic_pret_search"/>
+        <field name="context">{'search_default_en_cours': 1}</field>
+    </record>
+
+</odoo>

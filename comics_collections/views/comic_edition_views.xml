@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Vue liste comic.edition ─────────────────────────────────────────── -->
+    <record id="view_comic_edition_list" model="ir.ui.view">
+        <field name="name">comic.edition.list</field>
+        <field name="model">comic.edition</field>
+        <field name="arch" type="xml">
+            <list string="Éditions" default_order="work_id,date_parution">
+                <field name="work_id"/>
+                <field name="langue"/>
+                <field name="editeur_id"/>
+                <field name="date_parution"/>
+                <field name="format"/>
+                <field name="nb_pages"/>
+                <field name="nb_isbn" string="ISBN"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ── Vue formulaire comic.edition ────────────────────────────────────── -->
+    <record id="view_comic_edition_form" model="ir.ui.view">
+        <field name="name">comic.edition.form</field>
+        <field name="model">comic.edition</field>
+        <field name="arch" type="xml">
+            <form string="Édition">
+                <sheet>
+                    <div name="button_box" class="oe_button_box"/>
+                    <field name="image_couverture" widget="image"
+                           class="oe_avatar" options="{'preview_image': 'image_couverture'}"/>
+                    <div class="oe_title">
+                        <label for="work_id" string="Œuvre"/>
+                        <h1><field name="work_id"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="editeur_id"/>
+                            <field name="langue"/>
+                            <field name="format"/>
+                            <field name="date_parution"/>
+                            <field name="date_depot_legal"/>
+                            <field name="nb_pages"/>
+                        </group>
+                        <group string="Liens d'achat">
+                            <field name="url_club_be" widget="url"/>
+                            <field name="url_amazon_be" widget="url"/>
+                            <field name="url_fnac_be" widget="url"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="ISBNs">
+                            <field name="isbn_ids">
+                                <list editable="bottom">
+                                    <field name="isbn_13"/>
+                                    <field name="isbn_10"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Synopsis">
+                            <field name="synopsis"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ── Vue recherche comic.edition ─────────────────────────────────────── -->
+    <record id="view_comic_edition_search" model="ir.ui.view">
+        <field name="name">comic.edition.search</field>
+        <field name="model">comic.edition</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une édition">
+                <field name="work_id" string="Œuvre / Titre"/>
+                <field name="editeur_id"/>
+                <field name="langue"/>
+                <field name="isbn_ids" string="ISBN"
+                       filter_domain="[('isbn_ids.isbn_13', 'ilike', self)]"/>
+                <separator/>
+                <filter string="Français" name="fr" domain="[('langue', '=', 'fr')]"/>
+                <filter string="Néerlandais" name="nl" domain="[('langue', '=', 'nl')]"/>
+                <filter string="Sans ISBN" name="sans_isbn"
+                        domain="[('nb_isbn', '=', 0)]"/>
+                <group name="group_by">
+                    <filter string="Langue" name="groupby_langue" context="{'group_by': 'langue'}"/>
+                    <filter string="Éditeur" name="groupby_editeur" context="{'group_by': 'editeur_id'}"/>
+                    <filter string="Format" name="groupby_format" context="{'group_by': 'format'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ── Action comic.edition ─────────────────────────────────────────────  -->
+    <record id="action_comic_edition" model="ir.actions.act_window">
+        <field name="name">Éditions</field>
+        <field name="res_model">comic.edition</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_comic_edition_search"/>
+    </record>
+
+</odoo>

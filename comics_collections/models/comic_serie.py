@@ -57,3 +57,14 @@ class ComicSerie(models.Model):
     def _compute_works(self):
         for serie in self:
             serie.nb_works_total = len(serie.work_ids)
+
+    def action_view_works(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Œuvres — {self.name}',
+            'res_model': 'comic.work',
+            'view_mode': 'list,form',
+            'domain': [('serie_id', '=', self.id)],
+            'context': {'default_serie_id': self.id},
+        }

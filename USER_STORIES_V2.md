@@ -50,7 +50,7 @@
 | US-050 | Analyse + décisions architecturales + déduplication | —              |
 | US-051 | Implémentation ORM (comic.work, .edition, .isbn)   | US-050          |
 | US-052 | Adaptation datasources et import                   | US-051          |
-| US-053 | Vues back-office (list/form/search)                | US-051          |
+| US-053 | Vues back-office (list/form/search) ✅              | US-051          |
 | US-054 | Adaptation comic_shop et bibliothèque client       | US-051, US-050  |
 | US-057 | Façade UX album/tome après refactor canonique      | US-053, US-054  |
 | US-055 | Tests unitaires et validation                      | US-051, US-054, US-057 |
@@ -797,7 +797,7 @@ Critères d'acceptance :
 
 ---
 
-**US-053 — Vues back-office** ⏳ 🟠
+**US-053 — Vues back-office** ✅
 
 ```
 En tant qu'administrateur
@@ -805,23 +805,23 @@ Je veux des vues list/form/search pour comic.work, comic.edition et comic.isbn
 Afin de gérer le nouveau schéma depuis l'interface Odoo
 
 Critères d'acceptance :
-- [ ] views/comic_work_views.xml :
+- [x] views/comic_work_views.xml :
       - List : titre canonique, série, tome, nb éditions (computed), nb auteurs (computed)
       - Form : onglet "Œuvre" (titre_canonique, serie_id, tome, slug, refs externes)
                onglet "Auteurs" (auteur_line_ids avec partner_id et role)
                onglet "Éditions" (edition_ids inline list : langue, éditeur, date, format, nb ISBN)
       - Search : par titre, série, tome, auteur, slug, wikidata_id
       - Kanban (optionnel) : image de la première édition fr, titre, série, tome
-- [ ] views/comic_edition_views.xml :
+- [x] views/comic_edition_views.xml :
       - List : titre affiché, langue, éditeur, date, format, nb ISBN
       - Form : champs édition + sous-liste isbn_ids inline (isbn_13, isbn_10)
                smartbutton "Produit lié" si product_tmpl_id renseigné (comic_shop uniquement)
-- [ ] Menu mis à jour :
-      "Ma Collection > Œuvres" (remplace Albums) + "Ma Collection > Éditions"
-- [ ] Vue comic.serie : smartbutton/compteur "nb_works" (computed via work_ids)
-- [ ] Vue comic.pret : affiche edition_id avec lien vers l'œuvre parente
+- [x] Menu mis à jour :
+      "Ma Collection > Œuvres" + "Ma Collection > Éditions" + "Ma Collection > Prêts"
+- [x] Vue comic.serie : smartbutton/compteur "nb_works" (computed via work_ids)
+- [x] Vue comic.pret : affiche edition_id avec lien vers l'œuvre parente
 - [ ] Recherche globale par ISBN : remonte comic.isbn → comic.edition → comic.work
-- [ ] Vues comic.album et comic.album.auteur.line supprimées (plus de modèle)
+- [x] Vues comic.album et comic.album.auteur.line supprimées (plus de modèle)
 ```
 
 ---

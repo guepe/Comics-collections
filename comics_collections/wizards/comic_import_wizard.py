@@ -130,7 +130,8 @@ class ComicImportWizard(models.TransientModel):
         }
         for index, row in enumerate(rows, start=2):
             try:
-                result = self._import_row(row)
+                with self.env.cr.savepoint():
+                    result = self._import_row(row)
             except Exception as exc:
                 stats['errors'].append({
                     'line': index,
@@ -582,11 +583,7 @@ class ComicImportWizard(models.TransientModel):
         else:
             work = self._find_work(serie, tome, title)
             if not work:
-                work = self.env['comic.work'].create({
-                    'titre_canonique': title,
-                    'tome': tome,
-                    'serie_id': serie.id if serie else False,
-                })
+                work = self._get_or_create_work(serie, tome, title)
             else:
                 missing_vals = {}
                 if title and not work.titre_canonique:
@@ -621,6 +618,25 @@ class ComicImportWizard(models.TransientModel):
             return self.env['comic.edition'].browse()
         isbn_rec = self.env['comic.isbn'].search([('isbn_13', '=', isbn)], limit=1)
         return isbn_rec.edition_id if isbn_rec else self.env['comic.edition'].browse()
+
+    def _get_or_create_work(self, serie, tome, title):
+        """Create a comic.work, falling back to search on unique constraint violation."""
+        Work = self.env['comic.work']
+        create_vals = {
+            'titre_canonique': title,
+            'tome': tome,
+            'serie_id': serie.id if serie else False,
+        }
+        try:
+            with self.env.cr.savepoint():
+                return Work.create(create_vals)
+        except Exception:
+            # Unique constraint on (serie_id, tome): fetch the existing record
+            if serie and tome:
+                work = Work.search([('serie_id', '=', serie.id), ('tome', '=', tome)], limit=1)
+                if work:
+                    return work
+            raise
 
     def _find_work(self, serie, tome, title):
         Work = self.env['comic.work']

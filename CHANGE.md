@@ -6,6 +6,60 @@
 
 ---
 
+## 2026-05-21 — US-053 : Vues back-office + correctifs import et templates
+
+### US-053 — Vues back-office comic.work / comic.edition / comic.pret ✅
+
+**comics_collections/models/comic_work.py**
+- Ajout champs computed+stored `nb_editions` (depends `edition_ids`) et `nb_auteurs` (depends `auteur_line_ids`)
+- Ajout méthode `action_view_editions()` pour le smartbutton de la fiche work
+
+**comics_collections/models/comic_edition.py**
+- Ajout champ computed+stored `nb_isbn` (depends `isbn_ids`)
+
+**comics_collections/models/comic_serie.py**
+- Ajout méthode `action_view_works()` pour le smartbutton de la fiche série
+
+**comics_collections/views/comic_work_views.xml** (réécrit)
+- List : colonnes série, tome, titre, nb_editions, nb_auteurs
+- Form : smartbutton Éditions, onglets Auteurs + Éditions (avec nb_isbn)
+- Search : filtre auteur (via auteur_line_ids.partner_id), slug, wikidata_id, filtre "sans édition"
+
+**comics_collections/views/comic_edition_views.xml** (nouveau fichier)
+- List : work, langue, éditeur, date, format, nb_pages, nb_isbn
+- Form : image couverture, group champs + liens achat, onglets ISBNs + Synopsis, chatter
+- Search : filtre par ISBN (ilike sur isbn_ids.isbn_13), group-by langue/éditeur/format
+
+**comics_collections/views/comic_pret_views.xml** (nouveau fichier)
+- List : colorée (rouge = en retard, vert = retourné), avec decoration-danger/success
+- Form : edition_id (album prêté), partenaire, dates, retourne, notes, chatter
+- Search : filtres "en cours / retournés / en retard", action par défaut "en cours"
+
+**comics_collections/views/comic_serie_views.xml**
+- Smartbutton "Œuvres" (nb_works_total) sur la fiche série → ouvre comic.work filtré par série
+
+**comics_collections/views/comic_menu.xml**
+- Ajout entrée "Prêts" (sequence 30) dans Ma Collection
+
+**comics_collections/__manifest__.py**
+- Déclaration des nouveaux fichiers `comic_edition_views.xml` et `comic_pret_views.xml`
+
+### Correctifs session
+
+**comics_collections/wizards/comic_import_wizard.py**
+- `action_import` : chaque ligne wrappée dans `self.env.cr.savepoint()` pour éviter que l'exception d'une ligne n'avorte la transaction entière (erreur `InFailedSqlTransaction`)
+- `_get_or_create_work` (nouvelle méthode) : tente le create dans un savepoint interne ; sur contrainte UNIQUE `(serie_id, tome)`, fait un fallback `search` au lieu de planter
+- `_normalise_header` : ajout alias BDGest (`num→tome`, `dl→date_parution`, `lu→etat_lecture`, `wishlist→dans_wishlist`, `table→_table`) + colonnes à ignorer
+- `_normalise_import_rows` : filtre sur `_table == 'album'` pour exclure les lignes REVUE/PARABDE du CSV BDGest
+- `_parse_reading_state` : accepte `'0'` → `non_lu` et `'1'` → `lu` (format BDGest)
+- `_sync_customer_album` : crée/met à jour `comic.customer.album` pour l'utilisateur courant
+
+**comic_shop/views/website_sale_shop_templates.xml**
+- `shop_serie_detail_page` : `albums` → `editions` (le contrôleur envoie `comic.edition`, pas `comic.album`)
+- Page auteur : boucle `album.*` → `edition.work_id.*` (`serie_id`, `tome`, `name` → `titre_canonique`)
+
+---
+
 ## 2026-05-21 — US-052 : Adaptation datasources et import
 
 ### US-052 — Entrées de données vers work / edition / isbn ✅

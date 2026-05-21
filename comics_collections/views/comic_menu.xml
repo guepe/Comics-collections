@@ -36,12 +36,19 @@
               groups="comics_collections.group_comic_user"
               sequence="25"/>
 
+    <menuitem id="menu_comic_prets"
+              name="Prêts"
+              parent="menu_comic_collection"
+              action="action_comic_pret"
+              groups="comics_collections.group_comic_user"
+              sequence="30"/>
+
     <menuitem id="menu_comic_import"
               name="Import CSV/Excel"
               parent="menu_comic_collection"
               action="action_comic_import_wizard"
               groups="comics_collections.group_comic_user"
-              sequence="30"/>
+              sequence="40"/>
 
     <!-- Catalogues -->
     <menuitem id="menu_comic_catalogues"

@@ -484,16 +484,16 @@
                     <t t-foreach="by_role.items()" t-as="role_group">
                         <h3 class="mb-3"><t t-esc="role_group[0]"/></h3>
                         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3 mb-5">
-                            <t t-foreach="role_group[1]" t-as="album">
+                            <t t-foreach="role_group[1]" t-as="edition">
                                 <div class="col">
-                                    <a t-att-href="album.product_tmpl_id.website_url or '/shop'"
+                                    <a t-att-href="edition.product_tmpl_id.website_url or '/shop'"
                                        class="text-decoration-none text-dark">
                                         <div class="card h-100 shadow-sm border-0">
-                                            <t t-if="album.product_tmpl_id.image_512">
-                                                <img t-att-src="'/web/image/product.template/%d/image_512' % album.product_tmpl_id.id"
+                                            <t t-if="edition.product_tmpl_id.image_512">
+                                                <img t-att-src="'/web/image/product.template/%d/image_512' % edition.product_tmpl_id.id"
                                                      class="card-img-top"
                                                      style="object-fit:contain;background:#f5f5f5;height:180px;"
-                                                     t-att-alt="album.name"
+                                                     t-att-alt="edition.work_id.titre_canonique"
                                                      loading="lazy"/>
                                             </t>
                                             <t t-else="">
@@ -503,20 +503,20 @@
                                                 </div>
                                             </t>
                                             <div class="card-body p-2 text-center">
-                                                <t t-if="album.serie_id">
+                                                <t t-if="edition.work_id.serie_id">
                                                     <div class="text-muted" style="font-size:0.7rem;">
-                                                        <t t-esc="album.serie_id.name"/>
+                                                        <t t-esc="edition.work_id.serie_id.name"/>
                                                     </div>
                                                 </t>
                                                 <div class="fw-bold small">
-                                                    <t t-if="album.tome">T<t t-esc="album.tome"/> — </t>
-                                                    <t t-esc="album.name"/>
+                                                    <t t-if="edition.work_id.tome">T<t t-esc="edition.work_id.tome"/> — </t>
+                                                    <t t-esc="edition.work_id.titre_canonique"/>
                                                 </div>
                                             </div>
                                             <div class="card-footer p-2 text-center bg-transparent border-top">
-                                                <t t-if="album.product_tmpl_id.list_price">
+                                                <t t-if="edition.product_tmpl_id.list_price">
                                                     <strong class="text-primary small">
-                                                        <t t-esc="'%.2f €' % album.product_tmpl_id.list_price"/>
+                                                        <t t-esc="'%.2f €' % edition.product_tmpl_id.list_price"/>
                                                     </strong>
                                                     <br/>
                                                 </t>

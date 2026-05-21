@@ -42,6 +42,13 @@ class ComicEdition(models.Model):
     isbn_ids = fields.One2many('comic.isbn', 'edition_id', string='ISBNs')
     active = fields.Boolean(default=True)
 
+    nb_isbn = fields.Integer(string='Nb ISBN', compute='_compute_nb_isbn', store=True)
+
+    @api.depends('isbn_ids')
+    def _compute_nb_isbn(self):
+        for rec in self:
+            rec.nb_isbn = len(rec.isbn_ids)
+
     def _compute_display_name(self):
         langue_labels = dict(self._fields['langue'].selection)
         for rec in self:

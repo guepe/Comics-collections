@@ -49,10 +49,25 @@ class ComicWork(models.Model):
     edition_ids = fields.One2many('comic.edition', 'work_id', string='Éditions')
     active = fields.Boolean(default=True)
 
+    nb_editions = fields.Integer(
+        string='Nb éditions', compute='_compute_nb_editions', store=True)
+    nb_auteurs = fields.Integer(
+        string='Nb auteurs', compute='_compute_nb_auteurs', store=True)
+
     _unique_serie_tome = models.Constraint(
         'UNIQUE(serie_id, tome)',
         "Un tome de cette série existe déjà. Chaque numéro de tome doit être unique par série.",
     )
+
+    @api.depends('edition_ids')
+    def _compute_nb_editions(self):
+        for rec in self:
+            rec.nb_editions = len(rec.edition_ids)
+
+    @api.depends('auteur_line_ids')
+    def _compute_nb_auteurs(self):
+        for rec in self:
+            rec.nb_auteurs = len(rec.auteur_line_ids)
 
     @api.depends('titre_canonique')
     def _compute_titre_normalise(self):
@@ -72,6 +87,17 @@ class ComicWork(models.Model):
             if not vals.get('slug'):
                 vals['slug'] = self._generate_slug(vals)
         return super().create(vals_list)
+
+    def action_view_editions(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Éditions — {self.display_name}',
+            'res_model': 'comic.edition',
+            'view_mode': 'list,form',
+            'domain': [('work_id', '=', self.id)],
+            'context': {'default_work_id': self.id},
+        }
 
     def _generate_slug(self, vals):
         serie_slug = ''
