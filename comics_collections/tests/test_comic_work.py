@@ -25,9 +25,9 @@ class TestComicWork(TransactionCase):
         work = self.env['comic.work'].create({
             'serie_id': self.serie.id,
             'titre_canonique': 'Iles des mers gelées',
-            'tome': 5,
+            'tome': 99,
         })
-        self.assertEqual(work.slug, 'thorgal-t05')
+        self.assertEqual(work.slug, 'thorgal-t99')
 
     def test_slug_no_serie_uses_tome_only(self):
         work = self.env['comic.work'].create({

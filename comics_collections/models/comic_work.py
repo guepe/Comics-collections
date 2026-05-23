@@ -181,13 +181,16 @@ class ComicWork(models.Model):
             if not vals.get('slug'):
                 vals['slug'] = self._generate_slug(vals)
         records = super().create(vals_list)
-        for record in records:
-            if not record.edition_ids:
-                self.env['comic.edition'].create({
-                    'work_id': record.id,
-                    'langue': 'fr',
-                    'format': 'cartonne',
-                })
+        # Skip auto-edition during data/demo file loading (install_mode) — the XML
+        # provides explicit editions. Only auto-create in interactive/API context.
+        if not self.env.context.get('install_mode'):
+            for record in records:
+                if not record.edition_ids:
+                    self.env['comic.edition'].create({
+                        'work_id': record.id,
+                        'langue': 'fr',
+                        'format': 'cartonne',
+                    })
         return records
 
     # ── Actions ───────────────────────────────────────────────────────────────
