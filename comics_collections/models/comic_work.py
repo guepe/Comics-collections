@@ -166,6 +166,17 @@ class ComicWork(models.Model):
         for rec in self:
             rec.titre_normalise = normalize_title(rec.titre_canonique)
 
+    @api.model
+    def _name_search(self, name='', domain=None, operator='ilike', limit=100, order=None):
+        # If the input looks like an ISBN (digits/dashes, 10-17 chars), search via isbn first
+        isbn_clean = re.sub(r'[^0-9X]', '', (name or '').upper())
+        if len(isbn_clean) >= 10:
+            isbn_domain = [('edition_ids.isbn_ids.isbn_13', 'ilike', isbn_clean)]
+            works = self.search((domain or []) + isbn_domain, limit=limit, order=order)
+            if works:
+                return works
+        return super()._name_search(name, domain=domain, operator=operator, limit=limit, order=order)
+
     def _compute_display_name(self):
         for rec in self:
             serie = rec.serie_id.name if rec.serie_id else ''

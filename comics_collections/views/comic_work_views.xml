@@ -204,6 +204,8 @@
                 <field name="editeur_id"/>
                 <field name="auteur_line_ids" string="Auteur"
                        filter_domain="[('auteur_line_ids.partner_id.name', 'ilike', self)]"/>
+                <field name="edition_ids" string="ISBN"
+                       filter_domain="[('edition_ids.isbn_ids.isbn_13', 'ilike', self)]"/>
                 <separator/>
                 <filter string="Sans couverture" name="sans_couverture"
                         domain="[('image_couverture', '=', False)]"/>

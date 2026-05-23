@@ -827,7 +827,8 @@ Critères d'acceptance :
       "Ma Collection > Œuvres" + "Ma Collection > Éditions" + "Ma Collection > Prêts"
 - [x] Vue comic.serie : smartbutton/compteur "nb_works" (computed via work_ids)
 - [x] Vue comic.pret : affiche edition_id avec lien vers l'œuvre parente
-- [ ] Recherche globale par ISBN : remonte comic.isbn → comic.edition → comic.work
+- [x] Recherche globale par ISBN : remonte comic.isbn → comic.edition → comic.work
+      (search view comic.work + _name_search override : ISBN dans barre de filtre, Many2one et recherche globale)
 - [x] Vues comic.album et comic.album.auteur.line supprimées (plus de modèle)
 ```
 
