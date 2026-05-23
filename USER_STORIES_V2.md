@@ -794,6 +794,12 @@ Critères d'acceptance :
       - itère sur comic.edition au lieu de comic.album
       - met à jour edition.synopsis, edition.image_couverture, etc.
 - [x] Cron `comic_serie_cron.xml` (suivi séries) : inchangé — itère déjà sur comic.serie
+- [x] Renommage des fichiers mal nommés (comic_album.py → comic_edition.py) dans
+      comic_datasource/models, comic_shop/models, comic_bdgest/models
+- [x] comic_bdgest/views/comic_album_inherit_views.xml supprimé (remplacé par
+      comic_edition_inherit_views.xml déjà en place)
+- [x] comic_shop/views/comic_album_views.xml → comic_edition_views.xml + manifest mis à jour
+- [x] Aucune référence à comic.album dans le code Python ou XML actif
 ```
 
 ---

@@ -1,1 +1,1 @@
-from . import comic_album
+from . import comic_edition
