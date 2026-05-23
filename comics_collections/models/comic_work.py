@@ -59,6 +59,81 @@ class ComicWork(models.Model):
         "Un tome de cette série existe déjà. Chaque numéro de tome doit être unique par série.",
     )
 
+    # ── Édition principale — façade "album tout-en-un" ───────────────────────
+
+    primary_edition_id = fields.Many2one(
+        'comic.edition',
+        string='Édition principale',
+        compute='_compute_primary_edition_id',
+        store=True,
+        index=True,
+    )
+
+    # Champs délégués à l'édition principale (écriture transparente)
+    image_couverture = fields.Image(
+        string='Couverture',
+        related='primary_edition_id.image_couverture',
+        readonly=False,
+    )
+    editeur_id = fields.Many2one(
+        'comic.editeur',
+        string='Éditeur',
+        related='primary_edition_id.editeur_id',
+        readonly=False,
+    )
+    langue = fields.Selection(
+        related='primary_edition_id.langue',
+        string='Langue',
+        readonly=False,
+    )
+    format = fields.Selection(
+        related='primary_edition_id.format',
+        string='Format',
+        readonly=False,
+    )
+    nb_pages = fields.Integer(
+        string='Nombre de pages',
+        related='primary_edition_id.nb_pages',
+        readonly=False,
+    )
+    date_parution = fields.Date(
+        string='Date de parution',
+        related='primary_edition_id.date_parution',
+        readonly=False,
+    )
+    synopsis = fields.Html(
+        string='Synopsis',
+        related='primary_edition_id.synopsis',
+        readonly=False,
+    )
+    isbn_ids = fields.One2many(
+        related='primary_edition_id.isbn_ids',
+        string='ISBNs',
+        readonly=False,
+    )
+    url_club_be = fields.Char(
+        related='primary_edition_id.url_club_be',
+        string='Lien Club.be',
+        readonly=False,
+    )
+    url_amazon_be = fields.Char(
+        related='primary_edition_id.url_amazon_be',
+        string='Lien Amazon.be',
+        readonly=False,
+    )
+    url_fnac_be = fields.Char(
+        related='primary_edition_id.url_fnac_be',
+        string='Lien FNAC.be',
+        readonly=False,
+    )
+
+    # ── Computes ─────────────────────────────────────────────────────────────
+
+    @api.depends('edition_ids')
+    def _compute_primary_edition_id(self):
+        for rec in self:
+            rec.primary_edition_id = rec.edition_ids[:1] if rec.edition_ids else False
+
     @api.depends('edition_ids')
     def _compute_nb_editions(self):
         for rec in self:
@@ -81,12 +156,24 @@ class ComicWork(models.Model):
             sep = ' — ' if (serie or tome) and rec.titre_canonique else ''
             rec.display_name = f'{serie}{tome}{sep}{rec.titre_canonique}'.strip()
 
+    # ── Création + édition par défaut ────────────────────────────────────────
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if not vals.get('slug'):
                 vals['slug'] = self._generate_slug(vals)
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        for record in records:
+            if not record.edition_ids:
+                self.env['comic.edition'].create({
+                    'work_id': record.id,
+                    'langue': 'fr',
+                    'format': 'cartonne',
+                })
+        return records
+
+    # ── Actions ───────────────────────────────────────────────────────────────
 
     def action_view_editions(self):
         self.ensure_one()
@@ -98,6 +185,13 @@ class ComicWork(models.Model):
             'domain': [('work_id', '=', self.id)],
             'context': {'default_work_id': self.id},
         }
+
+    def action_generate_purchase_links(self):
+        self.ensure_one()
+        if self.primary_edition_id:
+            self.primary_edition_id.action_generate_purchase_links()
+
+    # ── Slug ──────────────────────────────────────────────────────────────────
 
     def _generate_slug(self, vals):
         serie_slug = ''

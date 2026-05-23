@@ -1,50 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- ── Vue liste comic.work ─────────────────────────────────────────────── -->
+    <!-- ── Vue liste Albums / Tomes ──────────────────────────────────────────── -->
     <record id="view_comic_work_list" model="ir.ui.view">
         <field name="name">comic.work.list</field>
         <field name="model">comic.work</field>
         <field name="arch" type="xml">
-            <list string="Œuvres" default_order="serie_id,tome">
+            <list string="Albums" default_order="serie_id,tome">
                 <field name="serie_id"/>
                 <field name="tome" string="T°"/>
-                <field name="titre_canonique"/>
-                <field name="nb_editions" string="Éditions"/>
+                <field name="titre_canonique" string="Titre"/>
+                <field name="editeur_id"/>
+                <field name="date_parution"/>
                 <field name="nb_auteurs" string="Auteurs"/>
+                <field name="nb_editions" string="Éd." optional="hide"/>
             </list>
         </field>
     </record>
 
-    <!-- ── Vue formulaire comic.work ───────────────────────────────────────── -->
+    <!-- ── Vue kanban Albums / Tomes ─────────────────────────────────────────── -->
+    <record id="view_comic_work_kanban" model="ir.ui.view">
+        <field name="name">comic.work.kanban</field>
+        <field name="model">comic.work</field>
+        <field name="arch" type="xml">
+            <kanban class="o_comic_kanban_series" sample="1">
+                <field name="id"/>
+                <field name="titre_canonique"/>
+                <field name="tome"/>
+                <field name="serie_id"/>
+                <field name="image_couverture"/>
+                <field name="editeur_id"/>
+                <field name="primary_edition_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_comic_serie_card">
+                            <div class="o_comic_serie_cover">
+                                <t t-if="record.image_couverture.raw_value">
+                                    <img loading="lazy"
+                                         t-att-src="'/web/image/comic.work/' + record.id.raw_value + '/image_couverture'"
+                                         t-att-alt="record.titre_canonique.value"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="o_comic_serie_placeholder">
+                                        <span t-esc="record.titre_canonique.value"/>
+                                    </div>
+                                </t>
+                                <t t-if="record.tome.raw_value">
+                                    <span class="o_comic_serie_statut" style="background:#1a73e8;">
+                                        T<t t-esc="record.tome.raw_value"/>
+                                    </span>
+                                </t>
+                            </div>
+                            <div class="o_comic_serie_info">
+                                <div class="o_comic_serie_title" t-esc="record.titre_canonique.value"/>
+                                <div class="o_comic_serie_meta">
+                                    <t t-esc="record.serie_id.value || ''"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ── Vue formulaire Album (tout-en-un) ─────────────────────────────────── -->
     <record id="view_comic_work_form" model="ir.ui.view">
         <field name="name">comic.work.form</field>
         <field name="model">comic.work</field>
         <field name="arch" type="xml">
-            <form string="Œuvre BD">
+            <form string="Album BD">
                 <sheet>
+                    <!-- Smartbutton éditions multiples (uniquement si > 1) -->
                     <div name="button_box" class="oe_button_box">
                         <button name="action_view_editions"
                                 type="object"
                                 class="oe_stat_button"
-                                icon="fa-book"
-                                invisible="nb_editions == 0">
+                                icon="fa-clone"
+                                invisible="nb_editions &lt;= 1">
                             <field name="nb_editions" widget="statinfo" string="Éditions"/>
                         </button>
                     </div>
+
+                    <!-- Couverture + titre -->
+                    <field name="image_couverture" widget="image"
+                           class="oe_avatar"
+                           options="{'preview_image': 'image_couverture', 'size': [128, 192]}"/>
                     <div class="oe_title">
-                        <label for="titre_canonique" string="Titre canonique"/>
+                        <label for="serie_id" string="Série"/>
+                        <h2>
+                            <field name="serie_id" placeholder="Série…"/>
+                            <field name="tome" class="d-inline-block ms-2" style="width:4rem;" invisible="not tome"/>
+                        </h2>
+                        <label for="titre_canonique" string="Titre"/>
                         <h1>
-                            <field name="titre_canonique" placeholder="Titre canonique"/>
+                            <field name="titre_canonique" placeholder="Titre de l'album"/>
                         </h1>
                     </div>
+
+                    <!-- Champ invisible pour primary_edition_id (conditions invisible) -->
+                    <field name="primary_edition_id" invisible="1"/>
+
+                    <!-- Infos éditoriales -->
                     <group>
                         <group>
-                            <field name="serie_id"/>
-                            <field name="tome"/>
+                            <field name="editeur_id"
+                                   invisible="not primary_edition_id"/>
+                            <field name="langue"
+                                   invisible="not primary_edition_id"/>
+                            <field name="format"
+                                   invisible="not primary_edition_id"/>
+                        </group>
+                        <group>
+                            <field name="date_parution"
+                                   invisible="not primary_edition_id"/>
+                            <field name="nb_pages"
+                                   invisible="not primary_edition_id"/>
+                            <field name="nb_auteurs" string="Nb auteurs" readonly="1"/>
                         </group>
                     </group>
+
                     <notebook>
+                        <!-- Auteurs -->
                         <page string="Auteurs">
                             <field name="auteur_line_ids">
                                 <list editable="bottom">
@@ -53,7 +130,39 @@
                                 </list>
                             </field>
                         </page>
-                        <page string="Éditions">
+
+                        <!-- ISBNs -->
+                        <page string="ISBNs" invisible="not primary_edition_id">
+                            <field name="isbn_ids">
+                                <list editable="bottom">
+                                    <field name="isbn_13"/>
+                                    <field name="isbn_10"/>
+                                </list>
+                            </field>
+                        </page>
+
+                        <!-- Synopsis -->
+                        <page string="Synopsis" invisible="not primary_edition_id">
+                            <field name="synopsis" nolabel="1"/>
+                        </page>
+
+                        <!-- Liens d'achat -->
+                        <page string="Liens d'achat" invisible="not primary_edition_id">
+                            <button name="action_generate_purchase_links"
+                                    string="Générer les liens depuis l'ISBN"
+                                    type="object"
+                                    class="btn-secondary mb-3"
+                                    confirm="Générer les liens d'achat depuis l'ISBN principal ?"
+                                    groups="comics_collections.group_comic_manager"/>
+                            <group>
+                                <field name="url_club_be" widget="url"/>
+                                <field name="url_amazon_be" widget="url"/>
+                                <field name="url_fnac_be" widget="url"/>
+                            </group>
+                        </page>
+
+                        <!-- Éditions multiples (masqué si une seule édition) -->
+                        <page string="Éditions multiples" invisible="nb_editions &lt;= 1">
                             <field name="edition_ids">
                                 <list>
                                     <field name="langue"/>
@@ -65,6 +174,8 @@
                                 </list>
                             </field>
                         </page>
+
+                        <!-- Références (données techniques) -->
                         <page string="Références">
                             <group>
                                 <field name="slug"/>
@@ -81,35 +192,38 @@
         </field>
     </record>
 
-    <!-- ── Vue recherche comic.work ────────────────────────────────────────── -->
+    <!-- ── Vue recherche ─────────────────────────────────────────────────────── -->
     <record id="view_comic_work_search" model="ir.ui.view">
         <field name="name">comic.work.search</field>
         <field name="model">comic.work</field>
         <field name="arch" type="xml">
-            <search string="Rechercher une œuvre">
+            <search string="Rechercher un album">
                 <field name="titre_canonique" string="Titre"/>
                 <field name="serie_id"/>
                 <field name="tome"/>
-                <field name="slug"/>
-                <field name="wikidata_id" string="Wikidata"/>
+                <field name="editeur_id"/>
                 <field name="auteur_line_ids" string="Auteur"
                        filter_domain="[('auteur_line_ids.partner_id.name', 'ilike', self)]"/>
                 <separator/>
-                <filter string="Sans édition" name="sans_edition"
-                        domain="[('nb_editions', '=', 0)]"/>
+                <filter string="Sans couverture" name="sans_couverture"
+                        domain="[('image_couverture', '=', False)]"/>
+                <filter string="Sans ISBN" name="sans_isbn"
+                        domain="[('isbn_ids', '=', False)]"/>
                 <group name="group_by">
                     <filter string="Série" name="groupby_serie" context="{'group_by': 'serie_id'}"/>
+                    <filter string="Éditeur" name="groupby_editeur" context="{'group_by': 'editeur_id'}"/>
                 </group>
             </search>
         </field>
     </record>
 
-    <!-- ── Action comic.work ───────────────────────────────────────────────── -->
+    <!-- ── Action ────────────────────────────────────────────────────────────── -->
     <record id="action_comic_work" model="ir.actions.act_window">
         <field name="name">Albums / Tomes</field>
         <field name="res_model">comic.work</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="view_comic_work_search"/>
+        <field name="context">{'search_default_groupby_serie': 1}</field>
     </record>
 
 </odoo>

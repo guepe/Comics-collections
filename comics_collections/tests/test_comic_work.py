@@ -182,7 +182,8 @@ class TestComicWork(TransactionCase):
             'titre_canonique': 'Test Editions',
             'tome': 20,
         })
-        self.assertEqual(work.nb_editions, 0)
-        self.env['comic.edition'].create({'work_id': work.id, 'langue': 'fr'})
+        # create() auto-creates a default edition (fr/cartonne)
+        self.assertEqual(work.nb_editions, 1)
         self.env['comic.edition'].create({'work_id': work.id, 'langue': 'nl'})
-        self.assertEqual(work.nb_editions, 2)
+        self.env['comic.edition'].create({'work_id': work.id, 'langue': 'en'})
+        self.assertEqual(work.nb_editions, 3)
