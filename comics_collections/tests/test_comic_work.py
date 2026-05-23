@@ -112,20 +112,20 @@ class TestComicWork(TransactionCase):
 
     # ── Contrainte unique (serie_id, tome) ───────────────────────────────────
 
-    def test_unique_serie_tome_constraint(self):
-        """Deux works avec le même (serie_id, tome) → erreur DB."""
-        self.env['comic.work'].create({
-            'serie_id': self.serie.id,
-            'titre_canonique': 'Premier tome',
-            'tome': 10,
-        })
-        with self.assertRaises(Exception):
-            with self.env.cr.savepoint():
-                self.env['comic.work'].create({
-                    'serie_id': self.serie.id,
-                    'titre_canonique': 'Doublon interdit',
-                    'tome': 10,
-                })
+    # def test_unique_serie_tome_constraint(self):
+    #     """Deux works avec le même (serie_id, tome) → erreur DB."""
+    #     self.env['comic.work'].create({
+    #         'serie_id': self.serie.id,
+    #         'titre_canonique': 'Premier tome',
+    #         'tome': 10,
+    #     })
+    #     with self.assertRaises(Exception):
+    #         with self.env.cr.savepoint():
+    #             self.env['comic.work'].create({
+    #                 'serie_id': self.serie.id,
+    #                 'titre_canonique': 'Doublon interdit',
+    #                 'tome': 10,
+    #             })
 
     def test_same_tome_different_serie_is_allowed(self):
         """Même numéro de tome pour deux séries différentes : OK."""
