@@ -53,6 +53,7 @@
 | US-053 | Vues back-office (list/form/search) ✅              | US-051          |
 | US-054 | Adaptation comic_shop et bibliothèque client ✅    | US-051, US-050  |
 | US-057 | Façade UX album/tome après refactor canonique ✅   | US-053, US-054  |
+| US-058 | Cleanup UI — onglets, menus, fix sync pochettes ✅ | US-057          |
 | US-055 | Tests unitaires et validation                      | US-051, US-054, US-057 |
 | US-056 | Moteur de déduplication des œuvres                 | US-051, US-050  |
 
@@ -886,6 +887,37 @@ Critères d'acceptance :
       - bouton "Sync depuis album"
 - [x] comic.customer.album.work_id implémenté (US-054)
 - [x] Règle 14 ajoutée dans CLAUDE.md : vocabulaire technique vs utilisateur
+```
+
+---
+
+**US-058 — Cleanup UI — onglets, menus, fix sync pochettes** ✅
+
+```
+En tant qu'utilisateur
+Je veux une interface plus propre et cohérente
+Afin de ne pas être distrait par des champs techniques / BDGest dans les vues courantes
+
+Critères d'acceptance :
+- [x] Fiche Série :
+      - Champs bdgest_id et bedetheque_url déplacés dans un onglet "Références"
+      - Le formulaire principal ne montre plus que les infos éditoriales courantes
+- [x] Fiche Work (Référentiel avancé) :
+      - slug, wikidata_id, openlibrary_id, bedetheque_id, comicvine_id déplacés dans onglet "Références"
+- [x] Fiche Édition (Référentiel avancé) :
+      - Liens d'achat (url_club_be, url_amazon_be, url_fnac_be) déplacés dans onglet "Liens d'achat"
+      - Bouton "Générer les liens depuis l'ISBN" dans cet onglet (managers uniquement)
+- [x] Bug pochettes — fix: comic_shop/views/comic_album_views.xml corrigé :
+      - model : comic.album → comic.edition
+      - inherit_id : view_comic_album_form → view_comic_edition_form
+      - Fichier ajouté au manifest de comic_shop
+      - Les boutons shop (Créer produit, Resynchroniser, Dissocier) sont désormais
+        visibles sur la fiche album (comic.edition) pour les managers
+- [x] Menu website shop :
+      - "Catalogue BD" renommé "Ma Collection" avec URL /my/library
+      - Sous-menus supprimés du XML (noupdate="0")
+      - Note : sur instance existante, supprimer manuellement les anciens
+        sous-menus depuis Site Web > Menus
 ```
 
 ---

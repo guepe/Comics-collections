@@ -41,11 +41,6 @@
                             <field name="date_depot_legal"/>
                             <field name="nb_pages"/>
                         </group>
-                        <group string="Liens d'achat">
-                            <field name="url_club_be" widget="url"/>
-                            <field name="url_amazon_be" widget="url"/>
-                            <field name="url_fnac_be" widget="url"/>
-                        </group>
                     </group>
                     <notebook>
                         <page string="ISBNs">
@@ -58,6 +53,19 @@
                         </page>
                         <page string="Synopsis">
                             <field name="synopsis"/>
+                        </page>
+                        <page string="Liens d'achat">
+                            <button name="action_generate_purchase_links"
+                                    string="Générer les liens depuis l'ISBN"
+                                    type="object"
+                                    class="btn-secondary mb-3"
+                                    confirm="Générer les liens d'achat depuis l'ISBN principal ? Les liens existants seront écrasés."
+                                    groups="comics_collections.group_comic_manager"/>
+                            <group>
+                                <field name="url_club_be" widget="url"/>
+                                <field name="url_amazon_be" widget="url"/>
+                                <field name="url_fnac_be" widget="url"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>

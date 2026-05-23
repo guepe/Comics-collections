@@ -42,13 +42,6 @@
                         <group>
                             <field name="serie_id"/>
                             <field name="tome"/>
-                            <field name="slug"/>
-                        </group>
-                        <group string="Références externes">
-                            <field name="wikidata_id"/>
-                            <field name="openlibrary_id"/>
-                            <field name="bedetheque_id"/>
-                            <field name="comicvine_id"/>
                         </group>
                     </group>
                     <notebook>
@@ -71,6 +64,15 @@
                                     <field name="nb_isbn" string="ISBN"/>
                                 </list>
                             </field>
+                        </page>
+                        <page string="Références">
+                            <group>
+                                <field name="slug"/>
+                                <field name="wikidata_id"/>
+                                <field name="openlibrary_id"/>
+                                <field name="bedetheque_id"/>
+                                <field name="comicvine_id"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>

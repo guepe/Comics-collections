@@ -14,37 +14,20 @@
             <field name="active">True</field>
         </record>
 
-        <!-- ── Menus website "Catalogue BD" ────────────────────────────────────
-             noupdate="1" → respecte les modifications faites depuis le website builder.
-             parent_id ref="website.main_menu" : entrée de niveau racine dans la navbar.
-        ── -->
+    </data>
+
+    <!-- ── Menus website ─────────────────────────────────────────────────────
+         noupdate="0" : mis à jour à chaque upgrade du module.
+         Pour supprimer les anciens sous-menus "Catalogue BD" sur une instance
+         existante, aller dans Site Web > Menus et les supprimer manuellement.
+    ── -->
+    <data noupdate="0">
 
         <record id="menu_bd_catalogue" model="website.menu">
-            <field name="name">Catalogue BD</field>
-            <field name="url">/shop/series</field>
+            <field name="name">Ma Collection</field>
+            <field name="url">/my/library</field>
             <field name="parent_id" ref="website.main_menu"/>
             <field name="sequence">60</field>
-        </record>
-
-        <record id="menu_bd_series" model="website.menu">
-            <field name="name">Séries</field>
-            <field name="url">/shop/series</field>
-            <field name="parent_id" ref="comic_shop.menu_bd_catalogue"/>
-            <field name="sequence">10</field>
-        </record>
-
-        <record id="menu_bd_auteurs" model="website.menu">
-            <field name="name">Auteurs</field>
-            <field name="url">/shop/auteurs</field>
-            <field name="parent_id" ref="comic_shop.menu_bd_catalogue"/>
-            <field name="sequence">20</field>
-        </record>
-
-        <record id="menu_bd_editeurs" model="website.menu">
-            <field name="name">Maisons d'édition</field>
-            <field name="url">/shop/editeurs</field>
-            <field name="parent_id" ref="comic_shop.menu_bd_catalogue"/>
-            <field name="sequence">30</field>
         </record>
 
     </data>

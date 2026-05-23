@@ -1568,3 +1568,24 @@ Composants CSS :
 ```
 
 ```
+
+## 2026-05-23 — US-058 Cleanup UI : onglets, menus, fix sync pochettes
+
+### US-058 — Cleanup formulaires + menus
+
+**Référénces dans des onglets** — champs techniques déplacés hors des en-têtes de formulaire :
+- `comics_collections/views/comic_serie_views.xml` : `bdgest_id` + `bedetheque_url` déplacés dans un onglet "Références" (notebook)
+- `comics_collections/views/comic_work_views.xml` : `slug` + `wikidata_id` + `openlibrary_id` + `bedetheque_id` + `comicvine_id` déplacés dans onglet "Références" ; le groupe "Références externes" disparaît de l'en-tête
+- `comics_collections/views/comic_edition_views.xml` : liens d'achat (`url_club_be`, `url_amazon_be`, `url_fnac_be`) déplacés dans onglet "Liens d'achat" + bouton `action_generate_purchase_links` (managers uniquement)
+
+**Fix pochettes d'album** — cause racine : `comic_shop/views/comic_album_views.xml` n'était pas dans le manifest et pointait sur l'ancien modèle `comic.album` :
+- Model corrigé : `comic.album` → `comic.edition`
+- inherit_id corrigé : `view_comic_album_form` → `view_comic_edition_form`
+- Record id renommé : `view_comic_album_form_shop` → `view_comic_edition_form_shop`
+- Fichier ajouté dans `comic_shop/__manifest__.py` data list
+- Résultat : les boutons "Créer produit", "Resynchroniser" et "Dissocier" sont maintenant fonctionnels sur la fiche album (comic.edition)
+
+**Menu website** — `comic_shop/data/comic_shop_data.xml` :
+- Bloc `noupdate="1"` séparé du bloc menus (`noupdate="0"`)
+- Menu `menu_bd_catalogue` renommé "Ma Collection" avec URL `/my/library`
+- Sous-menus Séries/Auteurs/Maisons d'édition supprimés du XML ; sur instance existante, les supprimer manuellement via Site Web > Menus

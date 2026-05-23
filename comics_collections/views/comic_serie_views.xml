@@ -49,8 +49,6 @@
                         <group>
                             <field name="nb_works_total"/>
                             <field name="a_suivre"/>
-                            <field name="bdgest_id"/>
-                            <field name="bedetheque_url" widget="url"/>
                         </group>
                     </group>
                     <notebook>
@@ -65,6 +63,12 @@
                                     <field name="nb_editions" string="Éditions" optional="hide"/>
                                 </list>
                             </field>
+                        </page>
+                        <page string="Références">
+                            <group>
+                                <field name="bdgest_id"/>
+                                <field name="bedetheque_url" widget="url"/>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
