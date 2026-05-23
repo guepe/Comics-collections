@@ -26,7 +26,7 @@
 
 | US     | Titre                                              | Dépend de       |
 | ------ | -------------------------------------------------- | --------------- |
-| US-040 | Fiche produit webshop enrichie BD ✅                | US-037          |
+| US-040 | Fiche produit webshop enrichie BD ✅ (complet)      | US-037          |
 | US-041 | Navigation webshop par série / auteur / genre ✅    | US-040          |
 | US-041b | Pages website auteurs et éditeurs ✅               | US-040, US-041  |
 | US-042 | Intégration POS (caisse)                           | US-035          |
@@ -275,7 +275,7 @@ Critères d'acceptance :
 - [x] Affichage sur la page produit : série, tome, auteurs avec rôles, éditeur,
         genre, date de parution, nombre de pages, ISBN
 - [x] Synopsis complet (champ Html)
-- [ ] Couverture haute résolution (zoom au clic) — couverture affichée via image standard produit
+- [x] Couverture haute résolution (zoom au clic) — bouton "Voir la couverture en HD" ouvre un modal Bootstrap 5 avec l'image pleine résolution
 - [x] Badge "Tome X de la série Y" avec lien vers la page de la série
 - [x] Section "Les autres tomes de la série" (carrousel des albums liés ayant un produit)
 - [x] Si l'utilisateur est connecté et a cet album en bibliothèque :
