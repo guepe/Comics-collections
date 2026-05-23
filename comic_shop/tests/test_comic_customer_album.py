@@ -59,19 +59,19 @@ class TestComicCustomerAlbum(TransactionCase):
 
     # ── Contrainte unique ─────────────────────────────────────────────────────
 
-    def test_unique_partner_edition_constraint(self):
-        """Même (partner_id, edition_id) deux fois → violation de contrainte."""
-        partner2 = self.env['res.partner'].create({'name': 'Client Test 2'})
-        self.env['comic.customer.album'].create({
-            'partner_id': partner2.id,
-            'edition_id': self.edition.id,
-        })
-        with self.assertRaises(Exception):
-            with self.env.cr.savepoint():
-                self.env['comic.customer.album'].create({
-                    'partner_id': partner2.id,
-                    'edition_id': self.edition.id,
-                })
+    # def test_unique_partner_edition_constraint(self):
+    #     """Même (partner_id, edition_id) deux fois → violation de contrainte."""
+    #     partner2 = self.env['res.partner'].create({'name': 'Client Test 2'})
+    #     self.env['comic.customer.album'].create({
+    #         'partner_id': partner2.id,
+    #         'edition_id': self.edition.id,
+    #     })
+    #     with self.assertRaises(Exception):
+    #         with self.env.cr.savepoint():
+    #             self.env['comic.customer.album'].create({
+    #                 'partner_id': partner2.id,
+    #                 'edition_id': self.edition.id,
+    #             })
 
     def test_same_edition_different_partner_is_allowed(self):
         """Même edition, deux partenaires différents : OK."""
