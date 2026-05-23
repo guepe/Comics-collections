@@ -79,7 +79,7 @@ class ComicWork(models.Model):
             serie = rec.serie_id.name if rec.serie_id else ''
             tome = f' T{rec.tome:02d}' if rec.tome else ''
             sep = ' — ' if (serie or tome) and rec.titre_canonique else ''
-            rec.display_name = f'{serie}{tome}{sep}{rec.titre_canonique}'
+            rec.display_name = f'{serie}{tome}{sep}{rec.titre_canonique}'.strip()
 
     @api.model_create_multi
     def create(self, vals_list):
