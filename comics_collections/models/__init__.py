@@ -5,4 +5,5 @@ from . import comic_work
 from . import comic_edition
 from . import comic_isbn
 from . import comic_pret
+from . import comic_dedup_pair
 from . import res_partner

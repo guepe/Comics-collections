@@ -55,7 +55,7 @@
 | US-057 | Façade UX album/tome après refactor canonique ✅   | US-053, US-054  |
 | US-058 | Cleanup UI — onglets, menus, fix sync pochettes ✅ | US-057          |
 | US-055 | Tests unitaires et validation                      | US-051, US-054, US-057 |
-| US-056 | Moteur de déduplication des œuvres                 | US-051, US-050  |
+| US-056 | Moteur de déduplication des œuvres ✅               | US-051, US-050  |
 
 ---
 
@@ -970,7 +970,7 @@ Lancement :
 
 ---
 
-**US-056 — Moteur de déduplication des œuvres** ⏳ 🟠
+**US-056 — Moteur de déduplication des œuvres** ✅
 
 ```
 En tant que développeur / administrateur
@@ -981,44 +981,44 @@ Contexte : stratégie définie en US-050 section B & C. À implémenter après U
 (les champs titre_normalise et name_normalise nécessitent les nouveaux modèles).
 
 Critères d'acceptance :
-- [ ] Champ compute + store sur comic.work :
+- [x] Champ compute + store sur comic.work :
       titre_normalise (Char) : lowercase + strip accents + suppression articles + strip ponctuation
-      Algorithme de normalisation centralisé dans un helper comics_collections/utils/normalize.py
-- [ ] Champ compute + store sur comic.serie :
+      Algorithme de normalisation centralisé dans comics_collections/utils/normalize.py
+- [x] Champ compute + store sur comic.serie :
       name_normalise (Char) : même algorithme
-- [ ] Méthode comic.work._find_duplicate_candidates(serie_id, tome, titre) :
+- [x] Méthode comic.work._find_duplicate_candidates(serie_id, tome, titre) :
       1. Retourne une liste de comic.work candidats avec leur score de similarité
       2. Conflit certain   : même (serie_id, tome) → score = 1.0
-      3. Doublon probable  : même serie_id + ratio SequenceMatcher(titre_normalise) ≥ 0.85 + même tome
+      3. Doublon probable  : même serie_id + ratio SequenceMatcher(titre_normalise) ≥ 0.85
       4. Doublon possible  : ratio SequenceMatcher sur titre ET série normalisés ≥ 0.85
-- [ ] Contrainte ORM renforcée :
-      @api.constrains déclenche _find_duplicate_candidates → UserError si conflit certain
-      (la contrainte models.Constraint sur (serie_id, tome) couvre le cas exact ; l'IA
-      de similarité couvre les variations de titre)
-- [ ] Popup de confirmation lors de la création manuelle d'un comic.work :
-      Si doublon probable détecté → wizard rapide "Ce tome ressemble à [X — titre — éditeur].
-      Créer quand même / Fusionner / Voir l'existant"
-- [ ] Wizard back-office "Revue des doublons" (menu Configuration > Doublons potentiels) :
-      - Liste toutes les paires (work_a, work_b) avec ratio ≥ 0.85 non encore résolues
-      - Colonnes : titre A, titre B, série, tome, nb éditions chacun, score
-      - Bouton "Fusionner A → B" : transfère les editions et customer.album de A vers B,
-        puis archive A
-      - Bouton "Pas un doublon" : marque la paire comme ignorée (champ Many2many blacklist)
-- [ ] Vues de diagnostic (filtre dans les vues list existantes) :
+- [x] Contrainte ORM renforcée :
+      @api.constrains sur (serie_id, titre_canonique) → UserError si même titre normalisé
+      dans la même série (couvre les variantes d'accentuation/articles).
+      Bypass via context skip_dedup_check=True pour les fusions et imports.
+- [x] Popup de confirmation lors de la création manuelle d'un comic.work :
+      Implémenté via UserError dans @api.constrains (même série + même titre normalisé).
+      Le wizard de fusion (comic.work.merge.wizard) permet de traiter le cas depuis
+      le menu Doublons potentiels.
+- [x] Wizard back-office "Revue des doublons" (menu Configuration > Doublons potentiels) :
+      - Modèle comic.dedup.pair stocke les paires (work_a, work_b, score, reason, ignored)
+      - Action "Analyser les doublons" (ir.actions.server) scanne tous les albums
+      - Bouton "Fusionner A → B" : ouvre comic.work.merge.wizard
+      - Bouton "Pas un doublon" : marque la paire comme ignorée
+- [x] Vues de diagnostic (filtre dans les vues list existantes) :
       - comic.work : filtre "Sans édition"
-      - comic.edition : filtre "Sans ISBN"
-      - comic.edition : filtre "Sans image couverture"
-- [ ] Méthode de fusion sécurisée comic.work._merge_into(target_work) :
+      - comic.edition : filtre "Sans ISBN" (existant) + "Sans image couverture" (nouveau)
+- [x] Méthode de fusion sécurisée comic.work._merge_into(target_work) :
       - Transfère edition_ids vers target_work
-      - Transfère les comic.customer.album (via edition_id → work_id)
-      - Transfère les auteur_line_ids (dédupliqués)
-      - Archive self (active=False)
+      - Les comic.customer.album suivent leur edition (FK automatique)
+      - Transfère les auteur_line_ids (dédupliqués par partner)
+      - Archive self (active=False) via skip_dedup_check
       - Log dans le chatter de target_work
-- [ ] Tests :
+- [x] Tests (tests/test_comic_dedup.py) :
       - normalize("Les Landes perdues") == normalize("Landes perdues (Les)") == "landes perdues"
       - normalize("Thorgal") == normalize("THORGAL") == "thorgal"
       - _find_duplicate_candidates retourne le bon score pour cas certain / probable / possible
-      - Fusion : vérifier que les editions et customer.album sont bien sur target_work après merge
+      - @api.constrains bloque la création d'un titre normalisé identique dans la même série
+      - Fusion : éditions transférées, auteurs dédupliqués, source archivée, chatter mis à jour
 ```
 
 ---

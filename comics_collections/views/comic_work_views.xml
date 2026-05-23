@@ -209,6 +209,8 @@
                         domain="[('image_couverture', '=', False)]"/>
                 <filter string="Sans ISBN" name="sans_isbn"
                         domain="[('isbn_ids', '=', False)]"/>
+                <filter string="Sans édition" name="sans_edition"
+                        domain="[('edition_ids', '=', False)]"/>
                 <group name="group_by">
                     <filter string="Série" name="groupby_serie" context="{'group_by': 'serie_id'}"/>
                     <filter string="Éditeur" name="groupby_editeur" context="{'group_by': 'editeur_id'}"/>

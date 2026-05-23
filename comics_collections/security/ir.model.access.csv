@@ -17,3 +17,5 @@ access_comic_pret_user,comic.pret user,model_comic_pret,comics_collections.group
 access_comic_pret_manager,comic.pret manager,model_comic_pret,comics_collections.group_comic_manager,1,1,1,1
 access_comic_import_wizard_user,comic.import.wizard user,model_comic_import_wizard,comics_collections.group_comic_user,1,1,1,1
 access_comic_import_mapping_line_user,comic.import.mapping.line user,model_comic_import_mapping_line,comics_collections.group_comic_user,1,1,1,1
+access_comic_dedup_pair_manager,comic.dedup.pair manager,model_comic_dedup_pair,comics_collections.group_comic_manager,1,1,1,1
+access_comic_work_merge_wizard_manager,comic.work.merge.wizard manager,model_comic_work_merge_wizard,comics_collections.group_comic_manager,1,1,1,1

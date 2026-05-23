@@ -1625,3 +1625,55 @@ Composants CSS :
 Tests lancés avec :
     docker exec odoo-web odoo-bin -d odoo -u comics_collections --test-tags /comics_collections
     docker exec odoo-web odoo-bin -d odoo -u comic_shop --test-tags /comic_shop
+
+## 2026-05-23 (suite 3) — US-056 Moteur de déduplication des œuvres
+
+### US-056 — Moteur de déduplication des œuvres ✅
+
+**Nouveaux fichiers :**
+- `comics_collections/utils/__init__.py` + `comics_collections/utils/normalize.py` :
+  Fonction `normalize_title()` centralisée (accents, articles, ponctuation). Remplace
+  `_normalize_title()` locale dans `comic_work.py`.
+- `comics_collections/models/comic_dedup_pair.py` : modèle `comic.dedup.pair` (score, reason,
+  ignored). Méthode `action_scan_all()` : O(n²) sur les works actifs, bypasse les paires
+  ignorées, crée les nouvelles paires via savepoint pour la contrainte UNIQUE.
+- `comics_collections/wizards/comic_dedup_wizard.py` : `comic.work.merge.wizard` (TransientModel).
+  Confirme la fusion source→target, supprime la paire correspondante, redirige vers la fiche cible.
+- `comics_collections/views/comic_dedup_views.xml` : liste des paires (decoration-danger/warning
+  selon reason), boutons "Fusionner A→B" / "Pas un doublon", search avec filtres "À traiter" /
+  "Ignorés" / "Conflits certains" / "Doublons probables". ir.actions.server pour le scan.
+  Vue formulaire du wizard de fusion avec alerte et résumé des données transférées.
+- `comics_collections/tests/test_comic_dedup.py` : 3 classes TestNormalize (11 cas),
+  TestDedupEngine (6 cas), TestMerge (5 cas).
+
+**Fichiers modifiés :**
+- `comics_collections/models/comic_work.py` :
+  - Suppression de `_normalize_title` locale ; import de `normalize_title` depuis utils.
+  - Ajout de la fonction module-level `_score_pair()` (pure Python, paramétrique).
+  - `_find_duplicate_candidates(serie_id, tome, titre, exclude_self=True)` : retourne
+    liste triée {work, score, reason} par score décroissant.
+  - `@api.constrains('serie_id', 'titre_canonique')` : bloque la création si même
+    `titre_normalise` dans la même série (couvre variantes d'accentuation/articles).
+    Bypass via `context['skip_dedup_check']`.
+  - `_merge_into(target_work)` : transfère editions (customer.album suivent par FK),
+    auteur_line_ids (dédupliqués), log chatter, archive source.
+- `comics_collections/models/comic_serie.py` : champ `name_normalise` (compute+store+index).
+- `comics_collections/models/__init__.py` : ajout `comic_dedup_pair`.
+- `comics_collections/wizards/__init__.py` : ajout `comic_dedup_wizard`.
+- `comics_collections/__init__.py` : ajout `from . import utils`.
+- `comics_collections/__manifest__.py` : ajout `views/comic_dedup_views.xml`.
+- `comics_collections/security/ir.model.access.csv` : ACL pour `comic.dedup.pair` et
+  `comic.work.merge.wizard` (managers uniquement).
+- `comics_collections/views/comic_work_views.xml` : filtre "Sans édition".
+- `comics_collections/views/comic_edition_views.xml` : filtre "Sans image couverture".
+- `comics_collections/views/comic_menu.xml` : menu "Doublons potentiels" sous Configuration.
+- `comics_collections/tests/__init__.py` : ajout `test_comic_dedup`.
+- `USER_STORIES_V2.md` : US-056 marquée ✅.
+
+**Décision technique :**
+- `_score_pair()` est une fonction module-level (pas une méthode) pour être importable
+  depuis `comic_dedup_pair.py` sans import circulaire via ORM.
+- Le scan ne rejette les paires ignorées qu'après unlink des paires non-ignorées → les paires
+  ignorées sont préservées entre deux scans consécutifs.
+- `_merge_into` utilise `skip_dedup_check=True` pour archiver la source sans déclencher
+  `@api.constrains` sur l'enregistrement archivé.

@@ -1,5 +1,7 @@
 from odoo import api, fields, models
 
+from ..utils.normalize import normalize_title
+
 
 class ComicSerie(models.Model):
     _name = 'comic.serie'
@@ -8,6 +10,12 @@ class ComicSerie(models.Model):
     _order = 'name'
 
     name = fields.Char(string='Titre', required=True, tracking=True)
+    name_normalise = fields.Char(
+        string='Titre normalisé',
+        compute='_compute_name_normalise',
+        store=True,
+        index=True,
+    )
     type = fields.Selection([
         ('bd', 'Bande dessinée'),
         ('manga', 'Manga'),
@@ -36,6 +44,11 @@ class ComicSerie(models.Model):
     )
     active = fields.Boolean(default=True)
     has_cover = fields.Boolean(compute='_compute_has_cover', store=True)
+
+    @api.depends('name')
+    def _compute_name_normalise(self):
+        for rec in self:
+            rec.name_normalise = normalize_title(rec.name)
 
     @api.depends('image_couverture')
     def _compute_has_cover(self):

@@ -1,23 +1,40 @@
+import difflib
 import re
-import unicodedata
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
+
+from ..utils.normalize import normalize_title
 
 
-def _normalize_title(title):
-    """Normalize a comic title for deduplication (strips articles, accents, punctuation)."""
-    if not title:
-        return ''
-    nfd = unicodedata.normalize('NFD', title)
-    no_accents = ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')
-    s = no_accents.lower().strip()
-    for article in ("l'", 'les ', 'le ', 'la ', 'de ', 'het ', 'een ', 'the ', 'an ', 'a '):
-        if s.startswith(article):
-            s = s[len(article):]
-            break
-    s = re.sub(r'\s*\((les|de|the|het|een|an|a)\)\s*$', '', s)
-    s = re.sub(r"[,.\-'\"!?;:]", ' ', s)
-    return ' '.join(s.split())
+def _score_pair(same_serie, tome_a, titre_norm_a,
+                serie_norm_a, tome_b, titre_norm_b, serie_norm_b):
+    """Return (score, reason) for a pair of works.
+
+    same_serie   — bool, True when both belong to the exact same serie record
+    serie_norm_* — normalized serie name (empty string if no serie)
+    titre_norm_* — normalized title
+    """
+    if same_serie and tome_a and tome_b and tome_a == tome_b:
+        return 1.0, 'conflit_certain'
+
+    if not titre_norm_a or not titre_norm_b:
+        return 0.0, ''
+
+    titre_ratio = difflib.SequenceMatcher(None, titre_norm_a, titre_norm_b).ratio()
+
+    if titre_ratio >= 0.85 and same_serie:
+        return 0.9, 'doublon_probable'
+
+    if titre_ratio >= 0.85:
+        if not serie_norm_a and not serie_norm_b:
+            return round(titre_ratio, 3), 'doublon_possible'
+        if serie_norm_a and serie_norm_b:
+            serie_ratio = difflib.SequenceMatcher(None, serie_norm_a, serie_norm_b).ratio()
+            if serie_ratio >= 0.85:
+                return round((titre_ratio + serie_ratio) / 2, 3), 'doublon_possible'
+
+    return 0.0, ''
 
 
 class ComicWork(models.Model):
@@ -147,7 +164,7 @@ class ComicWork(models.Model):
     @api.depends('titre_canonique')
     def _compute_titre_normalise(self):
         for rec in self:
-            rec.titre_normalise = _normalize_title(rec.titre_canonique)
+            rec.titre_normalise = normalize_title(rec.titre_canonique)
 
     def _compute_display_name(self):
         for rec in self:
@@ -206,6 +223,93 @@ class ComicWork(models.Model):
             slug = f'{base}-{n}'
             n += 1
         return slug
+
+    # ── Moteur de déduplication ───────────────────────────────────────────────
+
+    def _find_duplicate_candidates(self, serie_id, tome, titre, exclude_self=True):
+        """Return list of dicts {work, score, reason} for potential duplicates.
+
+        Score levels:
+            1.0  conflit_certain  — exact (serie_id, tome) match
+            0.9  doublon_probable — same serie + similar title (≥ 0.85)
+            0.7+ doublon_possible — similar serie + similar title (both ≥ 0.85)
+        """
+        titre_norm = normalize_title(titre)
+        serie_norm = ''
+        if serie_id:
+            serie = self.env['comic.serie'].browse(serie_id)
+            serie_norm = serie.name_normalise or normalize_title(serie.name)
+
+        domain = [('active', '=', True)]
+        if exclude_self and self.ids:
+            domain.append(('id', 'not in', self.ids))
+
+        candidates = []
+        for work in self.search(domain):
+            same_serie = bool(serie_id and work.serie_id.id == serie_id)
+            score, reason = _score_pair(
+                same_serie, tome, titre_norm,
+                serie_norm, work.tome,
+                work.titre_normalise or '',
+                work.serie_id.name_normalise or '',
+            )
+            if score > 0:
+                candidates.append({'work': work, 'score': score, 'reason': reason})
+
+        return sorted(candidates, key=lambda x: x['score'], reverse=True)
+
+    @api.constrains('serie_id', 'titre_canonique')
+    def _check_title_duplicate(self):
+        for rec in self:
+            if self.env.context.get('skip_dedup_check'):
+                continue
+            titre_norm = normalize_title(rec.titre_canonique)
+            if not titre_norm or not rec.serie_id:
+                continue
+            duplicate = self.search([
+                ('id', '!=', rec.id),
+                ('serie_id', '=', rec.serie_id.id),
+                ('titre_normalise', '=', titre_norm),
+                ('active', '=', True),
+            ], limit=1)
+            if duplicate:
+                raise UserError(_(
+                    "Titre dupliqué détecté : « %(other)s » (Tome %(tome)s) existe "
+                    "déjà dans cette série avec un titre identique après normalisation.\n"
+                    "Si ce sont deux éditions différentes du même album, ouvrez l'album "
+                    "existant et ajoutez une édition depuis l'onglet « Éditions multiples ».",
+                    other=duplicate.display_name,
+                    tome=duplicate.tome,
+                ))
+
+    def _merge_into(self, target_work):
+        """Transfer all editions and auteur lines to target_work, then archive self."""
+        self.ensure_one()
+        if self.id == target_work.id:
+            raise UserError(_("Impossible de fusionner un album avec lui-même."))
+
+        editions_count = len(self.edition_ids)
+
+        # Customer albums follow their editions automatically via FK
+        self.edition_ids.write({'work_id': target_work.id})
+
+        # Transfer auteur lines, skipping partners already on target
+        existing_partners = target_work.auteur_line_ids.mapped('partner_id')
+        for line in self.auteur_line_ids:
+            if line.partner_id not in existing_partners:
+                line.write({'work_id': target_work.id})
+            else:
+                line.unlink()
+
+        target_work.message_post(body=_(
+            "Fusion : « %(source)s » (ID %(sid)s) intégré ici. "
+            "%(n)d édition(s) transférée(s). L'album source a été archivé.",
+            source=self.display_name,
+            sid=self.id,
+            n=editions_count,
+        ))
+        self.with_context(skip_dedup_check=True).write({'active': False})
+        return target_work
 
 
 class ComicWorkAuteurLine(models.Model):

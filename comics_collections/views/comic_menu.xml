@@ -99,4 +99,11 @@
               groups="comics_collections.group_comic_manager"
               sequence="20"/>
 
+    <menuitem id="menu_comic_dedup"
+              name="Doublons potentiels"
+              parent="menu_comic_config_root"
+              action="action_comic_dedup_pair"
+              groups="comics_collections.group_comic_manager"
+              sequence="50"/>
+
 </odoo>
