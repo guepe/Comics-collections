@@ -1589,3 +1589,39 @@ Composants CSS :
 - Bloc `noupdate="1"` séparé du bloc menus (`noupdate="0"`)
 - Menu `menu_bd_catalogue` renommé "Ma Collection" avec URL `/my/library`
 - Sous-menus Séries/Auteurs/Maisons d'édition supprimés du XML ; sur instance existante, les supprimer manuellement via Site Web > Menus
+
+## 2026-05-23 (suite) — US-055 Tests unitaires ORM
+
+### US-055 — Nouveaux fichiers de tests TransactionCase (ORM Odoo)
+
+**`comics_collections/tests/test_comic_isbn.py`** (nouveau)
+- Remplace les assertions statiques de test_isbn.py par des tests ORM réels
+- Couvre : EAN-13 valide, checksum incorrect, longueur incorrecte, normalisation (tirets/espaces), validation ISBN-10, contrainte d'unicité isbn_13
+
+**`comics_collections/tests/test_comic_work.py`** (nouveau)
+- Contrainte unique (serie_id, tome) via savepoint
+- Génération de slug : "thorgal-t05", conflit → "thorgal-t05-1"
+- Slug custom préservé si fourni
+- display_name : 3 cas (avec série+tome, tome seul, titre seul)
+- titre_normalise : suppression articles (les, le, la) et accents
+- auteur_line_ids : ajout + suppression + nb_auteurs
+- nb_editions : compute après ajout d'éditions
+
+**`comics_collections/tests/test_comic_edition.py`** (nouveau)
+- Création édition et lien work, éditions multiples par work
+- Édition sans ISBN valide (nb_isbn = 0)
+- nb_isbn computed sur ajout/suppression
+- display_name contient série, langue, éditeur
+- action_generate_purchase_links avec ISBN → liens renseignés
+
+**`comic_shop/tests/__init__.py`** + **`test_comic_customer_album.py`** (nouveaux)
+- work_id computed depuis edition_id.work_id, mis à jour au changement
+- Contrainte unique (partner_id, edition_id) via savepoint
+- Même edition + partenaires différents → OK
+- Valeurs par défaut : etat_lecture, dans_collection, date_ajout
+
+**`comics_collections/tests/__init__.py`** mis à jour avec imports des 3 nouveaux modules
+
+Tests lancés avec :
+    docker exec odoo-web odoo-bin -d odoo -u comics_collections --test-tags /comics_collections
+    docker exec odoo-web odoo-bin -d odoo -u comic_shop --test-tags /comic_shop

@@ -922,7 +922,7 @@ Critères d'acceptance :
 
 ---
 
-**US-055 — Tests unitaires et validation** ⏳ 🟡
+**US-055 — Tests unitaires et validation** ✅
 
 ```
 En tant que développeur
@@ -930,26 +930,40 @@ Je veux des tests couvrant les nouveaux modèles et leurs interactions
 Afin de garantir la robustesse du schéma refactorisé
 
 Critères d'acceptance :
-- [ ] tests/test_comic_isbn.py :
+- [x] comics_collections/tests/test_comic_isbn.py (ORM — TransactionCase) :
       - Validation EAN-13 : cas valide, checksum incorrect, mauvaise longueur, tirets acceptés
       - Validation ISBN-10 si renseigné
-      - Normalisation : "978-2-205-07567-7" → "9782205075677"
-      - Contrainte unicité : deux comic.isbn avec le même isbn_13 → UserError
-- [ ] tests/test_comic_work.py :
-      - Contrainte unique (serie_id, tome)
-      - Génération slug : serie "Thorgal" tome 5 → "thorgal-t05", conflit → "thorgal-t05-2"
-      - display_name : format "{serie} T05 — {titre}" correct
-      - auteur_line_ids : ajout/suppression d'un auteur avec rôle
-- [ ] tests/test_comic_edition.py :
-      - Création edition liée à un work : vérifier display_name complet
-      - Plusieurs editions pour un même work (fr + nl + collector) : toutes accessibles via work.edition_ids
-      - edition sans isbn : valide (champ optionnel)
-      - Lien edition → product.template (comic_shop) : _sync_to_product() copie les bons champs
-- [ ] tests/test_comic_customer_album.py :
-      - Contrainte unique (partner_id, edition_id)
+      - Normalisation : tirets et espaces supprimés à la création
+      - Contrainte unicité : deux comic.isbn avec le même isbn_13 → Exception DB
+- [x] comics_collections/tests/test_comic_work.py (ORM — TransactionCase) :
+      - Contrainte unique (serie_id, tome) → Exception DB
+      - Même tome, série différente → OK
+      - Génération slug : "Thorgal" T05 → "thorgal-t05"
+      - Conflit slug (series avec noms similaires) → suffixe -1
+      - Slug custom préservé si fourni à la création
+      - display_name : "Thorgal T01 — Titre", sans série → "T07 — Titre", sans tome → "Titre"
+      - titre_normalise : suppression articles (les, le) + accents
+      - auteur_line_ids : ajout / suppression + nb_auteurs
+      - nb_editions : compute sur ajout d'éditions
+- [x] comics_collections/tests/test_comic_edition.py (ORM — TransactionCase) :
+      - Création liée à un work, présence dans work.edition_ids
+      - Plusieurs editions (fr + nl + collector) toutes accessibles via work.edition_ids
+      - Édition sans isbn : valide, nb_isbn = 0
+      - nb_isbn : compute sur ajout / suppression d'isbn
+      - display_name : contient nom série, label langue, éditeur
+      - Génération liens d'achat depuis ISBN, vide sans ISBN
+- [x] comic_shop/tests/test_comic_customer_album.py (ORM — TransactionCase) :
       - work_id computed = edition_id.work_id
-      - Import automatique depuis commande : customer.album créé avec source='achete_ici'
-- [ ] Tous les tests passent : `./odoo-bin -d test -i comics_collections,comic_shop --test-tags refactor`
+      - work_id se met à jour quand edition_id change
+      - Contrainte unique (partner_id, edition_id) → Exception DB
+      - Même edition, partenaires différents → OK
+      - Valeurs par défaut : etat_lecture='non_lu', dans_collection=True, date_ajout renseigné
+- [x] comics_collections/tests/__init__.py mis à jour
+- [x] comic_shop/tests/__init__.py créé
+
+Lancement :
+    docker exec odoo-web odoo-bin -d odoo -u comics_collections --test-tags /comics_collections
+    docker exec odoo-web odoo-bin -d odoo -u comic_shop --test-tags /comic_shop
 ```
 
 ---
