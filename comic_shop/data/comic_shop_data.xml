@@ -23,6 +23,9 @@
     ── -->
     <data noupdate="0">
 
+        <!-- Suppression des anciens menus "Catalogue BD" (créés avec noupdate=1 dans b5639cc) -->
+        <delete model="website.menu" search="[('url', 'in', ['/shop/series', '/shop/auteurs', '/shop/editeurs'])]"/>
+
         <record id="menu_bd_catalogue" model="website.menu">
             <field name="name">Ma Collection</field>
             <field name="url">/my/library</field>
