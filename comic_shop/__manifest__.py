@@ -1,6 +1,6 @@
 {
     'name': 'Comic Shop',
-    'version': '19.0.1.0.0',
+    'version': '19.0.2.0.0',
     'category': 'Leisure',
     'summary': 'Vendez vos BD en ligne et gérez la bibliothèque de vos clients',
     'description': """
