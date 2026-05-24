@@ -24,6 +24,7 @@
         'security/comic_shop_security.xml',
         'security/ir.model.access.csv',
         'data/comic_shop_data.xml',
+        'data/comic_shop_server_actions.xml',
         'views/comic_serie_views.xml',
         'views/comic_edition_views.xml',
         'views/comic_customer_album_views.xml',

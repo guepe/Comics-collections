@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Actions engrenage sur comic.serie ────────────────────────────────── -->
+
+    <record id="action_serie_publish_products" model="ir.actions.server">
+        <field name="name">Publier les albums</field>
+        <field name="model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">
+products = records.mapped('work_ids.edition_ids.product_tmpl_id').filtered(lambda p: p.id)
+products.write({'is_published': True})
+        </field>
+    </record>
+
+    <record id="action_serie_unpublish_products" model="ir.actions.server">
+        <field name="name">Dépublier les albums</field>
+        <field name="model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">
+products = records.mapped('work_ids.edition_ids.product_tmpl_id').filtered(lambda p: p.id)
+products.write({'is_published': False})
+        </field>
+    </record>
+
+    <!-- ── Actions engrenage sur comic.work ─────────────────────────────────── -->
+
+    <record id="action_work_mark_lu" model="ir.actions.server">
+        <field name="name">Marquer comme Lu</field>
+        <field name="model_id" ref="comics_collections.model_comic_work"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_work"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">records.action_mark_lu()</field>
+    </record>
+
+    <record id="action_work_mark_en_cours" model="ir.actions.server">
+        <field name="name">Marquer comme En cours</field>
+        <field name="model_id" ref="comics_collections.model_comic_work"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_work"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">records.action_mark_en_cours()</field>
+    </record>
+
+    <record id="action_work_mark_non_lu" model="ir.actions.server">
+        <field name="name">Marquer comme Non lu</field>
+        <field name="model_id" ref="comics_collections.model_comic_work"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_work"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">records.action_mark_non_lu()</field>
+    </record>
+
+</odoo>
