@@ -12,8 +12,8 @@
 |---|---|---|
 | US-035 | ✅ Scaffold comic_shop — désinstallation sécurisée | 🟡 |
 | US-042 | ✅ Intégration POS (caisse) | 🟠 |
-| US-044 | Ajout BD hors catalogue (portail client) | 🟠 |
-| US-045 | 1 critère restant : import POS (dépend US-042 ✅) | 🟠 |
+| US-044 | ✅ Ajout BD hors catalogue (portail client) | 🟠 |
+| US-045 | ✅ Import POS → bibliothèque (livré dans US-042) | 🟠 |
 | US-046 | Rapport "BD non vendues les plus suivies" | 🟡 |
 | US-047 | Rapport "Séries et auteurs à référencer" | 🟡 |
 | US-048 | Notification CRM à la mise en catalogue | 🟡 |
@@ -76,7 +76,7 @@ Fichiers concernés :
 
 ---
 
-**US-044 — Ajout d'une BD hors catalogue à la bibliothèque** ⏳ 🟠
+**US-044 — Ajout d'une BD hors catalogue à la bibliothèque** ✅
 
 ```
 En tant que client connecté sur le portail
@@ -84,36 +84,38 @@ Je veux ajouter dans ma bibliothèque une BD que je n'ai pas achetée dans le sh
 Afin de centraliser toute ma collection, pas seulement mes achats ici
 
 Contexte technique :
-  Le portail est sur /my/library (comic_shop/controllers/main.py).
+  Le portail est sur /my/library (comic_shop/controllers/portal.py).
   La recherche BD passe par ComicDataAggregator (comic_datasource/aggregator.py).
   L'import crée comic.work + comic.edition + comic.isbn si l'ISBN est inconnu,
   ou retrouve l'édition existante si l'ISBN est déjà en base.
   Le résultat crée un comic.customer.album (partner_id, edition_id, source).
 
 Critères d'acceptance :
-- [ ] Bouton "Ajouter une BD" sur la page /my/library
-- [ ] Formulaire en 2 étapes (route POST /my/library/add) :
-        Étape 1 : champ ISBN ou titre → résultats via ComicDataAggregator
-                  liste couverture + titre + auteurs + ISBN
-        Étape 2 : sélection du résultat + source (achete_ailleurs / cadeau / inconnu)
-                  + état de lecture + note
-- [ ] Si ISBN trouvé dans comic.isbn → réutilise l'édition existante
-- [ ] Si ISBN inconnu → crée comic.work + comic.edition + comic.isbn sans product_tmpl_id
-- [ ] Message flash "X a été ajouté à votre bibliothèque"
-- [ ] Si l'édition est déjà dans la bibliothèque du client → message d'avertissement
-        + proposition de mise à jour (état de lecture, note) sans créer de doublon
+- [x] Bouton "Ajouter une BD" sur la page /my/library (barre de filtres + état vide)
+- [x] Formulaire en 2 étapes :
+        GET  /my/library/add          — formulaire de recherche
+        POST /my/library/add/search   — résultats (local DB + ComicDataAggregator)
+        POST /my/library/add/confirm  — sélection + source + état + note → création
+- [x] Si ISBN trouvé dans comic.isbn → réutilise l'édition existante
+- [x] Si ISBN inconnu → crée comic.work + comic.edition + comic.isbn sans product_tmpl_id
+        (télécharge la couverture si cover_url disponible)
+- [x] Message flash "X a été ajouté à votre bibliothèque" (via request.session)
+- [x] Si l'édition est déjà dans la bibliothèque du client → message d'avertissement
+        + bouton "Mettre à jour" (force_update=1) sans créer de doublon
 
-Fichiers à créer/modifier :
-  comic_shop/controllers/main.py   — routes /my/library/add (GET + POST)
-  comic_shop/views/portal_library_templates.xml — formulaire 2 étapes
+Fichiers modifiés :
+  comic_shop/__manifest__.py                  — ajout dépendance comic_datasource
+  comic_shop/controllers/portal.py            — 3 nouvelles routes + 4 helpers
+  comic_shop/views/portal_library_templates.xml — bouton + template portal_library_add
 ```
 
 ---
 
-**US-045 — critère restant (bloqué par US-042)**
+**US-045 — critère restant** ✅
 
 ```
-- [ ] Idem import auto bibliothèque pour les ventes POS — dépend de US-042
+- [x] Idem import auto bibliothèque pour les ventes POS — livré dans US-042
+        (pos.order.action_pos_order_paid() → _add_comics_to_library() dans comic_pos_order.py)
 ```
 
 ---

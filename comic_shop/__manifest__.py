@@ -14,6 +14,7 @@
     'license': 'LGPL-3',
     'depends': [
         'comics_collections',
+        'comic_datasource',
         'sale',
         'website',
         'website_sale',

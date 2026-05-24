@@ -79,6 +79,13 @@
                         </div>
                     </form>
 
+                    <!-- Bouton Ajouter une BD -->
+                    <div class="mb-3 text-end">
+                        <a href="/my/library/add" class="btn btn-outline-primary btn-sm">
+                            <i class="fa fa-plus me-1"/>Ajouter une BD
+                        </a>
+                    </div>
+
                     <!-- Filtres + tri + vue -->
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
 
@@ -130,9 +137,14 @@
                         <div class="alert alert-info text-center py-5">
                             <i class="fa fa-book fa-3x text-muted mb-3 d-block"/>
                             <p class="mb-2">Votre bibliothèque est vide.</p>
-                            <a href="/shop" class="btn btn-primary">
-                                <i class="fa fa-shopping-cart me-1"/>Découvrir le catalogue
-                            </a>
+                            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                <a href="/shop" class="btn btn-primary">
+                                    <i class="fa fa-shopping-cart me-1"/>Découvrir le catalogue
+                                </a>
+                                <a href="/my/library/add" class="btn btn-outline-primary">
+                                    <i class="fa fa-plus me-1"/>Ajouter une BD
+                                </a>
+                            </div>
                         </div>
                     </t>
 
@@ -477,6 +489,210 @@
 
                         </div>
                     </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── /my/library/add — Ajouter une BD (recherche + résultats + warning) -->
+
+    <template id="portal_library_add" name="Ajouter une BD à ma bibliothèque">
+        <t t-call="portal.portal_layout">
+            <div class="o_portal_wrap">
+                <div class="container mt-4 mb-5" style="max-width:860px;">
+
+                    <!-- Fil d'Ariane -->
+                    <nav aria-label="breadcrumb" class="mb-4">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/my/home">Mon compte</a></li>
+                            <li class="breadcrumb-item"><a href="/my/library">Ma Bibliothèque</a></li>
+                            <li class="breadcrumb-item active">Ajouter une BD</li>
+                        </ol>
+                    </nav>
+
+                    <h2 class="mb-4"><i class="fa fa-plus-circle me-2 text-primary"/>Ajouter une BD</h2>
+
+                    <!-- Flash message de retour -->
+                    <t t-if="flash">
+                        <div t-attf-class="alert alert-{{ flash.get('type', 'info') }} alert-dismissible fade show" role="alert">
+                            <t t-esc="flash.get('message', '')"/>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"/>
+                        </div>
+                    </t>
+
+                    <!-- ── Formulaire de recherche ─────────────────────────── -->
+
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-header bg-light fw-semibold">
+                            <i class="fa fa-search me-1"/>Rechercher une BD
+                        </div>
+                        <div class="card-body">
+                            <form action="/my/library/add/search" method="post">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <div class="row g-2 align-items-end">
+                                    <div class="col-sm-5">
+                                        <label class="form-label fw-semibold small">ISBN (EAN-13)</label>
+                                        <input type="text" name="isbn" class="form-control"
+                                               placeholder="ex. 9782505015…"
+                                               t-att-value="search_isbn or ''"/>
+                                    </div>
+                                    <div class="col-sm-1 text-center text-muted fw-bold pt-4">ou</div>
+                                    <div class="col-sm-4">
+                                        <label class="form-label fw-semibold small">Titre ou série</label>
+                                        <input type="text" name="title" class="form-control"
+                                               placeholder="ex. Largo Winch"
+                                               t-att-value="search_title or ''"/>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="fa fa-search me-1"/>Rechercher
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ── Erreur externe ──────────────────────────────────── -->
+                    <t t-if="error">
+                        <div class="alert alert-warning"><i class="fa fa-exclamation-triangle me-1"/><t t-esc="error"/></div>
+                    </t>
+
+                    <!-- ── Warning : déjà dans la bibliothèque ────────────── -->
+                    <t t-if="step == 'warning'">
+                        <div class="alert alert-warning mb-4">
+                            <h5 class="alert-heading"><i class="fa fa-exclamation-triangle me-1"/>Déjà dans votre bibliothèque</h5>
+                            <p class="mb-1">
+                                <strong><t t-esc="edition.work_id.titre_canonique"/></strong>
+                                est déjà présent dans votre bibliothèque
+                                (état : <t t-esc="existing.etat_lecture"/>).
+                            </p>
+                            <hr/>
+                            <p class="mb-2">Voulez-vous mettre à jour votre entrée avec les nouvelles valeurs ?</p>
+                            <form action="/my/library/add/confirm" method="post" class="d-inline">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="force_update" value="1"/>
+                                <input type="hidden" name="edition_id" t-att-value="edition.id"/>
+                                <input type="hidden" name="isbn" t-att-value="post.get('isbn', '')"/>
+                                <input type="hidden" name="source" t-att-value="post.get('source', 'inconnu')"/>
+                                <input type="hidden" name="etat_lecture" t-att-value="post.get('etat_lecture', 'non_lu')"/>
+                                <input type="hidden" name="note" t-att-value="post.get('note', '0')"/>
+                                <button type="submit" class="btn btn-warning me-2">
+                                    <i class="fa fa-refresh me-1"/>Mettre à jour
+                                </button>
+                            </form>
+                            <a href="/my/library" class="btn btn-outline-secondary">Annuler</a>
+                        </div>
+                    </t>
+
+                    <!-- ── Résultats de recherche ──────────────────────────── -->
+                    <t t-if="step == 'results' and results">
+                        <h5 class="mb-3 text-muted">
+                            <t t-esc="len(results)"/> résultat<t t-if="len(results) != 1">s</t>
+                        </h5>
+                        <t t-foreach="results" t-as="res">
+                            <div class="card shadow-sm border-0 mb-3">
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-start">
+
+                                        <!-- Couverture -->
+                                        <div class="col-auto">
+                                            <t t-if="res.get('edition_id') and res['edition_id']">
+                                                <!-- Edition locale : couverture depuis le modèle -->
+                                                <img t-att-src="'/web/image/comic.edition/%d/image_couverture' % res['edition_id']"
+                                                     style="width:70px;height:100px;object-fit:contain;background:#f5f5f5;"
+                                                     class="rounded border" alt=""
+                                                     onerror="this.style.display='none'"/>
+                                            </t>
+                                            <t t-elif="res.get('cover_url')">
+                                                <img t-att-src="res['cover_url']"
+                                                     style="width:70px;height:100px;object-fit:contain;background:#f5f5f5;"
+                                                     class="rounded border" alt=""
+                                                     onerror="this.style.display='none'"/>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="bg-light rounded border d-flex align-items-center justify-content-center"
+                                                     style="width:70px;height:100px;">
+                                                    <i class="fa fa-book text-muted"/>
+                                                </div>
+                                            </t>
+                                        </div>
+
+                                        <!-- Métadonnées -->
+                                        <div class="col">
+                                            <div class="fw-bold">
+                                                <t t-if="res.get('tome')">
+                                                    T<t t-esc="res['tome']"/> —
+                                                </t>
+                                                <t t-esc="res.get('title', '—')"/>
+                                            </div>
+                                            <t t-if="res.get('serie_name')">
+                                                <div class="text-muted small"><i class="fa fa-book me-1"/><t t-esc="res['serie_name']"/></div>
+                                            </t>
+                                            <t t-if="res.get('auteurs')">
+                                                <div class="text-muted small"><i class="fa fa-user me-1"/><t t-esc="res['auteurs']"/></div>
+                                            </t>
+                                            <t t-if="res.get('isbn')">
+                                                <div class="text-muted small"><i class="fa fa-barcode me-1"/><t t-esc="res['isbn']"/></div>
+                                            </t>
+                                            <t t-if="res.get('is_local')">
+                                                <span class="badge bg-success mt-1">Dans notre catalogue</span>
+                                            </t>
+                                        </div>
+
+                                        <!-- Formulaire d'ajout inline -->
+                                        <div class="col-md-4">
+                                            <form action="/my/library/add/confirm" method="post">
+                                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                <input type="hidden" name="edition_id" t-att-value="res.get('edition_id', 0)"/>
+                                                <input type="hidden" name="isbn" t-att-value="res.get('isbn', '')"/>
+                                                <input type="hidden" name="title" t-att-value="res.get('title', '')"/>
+                                                <input type="hidden" name="serie_name" t-att-value="res.get('serie_name', '')"/>
+                                                <input type="hidden" name="tome" t-att-value="res.get('tome', 0)"/>
+                                                <input type="hidden" name="cover_url" t-att-value="res.get('cover_url', '')"/>
+                                                <input type="hidden" name="editeur_name" t-att-value="res.get('editeur_name', '')"/>
+
+                                                <div class="mb-2">
+                                                    <label class="form-label small fw-semibold mb-1">Source</label>
+                                                    <select name="source" class="form-select form-select-sm">
+                                                        <option value="achete_ailleurs">Acheté ailleurs</option>
+                                                        <option value="cadeau">Cadeau</option>
+                                                        <option value="inconnu" selected="selected">Inconnu</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label small fw-semibold mb-1">État de lecture</label>
+                                                    <select name="etat_lecture" class="form-select form-select-sm">
+                                                        <option value="non_lu" selected="selected">Non lu</option>
+                                                        <option value="en_cours">En cours</option>
+                                                        <option value="lu">Lu ✓</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-2">
+                                                    <label class="form-label small fw-semibold mb-1">Note (0–5)</label>
+                                                    <input type="number" name="note" class="form-control form-control-sm"
+                                                           min="0" max="5" step="0.5" value="0"/>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                    <i class="fa fa-plus me-1"/>Ajouter à ma bibliothèque
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+
+                    <!-- Aucun résultat -->
+                    <t t-if="step == 'results' and not results and not error">
+                        <div class="alert alert-info">
+                            <i class="fa fa-search me-1"/>Aucun résultat pour cette recherche.
+                            Essayez avec un ISBN différent ou un autre titre.
+                        </div>
+                    </t>
+
                 </div>
             </div>
         </t>

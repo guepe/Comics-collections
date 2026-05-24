@@ -6,6 +6,32 @@
 
 ---
 
+## 2026-05-24 — US-044 + US-045 : Ajout BD hors catalogue + Import bibliothèque POS
+
+### US-044 — Ajout d'une BD hors catalogue à la bibliothèque ✅
+
+**comic_shop/__manifest__.py**
+- Ajout `comic_datasource` dans `depends` (nécessaire pour ComicDataAggregator)
+
+**comic_shop/controllers/portal.py**
+- Import `ComicDataAggregator`, `requests`, `base64`, `re`, `logging`
+- Ajout helper module-level `_clean_isbn(raw)` — normalise ISBN (strip espaces/tirets)
+- Ajout route GET `/my/library/add` → `my_library_add()` : formulaire de recherche
+- Ajout route POST `/my/library/add/search` → `my_library_add_search()` : recherche locale (comic.isbn, comic.work) puis ComicDataAggregator, retourne liste résultats
+- Ajout route POST `/my/library/add/confirm` → `my_library_add_confirm()` : résout/crée l'édition, détecte doublon, crée/met à jour `comic.customer.album`, flash via `request.session`
+- Ajout méthodes helper : `_edition_to_result()`, `_agg_to_result()`, `_source_result_to_result()`, `_create_edition_from_post()`
+- `_create_edition_from_post()` : trouve ou crée `comic.editeur`, `comic.serie`, `comic.work`, `comic.edition`, `comic.isbn` ; télécharge la couverture depuis cover_url
+
+**comic_shop/views/portal_library_templates.xml**
+- Ajout bouton "Ajouter une BD" dans la barre au-dessus des filtres
+- Ajout bouton "Ajouter une BD" dans le bloc état-vide de la bibliothèque
+- Ajout template `portal_library_add` : formulaire de recherche (ISBN/titre), liste de résultats avec formulaire inline (source + état + note + submit), section warning si doublon (avec bouton "Mettre à jour")
+
+### US-045 — Import auto bibliothèque pour ventes POS ✅
+- Livré dans US-042 via `comic_pos_order.py` — `action_pos_order_paid()` hookée
+
+---
+
 ## 2026-05-24 — US-035 + US-042 : Désinstallation sécurisée + Intégration POS
 
 ### US-035 — Désinstallation comic_shop sans perte de données ✅
