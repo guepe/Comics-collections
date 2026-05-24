@@ -27,7 +27,7 @@ class ComicLibraryPortal(CustomerPortal):
         elif filter == 'reading':
             domain.append(('etat_lecture', '=', 'en_cours'))
 
-        records = request.env['comic.customer.album'].search(domain)
+        records = request.env['comic.customer.album'].sudo().search(domain)
 
         if sort == 'serie':
             records = records.sorted(
@@ -38,7 +38,7 @@ class ComicLibraryPortal(CustomerPortal):
         else:
             records = records.sorted(key=lambda r: r.date_ajout or '', reverse=True)
 
-        all_records = request.env['comic.customer.album'].search([
+        all_records = request.env['comic.customer.album'].sudo().search([
             ('partner_id', '=', partner.id),
         ])
         nb_series = len(all_records.mapped('edition_id.work_id.serie_id').filtered('id'))
@@ -58,8 +58,8 @@ class ComicLibraryPortal(CustomerPortal):
 
     @http.route('/my/library/<int:cust_album_id>', type='http', auth='user', website=True)
     def my_library_detail(self, cust_album_id, **kw):
-        record = request.env['comic.customer.album'].browse(cust_album_id)
-        if not record.exists() or record.partner_id != request.env.user.partner_id:
+        record = request.env['comic.customer.album'].sudo().browse(cust_album_id)
+        if not record.exists() or record.partner_id.id != request.env.user.partner_id.id:
             return request.not_found()
         return request.render('comic_shop.portal_library_detail', {
             'record': record,
@@ -73,8 +73,8 @@ class ComicLibraryPortal(CustomerPortal):
         type='http', auth='user', methods=['POST'], website=True, csrf=True,
     )
     def my_library_update(self, cust_album_id, **post):
-        record = request.env['comic.customer.album'].browse(cust_album_id)
-        if not record.exists() or record.partner_id != request.env.user.partner_id:
+        record = request.env['comic.customer.album'].sudo().browse(cust_album_id)
+        if not record.exists() or record.partner_id.id != request.env.user.partner_id.id:
             return request.not_found()
 
         vals = {
@@ -98,8 +98,8 @@ class ComicLibraryPortal(CustomerPortal):
         type='http', auth='user', methods=['POST'], website=True, csrf=True,
     )
     def my_library_remove(self, cust_album_id, **post):
-        record = request.env['comic.customer.album'].browse(cust_album_id)
-        if record.exists() and record.partner_id == request.env.user.partner_id:
+        record = request.env['comic.customer.album'].sudo().browse(cust_album_id)
+        if record.exists() and record.partner_id.id == request.env.user.partner_id.id:
             record.sudo().unlink()
         return request.redirect('/my/library')
 
