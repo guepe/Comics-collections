@@ -24,6 +24,30 @@ class ComicSerie(models.Model):
                 all_editions.filtered(lambda e: e.isbn_ids and not e.product_tmpl_id)
             )
 
+    def action_create_products_bulk(self):
+        """Crée un produit pour chaque édition sans produit, sur plusieurs séries."""
+        editions = self.mapped('work_ids.edition_ids').filtered(lambda e: not e.product_tmpl_id)
+        category = self.env.ref('comic_shop.product_category_bd', raise_if_not_found=False)
+        for edition in editions:
+            product = self.env['product.template'].create({
+                'name': edition._get_product_name(),
+                'type': 'consu',
+                'comic_edition_id': edition.id,
+                'categ_id': category.id if category else False,
+            })
+            edition.product_tmpl_id = product
+            edition._sync_to_product()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _("Produits créés"),
+                'message': _("%d produit(s) créé(s) sur %d série(s).") % (len(editions), len(self)),
+                'type': 'success' if editions else 'warning',
+                'sticky': False,
+            },
+        }
+
     def action_create_products_from_isbn(self):
         """Creates a product for each edition with an ISBN but no linked product."""
         self.ensure_one()

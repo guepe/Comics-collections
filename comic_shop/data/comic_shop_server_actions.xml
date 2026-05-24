@@ -3,6 +3,15 @@
 
     <!-- ── Actions engrenage sur comic.serie ────────────────────────────────── -->
 
+    <record id="action_serie_create_products" model="ir.actions.server">
+        <field name="name">Créer les produits</field>
+        <field name="model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">records.action_create_products_bulk()</field>
+    </record>
+
     <record id="action_serie_publish_products" model="ir.actions.server">
         <field name="name">Publier les albums</field>
         <field name="model_id" ref="comics_collections.model_comic_serie"/>
