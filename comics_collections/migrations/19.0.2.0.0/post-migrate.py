@@ -85,37 +85,38 @@ def _migrate_albums(cr, env):
     for album in albums:
         album_id = album['id']
 
-        # Idempotence : sauter si un work identique existe déjà
-        existing = Work.search([
-            ('serie_id', '=', album['serie_id']),
-            ('tome', '=', album['tome'] or 0),
-            ('titre_canonique', '=', album['name']),
-        ], limit=1)
+        # Idempotence : chercher par (serie_id, tome) — la vraie contrainte UNIQUE
+        domain = [('tome', '=', album['tome'] or 0)]
+        if album['serie_id']:
+            domain.append(('serie_id', '=', album['serie_id']))
+        else:
+            domain.append(('serie_id', '=', False))
+        existing = Work.search(domain, limit=1)
+
         if existing:
-            primary = existing.primary_edition_id
-            if primary:
-                album_to_edition[album_id] = primary.id
+            # Work déjà présent : on lui rattache quand même une édition
+            work = existing
             skipped += 1
-            continue
+        else:
+            # comic.work — nouveau
+            work_vals = {
+                'titre_canonique': album['name'],
+                'serie_id': album['serie_id'],
+                'tome': album['tome'] or 0,
+                'active': album['active'],
+            }
+            if album.get('bdgest_album_id'):
+                work_vals['bedetheque_id'] = str(album['bdgest_album_id'])
+            work = Work.create(work_vals)
 
-        # comic.work
-        work_vals = {
-            'titre_canonique': album['name'],
-            'serie_id': album['serie_id'],
-            'tome': album['tome'] or 0,
-            'active': album['active'],
-        }
-        if album.get('bdgest_album_id'):
-            work_vals['bedetheque_id'] = str(album['bdgest_album_id'])
-        work = Work.create(work_vals)
-
-        # comic.work.auteur.line
-        for auteur in auteurs_by_album.get(album_id, []):
-            AuteurLine.create({
-                'work_id': work.id,
-                'partner_id': auteur['partner_id'],
-                'role': auteur['role'],
-            })
+        # comic.work.auteur.line — seulement si work nouvellement créé
+        if not existing:
+            for auteur in auteurs_by_album.get(album_id, []):
+                AuteurLine.create({
+                    'work_id': work.id,
+                    'partner_id': auteur['partner_id'],
+                    'role': auteur['role'],
+                })
 
         # comic.edition
         edition_vals = {'work_id': work.id, 'active': album['active']}
