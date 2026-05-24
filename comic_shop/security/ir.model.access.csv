@@ -2,3 +2,11 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_comic_customer_album_manager,comic.customer.album manager,model_comic_customer_album,comic_shop.group_shop_manager,1,1,1,1
 access_comic_customer_album_user,comic.customer.album user,model_comic_customer_album,comics_collections.group_comic_user,1,1,1,0
 access_comic_customer_album_portal,comic.customer.album portal,model_comic_customer_album,base.group_portal,1,1,1,0
+access_comic_edition_portal,comic.edition portal,model_comic_edition,base.group_portal,1,0,0,0
+access_comic_edition_public,comic.edition public,model_comic_edition,base.group_public,1,0,0,0
+access_comic_work_portal,comic.work portal,model_comic_work,base.group_portal,1,0,0,0
+access_comic_work_public,comic.work public,model_comic_work,base.group_public,1,0,0,0
+access_comic_serie_portal,comic.serie portal,model_comic_serie,base.group_portal,1,0,0,0
+access_comic_serie_public,comic.serie public,model_comic_serie,base.group_public,1,0,0,0
+access_comic_isbn_portal,comic.isbn portal,model_comic_isbn,base.group_portal,1,0,0,0
+access_comic_isbn_public,comic.isbn public,model_comic_isbn,base.group_public,1,0,0,0
