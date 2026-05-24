@@ -32,18 +32,31 @@ def migrate(cr, version):
     _migrate_prets(cr, album_to_edition)
 
 
+def _get_existing_columns(cr, table):
+    cr.execute("""
+        SELECT column_name FROM information_schema.columns
+        WHERE table_name = %s
+    """, (table,))
+    return {row[0] for row in cr.fetchall()}
+
+
 def _migrate_albums(cr, env):
     """Retourne un dict {album_id: edition_id} pour la migration des prêts."""
-    cr.execute("""
-        SELECT
-            id, name, serie_id, tome,
-            isbn, date_parution, date_depot_legal,
-            nb_pages, image_couverture, synopsis,
-            url_club_be, url_amazon_be, url_fnac_be,
-            bdgest_album_id, active
-        FROM comic_album
-        ORDER BY id
-    """)
+    existing = _get_existing_columns(cr, 'comic_album')
+    _logger.info("Colonnes disponibles dans comic_album : %s", sorted(existing))
+
+    # Colonnes obligatoires + colonnes optionnelles selon le schéma réel
+    required_cols = ['id', 'name', 'serie_id', 'tome', 'active']
+    optional_cols = [
+        'isbn', 'date_parution', 'date_depot_legal', 'nb_pages',
+        'image_couverture', 'synopsis',
+        'url_club_be', 'url_amazon_be', 'url_fnac_be', 'bdgest_album_id',
+    ]
+    select_cols = required_cols + [c for c in optional_cols if c in existing]
+
+    cr.execute(
+        f"SELECT {', '.join(select_cols)} FROM comic_album ORDER BY id"  # noqa: S608
+    )
     albums = cr.dictfetchall()
 
     auteurs_by_album = {}
@@ -92,7 +105,7 @@ def _migrate_albums(cr, env):
             'tome': album['tome'] or 0,
             'active': album['active'],
         }
-        if album['bdgest_album_id']:
+        if album.get('bdgest_album_id'):
             work_vals['bedetheque_id'] = str(album['bdgest_album_id'])
         work = Work.create(work_vals)
 
@@ -105,23 +118,17 @@ def _migrate_albums(cr, env):
             })
 
         # comic.edition
-        edition_vals = {
-            'work_id': work.id,
-            'date_parution': album['date_parution'],
-            'date_depot_legal': album['date_depot_legal'],
-            'nb_pages': album['nb_pages'],
-            'synopsis': album['synopsis'],
-            'url_club_be': album['url_club_be'],
-            'url_amazon_be': album['url_amazon_be'],
-            'url_fnac_be': album['url_fnac_be'],
-            'active': album['active'],
-        }
-        if album['image_couverture']:
+        edition_vals = {'work_id': work.id, 'active': album['active']}
+        for fld in ('date_parution', 'date_depot_legal', 'nb_pages', 'synopsis',
+                    'url_club_be', 'url_amazon_be', 'url_fnac_be'):
+            if album.get(fld):
+                edition_vals[fld] = album[fld]
+        if album.get('image_couverture'):
             edition_vals['image_couverture'] = album['image_couverture']
         edition = Edition.create(edition_vals)
 
         # comic.isbn
-        if album['isbn']:
+        if album.get('isbn'):
             isbn_clean = album['isbn'].replace('-', '').replace(' ', '')
             if len(isbn_clean) == 13 and isbn_clean.isdigit():
                 try:
