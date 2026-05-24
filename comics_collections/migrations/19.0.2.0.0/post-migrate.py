@@ -51,6 +51,7 @@ def _migrate_albums(cr, env):
         'isbn', 'date_parution', 'date_depot_legal', 'nb_pages',
         'image_couverture', 'synopsis',
         'url_club_be', 'url_amazon_be', 'url_fnac_be', 'bdgest_album_id',
+        'product_tmpl_id',
     ]
     select_cols = required_cols + [c for c in optional_cols if c in existing]
 
@@ -94,8 +95,15 @@ def _migrate_albums(cr, env):
         existing = Work.search(domain, limit=1)
 
         if existing:
-            # Work déjà présent : on lui rattache quand même une édition
+            # Work déjà présent : relier le produit si manquant
             work = existing
+            if album.get('product_tmpl_id') and existing.primary_edition_id:
+                ed = existing.primary_edition_id
+                if not ed.product_tmpl_id:
+                    ed.product_tmpl_id = album['product_tmpl_id']
+                album_to_edition[album_id] = ed.id
+            elif existing.primary_edition_id:
+                album_to_edition[album_id] = existing.primary_edition_id.id
             skipped += 1
         else:
             # comic.work — nouveau
@@ -126,6 +134,8 @@ def _migrate_albums(cr, env):
                 edition_vals[fld] = album[fld]
         if album.get('image_couverture'):
             edition_vals['image_couverture'] = album['image_couverture']
+        if album.get('product_tmpl_id'):
+            edition_vals['product_tmpl_id'] = album['product_tmpl_id']
         edition = Edition.create(edition_vals)
 
         # comic.isbn
