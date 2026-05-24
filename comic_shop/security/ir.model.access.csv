@@ -10,3 +10,9 @@ access_comic_serie_portal,comic.serie portal,comics_collections.model_comic_seri
 access_comic_serie_public,comic.serie public,comics_collections.model_comic_serie,base.group_public,1,0,0,0
 access_comic_isbn_portal,comic.isbn portal,comics_collections.model_comic_isbn,base.group_portal,1,0,0,0
 access_comic_isbn_public,comic.isbn public,comics_collections.model_comic_isbn,base.group_public,1,0,0,0
+access_comic_work_auteur_line_portal,comic.work.auteur.line portal,comics_collections.model_comic_work_auteur_line,base.group_portal,1,0,0,0
+access_comic_work_auteur_line_public,comic.work.auteur.line public,comics_collections.model_comic_work_auteur_line,base.group_public,1,0,0,0
+access_comic_editeur_portal,comic.editeur portal,comics_collections.model_comic_editeur,base.group_portal,1,0,0,0
+access_comic_editeur_public,comic.editeur public,comics_collections.model_comic_editeur,base.group_public,1,0,0,0
+access_comic_genre_portal,comic.genre portal,comics_collections.model_comic_genre,base.group_portal,1,0,0,0
+access_comic_genre_public,comic.genre public,comics_collections.model_comic_genre,base.group_public,1,0,0,0
