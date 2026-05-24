@@ -10,10 +10,10 @@
 
 | US | Titre | Priorité |
 |---|---|---|
-| US-035 | 1 critère restant : désinstallation comic_shop | 🟡 |
-| US-042 | Intégration POS (caisse) | 🟠 |
+| US-035 | ✅ Scaffold comic_shop — désinstallation sécurisée | 🟡 |
+| US-042 | ✅ Intégration POS (caisse) | 🟠 |
 | US-044 | Ajout BD hors catalogue (portail client) | 🟠 |
-| US-045 | 1 critère restant : import POS (dépend US-042) | bloqué |
+| US-045 | 1 critère restant : import POS (dépend US-042 ✅) | 🟠 |
 | US-046 | Rapport "BD non vendues les plus suivies" | 🟡 |
 | US-047 | Rapport "Séries et auteurs à référencer" | 🟡 |
 | US-048 | Notification CRM à la mise en catalogue | 🟡 |
@@ -29,16 +29,16 @@
 
 ---
 
-**US-035 — Scaffold `comic_shop` — critère restant** 🟡
+**US-035 — Scaffold `comic_shop` — critère restant** ✅
 
 ```
-- [ ] comic_shop désinstallable sans perte de données dans comics_collections
+- [x] comic_shop désinstallable sans perte de données dans comics_collections
       (vérifier que la désinstallation ne supprime pas les comic.edition, comic.work, etc.)
 ```
 
 ---
 
-**US-042 — Intégration POS (caisse)** ⏳ 🟠
+**US-042 — Intégration POS (caisse)** ✅
 
 ```
 En tant que commerçant en magasin
@@ -51,17 +51,23 @@ Contexte technique :
   À la vente POS : créer/mettre à jour comic.customer.album si client identifié.
 
 Critères d'acceptance :
-- [ ] Les produits liés à une comic.edition sont disponibles dans le POS
-- [ ] Recherche par ISBN dans le POS (scan code-barres = barcode du product.template)
-- [ ] Affichage dans le POS : couverture miniature, titre, série, tome, prix
-- [ ] À la validation d'une vente POS, si client identifié :
+- [x] Les produits liés à une comic.edition sont disponibles dans le POS
+        (available_in_pos=True syncé dans _sync_to_product et action_create_product)
+- [x] Recherche par ISBN dans le POS (scan code-barres = barcode du product.template)
+        (barcode syncé depuis isbn_13 via _sync_to_product)
+- [x] Affichage dans le POS : couverture miniature, titre, série, tome, prix
+        (image_1920 + name format "Série — Titre (T1)" syncés via _sync_to_product)
+- [x] À la validation d'une vente POS, si client identifié :
         créer (ou mettre à jour) un comic.customer.album avec source = achete_ici
-- [ ] Catégorie POS "Bandes Dessinées" créée automatiquement à l'installation
+        (pos.order.action_pos_order_paid() hooké dans comic_pos_order.py)
+- [x] Catégorie POS "Bandes Dessinées" créée automatiquement à l'installation
+        (pos.category record dans comic_shop_data.xml)
 
 Fichiers concernés :
-  comic_shop/models/comic_edition.py  — hook post-vente POS
+  comic_shop/models/comic_edition.py  — available_in_pos + pos_categ_ids dans sync
+  comic_shop/models/comic_serie.py    — idem dans action_create_products_bulk/from_isbn
+  comic_shop/models/comic_pos_order.py — hook action_pos_order_paid
   comic_shop/data/comic_shop_data.xml — catégorie POS
-  comic_shop/views/ — config POS si nécessaire
 ```
 
 ---

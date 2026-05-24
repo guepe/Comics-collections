@@ -1,4 +1,4 @@
-from odoo import models, fields, _
+from odoo import Command, models, fields, _
 from odoo.exceptions import UserError
 from odoo.tools import html2plaintext
 
@@ -28,12 +28,17 @@ class ComicEdition(models.Model):
             raise UserError(_("Cette édition est déjà liée à un produit."))
 
         category = self.env.ref('comic_shop.product_category_bd', raise_if_not_found=False)
-        product = self.env['product.template'].create({
+        pos_category = self.env.ref('comic_shop.pos_category_bd', raise_if_not_found=False)
+        vals = {
             'name': self._get_product_name(),
             'type': 'consu',
             'comic_edition_id': self.id,
             'categ_id': category.id if category else False,
-        })
+            'available_in_pos': True,
+        }
+        if pos_category:
+            vals['pos_categ_ids'] = [Command.link(pos_category.id)]
+        product = self.env['product.template'].create(vals)
         self.product_tmpl_id = product
         self._sync_to_product()
 
@@ -84,12 +89,17 @@ class ComicEdition(models.Model):
         self.ensure_one()
         if not self.product_tmpl_id:
             return
-        self.product_tmpl_id.write({
+        pos_category = self.env.ref('comic_shop.pos_category_bd', raise_if_not_found=False)
+        vals = {
             'name': self._get_product_name(),
             'image_1920': self.image_couverture or False,
             'barcode': self._get_primary_isbn() or False,
             'description_sale': html2plaintext(self.synopsis) if self.synopsis else False,
-        })
+            'available_in_pos': True,
+        }
+        if pos_category and pos_category not in self.product_tmpl_id.pos_categ_ids:
+            vals['pos_categ_ids'] = [Command.link(pos_category.id)]
+        self.product_tmpl_id.write(vals)
 
     def _get_product_name(self):
         work = self.work_id

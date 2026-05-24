@@ -7,6 +7,11 @@
             <field name="name">Bandes Dessinées</field>
         </record>
 
+        <!-- Catégorie POS pour les BD (scan ISBN + caisse) -->
+        <record id="pos_category_bd" model="pos.category">
+            <field name="name">Bandes Dessinées</field>
+        </record>
+
         <!-- Liste de prix par défaut pour le shop BD -->
         <record id="pricelist_bd_default" model="product.pricelist">
             <field name="name">Tarif Bandes Dessinées</field>

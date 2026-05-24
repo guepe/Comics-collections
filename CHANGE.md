@@ -6,6 +6,41 @@
 
 ---
 
+## 2026-05-24 — US-035 + US-042 : Désinstallation sécurisée + Intégration POS
+
+### US-035 — Désinstallation comic_shop sans perte de données ✅
+
+**comic_shop/__init__.py**
+- Ajout `uninstall_hook(env)` : nullifie `comic_edition.product_tmpl_id` et `product_template.comic_edition_id` en SQL avant que l'ORM ne supprime les enregistrements du module
+- Garantit que les enregistrements `comic.edition`, `comic.work`, `comic.serie` sont préservés intacts après désinstallation
+
+**comic_shop/__manifest__.py**
+- Ajout `'uninstall_hook': 'uninstall_hook'`
+
+### US-042 — Intégration POS (caisse) ✅
+
+**comic_shop/data/comic_shop_data.xml**
+- Ajout `pos.category` "Bandes Dessinées" (id: `pos_category_bd`) créée à l'installation avec `noupdate=1`
+
+**comic_shop/models/comic_edition.py**
+- Import `Command` ajouté
+- `action_create_product()` : ajout `available_in_pos=True` et `pos_categ_ids=[Command.link(pos_category_bd)]` à la création du produit
+- `_sync_to_product()` : ajout `available_in_pos=True` et liaison `pos_categ_ids` si pas encore liée
+
+**comic_shop/models/comic_serie.py**
+- Import `Command` ajouté
+- `action_create_products_bulk()` : idem, ajout `available_in_pos=True` + `pos_categ_ids` à chaque produit créé en masse
+- `action_create_products_from_isbn()` : idem
+
+**comic_shop/models/comic_pos_order.py** (nouveau)
+- `PosOrder(_inherit='pos.order')` : override `action_pos_order_paid()` → appelle `_add_comics_to_library()`
+- `_add_comics_to_library()` : pour chaque ligne POS dont le produit a un `comic_edition_id`, crée ou met à jour `comic.customer.album` avec `source='achete_ici'` si le client a `comic_auto_library=True`
+
+**comic_shop/models/__init__.py**
+- Ajout `from . import comic_pos_order`
+
+---
+
 ## 2026-05-21 — US-053 : Vues back-office + correctifs import et templates
 
 ### US-053 — Vues back-office comic.work / comic.edition / comic.pret ✅

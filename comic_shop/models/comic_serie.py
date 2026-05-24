@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import Command, _, api, fields, models
 
 
 class ComicSerie(models.Model):
@@ -28,13 +28,18 @@ class ComicSerie(models.Model):
         """Crée un produit pour chaque édition sans produit, sur plusieurs séries."""
         editions = self.mapped('work_ids.edition_ids').filtered(lambda e: not e.product_tmpl_id)
         category = self.env.ref('comic_shop.product_category_bd', raise_if_not_found=False)
+        pos_category = self.env.ref('comic_shop.pos_category_bd', raise_if_not_found=False)
         for edition in editions:
-            product = self.env['product.template'].create({
+            vals = {
                 'name': edition._get_product_name(),
                 'type': 'consu',
                 'comic_edition_id': edition.id,
                 'categ_id': category.id if category else False,
-            })
+                'available_in_pos': True,
+            }
+            if pos_category:
+                vals['pos_categ_ids'] = [Command.link(pos_category.id)]
+            product = self.env['product.template'].create(vals)
             edition.product_tmpl_id = product
             edition._sync_to_product()
         return {
@@ -65,13 +70,18 @@ class ComicSerie(models.Model):
             }
 
         category = self.env.ref('comic_shop.product_category_bd', raise_if_not_found=False)
+        pos_category = self.env.ref('comic_shop.pos_category_bd', raise_if_not_found=False)
         for edition in editions:
-            product = self.env['product.template'].create({
+            vals = {
                 'name': edition._get_product_name(),
                 'type': 'consu',
                 'comic_edition_id': edition.id,
                 'categ_id': category.id if category else False,
-            })
+                'available_in_pos': True,
+            }
+            if pos_category:
+                vals['pos_categ_ids'] = [Command.link(pos_category.id)]
+            product = self.env['product.template'].create(vals)
             edition.product_tmpl_id = product
             edition._sync_to_product()
 
