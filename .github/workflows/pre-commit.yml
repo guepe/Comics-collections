@@ -8,5 +8,10 @@ on:
 
 jobs:
   pre-commit:
-    uses: OCA/github-actions/.github/workflows/pre-commit.yml@v0
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: pre-commit/action@v3.0.1
