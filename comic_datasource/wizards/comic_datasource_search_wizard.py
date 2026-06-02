@@ -45,14 +45,8 @@ class ComicDatasourceSearchWizard(models.TransientModel):
     edition_id = fields.Many2one("comic.edition", string="Édition à enrichir")
     result_ids = fields.One2many("comic.datasource.result.line", "wizard_id", string="Résultats")
     import_report = fields.Html(string="Rapport", readonly=True)
-    bdgest_enabled = fields.Boolean(compute="_compute_bdgest_enabled")
     has_duplicates = fields.Boolean(compute="_compute_has_duplicates")
     has_title_conflicts = fields.Boolean(compute="_compute_has_duplicates")
-
-    def _compute_bdgest_enabled(self):
-        enabled = self.env["ir.config_parameter"].sudo().get_param("comic.bdgest_enabled", "False") == "True"
-        for rec in self:
-            rec.bdgest_enabled = enabled
 
     @api.depends("result_ids.is_duplicate", "result_ids.title_conflict")
     def _compute_has_duplicates(self):
@@ -442,7 +436,6 @@ class ComicDatasourceResultLine(models.TransientModel):
             ("google", "Google Books"),
             ("openlibrary", "Open Library"),
             ("bnf", "BnF"),
-            ("bdgest", "BDGest"),
         ],
     )
     cover_url = fields.Char(string="URL couverture")

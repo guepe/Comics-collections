@@ -28,26 +28,6 @@ class ResConfigSettings(models.TransientModel):
         help="Données officielles de dépôt légal pour les BD francophones. Gratuite, sans clé API.",
     )
 
-    # ── BDGest (opt-in) ───────────────────────────────────────────────────────
-    comic_bdgest_enabled = fields.Boolean(
-        string="Activer BDGest (scraping)",
-        config_parameter="comic.bdgest_enabled",
-        help="BDGest est un fallback de scraping. " "Son utilisation est soumise aux CGU de bedetheque.com.",
-    )
-    comic_bdgest_login = fields.Char(
-        string="Login BDGest",
-        config_parameter="comic.bdgest_login",
-    )
-    comic_bdgest_password = fields.Char(
-        string="Mot de passe BDGest",
-        config_parameter="comic.bdgest_password",
-    )
-    comic_bdgest_delay = fields.Integer(
-        string="Délai entre requêtes BDGest (secondes)",
-        config_parameter="comic.bdgest_delay",
-        help="Délai minimum entre deux requêtes BDGest. Minimum 2 secondes (CGU).",
-    )
-
     # ── Actions ───────────────────────────────────────────────────────────────
 
     def action_test_google_books(self):

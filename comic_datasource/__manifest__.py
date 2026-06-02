@@ -8,7 +8,6 @@
         - Google Books API (clé API gratuite)
         - Open Library API (sans clé)
         - BnF SRU API (sans clé, dépôt légal)
-        - BDGest scraping (fallback uniquement, opt-in légal)
     """,
     "author": "Belspace",
     "maintainer": "Belspace",

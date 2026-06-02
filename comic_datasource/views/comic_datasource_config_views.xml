@@ -64,29 +64,6 @@
                             </div>
                         </setting>
 
-                        <!-- BDGest fallback -->
-                        <setting id="comic_bdgest_setting"
-                                 title="Fallback scraping — uniquement si aucune API officielle ne trouve l'album.">
-                            <field name="comic_bdgest_enabled"/>
-                            <div class="content-group">
-                                <label for="comic_bdgest_enabled" class="o_form_label fw-bold"/>
-                                <div class="text-muted mt-1">
-                                    ⚠️ L'utilisation est soumise aux
-                                    <a href="https://www.bedetheque.com" target="_blank">CGU de BDGest</a>.
-                                    Désactivé par défaut.
-                                </div>
-                                <div class="mt-2" invisible="not comic_bdgest_enabled">
-                                    <field name="comic_bdgest_login"
-                                           placeholder="Login BDGest (optionnel)"/>
-                                    <field name="comic_bdgest_password"
-                                           placeholder="Mot de passe BDGest"
-                                           password="True"/>
-                                    <field name="comic_bdgest_delay"
-                                           string="Délai entre requêtes (secondes, min. 2)"/>
-                                </div>
-                            </div>
-                        </setting>
-
                     </block>
                 </app>
 

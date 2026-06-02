@@ -1,27 +1,27 @@
 """
 ComicDataAggregator — fusionne les données de toutes les sources disponibles.
 
-Cascade par défaut : Google Books → Open Library → BnF → BDGest
+Cascade par défaut : Google Books → Open Library → BnF
 Règles de fusion :
 - Premier champ non-vide trouvé est retenu (sauf exceptions ci-dessous)
-- synopsis : Google > BnF > BDGest (Open Library rarement utile)
+- synopsis : Google > BnF (Open Library rarement utile)
 - date_depot_legal : BnF prioritaire (seule source officielle)
-- cover_url : Google extraLarge > Open Library L > BDGest
+- cover_url : Google extraLarge > Open Library L
 """
 
 import logging
-from .sources import GoogleBooksSource, OpenLibrarySource, BnfSource, BdgestSource
+from .sources import GoogleBooksSource, OpenLibrarySource, BnfSource
 
 _logger = logging.getLogger(__name__)
 
-DEFAULT_SOURCE_ORDER = ["google", "openlibrary", "bnf", "bdgest"]
+DEFAULT_SOURCE_ORDER = ["google", "openlibrary", "bnf"]
 
 # Pour chaque champ : ordre de priorité des sources (différent de l'ordre de cascade)
 FIELD_PRIORITY = {
-    "synopsis": ["google", "bnf", "bdgest", "openlibrary"],
+    "synopsis": ["google", "bnf", "openlibrary"],
     "date_depot_legal": ["bnf"],
-    "cover_url": ["google", "openlibrary", "bdgest"],
-    "cover_url_small": ["google", "openlibrary", "bdgest"],
+    "cover_url": ["google", "openlibrary"],
+    "cover_url_small": ["google", "openlibrary"],
 }
 
 
@@ -61,7 +61,6 @@ class ComicDataAggregator:
             "google": GoogleBooksSource(env),
             "openlibrary": OpenLibrarySource(env),
             "bnf": BnfSource(env),
-            "bdgest": BdgestSource(env),
         }
         self._cache = {}  # clé: "isbn:XXX" ou "title:XXX" → résultat
 

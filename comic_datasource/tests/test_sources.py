@@ -249,32 +249,5 @@ class TestBnfSource(unittest.TestCase):
         self.assertIsNone(result)
 
 
-# ── BDGest ────────────────────────────────────────────────────────────────────
-
-
-class TestBdgestSource(unittest.TestCase):
-
-    def test_disabled_by_default(self):
-        from odoo.addons.comic_datasource.sources.bdgest import BdgestSource
-
-        source = BdgestSource(env=None)
-        # Sans env Odoo, is_available() retourne False (pas de config)
-        self.assertFalse(source.is_available())
-
-    def test_search_by_isbn_returns_none_when_disabled(self):
-        from odoo.addons.comic_datasource.sources.bdgest import BdgestSource
-
-        source = BdgestSource(env=None)
-        result = source.search_by_isbn("9782012101340")
-        self.assertIsNone(result)
-
-    def test_search_by_title_returns_empty_when_disabled(self):
-        from odoo.addons.comic_datasource.sources.bdgest import BdgestSource
-
-        source = BdgestSource(env=None)
-        results = source.search_by_title("Astérix")
-        self.assertEqual(results, [])
-
-
 if __name__ == "__main__":
     unittest.main()
