@@ -17,7 +17,7 @@ Modèle normalisé retourné par chaque source (ComicSourceResult) :
     'synopsis': str | None,         # HTML ou texte brut
     'cover_url': str | None,        # URL couverture haute résolution
     'cover_url_small': str | None,  # URL couverture miniature
-    'source': str,                  # 'google'|'openlibrary'|'bnf'|'bdgest'
+    'source': str,                  # 'google'|'openlibrary'|'bnf'
     'source_id': str | None,        # ID dans la source (ex: Google Books volume ID)
     'raw': dict,                    # Réponse brute pour debugging
 }

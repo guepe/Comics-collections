@@ -19,8 +19,7 @@
                 <field name="source" widget="badge"
                        decoration-success="source == 'google'"
                        decoration-info="source == 'openlibrary'"
-                       decoration-primary="source == 'bnf'"
-                       decoration-warning="source == 'bdgest'"/>
+                       decoration-primary="source == 'bnf'"/>
                 <field name="is_duplicate" widget="boolean"
                        column_invisible="True"/>
                 <field name="existing_edition_id" optional="show"
@@ -48,7 +47,6 @@
                         <div class="text-muted">
                             Sources interrogées (par ordre de priorité) :
                             <b>Google Books</b> → <b>Open Library</b> → <b>BnF</b>
-                            <span invisible="not bdgest_enabled"> → <b>BDGest</b></span>
                         </div>
                     </group>
                 </group>
@@ -89,7 +87,7 @@
                                    decoration-success="source == 'google'"
                                    decoration-info="source == 'openlibrary'"
                                    decoration-primary="source == 'bnf'"
-                                   decoration-warning="source == 'bdgest'"/>
+                                   decoration-warning="source == 'bnf'"/>
                             <field name="is_duplicate" column_invisible="True"/>
                             <field name="title_conflict" column_invisible="True"/>
                             <field name="existing_edition_id" optional="show"
@@ -108,7 +106,6 @@
                 <field name="edition_id" invisible="1"/>
                 <field name="has_duplicates" invisible="1"/>
                 <field name="has_title_conflicts" invisible="1"/>
-                <field name="bdgest_enabled" invisible="1"/>
 
                 <footer>
                     <!-- Boutons état : recherche -->

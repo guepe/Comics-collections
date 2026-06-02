@@ -19,14 +19,11 @@ class TestComicDataAggregator(unittest.TestCase):
 
         self.aggregator = ComicDataAggregator(env=None)
 
-    def _mock_sources(self, google=None, openlibrary=None, bnf=None, bdgest=None):
+    def _mock_sources(self, google=None, openlibrary=None, bnf=None):
         """Patche toutes les sources avec des résultats prédéfinis."""
         self.aggregator._sources["google"].search_by_isbn = MagicMock(return_value=google)
         self.aggregator._sources["openlibrary"].search_by_isbn = MagicMock(return_value=openlibrary)
         self.aggregator._sources["bnf"].search_by_isbn = MagicMock(return_value=bnf)
-        self.aggregator._sources["bdgest"].search_by_isbn = MagicMock(return_value=bdgest)
-        # BDGest désactivé par défaut
-        self.aggregator._sources["bdgest"].is_available = MagicMock(return_value=False)
 
     def test_google_wins_for_synopsis(self):
         google_result = _make_result(
@@ -114,7 +111,6 @@ class TestComicDataAggregator(unittest.TestCase):
         bnf_result = _make_result("bnf", title="Fallback BnF")
         self.aggregator._sources["bnf"].search_by_isbn = MagicMock(return_value=bnf_result)
         self.aggregator._sources["openlibrary"].search_by_isbn = MagicMock(return_value=None)
-        self.aggregator._sources["bdgest"].is_available = MagicMock(return_value=False)
         result = self.aggregator.search(isbn="9782012101340")
         self.assertEqual(result.data.get("title"), "Fallback BnF")
 

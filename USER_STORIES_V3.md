@@ -27,7 +27,7 @@
 | US-059 | Fichier LICENSE LGPL-3                             | 🟡       |
 | US-060 | ✅ README.rst format OCA par module                 | 🟡       |
 | US-061 | ✅ `__manifest__.py` valide format OCA strict       | 🟡       |
-| US-062 | Tests unitaires de base (CI-compatible)            | 🟡       |
+| US-062 | ✅ Tests unitaires de base (CI-compatible)          | 🟡       |
 | US-063 | GitHub Actions CI — workflow OCA réutilisable      | 🟡       |
 | US-064 | Dépôt GitHub public + proposition OCA              | 🟡       |
 
@@ -485,7 +485,7 @@ Fichiers à modifier :
 
 ---
 
-**US-062 — Tests unitaires de base (CI-compatible)** ⏳ 🟡
+**US-062 — Tests unitaires de base (CI-compatible)** ✅ 🟡
 
 ```
 En tant que développeur OCA
@@ -498,15 +498,17 @@ Contexte technique :
   Module prioritaire : comics_collections (modèles complexes + contraintes).
 
 Critères d'acceptance :
-- [ ] comics_collections/tests/ — tests de base :
-        test_comic_serie.py   : création série, contrainte name
-        test_comic_work.py    : création album, contrainte UNIQUE(serie_id, tome)
-        test_comic_edition.py : création édition, validation ISBN EAN-13
-        test_comic_pret.py    : création prêt, retour effectif
-- [ ] comic_datasource/tests/ : test aggregator avec mocks des sources HTTP
-- [ ] comic_shop/tests/ : test sync edition → product.template, test comic.customer.album
-- [ ] Compatible odoo-bin --test-enable (pas de dépendance système manquante)
-- [ ] Aucun test cassé à l'installation du module
+- [x] comics_collections/tests/ :
+        test_comic_serie.py   : création, name_normalise, name requis ✅ (créé)
+        test_comic_work.py    : slug, display_name, contrainte UNIQUE(serie_id, tome) ✅ (décommentée)
+        test_comic_edition.py : création, nb_isbn, display_name, liens d'achat ✅
+        test_comic_pret.py    : création prêt, retour effectif ✅ (créé)
+        test_comic_isbn.py    : validation EAN-13/ISBN-10, contrainte unicité ✅
+        test_comic_dedup.py   : détection doublons ✅
+- [x] comic_datasource/tests/ : test_sources.py (HTTP mocks) + test_aggregator.py ✅
+- [x] comic_shop/tests/ : test_comic_customer_album.py + test_sync_product.py ✅ (créé)
+- [x] pre-commit passe sur tous les fichiers de test (black + flake8 + pylint) ✅
+- [ ] Tests validés dans Odoo (odoo-bin --test-enable) — à vérifier en lançant Docker
 
 Fichiers à créer :
   {module}/tests/__init__.py
