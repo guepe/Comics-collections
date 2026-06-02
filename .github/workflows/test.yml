@@ -8,7 +8,57 @@ on:
 
 jobs:
   test:
-    uses: OCA/github-actions/.github/workflows/test.yml@v0
-    with:
-      odoo_version: "19.0"
-    secrets: inherit
+    runs-on: ubuntu-22.04
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libxml2-dev libxslt1-dev libldap2-dev libsasl2-dev \
+            libpq-dev node-less
+
+      - name: Clone Odoo 19.0
+        run: |
+          git clone --depth=1 --branch=19.0 \
+            https://github.com/odoo/odoo.git /opt/odoo
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r /opt/odoo/requirements.txt
+          pip install \
+            requests beautifulsoup4 lxml xmltodict \
+            openai anthropic openpyxl xlrd
+
+      - name: Run tests
+        run: |
+          python /opt/odoo/odoo-bin \
+            --db_host=localhost \
+            --db_user=odoo \
+            --db_password=odoo \
+            -d ci_test \
+            --addons-path=/opt/odoo/addons,${{ github.workspace }} \
+            -i comics_collections,comic_datasource,comic_shop \
+            --test-enable \
+            --stop-after-init \
+            --no-http
