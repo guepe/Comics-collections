@@ -15,14 +15,14 @@ def normalize_title(title):
         "Thorgal"                  → "thorgal"
     """
     if not title:
-        return ''
-    nfd = unicodedata.normalize('NFD', title)
-    no_accents = ''.join(c for c in nfd if unicodedata.category(c) != 'Mn')
+        return ""
+    nfd = unicodedata.normalize("NFD", title)
+    no_accents = "".join(c for c in nfd if unicodedata.category(c) != "Mn")
     s = no_accents.lower().strip()
-    for article in ("l'", 'les ', 'le ', 'la ', 'de ', 'het ', 'een ', 'the ', 'an ', 'a '):
+    for article in ("l'", "les ", "le ", "la ", "de ", "het ", "een ", "the ", "an ", "a "):
         if s.startswith(article):
-            s = s[len(article):]
+            s = s[len(article) :]
             break
-    s = re.sub(r"\s*\((les|de|the|het|een|an|a)\)\s*$", '', s)
-    s = re.sub(r"[,.\-'\"!?;:]", ' ', s)
-    return ' '.join(s.split())
+    s = re.sub(r"\s*\((les|de|the|het|een|an|a)\)\s*$", "", s)
+    s = re.sub(r"[,.\-'\"!?;:]", " ", s)
+    return " ".join(s.split())

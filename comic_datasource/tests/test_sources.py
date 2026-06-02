@@ -2,6 +2,9 @@
 Tests unitaires pour chaque source de données.
 Les appels HTTP sont mockés — aucun accès réseau requis.
 """
+
+# pylint: disable=odoo-addons-relative-import
+
 import unittest
 from unittest.mock import patch, MagicMock
 
@@ -9,111 +12,119 @@ from unittest.mock import patch, MagicMock
 # ── Google Books ──────────────────────────────────────────────────────────────
 
 GOOGLE_BOOKS_RESPONSE = {
-    'items': [{
-        'id': 'abc123',
-        'volumeInfo': {
-            'title': 'Astérix le Gaulois',
-            'authors': ['René Goscinny'],
-            'publisher': 'Dargaud',
-            'publishedDate': '1961-10-29',
-            'pageCount': 48,
-            'description': 'Le premier album d\'Astérix.',
-            'imageLinks': {
-                'thumbnail': 'http://books.google.com/small.jpg',
-                'large': 'http://books.google.com/large.jpg',
+    "items": [
+        {
+            "id": "abc123",
+            "volumeInfo": {
+                "title": "Astérix le Gaulois",
+                "authors": ["René Goscinny"],
+                "publisher": "Dargaud",
+                "publishedDate": "1961-10-29",
+                "pageCount": 48,
+                "description": "Le premier album d'Astérix.",
+                "imageLinks": {
+                    "thumbnail": "http://books.google.com/small.jpg",
+                    "large": "http://books.google.com/large.jpg",
+                },
+                "industryIdentifiers": [
+                    {"type": "ISBN_13", "identifier": "9782012101340"},
+                ],
             },
-            'industryIdentifiers': [
-                {'type': 'ISBN_13', 'identifier': '9782012101340'},
-            ],
         }
-    }]
+    ]
 }
 
 
 class TestGoogleBooksSource(unittest.TestCase):
 
-    @patch('odoo.addons.comic_datasource.sources.google_books.requests.get')
+    @patch("odoo.addons.comic_datasource.sources.google_books.requests.get")
     def test_search_by_isbn_found(self, mock_get):
         mock_get.return_value = MagicMock(
             status_code=200,
             json=lambda: GOOGLE_BOOKS_RESPONSE,
         )
         from odoo.addons.comic_datasource.sources.google_books import GoogleBooksSource
-        source = GoogleBooksSource()
-        result = source.search_by_isbn('9782012101340')
-        self.assertIsNotNone(result)
-        self.assertEqual(result.title, 'Astérix le Gaulois')
-        self.assertEqual(result.isbn, '9782012101340')
-        self.assertEqual(result.editeur, 'Dargaud')
-        self.assertEqual(result.nb_pages, 48)
-        self.assertEqual(result.source, 'google')
-        self.assertEqual(len(result.auteurs), 1)
-        self.assertEqual(result.auteurs[0]['name'], 'René Goscinny')
 
-    @patch('odoo.addons.comic_datasource.sources.google_books.requests.get')
+        source = GoogleBooksSource()
+        result = source.search_by_isbn("9782012101340")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.title, "Astérix le Gaulois")
+        self.assertEqual(result.isbn, "9782012101340")
+        self.assertEqual(result.editeur, "Dargaud")
+        self.assertEqual(result.nb_pages, 48)
+        self.assertEqual(result.source, "google")
+        self.assertEqual(len(result.auteurs), 1)
+        self.assertEqual(result.auteurs[0]["name"], "René Goscinny")
+
+    @patch("odoo.addons.comic_datasource.sources.google_books.requests.get")
     def test_search_by_isbn_not_found(self, mock_get):
         mock_get.return_value = MagicMock(status_code=200, json=lambda: {})
         from odoo.addons.comic_datasource.sources.google_books import GoogleBooksSource
+
         source = GoogleBooksSource()
-        result = source.search_by_isbn('0000000000000')
+        result = source.search_by_isbn("0000000000000")
         self.assertIsNone(result)
 
-    @patch('odoo.addons.comic_datasource.sources.google_books.requests.get')
+    @patch("odoo.addons.comic_datasource.sources.google_books.requests.get")
     def test_search_by_isbn_quota_exceeded(self, mock_get):
         mock_get.return_value = MagicMock(status_code=429)
         from odoo.addons.comic_datasource.sources.google_books import GoogleBooksSource
+
         source = GoogleBooksSource()
-        result = source.search_by_isbn('9782012101340')
+        result = source.search_by_isbn("9782012101340")
         self.assertIsNone(result)
 
-    @patch('odoo.addons.comic_datasource.sources.google_books.requests.get')
+    @patch("odoo.addons.comic_datasource.sources.google_books.requests.get")
     def test_search_by_title(self, mock_get):
         mock_get.return_value = MagicMock(
             status_code=200,
             json=lambda: GOOGLE_BOOKS_RESPONSE,
         )
         from odoo.addons.comic_datasource.sources.google_books import GoogleBooksSource
-        source = GoogleBooksSource()
-        results = source.search_by_title('Astérix')
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0].title, 'Astérix le Gaulois')
 
-    @patch('odoo.addons.comic_datasource.sources.google_books.requests.get')
-    def test_network_error_returns_none(self, mock_get):
-        mock_get.side_effect = Exception('network error')
-        from odoo.addons.comic_datasource.sources.google_books import GoogleBooksSource
         source = GoogleBooksSource()
-        result = source.search_by_isbn('9782012101340')
+        results = source.search_by_title("Astérix")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].title, "Astérix le Gaulois")
+
+    @patch("odoo.addons.comic_datasource.sources.google_books.requests.get")
+    def test_network_error_returns_none(self, mock_get):
+        mock_get.side_effect = Exception("network error")
+        from odoo.addons.comic_datasource.sources.google_books import GoogleBooksSource
+
+        source = GoogleBooksSource()
+        result = source.search_by_isbn("9782012101340")
         self.assertIsNone(result)
 
     def test_date_normalization_year_only(self):
         from odoo.addons.comic_datasource.sources.google_books import GoogleBooksSource
+
         source = GoogleBooksSource()
         item = {
-            'id': 'x',
-            'volumeInfo': {
-                'title': 'Test',
-                'publishedDate': '1995',
-                'industryIdentifiers': [],
-                'authors': [],
-                'imageLinks': {},
-            }
+            "id": "x",
+            "volumeInfo": {
+                "title": "Test",
+                "publishedDate": "1995",
+                "industryIdentifiers": [],
+                "authors": [],
+                "imageLinks": {},
+            },
         }
         result = source._parse_volume(item)
-        self.assertEqual(result.date_parution, '1995-01-01')
+        self.assertEqual(result.date_parution, "1995-01-01")
 
 
 # ── Open Library ──────────────────────────────────────────────────────────────
 
 OL_RESPONSE = {
-    'ISBN:9782012101340': {
-        'title': 'Astérix le Gaulois',
-        'authors': [{'name': 'René Goscinny'}],
-        'publishers': [{'name': 'Dargaud'}],
-        'details': {
-            'publish_date': 'October 1961',
-            'number_of_pages': 48,
-            'key': '/books/OL123M',
+    "ISBN:9782012101340": {
+        "title": "Astérix le Gaulois",
+        "authors": [{"name": "René Goscinny"}],
+        "publishers": [{"name": "Dargaud"}],
+        "details": {
+            "publish_date": "October 1961",
+            "number_of_pages": 48,
+            "key": "/books/OL123M",
         },
     }
 }
@@ -121,40 +132,39 @@ OL_RESPONSE = {
 
 class TestOpenLibrarySource(unittest.TestCase):
 
-    @patch('odoo.addons.comic_datasource.sources.open_library.requests.head')
-    @patch('odoo.addons.comic_datasource.sources.open_library.requests.get')
+    @patch("odoo.addons.comic_datasource.sources.open_library.requests.head")
+    @patch("odoo.addons.comic_datasource.sources.open_library.requests.get")
     def test_search_by_isbn_found(self, mock_get, mock_head):
         mock_get.return_value = MagicMock(status_code=200, json=lambda: OL_RESPONSE)
-        mock_head.return_value = MagicMock(
-            status_code=200, headers={'Content-Length': '50000'}
-        )
+        mock_head.return_value = MagicMock(status_code=200, headers={"Content-Length": "50000"})
         from odoo.addons.comic_datasource.sources.open_library import OpenLibrarySource
-        source = OpenLibrarySource()
-        result = source.search_by_isbn('9782012101340')
-        self.assertIsNotNone(result)
-        self.assertEqual(result.title, 'Astérix le Gaulois')
-        self.assertEqual(result.editeur, 'Dargaud')
-        self.assertEqual(result.source, 'openlibrary')
 
-    @patch('odoo.addons.comic_datasource.sources.open_library.requests.head')
-    @patch('odoo.addons.comic_datasource.sources.open_library.requests.get')
+        source = OpenLibrarySource()
+        result = source.search_by_isbn("9782012101340")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.title, "Astérix le Gaulois")
+        self.assertEqual(result.editeur, "Dargaud")
+        self.assertEqual(result.source, "openlibrary")
+
+    @patch("odoo.addons.comic_datasource.sources.open_library.requests.head")
+    @patch("odoo.addons.comic_datasource.sources.open_library.requests.get")
     def test_cover_absent_returns_none(self, mock_get, mock_head):
         mock_get.return_value = MagicMock(status_code=200, json=lambda: OL_RESPONSE)
         # Couverture absente (Content-Length = 1)
-        mock_head.return_value = MagicMock(
-            status_code=200, headers={'Content-Length': '1'}
-        )
+        mock_head.return_value = MagicMock(status_code=200, headers={"Content-Length": "1"})
         from odoo.addons.comic_datasource.sources.open_library import OpenLibrarySource
+
         source = OpenLibrarySource()
-        result = source.search_by_isbn('9782012101340')
+        result = source.search_by_isbn("9782012101340")
         self.assertIsNone(result.cover_url)
 
-    @patch('odoo.addons.comic_datasource.sources.open_library.requests.get')
+    @patch("odoo.addons.comic_datasource.sources.open_library.requests.get")
     def test_search_by_isbn_empty(self, mock_get):
         mock_get.return_value = MagicMock(status_code=200, json=lambda: {})
         from odoo.addons.comic_datasource.sources.open_library import OpenLibrarySource
+
         source = OpenLibrarySource()
-        result = source.search_by_isbn('0000000000000')
+        result = source.search_by_isbn("0000000000000")
         self.assertIsNone(result)
 
 
@@ -197,24 +207,25 @@ BNF_XML_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 
 class TestBnfSource(unittest.TestCase):
 
-    @patch('odoo.addons.comic_datasource.sources.bnf.requests.get')
+    @patch("odoo.addons.comic_datasource.sources.bnf.requests.get")
     def test_search_by_isbn_found(self, mock_get):
         mock_get.return_value = MagicMock(status_code=200, text=BNF_XML_RESPONSE)
         from odoo.addons.comic_datasource.sources.bnf import BnfSource
-        source = BnfSource()
-        result = source.search_by_isbn('9782012101340')
-        self.assertIsNotNone(result)
-        self.assertEqual(result.title, 'Astérix le Gaulois')
-        self.assertEqual(result.isbn, '9782012101340')
-        self.assertEqual(result.editeur, 'Dargaud')
-        self.assertEqual(result.nb_pages, 48)
-        self.assertEqual(result.source, 'bnf')
-        self.assertEqual(len(result.auteurs), 2)
-        roles = {a['role'] for a in result.auteurs}
-        self.assertIn('scenariste', roles)
-        self.assertIn('dessinateur', roles)
 
-    @patch('odoo.addons.comic_datasource.sources.bnf.requests.get')
+        source = BnfSource()
+        result = source.search_by_isbn("9782012101340")
+        self.assertIsNotNone(result)
+        self.assertEqual(result.title, "Astérix le Gaulois")
+        self.assertEqual(result.isbn, "9782012101340")
+        self.assertEqual(result.editeur, "Dargaud")
+        self.assertEqual(result.nb_pages, 48)
+        self.assertEqual(result.source, "bnf")
+        self.assertEqual(len(result.auteurs), 2)
+        roles = {a["role"] for a in result.auteurs}
+        self.assertIn("scenariste", roles)
+        self.assertIn("dessinateur", roles)
+
+    @patch("odoo.addons.comic_datasource.sources.bnf.requests.get")
     def test_search_by_isbn_empty(self, mock_get):
         empty_xml = """<?xml version="1.0"?>
         <srw:searchRetrieveResponse xmlns:srw="http://www.loc.gov/zing/srw/">
@@ -223,41 +234,47 @@ class TestBnfSource(unittest.TestCase):
         </srw:searchRetrieveResponse>"""
         mock_get.return_value = MagicMock(status_code=200, text=empty_xml)
         from odoo.addons.comic_datasource.sources.bnf import BnfSource
+
         source = BnfSource()
-        result = source.search_by_isbn('0000000000000')
+        result = source.search_by_isbn("0000000000000")
         self.assertIsNone(result)
 
-    @patch('odoo.addons.comic_datasource.sources.bnf.requests.get')
+    @patch("odoo.addons.comic_datasource.sources.bnf.requests.get")
     def test_timeout_returns_none(self, mock_get):
-        mock_get.side_effect = Exception('timeout')
+        mock_get.side_effect = Exception("timeout")
         from odoo.addons.comic_datasource.sources.bnf import BnfSource
+
         source = BnfSource()
-        result = source.search_by_isbn('9782012101340')
+        result = source.search_by_isbn("9782012101340")
         self.assertIsNone(result)
 
 
 # ── BDGest ────────────────────────────────────────────────────────────────────
 
+
 class TestBdgestSource(unittest.TestCase):
 
     def test_disabled_by_default(self):
         from odoo.addons.comic_datasource.sources.bdgest import BdgestSource
+
         source = BdgestSource(env=None)
         # Sans env Odoo, is_available() retourne False (pas de config)
         self.assertFalse(source.is_available())
 
     def test_search_by_isbn_returns_none_when_disabled(self):
         from odoo.addons.comic_datasource.sources.bdgest import BdgestSource
+
         source = BdgestSource(env=None)
-        result = source.search_by_isbn('9782012101340')
+        result = source.search_by_isbn("9782012101340")
         self.assertIsNone(result)
 
     def test_search_by_title_returns_empty_when_disabled(self):
         from odoo.addons.comic_datasource.sources.bdgest import BdgestSource
+
         source = BdgestSource(env=None)
-        results = source.search_by_title('Astérix')
+        results = source.search_by_title("Astérix")
         self.assertEqual(results, [])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

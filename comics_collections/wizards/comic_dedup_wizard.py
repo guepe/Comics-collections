@@ -3,23 +3,25 @@ from odoo.exceptions import UserError
 
 
 class ComicWorkMergeWizard(models.TransientModel):
-    _name = 'comic.work.merge.wizard'
-    _description = 'Fusion de deux albums BD'
+    _name = "comic.work.merge.wizard"
+    _description = "Fusion de deux albums BD"
 
     source_work_id = fields.Many2one(
-        'comic.work', required=True, string='Album source (sera archivé)',
-        domain=[('active', '=', True)],
+        "comic.work",
+        required=True,
+        string="Album source (sera archivé)",
+        domain=[("active", "=", True)],
     )
     target_work_id = fields.Many2one(
-        'comic.work', required=True, string='Album cible (sera conservé)',
-        domain=[('active', '=', True)],
+        "comic.work",
+        required=True,
+        string="Album cible (sera conservé)",
+        domain=[("active", "=", True)],
     )
-    pair_id = fields.Many2one('comic.dedup.pair', string='Paire de doublons')
+    pair_id = fields.Many2one("comic.dedup.pair", string="Paire de doublons")
 
-    nb_editions_source = fields.Integer(
-        related='source_work_id.nb_editions', string='Éditions à transférer')
-    nb_auteurs_source = fields.Integer(
-        related='source_work_id.nb_auteurs', string='Auteurs à transférer')
+    nb_editions_source = fields.Integer(related="source_work_id.nb_editions", string="Éditions à transférer")
+    nb_auteurs_source = fields.Integer(related="source_work_id.nb_auteurs", string="Auteurs à transférer")
 
     def action_confirm_merge(self):
         self.ensure_one()
@@ -32,9 +34,9 @@ class ComicWorkMergeWizard(models.TransientModel):
             self.pair_id.unlink()
 
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'comic.work',
-            'res_id': self.target_work_id.id,
-            'view_mode': 'form',
-            'target': 'current',
+            "type": "ir.actions.act_window",
+            "res_model": "comic.work",
+            "res_id": self.target_work_id.id,
+            "view_mode": "form",
+            "target": "current",
         }

@@ -1,0 +1,66 @@
+[MASTER]
+load-plugins=pylint_odoo
+# Scripts CLI — pas des modules Odoo
+ignore=tools
+
+[FORMAT]
+max-line-length=120
+
+[MESSAGES CONTROL]
+disable=
+    # odoo/requests ne peuvent pas être importés dans l'env isolé pre-commit
+    import-error,
+    # Standard pylint trop bruyant pour une codebase Odoo
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    too-many-locals,
+    too-many-branches,
+    too-many-statements,
+    too-many-arguments,
+    too-many-instance-attributes,
+    too-many-public-methods,
+    too-few-public-methods,
+    too-many-positional-arguments,
+    too-many-lines,
+    # Patterns courants en Odoo (lazy imports, accès interne)
+    broad-exception-caught,
+    protected-access,
+    import-outside-toplevel,
+    # __manifest__.py est une expression dict nue par convention Odoo
+    pointless-statement,
+    # Longueur déjà vérifiée par flake8
+    line-too-long,
+    # Concaténation implicite parfois intentionnelle dans les URLs Odoo
+    implicit-str-concat,
+    # Exigences OCA non applicables à ce projet perso
+    manifest-required-author,
+    manifest-version-format,
+    missing-readme,
+    manifest-deprecated-key,
+    # setUpClass/setUp sont des noms standards Python/Odoo unittest
+    invalid-name,
+    # Reformatage optionnel — parfois intentionnel
+    consider-using-f-string,
+    unnecessary-lambda-assignment,
+    # prefer-env-translation : paradigme Odoo 19 récent, migration séparée
+    prefer-env-translation,
+    # Odoo controllers : **kwargs requis pour le routing même si non utilisé
+    unused-argument,
+    # Ordre imports : defer à black
+    wrong-import-order,
+    # Odoo translation : formatage % standard
+    translation-not-lazy,
+    translation-positional-used,
+    # Re-raise : on veut parfois montrer un UserError propre
+    raise-missing-from,
+    # Migrations SQL raw nécessaire
+    sql-injection,
+    # Paramètre filter dans controller portal — pattern courant
+    redefined-builtin,
+    # Code dupliqué : patterns communs dans les wizards Odoo
+    duplicate-code,
+    # print() : scripts CLI dans tools/ intentionnellement
+    print-used,
+    # Groupement d'imports : conflit avec black
+    ungrouped-imports,

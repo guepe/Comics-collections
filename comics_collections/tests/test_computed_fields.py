@@ -2,10 +2,12 @@
 
 On injecte des faux recordsets afin de tester la logique sans base de données.
 """
+
 import unittest
 
 
 # ── Faux objets imitant l'interface Odoo recordset ────────────────────────────
+
 
 class FakeAlbum:
     def __init__(self, dans_collection=False, image_couverture=None, tome=0):
@@ -51,10 +53,11 @@ class FakeSerie:
 
 # ── Logique extraite (miroir exact du code production) ────────────────────────
 
+
 def _compute_albums(self):
     for serie in self:
         serie.nb_albums_total = len(serie.album_ids)
-        serie.nb_albums_possedes = len(serie.album_ids.filtered('dans_collection'))
+        serie.nb_albums_possedes = len(serie.album_ids.filtered("dans_collection"))
 
 
 def _compute_has_cover(self):
@@ -64,11 +67,12 @@ def _compute_has_cover(self):
 
 def _compute_first_album_cover(self):
     for serie in self:
-        album = serie.album_ids.filtered('image_couverture').sorted('tome')
+        album = serie.album_ids.filtered("image_couverture").sorted("tome")
         serie.first_album_cover_id = album[0] if album else False
 
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
+
 
 class TestComputeAlbums(unittest.TestCase):
 
@@ -111,7 +115,7 @@ class TestComputeHasCover(unittest.TestCase):
         return serie
 
     def test_with_cover(self):
-        s = self._run(b'fake_image_data')
+        s = self._run(b"fake_image_data")
         self.assertTrue(s.has_cover)
 
     def test_without_cover(self):
@@ -119,7 +123,7 @@ class TestComputeHasCover(unittest.TestCase):
         self.assertFalse(s.has_cover)
 
     def test_empty_bytes(self):
-        s = self._run(b'')
+        s = self._run(b"")
         self.assertFalse(s.has_cover)
 
 
@@ -139,17 +143,17 @@ class TestComputeFirstAlbumCover(unittest.TestCase):
         self.assertFalse(s.first_album_cover_id)
 
     def test_picks_lowest_tome_with_cover(self):
-        a1 = FakeAlbum(tome=3, image_couverture=b'img3')
-        a2 = FakeAlbum(tome=1, image_couverture=b'img1')
+        a1 = FakeAlbum(tome=3, image_couverture=b"img3")
+        a2 = FakeAlbum(tome=1, image_couverture=b"img1")
         a3 = FakeAlbum(tome=2, image_couverture=None)
         s = self._run([a1, a2, a3])
         self.assertIs(s.first_album_cover_id, a2)
 
     def test_single_album_with_cover(self):
-        a = FakeAlbum(tome=1, image_couverture=b'img')
+        a = FakeAlbum(tome=1, image_couverture=b"img")
         s = self._run([a])
         self.assertIs(s.first_album_cover_id, a)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

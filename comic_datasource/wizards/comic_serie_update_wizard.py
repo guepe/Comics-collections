@@ -1,15 +1,15 @@
 import logging
 import re
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
 
 def _normalize_isbn(isbn):
-    raw = re.sub(r'[\-\s]', '', isbn or '')
+    raw = re.sub(r"[\-\s]", "", isbn or "")
     if len(raw) == 10 and raw[:9].isdigit():
-        base = '978' + raw[:9]
+        base = "978" + raw[:9]
         total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
         check = (10 - total % 10) % 10
         return base + str(check)
@@ -17,18 +17,18 @@ def _normalize_isbn(isbn):
 
 
 class ComicSerieUpdateWizard(models.TransientModel):
-    _name = 'comic.serie.update.wizard'
+    _name = "comic.serie.update.wizard"
     _description = "Mise à jour en lot des albums d'une série depuis les sources de données"
 
-    serie_id = fields.Many2one('comic.serie', required=True, readonly=True)
-    nb_albums = fields.Integer(compute='_compute_nb_albums', string='Albums à traiter')
+    serie_id = fields.Many2one("comic.serie", required=True, readonly=True)
+    nb_albums = fields.Integer(compute="_compute_nb_albums", string="Albums à traiter")
     state = fields.Selection(
-        [('confirm', 'Confirmation'), ('done', 'Terminé')],
-        default='confirm',
+        [("confirm", "Confirmation"), ("done", "Terminé")],
+        default="confirm",
     )
-    import_report = fields.Html(string='Rapport', readonly=True)
+    import_report = fields.Html(string="Rapport", readonly=True)
 
-    @api.depends('serie_id.work_ids')
+    @api.depends("serie_id.work_ids")
     def _compute_nb_albums(self):
         for rec in self:
             rec.nb_albums = len(rec.serie_id.work_ids)
@@ -40,7 +40,7 @@ class ComicSerieUpdateWizard(models.TransientModel):
         aggregator = ComicDataAggregator(env=self.env)
         updated, skipped, errors = [], [], []
 
-        for work in self.serie_id.work_ids.sorted('tome'):
+        for work in self.serie_id.work_ids.sorted("tome"):
             try:
                 agg = None
                 edition = work.edition_ids[:1]
@@ -69,7 +69,7 @@ class ComicSerieUpdateWizard(models.TransientModel):
                 errors.append(work)
 
         self.import_report = self._build_report(updated, skipped, errors)
-        self.state = 'done'
+        self.state = "done"
         return self._reopen()
 
     def _best_match_with_isbn(self, results, work):
@@ -83,35 +83,35 @@ class ComicSerieUpdateWizard(models.TransientModel):
     def _build_report(self, updated, skipped, errors):
         lines = []
         if updated:
-            lines.append(f'<b>✅ {len(updated)} mis à jour :</b><ul>')
-            lines += [f'<li>{w.titre_canonique}</li>' for w in updated]
-            lines.append('</ul>')
+            lines.append(f"<b>✅ {len(updated)} mis à jour :</b><ul>")
+            lines += [f"<li>{w.titre_canonique}</li>" for w in updated]
+            lines.append("</ul>")
         if skipped:
-            lines.append(f'<b>⏭️ {len(skipped)} ignoré(s) (non trouvé ou déjà à jour) :</b><ul>')
-            lines += [f'<li>{w.titre_canonique}</li>' for w in skipped]
-            lines.append('</ul>')
+            lines.append(f"<b>⏭️ {len(skipped)} ignoré(s) (non trouvé ou déjà à jour) :</b><ul>")
+            lines += [f"<li>{w.titre_canonique}</li>" for w in skipped]
+            lines.append("</ul>")
         if errors:
-            lines.append(f'<b>❌ {len(errors)} erreur(s) :</b><ul>')
-            lines += [f'<li>{w.titre_canonique}</li>' for w in errors]
-            lines.append('</ul>')
-        return ''.join(lines) or '<p>Aucune œuvre à traiter.</p>'
+            lines.append(f"<b>❌ {len(errors)} erreur(s) :</b><ul>")
+            lines += [f"<li>{w.titre_canonique}</li>" for w in errors]
+            lines.append("</ul>")
+        return "".join(lines) or "<p>Aucune œuvre à traiter.</p>"
 
     def action_close_and_return(self):
         """Ferme le wizard et retourne à la fiche série."""
         self.ensure_one()
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'comic.serie',
-            'res_id': self.serie_id.id,
-            'view_mode': 'form',
-            'target': 'current',
+            "type": "ir.actions.act_window",
+            "res_model": "comic.serie",
+            "res_id": self.serie_id.id,
+            "view_mode": "form",
+            "target": "current",
         }
 
     def _reopen(self):
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': self._name,
-            'res_id': self.id,
-            'view_mode': 'form',
-            'target': 'new',
+            "type": "ir.actions.act_window",
+            "res_model": self._name,
+            "res_id": self.id,
+            "view_mode": "form",
+            "target": "new",
         }

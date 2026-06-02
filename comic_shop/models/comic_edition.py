@@ -4,20 +4,20 @@ from odoo.tools import html2plaintext
 
 
 class ComicEdition(models.Model):
-    _inherit = 'comic.edition'
+    _inherit = "comic.edition"
 
     product_tmpl_id = fields.Many2one(
-        'product.template',
-        string='Produit',
-        ondelete='set null',
+        "product.template",
+        string="Produit",
+        ondelete="set null",
         copy=False,
         help="Produit Odoo associé à cette édition pour la vente en ligne et en caisse.",
     )
     sync_product = fields.Boolean(
-        string='Synchro auto',
+        string="Synchro auto",
         default=True,
         help="Si activé, les modifications de l'édition (couverture, synopsis, ...) se répercutent "
-             "automatiquement sur le produit lié.",
+        "automatiquement sur le produit lié.",
     )
 
     # --- Actions boutons ----------------------------------------------------
@@ -27,37 +27,37 @@ class ComicEdition(models.Model):
         if self.product_tmpl_id:
             raise UserError(_("Cette édition est déjà liée à un produit."))
 
-        category = self.env.ref('comic_shop.product_category_bd', raise_if_not_found=False)
-        pos_category = self.env.ref('comic_shop.pos_category_bd', raise_if_not_found=False)
+        category = self.env.ref("comic_shop.product_category_bd", raise_if_not_found=False)
+        pos_category = self.env.ref("comic_shop.pos_category_bd", raise_if_not_found=False)
         vals = {
-            'name': self._get_product_name(),
-            'type': 'consu',
-            'comic_edition_id': self.id,
-            'categ_id': category.id if category else False,
-            'available_in_pos': True,
+            "name": self._get_product_name(),
+            "type": "consu",
+            "comic_edition_id": self.id,
+            "categ_id": category.id if category else False,
+            "available_in_pos": True,
         }
         if pos_category:
-            vals['pos_categ_ids'] = [Command.link(pos_category.id)]
-        product = self.env['product.template'].create(vals)
+            vals["pos_categ_ids"] = [Command.link(pos_category.id)]
+        product = self.env["product.template"].create(vals)
         self.product_tmpl_id = product
         self._sync_to_product()
 
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'product.template',
-            'res_id': product.id,
-            'view_mode': 'form',
-            'target': 'current',
+            "type": "ir.actions.act_window",
+            "res_model": "product.template",
+            "res_id": product.id,
+            "view_mode": "form",
+            "target": "current",
         }
 
     def action_view_product(self):
         self.ensure_one()
         return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'product.template',
-            'res_id': self.product_tmpl_id.id,
-            'view_mode': 'form',
-            'target': 'current',
+            "type": "ir.actions.act_window",
+            "res_model": "product.template",
+            "res_id": self.product_tmpl_id.id,
+            "view_mode": "form",
+            "target": "current",
         }
 
     def action_unlink_product(self):
@@ -74,7 +74,7 @@ class ComicEdition(models.Model):
 
     # --- Auto-sync on write -------------------------------------------------
 
-    _SYNC_TRIGGER_FIELDS = {'image_couverture', 'synopsis', 'editeur_id', 'isbn_ids', 'work_id'}
+    _SYNC_TRIGGER_FIELDS = {"image_couverture", "synopsis", "editeur_id", "isbn_ids", "work_id"}
 
     def write(self, vals):
         res = super().write(vals)
@@ -89,16 +89,16 @@ class ComicEdition(models.Model):
         self.ensure_one()
         if not self.product_tmpl_id:
             return
-        pos_category = self.env.ref('comic_shop.pos_category_bd', raise_if_not_found=False)
+        pos_category = self.env.ref("comic_shop.pos_category_bd", raise_if_not_found=False)
         vals = {
-            'name': self._get_product_name(),
-            'image_1920': self.image_couverture or False,
-            'barcode': self._get_primary_isbn() or False,
-            'description_sale': html2plaintext(self.synopsis) if self.synopsis else False,
-            'available_in_pos': True,
+            "name": self._get_product_name(),
+            "image_1920": self.image_couverture or False,
+            "barcode": self._get_primary_isbn() or False,
+            "description_sale": html2plaintext(self.synopsis) if self.synopsis else False,
+            "available_in_pos": True,
         }
         if pos_category and pos_category not in self.product_tmpl_id.pos_categ_ids:
-            vals['pos_categ_ids'] = [Command.link(pos_category.id)]
+            vals["pos_categ_ids"] = [Command.link(pos_category.id)]
         self.product_tmpl_id.write(vals)
 
     def _get_product_name(self):
@@ -108,7 +108,7 @@ class ComicEdition(models.Model):
             parts.append(work.serie_id.name)
         if work.titre_canonique:
             parts.append(work.titre_canonique)
-        name = ' — '.join(parts) if parts else _('Édition BD')
+        name = " — ".join(parts) if parts else _("Édition BD")
         if work.tome:
             name = f"{name} (T{work.tome})"
         return name

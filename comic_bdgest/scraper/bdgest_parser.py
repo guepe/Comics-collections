@@ -61,10 +61,10 @@ from bs4 import BeautifulSoup
 
 BASE_URL = "https://www.bedetheque.com"
 try:
-    BeautifulSoup('', 'lxml')
-    _BS_PARSER = 'lxml'
+    BeautifulSoup("", "lxml")
+    _BS_PARSER = "lxml"
 except Exception:
-    _BS_PARSER = 'html.parser'
+    _BS_PARSER = "html.parser"
 
 
 class BdgestParser:
@@ -84,10 +84,7 @@ class BdgestParser:
         soup = BeautifulSoup(html, _BS_PARSER)
         results = []
 
-        items = (
-            soup.select('ul.search-list > li')
-            or soup.select('ul.liste-albums > li')
-        )
+        items = soup.select("ul.search-list > li") or soup.select("ul.liste-albums > li")
 
         for item in items:
             r = BdgestParser._parse_search_item(item)
@@ -106,54 +103,44 @@ class BdgestParser:
         )
         if not album_link:
             return None
-        bdgest_album_id = BdgestParser._id_from_url(album_link['href'], 'album')
+        bdgest_album_id = BdgestParser._id_from_url(album_link["href"], "album")
         if not bdgest_album_id:
             return None
 
         # Couverture
-        img = item.select_one('a.lnk_couv img') or item.select_one('img')
-        couverture_url = BdgestParser._abs(img.get('src', '')) if img else ''
+        img = item.select_one("a.lnk_couv img") or item.select_one("img")
+        couverture_url = BdgestParser._abs(img.get("src", "")) if img else ""
 
         # Série
         serie_link = item.select_one('a[href*="/serie-"]')
-        serie_name = serie_link.get_text(strip=True) if serie_link else ''
-        bdgest_serie_id = (
-            BdgestParser._id_from_url(serie_link['href'], 'serie')
-            if serie_link else None
-        )
+        serie_name = serie_link.get_text(strip=True) if serie_link else ""
+        bdgest_serie_id = BdgestParser._id_from_url(serie_link["href"], "serie") if serie_link else None
 
         # Tome
         tome_tag = item.select_one('.ntome, span.ntome, [class*="ntome"]')
         tome = BdgestParser._int(tome_tag.get_text(strip=True)) if tome_tag else None
 
         # Titre
-        titre_tag = (
-            item.select_one('a.lnk_titre')
-            or item.select_one('.infos-album a')
-            or item.select_one('.titre')
-        )
+        titre_tag = item.select_one("a.lnk_titre") or item.select_one(".infos-album a") or item.select_one(".titre")
         titre = titre_tag.get_text(strip=True) if titre_tag else album_link.get_text(strip=True)
 
         # Éditeur
-        editeur_tag = (
-            item.select_one('.infos-editeur a')
-            or item.select_one('.editeur')
-        )
-        editeur = editeur_tag.get_text(strip=True) if editeur_tag else ''
+        editeur_tag = item.select_one(".infos-editeur a") or item.select_one(".editeur")
+        editeur = editeur_tag.get_text(strip=True) if editeur_tag else ""
 
         # Auteurs
         auteurs = BdgestParser._parse_auteurs_tag(item)
 
         return {
-            'bdgest_album_id': bdgest_album_id,
-            'bdgest_serie_id': bdgest_serie_id,
-            'serie_name': serie_name,
-            'tome': tome,
-            'titre': titre,
-            'editeur': editeur,
-            'auteurs': auteurs,
-            'couverture_url': couverture_url,
-            'isbn': '',
+            "bdgest_album_id": bdgest_album_id,
+            "bdgest_serie_id": bdgest_serie_id,
+            "serie_name": serie_name,
+            "tome": tome,
+            "titre": titre,
+            "editeur": editeur,
+            "auteurs": auteurs,
+            "couverture_url": couverture_url,
+            "isbn": "",
         }
 
     # ──────────────────────────────────────────────────────────
@@ -167,99 +154,87 @@ class BdgestParser:
         Retourne : dict avec tous les champs disponibles.
         """
         soup = BeautifulSoup(html, _BS_PARSER)
-        result = {'bdgest_album_id': bdgest_album_id}
+        result = {"bdgest_album_id": bdgest_album_id}
 
-        section = (
-            soup.select_one('div.album-main')
-            or soup.select_one('div.main-infos')
-            or soup.body
-        )
+        section = soup.select_one("div.album-main") or soup.select_one("div.main-infos") or soup.body
 
         # ── ul.informations — label/valeur ──
-        for li in section.select('ul.informations > li, ul.infos > li'):
-            label_tag = li.select_one('label')
+        for li in section.select("ul.informations > li, ul.infos > li"):
+            label_tag = li.select_one("label")
             if not label_tag:
                 continue
-            key = label_tag.get_text(strip=True).lower().rstrip(':').strip()
+            key = label_tag.get_text(strip=True).lower().rstrip(":").strip()
 
             # Valeur : tout sauf le label
             label_tag.extract()
-            value = li.get_text(separator=' ', strip=True)
+            value = li.get_text(separator=" ", strip=True)
 
             BdgestParser._map_info_field(result, key, value, li)
 
         # ── Série depuis lien si pas encore trouvée ──
-        if not result.get('serie_name') or not result.get('bdgest_serie_id'):
+        if not result.get("serie_name") or not result.get("bdgest_serie_id"):
             serie_link = soup.select_one('a[href*="/serie-"]')
             if serie_link:
-                result.setdefault('serie_name', serie_link.get_text(strip=True))
-                result.setdefault(
-                    'bdgest_serie_id',
-                    BdgestParser._id_from_url(serie_link['href'], 'serie')
-                )
+                result.setdefault("serie_name", serie_link.get_text(strip=True))
+                result.setdefault("bdgest_serie_id", BdgestParser._id_from_url(serie_link["href"], "serie"))
 
         # ── Couverture ──
         cover_img = (
-            soup.select_one('div.couverture img')
-            or soup.select_one('img.couv_serie')
+            soup.select_one("div.couverture img")
+            or soup.select_one("img.couv_serie")
             or soup.select_one('[class*="couv"] img')
         )
-        couverture_url = ''
+        couverture_url = ""
         if cover_img:
-            src = cover_img.get('src') or cover_img.get('data-src', '')
+            src = cover_img.get("src") or cover_img.get("data-src", "")
             couverture_url = BdgestParser._abs(src)
-        result['couverture_url'] = couverture_url
+        result["couverture_url"] = couverture_url
 
         # ── Synopsis ──
-        if not result.get('synopsis'):
+        if not result.get("synopsis"):
             resume_tag = (
-                soup.select_one('div.resume')
-                or soup.select_one('div.synopsis')
-                or soup.select_one('[class*="resume"]')
+                soup.select_one("div.resume") or soup.select_one("div.synopsis") or soup.select_one('[class*="resume"]')
             )
             if resume_tag:
-                result['synopsis'] = resume_tag.get_text(separator='\n', strip=True)
+                result["synopsis"] = resume_tag.get_text(separator="\n", strip=True)
 
         # ── Auteurs ──
-        result['auteurs'] = BdgestParser._parse_auteurs_detail(section)
+        result["auteurs"] = BdgestParser._parse_auteurs_detail(section)
 
         # ── Normalisation ──
-        if result.get('tome'):
-            result['tome'] = BdgestParser._int(result['tome'])
-        if result.get('nb_pages'):
-            result['nb_pages'] = BdgestParser._int(result['nb_pages'])
-        if result.get('isbn'):
-            result['isbn'] = re.sub(r'[\s\-]', '', str(result['isbn']))
+        if result.get("tome"):
+            result["tome"] = BdgestParser._int(result["tome"])
+        if result.get("nb_pages"):
+            result["nb_pages"] = BdgestParser._int(result["nb_pages"])
+        if result.get("isbn"):
+            result["isbn"] = re.sub(r"[\s\-]", "", str(result["isbn"]))
 
         return result
 
     @staticmethod
     def _map_info_field(result, key, value, li):
         """Mappe un label bedetheque → champ interne."""
-        if any(k in key for k in ('titre', 'title')):
-            result.setdefault('titre', value)
-        elif any(k in key for k in ('série', 'serie', 'collection')):
-            result.setdefault('serie_name', value)
+        if any(k in key for k in ("titre", "title")):
+            result.setdefault("titre", value)
+        elif any(k in key for k in ("série", "serie", "collection")):
+            result.setdefault("serie_name", value)
             serie_link = li.select_one('a[href*="/serie-"]')
             if serie_link:
-                result.setdefault(
-                    'bdgest_serie_id',
-                    BdgestParser._id_from_url(serie_link['href'], 'serie')
-                )
-        elif key in ('tome', 'volume', 'numéro'):
-            result.setdefault('tome', value)
-        elif any(k in key for k in ('ean', 'isbn')):
-            result.setdefault('isbn', value)
-        elif any(k in key for k in ('parution', 'date de parution')):
-            result.setdefault('date_parution', BdgestParser._parse_date(value))
-        elif any(k in key for k in ('dépôt légal', 'depot legal')):
-            result.setdefault('date_depot_legal', BdgestParser._parse_date(value))
-        elif any(k in key for k in ('planches', 'pages', 'nb pages')):
-            result.setdefault('nb_pages', value)
-        elif any(k in key for k in ('éditeur', 'editeur', 'publisher')):
-            result.setdefault('editeur', value)
-        elif any(k in key for k in ('résumé', 'resume', 'synopsis')):
-            result.setdefault('synopsis', value)
+                result.setdefault("bdgest_serie_id", BdgestParser._id_from_url(serie_link["href"], "serie"))
+        elif key in ("tome", "volume", "numéro"):
+            result.setdefault("tome", value)
+        elif any(k in key for k in ("ean", "isbn")):
+            result.setdefault("isbn", value)
+        elif any(k in key for k in ("parution", "date de parution")):
+            result.setdefault("date_parution", BdgestParser._parse_date(value))
+        elif any(k in key for k in ("dépôt légal", "depot legal")):
+            result.setdefault("date_depot_legal", BdgestParser._parse_date(value))
+        elif any(k in key for k in ("planches", "pages", "nb pages")):
+            result.setdefault("nb_pages", value)
+        elif any(k in key for k in ("éditeur", "editeur", "publisher")):
+            result.setdefault("editeur", value)
+        elif any(k in key for k in ("résumé", "resume", "synopsis")):
+            result.setdefault("synopsis", value)
 
     # ──────────────────────────────────────────────────────────
     # Albums d'une série
@@ -275,41 +250,33 @@ class BdgestParser:
 
         # ID et nom série
         canonical = soup.select_one('link[rel="canonical"]')
-        bdgest_serie_id = (
-            BdgestParser._id_from_url(canonical['href'], 'serie')
-            if canonical else None
-        )
-        h1 = (
-            soup.select_one('h1[itemprop="name"]')
-            or soup.select_one('h1.serie')
-            or soup.select_one('h1')
-        )
-        serie_name = h1.get_text(strip=True) if h1 else ''
+        bdgest_serie_id = BdgestParser._id_from_url(canonical["href"], "serie") if canonical else None
+        h1 = soup.select_one('h1[itemprop="name"]') or soup.select_one("h1.serie") or soup.select_one("h1")
+        serie_name = h1.get_text(strip=True) if h1 else ""
 
         results = []
         seen = set()
 
         # Liens album dans la liste de la série
         for link in soup.select('ul.serie-albums a[href*="/album-"], li.album a[href*="/album-"], a[href*="/album-"]'):
-            bdgest_album_id = BdgestParser._id_from_url(link['href'], 'album')
+            bdgest_album_id = BdgestParser._id_from_url(link["href"], "album")
             if not bdgest_album_id or bdgest_album_id in seen:
                 continue
             seen.add(bdgest_album_id)
 
-            parent = link.find_parent('li') or link.parent
-            tome_tag = (
-                parent.select_one('.ntome, span.ntome')
-                if parent else None
-            )
+            parent = link.find_parent("li") or link.parent
+            tome_tag = parent.select_one(".ntome, span.ntome") if parent else None
             tome = BdgestParser._int(tome_tag.get_text(strip=True)) if tome_tag else None
 
-            results.append({
-                'bdgest_album_id': bdgest_album_id,
-                'bdgest_serie_id': bdgest_serie_id,
-                'serie_name': serie_name,
-                'tome': tome,
-                'titre': link.get_text(strip=True),
-            })
+            results.append(
+                {
+                    "bdgest_album_id": bdgest_album_id,
+                    "bdgest_serie_id": bdgest_serie_id,
+                    "serie_name": serie_name,
+                    "tome": tome,
+                    "titre": link.get_text(strip=True),
+                }
+            )
 
         return results
 
@@ -321,35 +288,35 @@ class BdgestParser:
     def _parse_auteurs_tag(tag):
         """Extrait auteurs + rôles depuis un tag quelconque (list item)."""
         auteurs = []
-        for li in tag.select('ul.auteurs > li, .auteurs > li'):
-            label = li.select_one('label')
-            role_text = label.get_text(strip=True).lower() if label else ''
+        for li in tag.select("ul.auteurs > li, .auteurs > li"):
+            label = li.select_one("label")
+            role_text = label.get_text(strip=True).lower() if label else ""
             role = BdgestParser._role(role_text)
-            for a in li.select('a'):
+            for a in li.select("a"):
                 nom = a.get_text(strip=True)
                 if nom:
-                    auteurs.append({'nom': nom, 'role': role})
+                    auteurs.append({"nom": nom, "role": role})
         # Fallback : liens auteur directs
         if not auteurs:
             for a in tag.select('a[href*="/auteur-"]'):
                 nom = a.get_text(strip=True)
-                parent_text = a.parent.get_text(' ', strip=True).lower() if a.parent else ''
+                parent_text = a.parent.get_text(" ", strip=True).lower() if a.parent else ""
                 if nom:
-                    auteurs.append({'nom': nom, 'role': BdgestParser._role(parent_text)})
+                    auteurs.append({"nom": nom, "role": BdgestParser._role(parent_text)})
         return auteurs
 
     @staticmethod
     def _parse_auteurs_detail(section):
         """Extrait auteurs avec rôles depuis la section d'une fiche album."""
         auteurs = []
-        for li in section.select('ul.auteurs > li'):
-            label = li.select_one('label')
-            role_text = label.get_text(strip=True).lower() if label else ''
+        for li in section.select("ul.auteurs > li"):
+            label = li.select_one("label")
+            role_text = label.get_text(strip=True).lower() if label else ""
             role = BdgestParser._role(role_text)
             for a in li.select('a[href*="/auteur-"]'):
                 nom = a.get_text(strip=True)
                 if nom:
-                    auteurs.append({'nom': nom, 'role': role})
+                    auteurs.append({"nom": nom, "role": role})
         if not auteurs:
             auteurs = BdgestParser._parse_auteurs_tag(section)
         return auteurs
@@ -365,21 +332,21 @@ class BdgestParser:
         /album-12345-BD-Titre.html → 12345
         /serie-678-Titre.html      → 678
         """
-        m = re.search(rf'/{prefix}-(\d+)-', url or '')
+        m = re.search(rf"/{prefix}-(\d+)-", url or "")
         return int(m.group(1)) if m else None
 
     @staticmethod
     def _int(value):
         """Convertit une chaîne en entier en ignorant les caractères non numériques."""
-        digits = re.sub(r'\D', '', str(value or ''))
+        digits = re.sub(r"\D", "", str(value or ""))
         return int(digits) if digits else None
 
     @staticmethod
     def _abs(url):
         """Retourne une URL absolue."""
         if not url:
-            return ''
-        return url if url.startswith('http') else BASE_URL + url
+            return ""
+        return url if url.startswith("http") else BASE_URL + url
 
     @staticmethod
     def _parse_date(value):
@@ -388,34 +355,34 @@ class BdgestParser:
         Formats rencontrés : '01/1961', '01/01/1961', '1961', 'janvier 1961'.
         """
         if not value:
-            return ''
+            return ""
         value = value.strip()
         # JJ/MM/AAAA
-        m = re.match(r'(\d{2})/(\d{2})/(\d{4})', value)
+        m = re.match(r"(\d{2})/(\d{2})/(\d{4})", value)
         if m:
-            return f'{m.group(3)}-{m.group(2)}-{m.group(1)}'
+            return f"{m.group(3)}-{m.group(2)}-{m.group(1)}"
         # MM/AAAA
-        m = re.match(r'(\d{2})/(\d{4})', value)
+        m = re.match(r"(\d{2})/(\d{4})", value)
         if m:
-            return f'{m.group(2)}-{m.group(1)}-01'
+            return f"{m.group(2)}-{m.group(1)}-01"
         # AAAA seul
-        m = re.match(r'(\d{4})', value)
+        m = re.match(r"(\d{4})", value)
         if m:
-            return f'{m.group(1)}-01-01'
+            return f"{m.group(1)}-01-01"
         return value
 
     @staticmethod
     def _role(text):
         """Déduit le rôle d'un auteur depuis le texte du label (FR)."""
         t = text.lower()
-        if any(k in t for k in ('scénario', 'scenar', 'script', 'texte')):
-            return 'scenariste'
-        if any(k in t for k in ('dessin', 'illustration', 'crayon', 'pencil')):
-            return 'dessinateur'
-        if any(k in t for k in ('colori', 'couleur', 'color')):
-            return 'coloriste'
-        if any(k in t for k in ('encr', 'ink')):
-            return 'encreur'
-        if any(k in t for k in ('traduct', 'translat')):
-            return 'traducteur'
-        return 'autre'
+        if any(k in t for k in ("scénario", "scenar", "script", "texte")):
+            return "scenariste"
+        if any(k in t for k in ("dessin", "illustration", "crayon", "pencil")):
+            return "dessinateur"
+        if any(k in t for k in ("colori", "couleur", "color")):
+            return "coloriste"
+        if any(k in t for k in ("encr", "ink")):
+            return "encreur"
+        if any(k in t for k in ("traduct", "translat")):
+            return "traducteur"
+        return "autre"

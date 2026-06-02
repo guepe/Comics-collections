@@ -8,20 +8,20 @@ Règles de fusion :
 - date_depot_legal : BnF prioritaire (seule source officielle)
 - cover_url : Google extraLarge > Open Library L > BDGest
 """
+
 import logging
 from .sources import GoogleBooksSource, OpenLibrarySource, BnfSource, BdgestSource
-from .sources.base import ComicSourceResult
 
 _logger = logging.getLogger(__name__)
 
-DEFAULT_SOURCE_ORDER = ['google', 'openlibrary', 'bnf', 'bdgest']
+DEFAULT_SOURCE_ORDER = ["google", "openlibrary", "bnf", "bdgest"]
 
 # Pour chaque champ : ordre de priorité des sources (différent de l'ordre de cascade)
 FIELD_PRIORITY = {
-    'synopsis': ['google', 'bnf', 'bdgest', 'openlibrary'],
-    'date_depot_legal': ['bnf'],
-    'cover_url': ['google', 'openlibrary', 'bdgest'],
-    'cover_url_small': ['google', 'openlibrary', 'bdgest'],
+    "synopsis": ["google", "bnf", "bdgest", "openlibrary"],
+    "date_depot_legal": ["bnf"],
+    "cover_url": ["google", "openlibrary", "bdgest"],
+    "cover_url_small": ["google", "openlibrary", "bdgest"],
 }
 
 
@@ -29,23 +29,24 @@ class AggregatedResult:
     """
     Résultat fusionné avec traçabilité de la source de chaque champ.
     """
+
     def __init__(self):
         self.data = {}
         self.field_sources = {}  # field_name → source_name
 
     def set_field(self, field, value, source):
-        if value is not None and value != '' and field not in self.data:
+        if value is not None and value != "" and field not in self.data:
             self.data[field] = value
             self.field_sources[field] = source
 
     def set_field_force(self, field, value, source):
         """Écrase même si déjà rempli (pour les champs à priorité explicite)."""
-        if value is not None and value != '':
+        if value is not None and value != "":
             self.data[field] = value
             self.field_sources[field] = source
 
     def to_dict(self):
-        return {**self.data, 'field_sources': self.field_sources}
+        return {**self.data, "field_sources": self.field_sources}
 
 
 class ComicDataAggregator:
@@ -57,10 +58,10 @@ class ComicDataAggregator:
     def __init__(self, env=None):
         self._env = env
         self._sources = {
-            'google': GoogleBooksSource(env),
-            'openlibrary': OpenLibrarySource(env),
-            'bnf': BnfSource(env),
-            'bdgest': BdgestSource(env),
+            "google": GoogleBooksSource(env),
+            "openlibrary": OpenLibrarySource(env),
+            "bnf": BnfSource(env),
+            "bdgest": BdgestSource(env),
         }
         self._cache = {}  # clé: "isbn:XXX" ou "title:XXX" → résultat
 
@@ -68,16 +69,17 @@ class ComicDataAggregator:
         config = None
         if self._env:
             import json
-            raw = self._env['ir.config_parameter'].sudo().get_param('comic.datasource_order', '')
+
+            raw = self._env["ir.config_parameter"].sudo().get_param("comic.datasource_order", "")
             if raw:
                 try:
                     config = json.loads(raw)
                 except Exception:
-                    pass
+                    _logger.debug("Invalid JSON in datasource config, using defaults")
         return config or DEFAULT_SOURCE_ORDER
 
     def search(self, isbn=None, title=None, author=None) -> AggregatedResult:
-        cache_key = f'isbn:{isbn}' if isbn else f'title:{title}:{author}'
+        cache_key = f"isbn:{isbn}" if isbn else f"title:{title}:{author}"
         if cache_key in self._cache:
             return self._cache[cache_key]
 
@@ -105,9 +107,19 @@ class ComicDataAggregator:
 
         # 2. Fusion — champ par champ selon les règles de priorité
         aggregated = AggregatedResult()
-        scalar_fields = ['title', 'serie_name', 'tome', 'isbn', 'date_parution',
-                         'date_depot_legal', 'nb_pages', 'editeur', 'synopsis',
-                         'cover_url', 'cover_url_small']
+        scalar_fields = [
+            "title",
+            "serie_name",
+            "tome",
+            "isbn",
+            "date_parution",
+            "date_depot_legal",
+            "nb_pages",
+            "editeur",
+            "synopsis",
+            "cover_url",
+            "cover_url_small",
+        ]
 
         for field in scalar_fields:
             priority = FIELD_PRIORITY.get(field, order)
@@ -121,15 +133,16 @@ class ComicDataAggregator:
 
         # auteurs : prend la liste la plus complète disponible
         best_auteurs = []
+        auteurs_source = None
         for source_name in order:
             result = results_by_source.get(source_name)
             if result and result.auteurs and len(result.auteurs) > len(best_auteurs):
                 best_auteurs = result.auteurs
                 auteurs_source = source_name
         if best_auteurs:
-            aggregated.set_field('auteurs', best_auteurs, auteurs_source)
+            aggregated.set_field("auteurs", best_auteurs, auteurs_source)
 
-        aggregated.set_field('sources_queried', list(results_by_source.keys()), 'aggregator')
+        aggregated.set_field("sources_queried", list(results_by_source.keys()), "aggregator")
 
         self._cache[cache_key] = aggregated
         return aggregated
@@ -148,10 +161,11 @@ class ComicDataAggregator:
 
     def _safe_search(self, method, *args):
         from .sources.google_books import GoogleBooksQuotaError
+
         try:
             return method(*args)
         except GoogleBooksQuotaError:
             raise  # quota error remonte jusqu'à l'appelant pour affichage UI
         except Exception as e:
-            _logger.warning('Aggregator: source error: %s', e)
+            _logger.warning("Aggregator: source error: %s", e)
             return None

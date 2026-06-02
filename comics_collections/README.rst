@@ -2,7 +2,8 @@
 Comic Collection
 ================
 
-**Gérez votre collection de bandes dessinées dans Odoo 19.**
+Manage your comic book collection in Odoo 19.
+Track series, albums, authors, publishers, loans and duplicates — all in one place.
 
 .. image:: https://img.shields.io/badge/licence-LGPL--3-blue.png
    :target: http://www.gnu.org/licenses/lgpl-3.0-standalone.html
@@ -11,85 +12,102 @@ Comic Collection
 .. image:: https://img.shields.io/badge/odoo-19.0-purple.png
    :alt: Odoo 19.0
 
-Description
-===========
+**Table of contents**
 
-Ce module permet de gérer une collection personnelle de bandes dessinées
-directement dans Odoo 19.
+.. contents::
+   :local:
 
-Fonctionnalités :
+Features
+========
 
-* **Séries et albums** avec couvertures, synopsis, auteurs, éditeurs
-* **Vues Kanban** avec grille de couvertures et barre de progression des séries
-* **Wishlist** pour les tomes à acquérir
-* **État de lecture** (Non lu / En cours / Lu) et **note** par album
-* **Enrichissement automatique** depuis Google Books (ISBN ou titre), Open Library, BnF
-* **Import CSV/XLS/XLSX** avec wizard de mapping et rapport d'erreurs
-* **Liens d'achat** auto-générés vers Club.be, Amazon.be et FNAC.be
-* Auteurs liés aux contacts Odoo natifs (``res.partner``)
-* Gestion des genres, éditeurs, et historique via chatter
+- **Series & Albums** — Organise your collection by series and individual albums (tomes).
+  Each album holds edition metadata: publisher, publication date, language, format,
+  cover image, synopsis, page count and purchase links (Club.be, Amazon.be, FNAC.be).
 
-Installation
-============
+- **Authors** — Link authors to albums with their role: *scénariste*, *dessinateur*,
+  *coloriste* or *autre*. Authors are stored as standard ``res.partner`` records and
+  benefit from the full Odoo contact management.
 
-1. Copier le module ``comics_collections`` dans votre répertoire ``addons``
-2. Mettre à jour la liste des modules dans Odoo
-3. Installer *Comic Collection* depuis le menu Apps
+- **Publishers & Genres** — Dedicated models for publishers (``comic.editeur``) and
+  genres (``comic.genre``) with full list views and easy assignment on series.
 
-Pour utiliser l'enrichissement depuis Google Books :
+- **ISBN management** — EAN-13 / ISBN-10 validation with uniqueness constraint.
+  Each edition can carry multiple ISBN records (``comic.isbn``).
 
-* Créer une clé API gratuite sur `console.cloud.google.com <https://console.cloud.google.com>`_
-* La saisir dans *Configuration → Paramètres → Sources de données BD*
+- **Loans (Prêts)** — Track who borrowed which album, expected and effective return dates.
+  Overdue loans are highlighted automatically.
 
-Aucune dépendance Python supplémentaire n'est requise pour le module de base.
+- **CSV / XLS / XLSX import wizard** — Import large collections from spreadsheets.
+  A column-mapping step lets you adapt any file layout to the Odoo schema, with a
+  detailed error report for rows that failed.
 
-Le module ``comic_datasource`` (optionnel) ajoute le wizard de recherche
-multi-sources et l'enrichissement automatique depuis les APIs externes.
+- **Deduplication** — Automatic detection of probable duplicates based on title
+  similarity (``difflib.SequenceMatcher``, threshold 0.85). A merge wizard lets you
+  pick the canonical record and archive the duplicate.
+
+- **Purchase links cron** — Weekly scheduled action fills missing purchase-link URLs
+  for all editions that have an ISBN.
+
+- **Chatter & tracking** — ``comic.work`` and ``comic.edition`` inherit
+  ``mail.thread`` and ``mail.activity.mixin`` for full change history.
+
+Security Groups
+===============
+
++-------------------------+----------------------------------------------+
+| Group                   | Access                                       |
++=========================+==============================================+
+| Comic User              | Read/write on own records                    |
++-------------------------+----------------------------------------------+
+| Comic Manager           | Full access + configuration menu             |
++-------------------------+----------------------------------------------+
 
 Configuration
 =============
 
-Après installation :
+No specific configuration is required after installation. The module ships with
+default genre data and an optional demo dataset.
 
-1. Accéder à **Bandes Dessinées → Configuration** (groupe Gestionnaire)
-2. Configurer la clé API Google Books si souhaité
-3. Créer vos premiers genres et éditeurs (ou utiliser les données de démonstration)
-
-Groupes de sécurité
--------------------
-
-* **Utilisateur BD** : accès en lecture/écriture à sa propre collection
-* **Gestionnaire BD** : accès complet + configuration
+To adjust the weekly purchase-links cron, go to
+**Technical → Automation → Scheduled Actions** and edit
+*Comic — Fill missing purchase links*.
 
 Usage
 =====
 
-**Ajouter une série :**
+1. Go to **Comics** in the main menu.
+2. Create series under **Comics → Series**.
+3. Add albums (tomes) under a series via the *Albums* tab or from **Comics → Albums**.
+4. Editions (publisher-level metadata: ISBN, date, format) live under
+   **Configuration → Advanced → Editions**.
+5. Import a spreadsheet via **Comics → Import → Import from file**.
+6. Review potential duplicates via **Comics → Deduplication**.
 
-* *Ma Collection → Séries → Nouveau*
-* Ou importer depuis le wizard *Rechercher des BD* (module ``comic_datasource``)
+Data Model
+==========
 
-**Importer une collection existante :**
+::
 
-* *Ma Collection → Import CSV/Excel*
-* Télécharger le modèle de fichier, le remplir, l'uploader
+    comic.serie
+      └──< comic.work          (album / tome)
+             ├──< comic.work.auteur.line   (partner_id + role)
+             └──< comic.edition
+                    └──< comic.isbn        (EAN-13, unique)
 
-**Gérer la wishlist :**
+    comic.pret                 (loan record)
+    comic.dedup.pair           (detected duplicate pair)
 
-* Cocher *Dans ma wishlist* sur un album
-* Accéder à la vue dédiée *Wishlist* dans le menu
+Known Issues / Roadmap
+=======================
 
-Roadmap
-=======
-
-* Module IA (génération de synopsis via Claude / OpenAI)
-* Gestion des prêts
-* Dashboard statistiques
+- AI-assisted synopsis generation (``comic_ai`` module) is not yet implemented.
+- Portal browsing and customer library are provided by the ``comic_shop`` module.
+- Multi-language title normalisation currently covers FR, NL and EN articles only.
 
 Bug Tracker
 ===========
 
-Les bugs peuvent être signalés sur le dépôt GitHub du projet.
+Please report issues at https://github.com/your-org/Comics-collections/issues.
 
 Credits
 =======
@@ -102,6 +120,4 @@ Authors
 Maintainers
 -----------
 
-* Belspace (sales@belspace.net)
-
-This module is maintained by Belspace.
+* Belspace — sales@belspace.net

@@ -8,20 +8,20 @@
 
 ## 🗺️ Table des matières
 
-| US | Titre | Priorité |
-|---|---|---|
-| US-035 | ✅ Scaffold comic_shop — désinstallation sécurisée | 🟡 |
-| US-042 | ✅ Intégration POS (caisse) | 🟠 |
-| US-044 | ✅ Ajout BD hors catalogue (portail client) | 🟠 |
-| US-045 | ✅ Import POS → bibliothèque (livré dans US-042) | 🟠 |
-| US-046 | Rapport "BD non vendues les plus suivies" | 🟡 |
-| US-047 | Rapport "Séries et auteurs à référencer" | 🟡 |
-| US-048 | Notification CRM à la mise en catalogue | 🟡 |
-| US-049 | Dashboard commerçant — vue marché | 🟡 |
-| US-026 | Configuration connecteurs IA (module comic_ai) | 🟡 |
-| US-027 | Génération synopsis par IA | 🟡 |
-| US-028 | Traduction synopsis par IA | 🟡 |
-| US-029 | Découverte IA par profil de goûts | 🟡 |
+| US     | Titre                                              | Priorité |
+| ------ | -------------------------------------------------- | -------- |
+| US-035 | ✅ Scaffold comic_shop — désinstallation sécurisée | 🟡       |
+| US-042 | ✅ Intégration POS (caisse)                        | 🟠       |
+| US-044 | ✅ Ajout BD hors catalogue (portail client)        | 🟠       |
+| US-045 | ✅ Import POS → bibliothèque (livré dans US-042)   | 🟠       |
+| US-046 | Rapport "BD non vendues les plus suivies"          | 🟡       |
+| US-047 | Rapport "Séries et auteurs à référencer"           | 🟡       |
+| US-048 | Notification CRM à la mise en catalogue            | 🟡       |
+| US-049 | Dashboard commerçant — vue marché                  | 🟡       |
+| US-026 | Configuration connecteurs IA (module comic_ai)     | 🟡       |
+| US-027 | Génération synopsis par IA                         | 🟡       |
+| US-028 | Traduction synopsis par IA                         | 🟡       |
+| US-029 | Découverte IA par profil de goûts                  | 🟡       |
 
 ---
 
@@ -333,3 +333,46 @@ Critères d'acceptance :
 - [ ] Bouton "Vérifier sur le datasource" par suggestion (évite les hallucinations IA)
 - [ ] Gestion d'erreur : clé API invalide ou timeout → message clair
 ```
+
+## US-030 — Mise en place du pre-commit OCA ✅
+
+**En tant que** développeur OCA
+**Je veux** configurer pre-commit avec les règles OCA sur mon projet
+**Afin de** garantir la qualité du code avant chaque commit et faciliter l'acceptation par l'OCA
+
+### Critères d'acceptance
+
+- [x] `pre-commit` installé dans l'environnement Python du projet
+- [x] Fichier `.pre-commit-config.yaml` à la racine (adapté — URL MQT en 404, config équivalente)
+- [x] Hooks actifs : black, flake8, pylint-odoo (prettier XML non ajouté — optionnel)
+- [x] `pre-commit run --all-files` passe sans erreur bloquante sur les modules existants
+- [x] Fichier `.flake8` configuré (max-line-length=120, exclusions Odoo standard)
+- [x] Fichier `pyproject.toml` configuré pour black (line-length=120)
+- [x] README.rst généré en EN pour chaque module (comics_collections, comic_datasource, comic_bdgest, comic_shop)
+- [x] `__manifest__.py` valides (19.0.x.y.z, LGPL-3, author Belspace) — format OCA 18.0 non applicable
+- [x] Documentation des commandes dans README.md (section Développement)
+
+### Fichiers à créer / modifier
+
+- `.pre-commit-config.yaml`
+- `.flake8`
+- `pyproject.toml`
+- `comic_collection/__manifest__.py` (vérification/correction)
+- `comic_collection/README.rst`
+
+### Commandes de référence
+
+```bash
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
+```
+
+### Notes
+
+- Line length OCA standard : 120 caractères
+- Version format obligatoire : `18.0.1.0.0`
+- Licence : `LGPL-3`
+- Author : ton nom ou organisation
+
+---

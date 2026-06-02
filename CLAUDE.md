@@ -9,37 +9,38 @@
 
 Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 
-| Module | Rôle | État |
-|---|---|---|
-| `comics_collections` | Collection, catalogue, import CSV/XLSX, déduplication | ✅ livré |
-| `comic_datasource` | Enrichissement multi-sources (Google Books, Open Library, BnF, BDGest fallback) | ✅ livré |
-| `comic_bdgest` | Scraping BDGest enrichissement | ✅ livré |
-| `comic_shop` | Shop en ligne, caisse (POS partiel), bibliothèque client portail | ✅ majeure partie livrée |
-| `comic_ai` | Génération IA (synopsis, traduction) — Claude + OpenAI | ⏳ non commencé |
+| Module               | Rôle                                                                            | État                     |
+| -------------------- | ------------------------------------------------------------------------------- | ------------------------ |
+| `comics_collections` | Collection, catalogue, import CSV/XLSX, déduplication                           | ✅ livré                 |
+| `comic_datasource`   | Enrichissement multi-sources (Google Books, Open Library, BnF, BDGest fallback) | ✅ livré                 |
+| `comic_bdgest`       | Scraping BDGest enrichissement                                                  | ✅ livré                 |
+| `comic_shop`         | Shop en ligne, caisse (POS partiel), bibliothèque client portail                | ✅ majeure partie livrée |
+| `comic_ai`           | Génération IA (synopsis, traduction) — Claude + OpenAI                          | ⏳ non commencé          |
 
 ---
 
 ## ⚙️ Environnement technique
 
-| Paramètre | Valeur |
-|---|---|
-| Odoo | **19.0** |
-| Python | 3.12+ |
-| PostgreSQL | 16 |
-| Licence | LGPL-3 (OCA style) |
-| Style | PEP8, OCA guidelines |
-| Branche Git | `19.0` |
+| Paramètre   | Valeur                     |
+| ----------- | -------------------------- |
+| Odoo        | **19.0**                   |
+| Python      | 3.12+                      |
+| PostgreSQL  | 16                         |
+| Licence     | LGPL-3 (OCA style)         |
+| Style       | PEP8, OCA guidelines       |
+| Branche Git | `19.0`                     |
+| Style OCA   | (maintainer-quality-tools) |
 
 **Dépendances Python :** `requests`, `beautifulsoup4`, `lxml`, `openai`, `anthropic`, `openpyxl`, `xlrd`, `xmltodict`
 
 **APIs externes :**
 
-| API | Auth | Usage | Limite |
-|---|---|---|---|
-| Google Books | Clé API gratuite | Métadonnées + couvertures | 1000 req/jour |
-| Open Library | Aucune | Couvertures + auteurs | Illimitée |
-| BnF SRU | Aucune | BD francophones (dépôt légal) | Illimitée |
-| BDGest | Login optionnel | Fallback scraping uniquement | Délai 2s obligatoire |
+| API          | Auth             | Usage                         | Limite               |
+| ------------ | ---------------- | ----------------------------- | -------------------- |
+| Google Books | Clé API gratuite | Métadonnées + couvertures     | 1000 req/jour        |
+| Open Library | Aucune           | Couvertures + auteurs         | Illimitée            |
+| BnF SRU      | Aucune           | BD francophones (dépôt légal) | Illimitée            |
+| BDGest       | Login optionnel  | Fallback scraping uniquement  | Délai 2s obligatoire |
 
 ---
 
@@ -141,11 +142,11 @@ Exemples : `"Les Landes perdues"` → `"landes perdues"` = `"Landes perdues (Les
 
 **Scores de déduplication (`_find_duplicate_candidates`) :**
 
-| Score | Raison | Déclencheur |
-|---|---|---|
-| 1.0 | `conflit_certain` | même `(serie_id, tome)` |
-| 0.9 | `doublon_probable` | même `serie_id` + `titre_ratio ≥ 0.85` |
-| 0.7+ | `doublon_possible` | `titre_ratio ≥ 0.85` ET `serie_ratio ≥ 0.85` |
+| Score | Raison             | Déclencheur                                  |
+| ----- | ------------------ | -------------------------------------------- |
+| 1.0   | `conflit_certain`  | même `(serie_id, tome)`                      |
+| 0.9   | `doublon_probable` | même `serie_id` + `titre_ratio ≥ 0.85`       |
+| 0.7+  | `doublon_possible` | `titre_ratio ≥ 0.85` ET `serie_ratio ≥ 0.85` |
 
 Algorithme : `difflib.SequenceMatcher` (seuil 0.85, pas de dépendance externe).
 
@@ -172,11 +173,11 @@ Cascade priorité : Google > Open Library > BnF > BDGest (fallback, délai 2s ob
 
 ## 🕐 Crons configurés
 
-| Module | Fichier | Fréquence | Action |
-|---|---|---|---|
-| `comics_collections` | `data/comic_cron_data.xml` | Hebdomadaire | Liens d'achat manquants |
-| `comic_datasource` | `data/comic_serie_cron.xml` | Quotidien (désactivé par défaut) | Enrichissement éditions incomplètes |
-| `comic_datasource` | `data/comic_serie_cron.xml` | Hebdomadaire (désactivé par défaut) | Détection tomes manquants |
+| Module               | Fichier                     | Fréquence                           | Action                              |
+| -------------------- | --------------------------- | ----------------------------------- | ----------------------------------- |
+| `comics_collections` | `data/comic_cron_data.xml`  | Hebdomadaire                        | Liens d'achat manquants             |
+| `comic_datasource`   | `data/comic_serie_cron.xml` | Quotidien (désactivé par défaut)    | Enrichissement éditions incomplètes |
+| `comic_datasource`   | `data/comic_serie_cron.xml` | Hebdomadaire (désactivé par défaut) | Détection tomes manquants           |
 
 ---
 
@@ -187,6 +188,7 @@ Cascade priorité : Google > Open Library > BnF > BDGest (fallback, délai 2s ob
 **Module XML ID prefix :** `comics_collections.` (avec "s") — ex. `comics_collections.group_comic_manager`
 
 **`__manifest__.py` :**
+
 ```python
 {
     'name': '...', 'version': '19.0.1.0.0', 'category': 'Leisure',
@@ -214,17 +216,18 @@ Cascade priorité : Google > Open Library > BnF > BDGest (fallback, délai 2s ob
 
 ## ⚠️ Incompatibilités Odoo 19
 
-| Modèle / contexte | Changement |
-|---|---|
-| `res.groups.category_id` | **Supprimé** — utiliser `res.groups.privilege` |
-| `res.groups.users` | **Renommé** en `user_ids` |
-| `ir.actions.server.groups_id` | **Renommé** en `group_ids` |
-| `_sql_constraints` | **Déprécié** — utiliser `models.Constraint(...)` |
-| Search view `<group expand string>` | `expand`/`string` supprimés — utiliser `<group name="group_by">` |
+| Modèle / contexte                                | Changement                                                                   |
+| ------------------------------------------------ | ---------------------------------------------------------------------------- |
+| `res.groups.category_id`                         | **Supprimé** — utiliser `res.groups.privilege`                               |
+| `res.groups.users`                               | **Renommé** en `user_ids`                                                    |
+| `ir.actions.server.groups_id`                    | **Renommé** en `group_ids`                                                   |
+| `_sql_constraints`                               | **Déprécié** — utiliser `models.Constraint(...)`                             |
+| Search view `<group expand string>`              | `expand`/`string` supprimés — utiliser `<group name="group_by">`             |
 | Vue héritée `<page string="..." position="...">` | `string` interdit comme sélecteur — utiliser `<xpath>` avec `name` ou classe |
-| `t-if` dans `arch` de form view | **Interdit** — utiliser `invisible="..."` |
+| `t-if` dans `arch` de form view                  | **Interdit** — utiliser `invisible="..."`                                    |
 
 **Many2many XML (Odoo 19) :**
+
 ```xml
 <!-- ✅ -->
 <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
@@ -233,11 +236,13 @@ Cascade priorité : Google > Open Library > BnF > BDGest (fallback, délai 2s ob
 ```
 
 **Groupes de sécurité :**
+
 ```
 ir.module.category  ←  res.groups.privilege  ←  res.groups
 ```
 
 **Cache Docker (après modif `.py`) :**
+
 ```bash
 find /chemin/module -name "__pycache__" -exec rm -rf {} +
 ~/.docker/bin/docker logs -f odoo-web

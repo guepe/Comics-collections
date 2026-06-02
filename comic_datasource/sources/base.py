@@ -22,6 +22,7 @@ Modèle normalisé retourné par chaque source (ComicSourceResult) :
     'raw': dict,                    # Réponse brute pour debugging
 }
 """
+
 import logging
 import re
 from abc import ABC, abstractmethod
@@ -36,12 +37,12 @@ from typing import Optional
 _BD_TITLE_PATTERNS = [
     # "Serie - Tome N : Titre" ou "Serie - T.N : Titre"
     re.compile(
-        r'^(?P<serie>.+?)\s*[-,]\s*(?:tome|t\.?|vol\.?)\s*(?P<tome>\d+)\s*(?::\s*(?P<title>.+))?$',
+        r"^(?P<serie>.+?)\s*[-,]\s*(?:tome|t\.?|vol\.?)\s*(?P<tome>\d+)\s*(?::\s*(?P<title>.+))?$",
         re.IGNORECASE,
     ),
     # "Serie T.N" ou "Serie Tome N" sans titre séparé
     re.compile(
-        r'^(?P<serie>.+?)\s+(?:tome|t\.)\s*(?P<tome>\d+)$',
+        r"^(?P<serie>.+?)\s+(?:tome|t\.)\s*(?P<tome>\d+)$",
         re.IGNORECASE,
     ),
 ]
@@ -58,18 +59,19 @@ def parse_bd_title(full_title: str, subtitle: str = None):
     for pattern in _BD_TITLE_PATTERNS:
         m = pattern.match(full_title.strip())
         if m:
-            serie = m.group('serie').strip()
-            tome = int(m.group('tome'))
-            title = m.group('title').strip() if m.lastindex >= 3 and m.group('title') else full_title
+            serie = m.group("serie").strip()
+            tome = int(m.group("tome"))
+            title = m.group("title").strip() if m.lastindex >= 3 and m.group("title") else full_title
             return serie, tome, title
 
     # Cherche le numéro de tome dans le subtitle si dispo
     if subtitle:
-        m = re.search(r'(?:tome|t\.?|vol\.?)\s*(\d+)', subtitle, re.IGNORECASE)
+        m = re.search(r"(?:tome|t\.?|vol\.?)\s*(\d+)", subtitle, re.IGNORECASE)
         if m:
             return None, int(m.group(1)), full_title
 
     return None, None, full_title
+
 
 _logger = logging.getLogger(__name__)
 
@@ -77,8 +79,9 @@ _logger = logging.getLogger(__name__)
 @dataclass
 class ComicSourceResult:
     """Modèle normalisé pour les résultats de toutes les sources."""
+
     source: str
-    title: str = ''
+    title: str = ""
     serie_name: Optional[str] = None
     tome: Optional[int] = None
     isbn: Optional[str] = None
@@ -95,35 +98,35 @@ class ComicSourceResult:
 
     def to_dict(self):
         return {
-            'title': self.title,
-            'serie_name': self.serie_name,
-            'tome': self.tome,
-            'isbn': self.isbn,
-            'date_parution': self.date_parution,
-            'date_depot_legal': self.date_depot_legal,
-            'nb_pages': self.nb_pages,
-            'editeur': self.editeur,
-            'auteurs': self.auteurs,
-            'synopsis': self.synopsis,
-            'cover_url': self.cover_url,
-            'cover_url_small': self.cover_url_small,
-            'source': self.source,
-            'source_id': self.source_id,
-            'raw': self.raw,
+            "title": self.title,
+            "serie_name": self.serie_name,
+            "tome": self.tome,
+            "isbn": self.isbn,
+            "date_parution": self.date_parution,
+            "date_depot_legal": self.date_depot_legal,
+            "nb_pages": self.nb_pages,
+            "editeur": self.editeur,
+            "auteurs": self.auteurs,
+            "synopsis": self.synopsis,
+            "cover_url": self.cover_url,
+            "cover_url_small": self.cover_url_small,
+            "source": self.source,
+            "source_id": self.source_id,
+            "raw": self.raw,
         }
 
 
 class BaseComicSource(ABC):
     """Interface commune pour toutes les sources de données BD."""
 
-    SOURCE_NAME = ''  # à définir dans chaque sous-classe
+    SOURCE_NAME = ""  # à définir dans chaque sous-classe
 
     def __init__(self, env=None):
         self._env = env  # environnement Odoo (accès ir.config_parameter)
 
     def _get_config(self, key, default=None):
         if self._env:
-            return self._env['ir.config_parameter'].sudo().get_param(key, default)
+            return self._env["ir.config_parameter"].sudo().get_param(key, default)
         return default
 
     @abstractmethod
@@ -146,5 +149,5 @@ class BaseComicSource(ABC):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            _logger.warning('%s: request failed: %s', self.SOURCE_NAME, e)
+            _logger.warning("%s: request failed: %s", self.SOURCE_NAME, e)
             return None

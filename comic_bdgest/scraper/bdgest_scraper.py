@@ -28,14 +28,14 @@ SEARCH_ALBUMS_URL = f"{BASE_URL}/search/albums"
 LOGIN_URL = f"{BASE_URL}/log_in.php"
 
 DEFAULT_HEADERS = {
-    'User-Agent': (
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-        'AppleWebKit/537.36 (KHTML, like Gecko) '
-        'Chrome/120.0.0.0 Safari/537.36'
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
     ),
-    'Accept-Language': 'fr-FR,fr;q=0.9,en;q=0.8',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    'Referer': BASE_URL,
+    "Accept-Language": "fr-FR,fr;q=0.9,en;q=0.8",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+    "Referer": BASE_URL,
 }
 
 # ──────────────────────────────────────────────────────────────
@@ -106,17 +106,17 @@ class BdgestScraper:
         Retourne : dict complet (fiche détaillée) | None
         Flux : search/albums → 1er résultat de liste → fiche album complète.
         """
-        isbn_clean = re.sub(r'[\s\-]', '', isbn)
+        isbn_clean = re.sub(r"[\s\-]", "", isbn)
         params = self._search_params(RechISBN=isbn_clean)
         response = self._get(SEARCH_ALBUMS_URL, params=params)
         results = BdgestParser.parse_search_results(response.text)
         if not results:
             return None
         first = results[0]
-        detail = self.get_album_detail(first['bdgest_album_id'])
+        detail = self.get_album_detail(first["bdgest_album_id"])
         # Complète avec les données de série issues de la liste si absentes
-        detail.setdefault('bdgest_serie_id', first.get('bdgest_serie_id'))
-        detail.setdefault('serie_name', first.get('serie_name'))
+        detail.setdefault("bdgest_serie_id", first.get("bdgest_serie_id"))
+        detail.setdefault("serie_name", first.get("serie_name"))
         return detail
 
     def search_by_author(self, term):
@@ -159,7 +159,7 @@ class BdgestScraper:
             return None
         try:
             resp = self._get(image_url)
-            return base64.b64encode(resp.content).decode('utf-8')
+            return base64.b64encode(resp.content).decode("utf-8")
         except BdgestError:
             _logger.warning("Impossible de télécharger l'image : %s", image_url)
             return None
@@ -171,17 +171,29 @@ class BdgestScraper:
     def _search_params(self, **criteria):
         """Construit les paramètres de recherche avec le CSRF token."""
         base = {
-            'RechIdSerie': '', 'RechIdAuteur': '', 'RechSerie': '',
-            'RechTitre': '', 'RechEditeur': '', 'RechCollection': '',
-            'RechStyle': '', 'RechAuteur': '', 'RechISBN': '',
-            'RechParution': '', 'RechOrigine': '', 'RechLangue': '',
-            'RechMotCle': '', 'RechDLDeb': '', 'RechDLFin': '',
-            'RechCoteMin': '', 'RechCoteMax': '', 'RechEO': '0',
+            "RechIdSerie": "",
+            "RechIdAuteur": "",
+            "RechSerie": "",
+            "RechTitre": "",
+            "RechEditeur": "",
+            "RechCollection": "",
+            "RechStyle": "",
+            "RechAuteur": "",
+            "RechISBN": "",
+            "RechParution": "",
+            "RechOrigine": "",
+            "RechLangue": "",
+            "RechMotCle": "",
+            "RechDLDeb": "",
+            "RechDLFin": "",
+            "RechCoteMin": "",
+            "RechCoteMax": "",
+            "RechEO": "0",
         }
         base.update(criteria)
         token = self._get_csrf_token()
         if token:
-            base['csrf_token_bel'] = token
+            base["csrf_token_bel"] = token
         return base
 
     def _get_csrf_token(self):
@@ -191,17 +203,18 @@ class BdgestScraper:
         try:
             response = self._get(SEARCH_ALBUMS_URL)
             from bs4 import BeautifulSoup
-            soup = BeautifulSoup(response.text, 'html.parser')
-            inp = soup.find('input', {'name': 'csrf_token_bel'})
+
+            soup = BeautifulSoup(response.text, "html.parser")
+            inp = soup.find("input", {"name": "csrf_token_bel"})
             if inp:
-                self._csrf_token = inp.get('value', '')
+                self._csrf_token = inp.get("value", "")
                 _logger.debug("CSRF token BDGest récupéré")
             else:
                 _logger.warning("csrf_token_bel introuvable dans la page de recherche")
-                self._csrf_token = ''
+                self._csrf_token = ""
         except BdgestError as exc:
             _logger.warning("Impossible de récupérer le CSRF token : %s", exc)
-            self._csrf_token = ''
+            self._csrf_token = ""
         return self._csrf_token
 
     # ──────────────────────────────────────────────────────────
@@ -228,9 +241,7 @@ class BdgestScraper:
         except requests.exceptions.HTTPError as exc:
             if response.status_code == 404:
                 raise BdgestNotFoundError(f"Page introuvable : {url}") from exc
-            raise BdgestError(
-                f"Erreur HTTP {response.status_code} : {url}"
-            ) from exc
+            raise BdgestError(f"Erreur HTTP {response.status_code} : {url}") from exc
 
         return response
 
@@ -243,7 +254,7 @@ class BdgestScraper:
     def _is_blocked(response):
         if response.status_code in (403, 429, 503):
             return True
-        if b'captcha' in response.content[:1000].lower():
+        if b"captcha" in response.content[:1000].lower():
             return True
         return False
 
@@ -253,7 +264,7 @@ class BdgestScraper:
             self._get(LOGIN_URL)  # récupère les cookies de session
             self._session.post(
                 LOGIN_URL,
-                data={'login': login, 'password': password, 'redirect': '/'},
+                data={"login": login, "password": password, "redirect": "/"},
                 timeout=15,
             )
             _logger.info("Authentification BDGest réussie pour %s", login)
