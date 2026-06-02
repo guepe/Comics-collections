@@ -137,9 +137,7 @@ class TestComicWork(TransactionCase):
 
     def test_unique_serie_tome_constraint_defined(self):
         """La contrainte UNIQUE(serie_id, tome) est bien créée en base de données."""
-        self.env.cr.execute(
-            "SELECT COUNT(*) FROM pg_constraint WHERE conname = 'comic_work_unique_serie_tome'"
-        )
+        self.env.cr.execute("SELECT COUNT(*) FROM pg_constraint WHERE conname = 'comic_work_unique_serie_tome'")
         count = self.env.cr.fetchone()[0]
         self.assertEqual(count, 1, "La contrainte unique (serie_id, tome) doit exister en DB")
 

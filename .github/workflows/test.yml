@@ -1,0 +1,14 @@
+name: tests
+
+on:
+  push:
+    branches: ["19.0"]
+  pull_request:
+    branches: ["19.0"]
+
+jobs:
+  test:
+    uses: OCA/github-actions/.github/workflows/test.yml@v0
+    with:
+      odoo_version: "19.0"
+    secrets: inherit

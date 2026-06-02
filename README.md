@@ -1,5 +1,9 @@
 # Comics Collections — Guide des modules Odoo 19
 
+[![tests](https://github.com/Belspace/Comics-collections/actions/workflows/test.yml/badge.svg?branch=19.0)](https://github.com/Belspace/Comics-collections/actions/workflows/test.yml)
+[![pre-commit](https://github.com/Belspace/Comics-collections/actions/workflows/pre-commit.yml/badge.svg?branch=19.0)](https://github.com/Belspace/Comics-collections/actions/workflows/pre-commit.yml)
+[![License: LGPL-3](https://img.shields.io/badge/license-LGPL--3-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0-standalone.html)
+
 Ensemble de modules Odoo 19 pour gérer une collection personnelle de bandes dessinées.
 Auteur : Belspace — Licence : LGPL-3
 

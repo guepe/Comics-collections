@@ -28,7 +28,7 @@
 | US-060 | ✅ README.rst format OCA par module                 | 🟡       |
 | US-061 | ✅ `__manifest__.py` valide format OCA strict       | 🟡       |
 | US-062 | ✅ Tests unitaires de base (CI-compatible)          | 🟡       |
-| US-063 | GitHub Actions CI — workflow OCA réutilisable      | 🟡       |
+| US-063 | ✅ GitHub Actions CI — workflow OCA réutilisable    | 🟡       |
 | US-064 | Dépôt GitHub public + proposition OCA              | 🟡       |
 
 ---
@@ -517,7 +517,7 @@ Fichiers à créer :
 
 ---
 
-**US-063 — GitHub Actions CI — workflow OCA réutilisable** ⏳ 🟡
+**US-063 — GitHub Actions CI — workflow OCA réutilisable** ✅ 🟡
 
 ```
 En tant que développeur OCA
@@ -530,16 +530,11 @@ Contexte technique :
   Prérequis : dépôt GitHub public (US-064) + tests en place (US-062).
 
 Critères d'acceptance :
-- [ ] .github/workflows/test.yml :
-        uses: OCA/github-actions/.github/workflows/test.yml@v0
-        with: { odoo_version: "19.0" }
-        secrets: inherit
-- [ ] .github/workflows/pre-commit.yml :
-        uses: OCA/github-actions/.github/workflows/pre-commit.yml@v0
-        secrets: inherit
-- [ ] Déclenché sur push ET pull_request sur la branche 19.0
-- [ ] Badge CI visible dans README.md
-- [ ] Aucun credential hardcodé (utiliser secrets: inherit)
+- [x] .github/workflows/test.yml : uses OCA/github-actions/.github/workflows/test.yml@v0
+- [x] .github/workflows/pre-commit.yml : uses OCA/github-actions/.github/workflows/pre-commit.yml@v0
+- [x] Déclenché sur push ET pull_request sur la branche 19.0
+- [x] Badges CI + LGPL-3 ajoutés dans README.md
+- [x] Aucun credential hardcodé (secrets: inherit)
 
 Fichiers à créer :
   .github/workflows/test.yml
