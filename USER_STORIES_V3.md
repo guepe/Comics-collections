@@ -23,6 +23,13 @@
 | US-027 | Génération synopsis par IA                         | 🟡       |
 | US-028 | Traduction synopsis par IA                         | 🟡       |
 | US-029 | Découverte IA par profil de goûts                  | 🟡       |
+| —      | **ÉPIC OCA — Publication & Qualité**               |          |
+| US-059 | Fichier LICENSE LGPL-3                             | 🟡       |
+| US-060 | ✅ README.rst format OCA par module                 | 🟡       |
+| US-061 | `__manifest__.py` valide format OCA strict         | 🟡       |
+| US-062 | Tests unitaires de base (CI-compatible)            | 🟡       |
+| US-063 | GitHub Actions CI — workflow OCA réutilisable      | 🟡       |
+| US-064 | Dépôt GitHub public + proposition OCA              | 🟡       |
 
 ---
 
@@ -349,8 +356,8 @@ Critères d'acceptance :
 - [x] `pre-commit run --all-files` passe sans erreur bloquante sur les modules existants
 - [x] Fichier `.flake8` configuré (max-line-length=120, exclusions Odoo standard)
 - [x] Fichier `pyproject.toml` configuré pour black (line-length=120)
-- [x] README.rst généré en EN pour chaque module (comics_collections, comic_datasource, comic_bdgest, comic_shop)
-- [x] `__manifest__.py` valides (19.0.x.y.z, LGPL-3, author Belspace) — format OCA 18.0 non applicable
+- [x] README.rst généré en EN pour chaque module (comics_collections, comic_datasource, comic_shop)
+- [x] `__manifest__.py` valides (19.0.x.y.z, LGPL-3, author Belspace)
 - [x] Documentation des commandes dans README.md (section Développement)
 
 ### Fichiers à créer / modifier
@@ -358,8 +365,8 @@ Critères d'acceptance :
 - `.pre-commit-config.yaml`
 - `.flake8`
 - `pyproject.toml`
-- `comic_collection/__manifest__.py` (vérification/correction)
-- `comic_collection/README.rst`
+- `comics_collections/__manifest__.py` (vérification/correction)
+- `comics_collections/README.rst`
 
 ### Commandes de référence
 
@@ -372,8 +379,192 @@ pre-commit run --all-files
 ### Notes
 
 - Line length OCA standard : 120 caractères
-- Version format obligatoire : `18.0.1.0.0`
+- Version format obligatoire : `19.0.1.0.0`
 - Licence : `LGPL-3`
 - Author : ton nom ou organisation
 
 ---
+
+## ÉPIC OCA — Publication & Qualité communautaire
+
+> US nécessaires pour soumettre les modules à la communauté OCA (maintainer-quality-tools).
+> Prérequis : US-030 ✅ (pre-commit configuré).
+> Ordre recommandé : US-059 → US-060 → US-061 → US-062 → US-063 → US-064
+
+> **Doublons identifiés et écartés :**
+>
+> - "pre-commit OCA" des notes brutes = **US-030 ✅** — déjà livré, ne pas recréer
+> - Validation `__manifest__.py` basique = critère `[x]` de **US-030** — US-061 couvre uniquement le format OCA strict additionnel (champs `website`, `maintainers`, `development_status`)
+
+---
+
+**US-059 — Fichier LICENSE LGPL-3** ⏳ 🟡
+
+```
+En tant que développeur OCA
+Je veux un fichier LICENSE à la racine du projet
+Afin de satisfaire les exigences légales OCA (LGPL-3 obligatoire pour toute PR)
+
+Critères d'acceptance :
+- [ ] Fichier LICENSE à la racine (texte GNU Lesser General Public License v3.0)
+- [ ] Chaque __manifest__.py a "license": "LGPL-3" (déjà fait en US-030)
+
+Fichiers à créer :
+  LICENSE
+```
+
+---
+
+**US-060 — README.rst format OCA par module** ✅ 🟡
+
+```
+En tant que développeur OCA
+Je veux des fichiers readme/ conformes au format OCA pour chaque module
+Afin que la structure soit acceptée par le CI OCA sans erreur
+
+Contexte technique :
+  OCA utilise le dossier readme/ avec des fichiers .rst distincts par section.
+  README.rst à la racine de chaque module est généré depuis readme/.
+  Modules concernés : comics_collections, comic_datasource, comic_shop.
+
+Contexte :
+  Les 3 modules ont déjà un README.rst monolithique à leur racine (généré lors de US-030).
+  Le format OCA strict exige en plus un dossier readme/ avec des fichiers .rst distincts
+  par section. La US consiste à convertir les README.rst existants vers cette structure.
+
+Critères d'acceptance :
+- [x] Dossier readme/ par module (comics_collections, comic_datasource, comic_shop) :
+        DESCRIPTION.rst  — description courte du module
+        INSTALL.rst      — dépendances et prérequis d'installation
+        CONFIGURE.rst    — paramètres de configuration
+        USAGE.rst        — guide d'utilisation
+        CONTRIBUTORS.rst — liste des contributeurs
+- [x] README.rst à la racine de chaque module régénéré via oca-gen-addon-readme ✅
+        (commande : oca-gen-addon-readme --org-name Belspace --repo-name Comics-collections
+         --branch 19.0 --addon-dir comics_collections --addon-dir comic_datasource --addon-dir comic_shop)
+- [x] Badges maturity, LGPL-3, github présents dans les 3 README.rst (générés automatiquement) ✅
+- [x] Aucune référence à des modules supprimés (comic_bdgest retiré de comic_datasource/README.rst ✅)
+
+Fichiers à créer / convertir (par module) :
+  {module}/readme/DESCRIPTION.rst
+  {module}/readme/INSTALL.rst
+  {module}/readme/CONFIGURE.rst
+  {module}/readme/USAGE.rst
+  {module}/readme/CONTRIBUTORS.rst
+  {module}/README.rst  (existe déjà — à mettre à jour)
+```
+
+---
+
+**US-061 — `__manifest__.py` valide format OCA strict** ⏳ 🟡
+
+```
+En tant que développeur OCA
+Je veux que chaque __manifest__.py respecte le format strict OCA
+Afin que le pre-commit et le CI ne bloquent pas sur la structure des manifests
+
+Contexte technique :
+  US-030 a déjà validé version/license/author pour Odoo 19.
+  US-061 ajoute les champs requis pour une PR OCA : website, maintainers,
+  development_status. Modules : comics_collections, comic_datasource, comic_shop.
+
+Critères d'acceptance :
+- [ ] "version": "19.0.1.0.0" — déjà fait (US-030)
+- [ ] "license": "LGPL-3" — déjà fait (US-030)
+- [ ] "author": "OCA, Belspace" (format OCA avec "OCA, " en préfixe)
+- [ ] "website": URL du dépôt OCA cible (à définir lors de US-064)
+- [ ] "maintainers": ["<github_username>"]
+- [ ] "development_status": "Alpha" | "Beta" | "Production/Stable"
+- [ ] pre-commit run --all-files passe sans erreur sur les manifests
+
+Fichiers à modifier :
+  comics_collections/__manifest__.py
+  comic_datasource/__manifest__.py
+  comic_shop/__manifest__.py
+```
+
+---
+
+**US-062 — Tests unitaires de base (CI-compatible)** ⏳ 🟡
+
+```
+En tant que développeur OCA
+Je veux des tests unitaires minimaux par module
+Afin que le CI OCA (odoo-bin --test-enable) passe sans erreur
+
+Contexte technique :
+  Tests à base de TransactionCase (odoo.tests.common).
+  Le CI OCA lance automatiquement les tests lors du build.
+  Module prioritaire : comics_collections (modèles complexes + contraintes).
+
+Critères d'acceptance :
+- [ ] comics_collections/tests/ — tests de base :
+        test_comic_serie.py   : création série, contrainte name
+        test_comic_work.py    : création album, contrainte UNIQUE(serie_id, tome)
+        test_comic_edition.py : création édition, validation ISBN EAN-13
+        test_comic_pret.py    : création prêt, retour effectif
+- [ ] comic_datasource/tests/ : test aggregator avec mocks des sources HTTP
+- [ ] comic_shop/tests/ : test sync edition → product.template, test comic.customer.album
+- [ ] Compatible odoo-bin --test-enable (pas de dépendance système manquante)
+- [ ] Aucun test cassé à l'installation du module
+
+Fichiers à créer :
+  {module}/tests/__init__.py
+  {module}/tests/test_*.py
+```
+
+---
+
+**US-063 — GitHub Actions CI — workflow OCA réutilisable** ⏳ 🟡
+
+```
+En tant que développeur OCA
+Je veux un pipeline CI basé sur les workflows officiels OCA/github-actions
+Afin que chaque push/PR sur la branche 19.0 soit validé automatiquement
+
+Contexte technique :
+  Utiliser OCA/github-actions (uses:), pas écrire from scratch.
+  Branche cible : 19.0 — Odoo 19.0 / Python 3.12 / PostgreSQL 16.
+  Prérequis : dépôt GitHub public (US-064) + tests en place (US-062).
+
+Critères d'acceptance :
+- [ ] .github/workflows/test.yml :
+        uses: OCA/github-actions/.github/workflows/test.yml@v0
+        with: { odoo_version: "19.0" }
+        secrets: inherit
+- [ ] .github/workflows/pre-commit.yml :
+        uses: OCA/github-actions/.github/workflows/pre-commit.yml@v0
+        secrets: inherit
+- [ ] Déclenché sur push ET pull_request sur la branche 19.0
+- [ ] Badge CI visible dans README.md
+- [ ] Aucun credential hardcodé (utiliser secrets: inherit)
+
+Fichiers à créer :
+  .github/workflows/test.yml
+  .github/workflows/pre-commit.yml
+```
+
+---
+
+**US-064 — Dépôt GitHub public + proposition OCA** ⏳ 🟡
+
+```
+En tant que développeur OCA
+Je veux publier le dépôt et soumettre une proposition à l'OCA
+Afin que les modules soient intégrés à la communauté
+
+Contexte technique :
+  Prérequis : US-059 à US-063 terminées.
+  Dépôt OCA cible à identifier (ex : OCA/vertical-editions ou nouveau dépôt dédié BD).
+
+Critères d'acceptance :
+- [ ] Dépôt GitHub public créé, branche principale 19.0
+- [ ] .gitignore adapté Odoo (__pycache__, *.pyc, .odoo, filestore/, etc.)
+- [ ] Premier push propre : pre-commit OK, pas de secrets, pas de __pycache__
+- [ ] Issue ouverte sur OCA/maintainer-tools pour proposer le(s) module(s)
+- [ ] PR soumise sur le dépôt OCA cible (ou dépôt "incoming" OCA)
+
+Fichiers à créer / vérifier :
+  .gitignore
+  README.md (badge CI ajouté en US-063)
+```
