@@ -73,9 +73,5 @@ class TestComicPret(TransactionCase):
     def test_plusieurs_prets_meme_edition(self):
         """Plusieurs prêts successifs sur la même édition sont autorisés."""
         partner2 = self.env["res.partner"].create({"name": "Deuxième Lecteur"})
-        self.Pret.create(
-            {"edition_id": self.edition.id, "partner_id": self.partner.id}
-        )
-        self.Pret.create(
-            {"edition_id": self.edition.id, "partner_id": partner2.id}
-        )
+        self.Pret.create({"edition_id": self.edition.id, "partner_id": self.partner.id})
+        self.Pret.create({"edition_id": self.edition.id, "partner_id": partner2.id})

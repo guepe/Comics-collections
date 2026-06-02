@@ -51,7 +51,7 @@ class TestComicSerie(TransactionCase):
 
     def test_name_required(self):
         """La création sans nom doit lever une ValidationError (required=True)."""
-        with self.assertRaises((ValidationError, Exception)):
+        with self.assertRaises(ValidationError):
             self.Serie.create({"name": False})
 
     def test_two_series_same_name_allowed(self):

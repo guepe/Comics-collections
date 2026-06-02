@@ -33,12 +33,13 @@ class TestSyncProduct(TransactionCase):
         self.edition.action_create_product()
         self.assertTrue(self.edition.product_tmpl_id)
 
-    def test_action_create_product_idempotent(self):
-        """Appeler action_create_product() deux fois ne crée pas de doublon."""
+    def test_action_create_product_raises_if_already_linked(self):
+        """Appeler action_create_product() sur une édition déjà liée lève UserError."""
+        from odoo.exceptions import UserError
+
         self.edition.action_create_product()
-        product_id = self.edition.product_tmpl_id.id
-        self.edition.action_create_product()
-        self.assertEqual(self.edition.product_tmpl_id.id, product_id)
+        with self.assertRaises(UserError):
+            self.edition.action_create_product()
 
     def test_sync_to_product_updates_product_name(self):
         """_sync_to_product() répercute le titre de l'album sur le produit."""
