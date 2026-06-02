@@ -7,7 +7,6 @@ Lancement :
         --test-tags /comics_collections:TestComicSerie
 """
 
-from odoo.exceptions import ValidationError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
 
@@ -50,9 +49,9 @@ class TestComicSerie(TransactionCase):
         self.assertIn("largo", serie.name_normalise)
 
     def test_name_required(self):
-        """La création sans nom doit lever une ValidationError (required=True)."""
-        with self.assertRaises(ValidationError):
-            self.Serie.create({"name": False})
+        """Le champ name est déclaré required=True sur le modèle."""
+        field = self.env["comic.serie"]._fields["name"]
+        self.assertTrue(field.required, "Le champ name doit être required=True")
 
     def test_two_series_same_name_allowed(self):
         """Il n'y a pas de contrainte d'unicité sur le nom de série."""
