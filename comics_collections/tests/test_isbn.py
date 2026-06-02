@@ -1,21 +1,20 @@
 """Tests unitaires pour la validation ISBN et la génération des liens d'achat.
 
-Ces méthodes sont des @staticmethod — aucun ORM Odoo requis.
-Compatible Odoo SH : utilise unittest.TestCase + @tagged pour être découvert
-par le runner Odoo sans nécessiter de base de données.
+Ces méthodes sont des @staticmethod — aucun accès ORM requis.
+Utilise TransactionCase (requis par Odoo 19 pour accéder à test_module via le
+tag selector) mais n'effectue aucune opération sur la base de données.
 
-Lancement direct :
+Lancement :
     docker exec odoo-web odoo-bin -d odoo -u comics_collections \
         --test-tags /comics_collections:TestValidateEan13,TestBuildPurchaseLinks
 """
 
-import unittest
-
 from odoo.tests import tagged
+from odoo.tests.common import TransactionCase
 
 
 def _validate_ean13(isbn):
-    """Copie locale de ComicAlbum._validate_ean13 pour tests hors ORM."""
+    """Copie locale de ComicIsbn._validate_ean13 pour tests sans ORM."""
     isbn = isbn.replace("-", "").replace(" ", "")
     if len(isbn) != 13 or not isbn.isdigit():
         return False
@@ -25,7 +24,7 @@ def _validate_ean13(isbn):
 
 
 def _build_purchase_links(isbn):
-    """Copie locale de ComicAlbum._build_purchase_links."""
+    """Copie locale de ComicEdition._build_purchase_links."""
     if not isbn:
         return {}
     templates = {
@@ -37,7 +36,7 @@ def _build_purchase_links(isbn):
 
 
 @tagged("comics_collections", "comic_isbn", "post_install", "-at_install")
-class TestValidateEan13(unittest.TestCase):
+class TestValidateEan13(TransactionCase):
 
     def test_valid_isbn(self):
         self.assertTrue(_validate_ean13("9782012101340"))
@@ -74,7 +73,7 @@ class TestValidateEan13(unittest.TestCase):
 
 
 @tagged("comics_collections", "comic_isbn", "post_install", "-at_install")
-class TestBuildPurchaseLinks(unittest.TestCase):
+class TestBuildPurchaseLinks(TransactionCase):
 
     ISBN = "9782012101340"
 
@@ -102,7 +101,3 @@ class TestBuildPurchaseLinks(unittest.TestCase):
     def test_amazon_be_url_format(self):
         links = _build_purchase_links(self.ISBN)
         self.assertTrue(links["url_amazon_be"].startswith("https://www.amazon.com.be"))
-
-
-if __name__ == "__main__":
-    unittest.main()
