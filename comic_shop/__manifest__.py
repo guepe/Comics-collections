@@ -7,11 +7,11 @@
         Extension commerciale de Comic Collection.
         Lien album ↔ produit, webshop BD, caisse (POS) et bibliothèque client sur le portail.
     """,
-    "author": "Belspace",
-    "maintainer": "Belspace",
-    "support": "sales@belspace.net",
-    "website": "https://guepe.github.io",
+    "author": "Belspace, OCA",
+    "maintainers": ["guepe"],
+    "website": "https://github.com/Belspace/Comics-collections",
     "license": "LGPL-3",
+    "development_status": "Beta",
     "depends": [
         "comics_collections",
         "comic_datasource",

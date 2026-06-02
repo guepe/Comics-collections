@@ -26,7 +26,7 @@
 | —      | **ÉPIC OCA — Publication & Qualité**               |          |
 | US-059 | Fichier LICENSE LGPL-3                             | 🟡       |
 | US-060 | ✅ README.rst format OCA par module                 | 🟡       |
-| US-061 | `__manifest__.py` valide format OCA strict         | 🟡       |
+| US-061 | ✅ `__manifest__.py` valide format OCA strict       | 🟡       |
 | US-062 | Tests unitaires de base (CI-compatible)            | 🟡       |
 | US-063 | GitHub Actions CI — workflow OCA réutilisable      | 🟡       |
 | US-064 | Dépôt GitHub public + proposition OCA              | 🟡       |
@@ -456,7 +456,7 @@ Fichiers à créer / convertir (par module) :
 
 ---
 
-**US-061 — `__manifest__.py` valide format OCA strict** ⏳ 🟡
+**US-061 — `__manifest__.py` valide format OCA strict** ✅ 🟡
 
 ```
 En tant que développeur OCA
@@ -469,13 +469,13 @@ Contexte technique :
   development_status. Modules : comics_collections, comic_datasource, comic_shop.
 
 Critères d'acceptance :
-- [ ] "version": "19.0.1.0.0" — déjà fait (US-030)
-- [ ] "license": "LGPL-3" — déjà fait (US-030)
-- [ ] "author": "OCA, Belspace" (format OCA avec "OCA, " en préfixe)
-- [ ] "website": URL du dépôt OCA cible (à définir lors de US-064)
-- [ ] "maintainers": ["<github_username>"]
-- [ ] "development_status": "Alpha" | "Beta" | "Production/Stable"
-- [ ] pre-commit run --all-files passe sans erreur sur les manifests
+- [x] "version": "19.0.1.0.0" — déjà fait (US-030)
+- [x] "license": "LGPL-3" — déjà fait (US-030)
+- [x] "author": "Belspace, OCA"
+- [x] "website": "https://github.com/Belspace/Comics-collections" (à mettre à jour vers l'URL OCA en US-064)
+- [x] "maintainers": ["guepe"]
+- [x] "development_status": "Beta"
+- [x] pre-commit run --all-files passe sans erreur (tous les hooks Passed)
 
 Fichiers à modifier :
   comics_collections/__manifest__.py

@@ -7,11 +7,11 @@
         Module de gestion de collection de bandes dessinées.
         Gérez vos séries, albums, auteurs, éditeurs et prêts.
     """,
-    "author": "Belspace",
-    "maintainer": "Belspace",
-    "support": "sales@belspace.net",
-    "website": "https://guepe.github.io",
+    "author": "Belspace, OCA",
+    "maintainers": ["guepe"],
+    "website": "https://github.com/Belspace/Comics-collections",
     "license": "LGPL-3",
+    "development_status": "Beta",
     "depends": ["base", "mail", "contacts"],
     "data": [
         "security/comic_security.xml",
