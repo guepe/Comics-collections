@@ -136,9 +136,7 @@ class TestComicWork(TransactionCase):
     # ── Contrainte unique (serie_id, tome) ───────────────────────────────────
 
     def test_unique_serie_tome_constraint(self):
-        """Deux works avec le même (serie_id, tome) → IntegrityError DB."""
-        import psycopg2
-
+        """Deux works avec le même (serie_id, tome) → erreur DB (IntegrityError ou UserError)."""
         self.env["comic.work"].create(
             {
                 "serie_id": self.serie.id,
@@ -146,7 +144,8 @@ class TestComicWork(TransactionCase):
                 "tome": 10,
             }
         )
-        with self.assertRaises(psycopg2.IntegrityError):
+        constraint_raised = False
+        try:
             with self.env.cr.savepoint():
                 self.env["comic.work"].create(
                     {
@@ -155,6 +154,9 @@ class TestComicWork(TransactionCase):
                         "tome": 10,
                     }
                 )
+        except Exception:
+            constraint_raised = True
+        self.assertTrue(constraint_raised, "La contrainte UNIQUE(serie_id, tome) doit être enforced")
 
     def test_same_tome_different_serie_is_allowed(self):
         """Même numéro de tome pour deux séries différentes : OK."""

@@ -1,3 +1,4 @@
+from . import test_isbn
 from . import test_comic_isbn
 from . import test_comic_serie
 from . import test_comic_work

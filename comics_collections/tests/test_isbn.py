@@ -1,11 +1,17 @@
 """Tests unitaires pour la validation ISBN et la génération des liens d'achat.
 
 Ces méthodes sont des @staticmethod — aucun ORM Odoo requis.
-Lancement : ./odoo-bin test -u comics_collections --test-tags /comics_collections
-ou (avec Odoo sur le PYTHONPATH) : python -m pytest comics_collections/tests/test_isbn.py
+Compatible Odoo SH : utilise unittest.TestCase + @tagged pour être découvert
+par le runner Odoo sans nécessiter de base de données.
+
+Lancement direct :
+    docker exec odoo-web odoo-bin -d odoo -u comics_collections \
+        --test-tags /comics_collections:TestValidateEan13,TestBuildPurchaseLinks
 """
 
 import unittest
+
+from odoo.tests import tagged
 
 
 def _validate_ean13(isbn):
@@ -30,6 +36,7 @@ def _build_purchase_links(isbn):
     return {field: tpl.format(isbn=isbn) for field, tpl in templates.items()}
 
 
+@tagged("comics_collections", "comic_isbn", "post_install", "-at_install")
 class TestValidateEan13(unittest.TestCase):
 
     def test_valid_isbn(self):
@@ -66,6 +73,7 @@ class TestValidateEan13(unittest.TestCase):
         self.assertFalse(_validate_ean13(""))
 
 
+@tagged("comics_collections", "comic_isbn", "post_install", "-at_install")
 class TestBuildPurchaseLinks(unittest.TestCase):
 
     ISBN = "9782012101340"
