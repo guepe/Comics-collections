@@ -10,6 +10,7 @@
 
 | US     | Titre                                              | Priorité |
 | ------ | -------------------------------------------------- | -------- |
+| US-030 | ✅ Mise en place du pre-commit OCA                 | 🟡       |
 | US-035 | ✅ Scaffold comic_shop — désinstallation sécurisée | 🟡       |
 | US-042 | ✅ Intégration POS (caisse)                        | 🟠       |
 | US-044 | ✅ Ajout BD hors catalogue (portail client)        | 🟠       |
