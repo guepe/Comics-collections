@@ -652,8 +652,6 @@ class ComicImportWizard(models.TransientModel):
                 existing_edition.write(write_vals)
             edition = existing_edition
         else:
-            # Avoid creating a duplicate edition when the work already has a single
-            # edition with no ISBN (e.g. previously imported without ISBN, now with).
             reuse_edition = self._find_updatable_edition(work)
             if reuse_edition:
                 write_vals = {key: value for key, value in edition_vals.items() if key != "work_id"}
@@ -677,11 +675,6 @@ class ComicImportWizard(models.TransientModel):
         return isbn_rec.edition_id if isbn_rec else self.env["comic.edition"].browse()
 
     def _find_updatable_edition(self, work):
-        """Return the single ISBN-less edition of a work, if exactly one exists.
-
-        Used to avoid creating a duplicate edition when the same album is imported
-        twice — once without ISBN and once with.
-        """
         editions = work.edition_ids
         if len(editions) == 1 and not editions.isbn_ids:
             return editions
