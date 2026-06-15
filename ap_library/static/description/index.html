@@ -1,0 +1,1543 @@
+<section style="background: #714b67; padding: 32px 24px; text-align: center">
+  <h1
+    style="color: #fff; font-size: 28px; margin: 0 0 10px 0; font-weight: 600"
+  >
+    📚 Library Management System
+  </h1>
+  <p
+    style="
+      color: #e8d5e3;
+      font-size: 14px;
+      margin: 0 0 16px 0;
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    "
+  >
+    A complete, production-ready Odoo module for managing books, borrowing
+    history, conflict resolution, and automated email reminders.
+  </p>
+  <div
+    style="
+      display: inline-flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    "
+  >
+    <span
+      style="
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+      "
+      >✅ Odoo 16 / 17</span
+    >
+    <span
+      style="
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+      "
+      >📦 Version 1.0</span
+    >
+    <span
+      style="
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+      "
+      >🏢 Community &amp; Enterprise</span
+    >
+    <span
+      style="
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        padding: 4px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+      "
+      >⚖️ OPL-1 License</span
+    >
+  </div>
+</section>
+
+<section style="padding: 8px 0">
+  <img
+    src="banner.gif"
+    style="width: 100%; display: block; max-height: 180px; object-fit: cover"
+    alt="Library Management System Banner"
+  />
+</section>
+
+<section style="padding: 28px 24px; background: #fdf6e3">
+  <h2
+    style="
+      color: #714b67;
+      font-size: 20px;
+      border-bottom: 2px solid #714b67;
+      padding-bottom: 8px;
+      margin: 0 0 18px 0;
+    "
+  >
+    🌟 Key Features
+  </h2>
+  <table style="width: 100%; border-collapse: collapse">
+    <tr>
+      <td style="width: 50%; padding: 6px 8px 6px 0; vertical-align: top">
+        <div
+          style="
+            background: #fff;
+            border: 1px solid #e0d0dc;
+            border-left: 4px solid #714b67;
+            border-radius: 4px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+          "
+        >
+          <h3
+            style="
+              color: #714b67;
+              margin: 0 0 5px 0;
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            📖 Book Catalogue
+          </h3>
+          <p style="color: #555; margin: 0; font-size: 12px; line-height: 1.55">
+            Cover images auto-fetched from OpenLibrary API, ISBN uniqueness
+            constraints, Many2many authors, categories, copy count and real-time
+            availability flag.
+          </p>
+        </div>
+        <div
+          style="
+            background: #fff;
+            border: 1px solid #e0d0dc;
+            border-left: 4px solid #714b67;
+            border-radius: 4px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+          "
+        >
+          <h3
+            style="
+              color: #714b67;
+              margin: 0 0 5px 0;
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            📋 Booking History
+          </h3>
+          <p style="color: #555; margin: 0; font-size: 12px; line-height: 1.55">
+            Full lifecycle — Draft → Pending → Approved → Returned / Rejected —
+            with chatter, activity mixin, computed day-count and auto sequence
+            numbering.
+          </p>
+        </div>
+        <div
+          style="
+            background: #fff;
+            border: 1px solid #e0d0dc;
+            border-left: 4px solid #714b67;
+            border-radius: 4px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+          "
+        >
+          <h3
+            style="
+              color: #714b67;
+              margin: 0 0 5px 0;
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            ⚔️ Conflict Detection
+          </h3>
+          <p style="color: #555; margin: 0; font-size: 12px; line-height: 1.55">
+            On approval, overlapping bookings are detected. If all copies are
+            occupied, a wizard opens listing conflicts and offers available date
+            slots.
+          </p>
+        </div>
+        <div
+          style="
+            background: #fff;
+            border: 1px solid #e0d0dc;
+            border-left: 4px solid #714b67;
+            border-radius: 4px;
+            padding: 12px 14px;
+          "
+        >
+          <h3
+            style="
+              color: #714b67;
+              margin: 0 0 5px 0;
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            🎲 Demo Data Loader
+          </h3>
+          <p style="color: #555; margin: 0; font-size: 12px; line-height: 1.55">
+            One-click server actions to populate 20 realistic books with live
+            cover art, categories, and 10 historical bookings across various
+            statuses.
+          </p>
+        </div>
+      </td>
+      <td style="width: 50%; padding: 6px 0 6px 8px; vertical-align: top">
+        <div
+          style="
+            background: #fff;
+            border: 1px solid #e0d0dc;
+            border-left: 4px solid #b8860b;
+            border-radius: 4px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+          "
+        >
+          <h3
+            style="
+              color: #b8860b;
+              margin: 0 0 5px 0;
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            🗂️ Category System
+          </h3>
+          <p style="color: #555; margin: 0; font-size: 12px; line-height: 1.55">
+            Hierarchical categories with parent-child support, cover images, and
+            computed book count. Drill into category books directly from the
+            kanban card.
+          </p>
+        </div>
+        <div
+          style="
+            background: #fff;
+            border: 1px solid #e0d0dc;
+            border-left: 4px solid #b8860b;
+            border-radius: 4px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+          "
+        >
+          <h3
+            style="
+              color: #b8860b;
+              margin: 0 0 5px 0;
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            🔔 Automated Emails
+          </h3>
+          <p style="color: #555; margin: 0; font-size: 12px; line-height: 1.55">
+            3 email templates: booking confirmation with PDF attachment,
+            librarian status-update notification, and overdue return reminder
+            grouped per customer.
+          </p>
+        </div>
+        <div
+          style="
+            background: #fff;
+            border: 1px solid #e0d0dc;
+            border-left: 4px solid #b8860b;
+            border-radius: 4px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+          "
+        >
+          <h3
+            style="
+              color: #b8860b;
+              margin: 0 0 5px 0;
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            📄 PDF Reports
+          </h3>
+          <p style="color: #555; margin: 0; font-size: 12px; line-height: 1.55">
+            QWeb-generated booking history and book-detail reports available as
+            one-click downloads and auto-attached to outbound confirmation
+            emails.
+          </p>
+        </div>
+        <div
+          style="
+            background: #fff;
+            border: 1px solid #e0d0dc;
+            border-left: 4px solid #b8860b;
+            border-radius: 4px;
+            padding: 12px 14px;
+          "
+        >
+          <h3
+            style="
+              color: #b8860b;
+              margin: 0 0 5px 0;
+              font-size: 13px;
+              font-weight: 600;
+            "
+          >
+            🔐 Role-Based Access
+          </h3>
+          <p style="color: #555; margin: 0; font-size: 12px; line-height: 1.55">
+            Three security groups — Admin, Librarian, User — with fine-grained
+            record rules, group-restricted buttons and context-aware field
+            defaults.
+          </p>
+        </div>
+      </td>
+    </tr>
+  </table>
+</section>
+
+<section style="padding: 16px 24px">
+  <table style="width: 100%; border-collapse: collapse">
+    <tr>
+      <td style="width: 50%; padding-right: 8px; vertical-align: top">
+        <img
+          src="screenshot1.png"
+          style="
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+          "
+          alt="Book Catalogue List View"
+        />
+        <p
+          style="
+            text-align: center;
+            color: #888;
+            font-size: 11px;
+            margin: 5px 0 0 0;
+            line-height: 1.4;
+          "
+        >
+          ① Book Catalogue — List View with availability, ISBN, authors and
+          cover images
+        </p>
+      </td>
+      <td style="width: 50%; padding-left: 8px; vertical-align: top">
+        <img
+          src="screenshot2.png"
+          style="
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+          "
+          alt="Booking Form View"
+        />
+        <p
+          style="
+            text-align: center;
+            color: #888;
+            font-size: 11px;
+            margin: 5px 0 0 0;
+            line-height: 1.4;
+          "
+        >
+          ② Booking History — Form View with status bar, approve/reject actions
+          and chatter
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td
+        style="
+          width: 50%;
+          padding-right: 8px;
+          vertical-align: top;
+          padding-top: 12px;
+        "
+      >
+        <img
+          src="screenshot3.png"
+          style="
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+          "
+          alt="Conflict Detection Wizard"
+        />
+        <p
+          style="
+            text-align: center;
+            color: #888;
+            font-size: 11px;
+            margin: 5px 0 0 0;
+            line-height: 1.4;
+          "
+        >
+          ③ Booking Conflict Wizard — detects overlaps and offers available date
+          slots
+        </p>
+      </td>
+      <td
+        style="
+          width: 50%;
+          padding-left: 8px;
+          vertical-align: top;
+          padding-top: 12px;
+        "
+      >
+        <img
+          src="screenshot4.png"
+          style="
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+          "
+          alt="Email Reminder"
+        />
+        <p
+          style="
+            text-align: center;
+            color: #888;
+            font-size: 11px;
+            margin: 5px 0 0 0;
+            line-height: 1.4;
+          "
+        >
+          ④ Automated overdue return reminder email with grouped bookings table
+        </p>
+      </td>
+    </tr>
+  </table>
+</section>
+
+<section style="padding: 28px 24px; background: #fdf6e3">
+  <h2
+    style="
+      color: #714b67;
+      font-size: 20px;
+      border-bottom: 2px solid #714b67;
+      padding-bottom: 8px;
+      margin: 0 0 16px 0;
+    "
+  >
+    🔄 Booking Workflow
+  </h2>
+  <table
+    style="
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      margin-bottom: 16px;
+    "
+  >
+    <tr>
+      <td style="padding: 6px">
+        <div
+          style="
+            background: #e2e3e5;
+            color: #383d41;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+          "
+        >
+          DRAFT
+        </div>
+      </td>
+      <td style="color: #b8860b; font-size: 18px; padding: 4px">→</td>
+      <td style="padding: 6px">
+        <div
+          style="
+            background: #fff3cd;
+            color: #856404;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+          "
+        >
+          PENDING
+        </div>
+      </td>
+      <td style="color: #b8860b; font-size: 18px; padding: 4px">→</td>
+      <td style="padding: 6px">
+        <div
+          style="
+            background: #d4edda;
+            color: #155724;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+          "
+        >
+          APPROVED
+        </div>
+      </td>
+      <td style="color: #b8860b; font-size: 18px; padding: 4px">→</td>
+      <td style="padding: 6px">
+        <div
+          style="
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+          "
+        >
+          RETURNED
+        </div>
+      </td>
+    </tr>
+  </table>
+  <table style="width: 100%; border-collapse: collapse">
+    <tr style="background: #714b67; color: #fff">
+      <th
+        style="
+          padding: 8px 12px;
+          text-align: left;
+          font-size: 11px;
+          font-weight: 600;
+        "
+      >
+        Step
+      </th>
+      <th
+        style="
+          padding: 8px 12px;
+          text-align: left;
+          font-size: 11px;
+          font-weight: 600;
+        "
+      >
+        Actor
+      </th>
+      <th
+        style="
+          padding: 8px 12px;
+          text-align: left;
+          font-size: 11px;
+          font-weight: 600;
+        "
+      >
+        Action
+      </th>
+      <th
+        style="
+          padding: 8px 12px;
+          text-align: left;
+          font-size: 11px;
+          font-weight: 600;
+        "
+      >
+        Result
+      </th>
+    </tr>
+    <tr style="background: #fff">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        1
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        User / Librarian
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Click "Request Book"
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Wizard opens pre-filled with dates
+      </td>
+    </tr>
+    <tr style="background: #fdf6e3">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        2
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        System
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Create booking record
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Sequence no. assigned, confirmation email sent with PDF
+      </td>
+    </tr>
+    <tr style="background: #fff">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        3
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Librarian / Admin
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Validate &amp; Approve
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Conflict check runs automatically
+      </td>
+    </tr>
+    <tr style="background: #fdf6e3">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        4a
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        System
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        No conflict found
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Status → Approved, copy count decremented
+      </td>
+    </tr>
+    <tr style="background: #fff">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        4b
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        System
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Conflict detected
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Conflict wizard opens → show available slots → notify user
+      </td>
+    </tr>
+    <tr style="background: #fdf6e3">
+      <td style="padding: 8px 12px; font-size: 12px">5</td>
+      <td style="padding: 8px 12px; font-size: 12px">Librarian / Admin</td>
+      <td style="padding: 8px 12px; font-size: 12px">Mark as Returned</td>
+      <td style="padding: 8px 12px; font-size: 12px">
+        Copy count restored, availability reset to True
+      </td>
+    </tr>
+  </table>
+</section>
+
+<section style="padding: 28px 24px; background: #fdf6e3">
+  <h2
+    style="
+      color: #714b67;
+      font-size: 20px;
+      border-bottom: 2px solid #714b67;
+      padding-bottom: 8px;
+      margin: 0 0 16px 0;
+    "
+  >
+    🔐 Role-Based Access Control
+  </h2>
+  <table style="width: 100%; border-collapse: collapse">
+    <tr style="background: #714b67; color: #fff">
+      <th
+        style="
+          padding: 8px 12px;
+          text-align: left;
+          font-size: 11px;
+          font-weight: 600;
+        "
+      >
+        Permission
+      </th>
+      <th
+        style="
+          padding: 8px 12px;
+          text-align: center;
+          font-size: 11px;
+          font-weight: 600;
+        "
+      >
+        Admin
+      </th>
+      <th
+        style="
+          padding: 8px 12px;
+          text-align: center;
+          font-size: 11px;
+          font-weight: 600;
+        "
+      >
+        Librarian
+      </th>
+      <th
+        style="
+          padding: 8px 12px;
+          text-align: center;
+          font-size: 11px;
+          font-weight: 600;
+        "
+      >
+        User
+      </th>
+    </tr>
+    <tr style="background: #fff">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        View all books
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+    </tr>
+    <tr style="background: #fdf6e3">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Create / Edit books
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #c0392b;
+          font-size: 14px;
+        "
+      >
+        ✘
+      </td>
+    </tr>
+    <tr style="background: #fff">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Delete books
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #c0392b;
+          font-size: 14px;
+        "
+      >
+        ✘
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #c0392b;
+          font-size: 14px;
+        "
+      >
+        ✘
+      </td>
+    </tr>
+    <tr style="background: #fdf6e3">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Request book (wizard)
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+    </tr>
+    <tr style="background: #fff">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Approve / Reject booking
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #c0392b;
+          font-size: 14px;
+        "
+      >
+        ✘
+      </td>
+    </tr>
+    <tr style="background: #fdf6e3">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        View own bookings only
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #c0392b;
+          font-size: 14px;
+        "
+      >
+        ✘
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #c0392b;
+          font-size: 14px;
+        "
+      >
+        ✘
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+    </tr>
+    <tr style="background: #fff">
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          font-size: 12px;
+        "
+      >
+        Send return reminder
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          border-bottom: 1px solid #eee;
+          text-align: center;
+          color: #c0392b;
+          font-size: 14px;
+        "
+      >
+        ✘
+      </td>
+    </tr>
+    <tr style="background: #fdf6e3">
+      <td style="padding: 8px 12px; font-size: 12px">Print PDF reports</td>
+      <td
+        style="
+          padding: 8px 12px;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          text-align: center;
+          color: #28a745;
+          font-size: 14px;
+        "
+      >
+        ✔
+      </td>
+      <td
+        style="
+          padding: 8px 12px;
+          text-align: center;
+          color: #b8860b;
+          font-size: 12px;
+        "
+      >
+        ◐ Own only
+      </td>
+    </tr>
+  </table>
+</section>
+
+<section style="padding: 28px 24px">
+  <h2
+    style="
+      color: #714b67;
+      font-size: 20px;
+      border-bottom: 2px solid #714b67;
+      padding-bottom: 8px;
+      margin: 0 0 16px 0;
+    "
+  >
+    ⚙️ Installation Guide
+  </h2>
+  <ol style="padding-left: 18px; color: #444; font-size: 12px; line-height: 2">
+    <li>
+      <strong>Download &amp; place the module</strong><br />
+      <code
+        style="
+          background: #f0ece0;
+          padding: 2px 7px;
+          border-radius: 3px;
+          font-size: 11px;
+        "
+        >cp -r wk_library_management /opt/odoo/custom_addons/</code
+      >
+    </li>
+    <li>
+      <strong>Update addons path in odoo.conf</strong><br />
+      <code
+        style="
+          background: #f0ece0;
+          padding: 2px 7px;
+          border-radius: 3px;
+          font-size: 11px;
+        "
+        >addons_path = /opt/odoo/addons,/opt/odoo/custom_addons</code
+      >
+    </li>
+    <li>
+      <strong>Restart Odoo server</strong><br />
+      <code
+        style="
+          background: #f0ece0;
+          padding: 2px 7px;
+          border-radius: 3px;
+          font-size: 11px;
+        "
+        >sudo systemctl restart odoo</code
+      >
+    </li>
+    <li>
+      <strong
+        >Go to Apps → Update App List → Search "Library Management" →
+        Install</strong
+      >
+    </li>
+    <li>
+      <strong>Load demo data (optional):</strong> Library → Books → Action →
+      Load Demo Books
+    </li>
+    <li>
+      <strong>Configure SMTP:</strong> Settings → Technical → Outbound Mail
+      Servers
+    </li>
+  </ol>
+  <div
+    style="
+      background: #fff8e8;
+      border-left: 4px solid #b8860b;
+      border-radius: 4px;
+      padding: 12px 16px;
+      margin-top: 14px;
+    "
+  >
+    <strong style="color: #b8860b">📦 Dependencies:</strong>
+    <span style="color: #555; font-size: 12px">
+      base, mail — no extra Python packages required beyond
+      <code
+        style="
+          background: #f0ece0;
+          padding: 1px 5px;
+          border-radius: 3px;
+          font-size: 11px;
+        "
+        >requests</code
+      >
+      (standard in Odoo environments).</span
+    >
+  </div>
+</section>
+
+<section style="padding: 28px 24px; background: #fdf6e3">
+  <h2
+    style="
+      color: #714b67;
+      font-size: 20px;
+      border-bottom: 2px solid #714b67;
+      padding-bottom: 8px;
+      margin: 0 0 16px 0;
+    "
+  >
+    🛠️ Technical Stack
+  </h2>
+  <table style="width: 100%; border-collapse: collapse">
+    <tr>
+      <td style="width: 50%; vertical-align: top; padding-right: 16px">
+        <h3
+          style="
+            color: #714b67;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+          "
+        >
+          Models
+        </h3>
+        <ul
+          style="
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 12px;
+            color: #555;
+            line-height: 2;
+          "
+        >
+          <li>
+            📗
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >book.books</code
+            >
+            — Book catalogue
+          </li>
+          <li>
+            📂
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >book.category</code
+            >
+            — Hierarchical categories
+          </li>
+          <li>
+            📋
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >booking.history</code
+            >
+            — Booking lifecycle
+          </li>
+          <li>
+            🧙
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >book.issue.wizard</code
+            >
+            — User request wizard
+          </li>
+          <li>
+            ⚔️
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >booking.conflict.wizard</code
+            >
+            — Conflict handler
+          </li>
+          <li>
+            📅
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >available.slot.wizard</code
+            >
+            — Slot finder
+          </li>
+        </ul>
+      </td>
+      <td style="width: 50%; vertical-align: top">
+        <h3
+          style="
+            color: #714b67;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+          "
+        >
+          ORM / Framework Features Used
+        </h3>
+        <ul
+          style="
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 12px;
+            color: #555;
+            line-height: 2;
+          "
+        >
+          <li>
+            ✅
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >mail.thread</code
+            >
+            +
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >mail.activity.mixin</code
+            >
+          </li>
+          <li>
+            ✅
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >@api.constrains</code
+            >
+            — ISBN uniqueness
+          </li>
+          <li>
+            ✅
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >@api.model_create_multi</code
+            >
+          </li>
+          <li>
+            ✅
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >ir.sequence</code
+            >
+            — Auto booking numbers
+          </li>
+          <li>
+            ✅
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >ir.actions.report</code
+            >
+            — QWeb PDF
+          </li>
+          <li>
+            ✅
+            <code
+              style="
+                background: #e8e0f0;
+                padding: 1px 5px;
+                border-radius: 3px;
+                font-size: 11px;
+              "
+              >_sql_constraints</code
+            >
+            — DB-level uniqueness
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+</section>
+
+<section style="padding: 28px 24px">
+  <h2
+    style="
+      color: #714b67;
+      font-size: 20px;
+      border-bottom: 2px solid #714b67;
+      padding-bottom: 8px;
+      margin: 0 0 16px 0;
+    "
+  >
+    📝 Changelog
+  </h2>
+  <div style="border-left: 3px solid #714b67; padding-left: 16px">
+    <p style="margin: 0 0 6px 0">
+      <span
+        style="
+          background: #714b67;
+          color: #fff;
+          padding: 2px 8px;
+          border-radius: 4px;
+          font-size: 11px;
+          font-family: monospace;
+        "
+        >v1.0.0</span
+      >
+      <span style="color: #888; font-size: 11px; margin-left: 8px"
+        >May 2025</span
+      >
+    </p>
+    <ul
+      style="
+        color: #555;
+        font-size: 12px;
+        line-height: 1.9;
+        margin: 8px 0 0 0;
+        padding-left: 16px;
+      "
+    >
+      <li>Initial release — Book, Category &amp; Booking models</li>
+      <li>Booking conflict detection with available-slot computation</li>
+      <li>3 automated email templates with PDF attachment support</li>
+      <li>Role-based access: Admin, Librarian, User security groups</li>
+      <li>Demo data loader — 20 books with OpenLibrary cover art</li>
+      <li>
+        Bulk server actions: Download Report, Deny Bookings, Send Reminder
+      </li>
+      <li>QWeb PDF reports for bookings and book details</li>
+    </ul>
+  </div>
+</section>
+
+<section style="background: #714b67; padding: 24px; text-align: center">
+  <h3 style="color: #fff; margin: 0 0 6px 0; font-size: 16px; font-weight: 600">
+    📚 Library Management System
+  </h3>
+  <p style="color: #e8d5e3; font-size: 12px; margin: 0 0 3px 0">
+    Developed by <strong style="color: #fff">Erotoca Software Pvt. Ltd.</strong>
+  </p>
+  <p style="color: #c9a8c0; font-size: 11px; margin: 0">
+    License: OPL-1 &nbsp;|&nbsp; Odoo 16 &amp; 17 &nbsp;|&nbsp;
+    support@erotoca.com
+  </p>
+</section>

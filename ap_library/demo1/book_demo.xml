@@ -1,0 +1,223 @@
+<odoo>
+    <data noupdate="1">
+        <record id="book_demo_1" model="book.books">
+            <field name="name">Python Programming</field>
+            <field name="isbn">ISBN0001</field>
+            <field name="description">Beginner guide to Python</field>
+            <field name="no_of_copies">5</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book1.jpeg" />
+
+        </record>
+
+        <record id="book_demo_2" model="book.books">
+            <field name="name">Java Programming</field>
+            <field name="isbn">ISBN0002</field>
+            <field name="description">Complete Java guide</field>
+            <field name="no_of_copies">4</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book2.jpeg" />
+
+        </record>
+
+        <record id="book_demo_3" model="book.books">
+            <field name="name">C Programming</field>
+            <field name="isbn">ISBN0003</field>
+            <field name="description">Basics of C language</field>
+            <field name="no_of_copies">3</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book3.jpeg" />
+
+        </record>
+
+        <record id="book_demo_4" model="book.books">
+            <field name="name">Data Structures</field>
+            <field name="isbn">ISBN0004</field>
+            <field name="description">Concepts of data structures</field>
+            <field name="no_of_copies">6</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book4.jpeg" />
+
+        </record>
+
+        <record id="book_demo_5" model="book.books">
+            <field name="name">Machine Learning</field>
+            <field name="isbn">ISBN0005</field>
+            <field name="description">Introduction to ML</field>
+            <field name="no_of_copies">2</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book5.jpeg" />
+
+        </record>
+
+        <record id="book_demo_6" model="book.books">
+            <field name="name">Artificial Intelligence</field>
+            <field name="isbn">ISBN0006</field>
+            <field name="description">AI fundamentals</field>
+            <field name="no_of_copies">3</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book6.jpeg" />
+
+        </record>
+
+        <record id="book_demo_7" model="book.books">
+            <field name="name">Operating Systems</field>
+            <field name="isbn">ISBN0007</field>
+            <field name="description">OS concepts</field>
+            <field name="no_of_copies">5</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book7.jpeg" />
+
+        </record>
+
+        <record id="book_demo_8" model="book.books">
+            <field name="name">Computer Networks</field>
+            <field name="isbn">ISBN0008</field>
+            <field name="description">Networking basics</field>
+            <field name="no_of_copies">4</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book8.jpeg" />
+
+        </record>
+
+        <record id="book_demo_9" model="book.books">
+            <field name="name">Database Systems</field>
+            <field name="isbn">ISBN0009</field>
+            <field name="description">Database design and concepts</field>
+            <field name="no_of_copies">3</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book9.jpeg" />
+
+        </record>
+
+        <record id="book_demo_10" model="book.books">
+            <field name="name">Web Development</field>
+            <field name="isbn">ISBN0010</field>
+            <field name="description">HTML CSS JS basics</field>
+            <field name="no_of_copies">5</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book10.jpeg" />
+
+        </record>
+
+        <record id="book_demo_11" model="book.books">
+            <field name="name">Django Framework</field>
+            <field name="isbn">ISBN0011</field>
+            <field name="description">Python web framework</field>
+            <field name="no_of_copies">2</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book11.jpeg" />
+
+        </record>
+
+        <record id="book_demo_12" model="book.books">
+            <field name="name">Flask Web Development</field>
+            <field name="isbn">ISBN0012</field>
+            <field name="description">Lightweight Python framework</field>
+            <field name="no_of_copies">3</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book12.jpeg" />
+
+        </record>
+
+        <record id="book_demo_13" model="book.books">
+            <field name="name">JavaScript Guide</field>
+            <field name="isbn">ISBN0013</field>
+            <field name="description">Complete JavaScript guide</field>
+            <field name="no_of_copies">4</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book13.png" />
+
+        </record>
+
+        <record id="book_demo_14" model="book.books">
+            <field name="name">React Development</field>
+            <field name="isbn">ISBN0014</field>
+            <field name="description">Frontend library React</field>
+            <field name="no_of_copies">2</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book14.jpeg" />
+
+        </record>
+
+        <record id="book_demo_15" model="book.books">
+            <field name="name">Node.js Development</field>
+            <field name="isbn">ISBN0015</field>
+            <field name="description">Backend JavaScript runtime</field>
+            <field name="no_of_copies">3</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book15.jpeg" />
+
+        </record>
+
+        <record id="book_demo_16" model="book.books">
+            <field name="name">Cyber Security</field>
+            <field name="isbn">ISBN0016</field>
+            <field name="description">Security fundamentals</field>
+            <field name="no_of_copies">4</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book16.jpeg" />
+
+        </record>
+
+        <record id="book_demo_17" model="book.books">
+            <field name="name">Cloud Computing</field>
+            <field name="isbn">ISBN0017</field>
+            <field name="description">Cloud technologies</field>
+            <field name="no_of_copies">3</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book17.jpeg" />
+
+        </record>
+
+        <record id="book_demo_18" model="book.books">
+            <field name="name">Docker Guide</field>
+            <field name="isbn">ISBN0018</field>
+            <field name="description">Containerization with Docker</field>
+            <field name="no_of_copies">2</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book18.jpeg" />
+
+        </record>
+
+        <record id="book_demo_19" model="book.books">
+            <field name="name">Kubernetes Basics</field>
+            <field name="isbn">ISBN0019</field>
+            <field name="description">Container orchestration</field>
+            <field name="no_of_copies">3</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book19.jpeg" />
+
+        </record>
+
+        <record id="book_demo_20" model="book.books">
+            <field name="name">Git Version Control</field>
+            <field name="isbn">ISBN0020</field>
+            <field name="description">Version control system</field>
+            <field name="no_of_copies">5</field>
+            <field name="availability">True</field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/Books/Book20.jpeg" />
+
+        </record>
+    </data>
+</odoo>

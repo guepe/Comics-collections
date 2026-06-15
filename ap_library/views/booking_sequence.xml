@@ -1,0 +1,14 @@
+<odoo>
+    <data noupdate="1">
+
+        <record id="booking_sequence" model="ir.sequence">
+            <field name="name">Booking Sequence</field>
+            <field name="code">booking.sequence</field>
+            <field name="prefix">Book/%(month)s%(year)s</field>
+            <field name="padding">4</field>
+            <field name="number_next">211</field>
+            <field name="number_increment">1</field>
+        </record>
+
+    </data>
+</odoo>

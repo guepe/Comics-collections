@@ -1,0 +1,24 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_book_user,Book User,model_book_books,wk_library_management.group_library_user,1,0,0,0
+access_book_librarian,Book Librarian,model_book_books,wk_library_management.group_library_librarian,1,1,0,0
+access_book_admin,book Admin,model_book_books,wk_library_management.group_library_admin,1,1,1,1
+
+access_category_user,category user,model_book_category,wk_library_management.group_library_user,1,0,0,0
+access_category_librarian,category Librarian,model_book_category,wk_library_management.group_library_librarian,1,0,0,0
+access_category_admin,Category Admin,model_book_category,wk_library_management.group_library_admin,1,1,1,1
+
+access_booking_user,Booking user,model_booking_history,wk_library_management.group_library_user,1,0,1,0
+access_booking_librarian,booking librarian,model_booking_history,wk_library_management.group_library_librarian,1,1,1,0
+access_booking_admin,Booking Admin,model_booking_history,wk_library_management.group_library_admin,1,1,1,1
+
+access_res_users_library_admin,access.res.users.library.admin,base.model_res_users,wk_library_management.group_library_admin,1,1,1,1
+access_res_user_librarian,acces_librarian_res_users,base.model_res_users,wk_library_management.group_library_librarian,1,1,1,1
+
+book_request_user_wizard,Book Wizard Request,model_book_issue_wizard,wk_library_management.group_library_user,1,1,1,1
+
+
+access_booking_conflict_wizard,booking_conflict_wizard,model_booking_conflict_wizard,wk_library_management.group_library_librarian,1,1,1,1
+access_available_slot_wizard,available_slot_wizard,model_available_slot_wizard,wk_library_management.group_library_librarian,1,1,1,1
+
+acces_update_booking_wizard,Update Booking Wizard,model_update_booking_wizard,,1,1,1,1

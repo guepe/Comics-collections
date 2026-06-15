@@ -1,0 +1,55 @@
+<odoo>
+    <data noupdate="1">
+
+        <record id="library_category_1" model="book.category">
+            <field name="name">Science Books</field>
+            <field name="description">
+                Books related to scientific discoveries and theories.
+                Helps readers understand physics, chemistry, and biology concepts.
+            </field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/category/category1.jpeg" />
+        </record>
+
+        <record id="library_category_2" model="book.category">
+            <field name="name">Technology Books</field>
+            <field name="description">
+                Books focused on modern technology and innovations.
+                Covers topics like programming, AI, and computer systems.
+            </field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/category/category2.jpeg" />
+        </record>
+
+        <record id="library_category_3" model="book.category">
+            <field name="name">History Books</field>
+            <field name="description">
+                Books that explain historical events and civilizations.
+                Provides knowledge about past cultures and important timelines.
+            </field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/category/category3.jpeg" />
+        </record>
+
+        <record id="library_category_4" model="book.category">
+            <field name="name">Literature Books</field>
+            <field name="description">
+                Books containing novels, poetry, and classic literature.
+                Improves imagination and understanding of storytelling.
+            </field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/category/category4.jpeg" />
+        </record>
+
+        <record id="library_category_5" model="book.category">
+            <field name="name">Self Development</field>
+            <field name="description">
+                Books that focus on personal growth and motivation.
+                Helps readers improve skills, mindset, and productivity.
+            </field>
+            <field name="image" type="base64"
+                file="wk_library_management/static/images/category/category5.jpeg" />
+        </record>
+
+    </data>
+</odoo>

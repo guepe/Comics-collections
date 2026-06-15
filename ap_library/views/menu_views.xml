@@ -1,0 +1,39 @@
+<odoo>
+
+    <menuitem id="menu_library_root" name="Library" />
+
+    <menuitem id="menu_books"
+        name="Books"
+        parent="menu_library_root"
+        action="action_books"
+        sequence="1" />
+
+
+    <menuitem id="menu_category"
+        name="Category"
+        parent="menu_library_root"
+        action="action_category"
+        sequence="2"
+        groups="wk_library_management.group_library_librarian,wk_library_management.group_library_admin" />
+
+    <menuitem id="menu_booking_history"
+        name="History"
+        parent="menu_library_root"
+        action="action_booking"
+        sequence="3" />
+
+    <menuitem id="library_menu_members"
+        name="Members"
+        parent="menu_library_root"
+        action="action_library_members"
+        sequence="4"
+        groups="wk_library_management.group_library_admin,wk_library_management.group_library_librarian" />
+
+
+    <menuitem id="menu_booking_dashboard"
+        name="Booking Dashboard"
+        parent="menu_library_root"
+        action="booking_dashboard_action"
+        sequence="5" />
+
+</odoo>

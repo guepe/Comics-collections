@@ -1,0 +1,48 @@
+<odoo>
+
+    <record id="view_update_booking_wizard_form" model="ir.ui.view">
+        <field name="name">update.booking.wizard.form</field>
+        <field name="model">update.booking.wizard</field>
+        <field name="arch" type="xml">
+
+            <form string="Update Booking">
+
+                <group>
+
+                    <field name="partner_id" readonly="1" />
+
+                    <field name="booking_id" />
+
+                    <field name="start_date" invisible="not booking_id" />
+
+                    <field name="end_date" invisible="not booking_id" />
+
+                </group>
+
+                <footer>
+
+                    <button name="action_update_booking"
+                        type="object"
+                        string="Update"
+                        class="btn-primary" />
+
+                    <button string="Cancel"
+                        class="btn-secondary"
+                        special="cancel" />
+
+                </footer>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <record id="action_update_booking_wizard" model="ir.actions.act_window">
+        <field name="name">Update Booking</field>
+        <field name="res_model">update.booking.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

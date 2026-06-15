@@ -1,0 +1,15 @@
+<odoo>
+
+    <record id="action_report_booking_history" model="ir.actions.report">
+        <field name="name">Booking History Report</field>
+        <field name="model">booking.history</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wk_library_management.booking_history_report_template</field>
+        <field name="report_file">wk_library_management.booking_history_report_template</field>
+
+        <field name="binding_model_id" ref="model_booking_history" />
+        <field name="binding_type">report</field>
+
+    </record>
+
+</odoo>

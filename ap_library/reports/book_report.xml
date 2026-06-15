@@ -1,0 +1,10 @@
+<odoo>
+    <record id="action_report_book_detail" model="ir.actions.report">
+        <field name="name">Book Detail Report</field>
+        <field name="model">book.books</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wk_library_management.book_detail_template</field>
+        <field name="report_file">wk_library_management.book_detail_template</field>
+        <field name="print_report_name">'Book-' + object.name</field>
+    </record>
+</odoo>

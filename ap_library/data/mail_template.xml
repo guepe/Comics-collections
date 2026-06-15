@@ -1,0 +1,169 @@
+<odoo>
+    <record id="email_template_library" model="mail.template">
+        <field name="name">Booking Confirmation status</field>
+        <field name="email_from">ambuj.odoo026@webkul.in</field>
+        <field name="subject">Booking reminder</field>
+        <field name="model_id" ref="wk_library_management.model_booking_history" />
+        <field name="email_to">{{object.assign_to.partner_id.email}}</field>
+
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                <p>Dear <t t-out="object.assign_to.partner_id.name" />,</p>
+                <p>This is a confirmation that your booking has been generated. Please find the
+                    details below:</p>
+
+                <div
+                    style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; max-width: 500px;">
+                    <div
+                        style="background-color: #31708f; color: #fff; padding: 10px; text-align: center; border-radius: 3px;">
+                        <strong>Booking Date:</strong>
+                        <br />
+                        <t t-out="object.booking_date" />
+                    </div>
+
+                    <div style="margin-top: 10px; font-size: 13px; color: #555; text-align: center;">
+                        <strong>Assignee:</strong>
+                        <t t-out="object.assign_to.partner_id.name" />
+                        <br />
+                        <strong>Till Date:</strong>
+                        <t t-out="object.expiry_date or 'N/A'" />
+                        <br />
+                        <strong>Total Days:</strong>
+                        <t t-out="object.total_days or 'N/A'" />
+                        <br />
+
+
+                    </div>
+
+                    <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;" />
+
+                    <div style="font-size: 13px; color: #555; text-align: center;">
+                        <strong>BOOK :</strong>
+                        <t t-out="object.book_id.name or 'N/A'" />
+                        <br />
+                        <strong>ISBN :</strong>
+                        <t t-out="object.book_id.isbn or 'N/A'" />
+                        <br />
+                        <strong>Auther :</strong>
+                        <t t-out="object.book_id.author_ids.name or 'N/A'" />
+                        <br />
+                        <strong>Status:</strong>
+                        <t t-out="object.status" />
+                    </div>
+
+
+                    <hr style="margin: 10px 0; border: 0; border-top: 1px solid #ddd;" />
+
+
+                    <div style="margin-top: 10px; font-size: 13px; color: #555; text-align: center;">
+                        <strong>Category :</strong>
+                        <t t-out="object.book_id.category_ids.name or 'N/A'" />
+                        <br />
+                        <strong>Responsible :</strong>
+                        <t t-out="object.book_id.responsible.partner_id.name or 'N/A'" />
+                        <br />
+
+
+                    </div>
+                </div>
+
+                <p style="margin-top: 20px;">Thanks &amp; Regards,<br />
+            <strong>Odoo Bot</strong><br />
+                    +91 9999999999<br />help.odoo026@webkul.in</p>
+            </div>
+        </field>
+    </record>
+
+
+    <!-- Second feature librarian update -->
+    <record id="email_template_library_librarian_status_update" model="mail.template">
+        <field name="name">Booking status</field>
+        <field name="email_from">ambuj.odoo026@webkul.in</field>
+        <field name="subject">Booking status updates</field>
+        <field name="model_id" ref="wk_library_management.model_booking_history" />
+        <field name="email_to">{{object.assign_to.partner_id.email}}</field>
+
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+                <p>Dear <t t-out="object.assign_to.partner_id.name" />,</p>
+                <p>This is an confirmatiom mail regrading the updates of Librarian approval. Find
+                    below Details:</p>
+
+                <div
+                    style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; max-width: 500px;">
+                    <div
+                        style="background-color: #3c763d; color: #fff; padding: 10px; text-align: center; border-radius:
+    3px;">
+                        <strong>Status:</strong>
+                        <t t-out="object.status" />
+                        <br />
+
+                        <!-- <strong>Received By :</strong>
+                        <t t-esc="object.received_by.partner_id.name" />
+                        <br /> -->
+                    </div>
+
+                    <div style="margin-top: 10px; font-size: 13px; color: #555; text-align: center;">
+                        <strong>BOOK :</strong>
+                        <t t-out="object.book_id.name or 'N/A'" />
+                        <br />
+                        <strong>ISBN :</strong>
+                        <t t-out="object.book_id.isbn or 'N/A'" />
+                        <br />
+                        <strong>Status:</strong>
+                        <t t-out="object.status" />
+                        <br />
+                        <strong>Till Date:</strong>
+                        <t t-out="object.expiry_date or 'N/A'" />
+                        <br />
+                        <strong>Total Days:</strong>
+                        <t t-out="object.total_days or 'N/A'" />
+                        <br />
+
+                    </div>
+
+                    <p style="margin-top: 20px;">Thanks &amp; Regards,<br />
+            <strong>Librarian</strong><br />
+                        +91 9999999999<br />ambuj.odoo026@webkul.in</p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+    <record id="email_template_booking_notify" model="mail.template">
+        <field name="name">Booking Slot Notification</field>
+        <field name="model_id" ref="wk_library_management.model_booking_history" />
+        <field name="subject">Booking Request Update (Notification)</field>
+        <field name="email_from">ambuj.odoo026@webkul.in</field>
+        <field name="email_to">{{ object.assign_to.partner_id.email }}</field>
+        <field name="body_html" type="html">
+            <div style="font-family: Arial, sans-serif; font-size: 14px; padding: 10px;">
+                <p>
+                    Sorry, we are unable to process the booking request between the duration you
+                    have mentioned inside the booking.
+                </p>
+
+                <p>
+                    But the good news is there are few slots available between this duration.
+                    You can choose one of the slots between this period:
+                </p>
+
+                <div
+                    style="margin: 20px 0; padding-left: 20px; color: #cc0000; font-weight: bold; line-height: 1.6;">
+                    <t t-out="object.available_slot_html" />
+                </div>
+
+                <p>
+                    Else you can choose the date after the mentioned dates.
+                </p>
+
+                <div style="margin-top: 30px;">
+                    <p> Regards,<br />
+                    <strong>Library Team</strong>
+                    </p>
+                </div>
+            </div>
+        </field>
+    </record>
+
+</odoo> 

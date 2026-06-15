@@ -1,0 +1,11 @@
+<odoo>
+
+    <record id="partner_booking_history_report" model="ir.actions.report">
+        <field name="name">Partner Booking History</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wk_library_management.partner_booking_history_template</field>
+        <field name="binding_model_id" ref="base.model_res_partner" />
+    </record>
+
+</odoo>

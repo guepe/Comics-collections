@@ -1,0 +1,41 @@
+<odoo>
+
+    <!-- Server Action To Download All Selected Book Details -->
+    <record id="action_download_selected_book_details" model="ir.actions.server">
+        <field name="name">Download Book Details</field>
+        <field name="model_id" ref="model_book_books" />
+        <field name="binding_model_id" ref="model_book_books" />
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            action=env.ref('wk_library_management.action_report_book_detail').report_action(records)
+        </field>
+    </record>
+
+
+    <!-- Server Action to deny bookings in bulk -->
+    <record id="action_deny_booking" model="ir.actions.server">
+        <field name="name">Deny Bookings</field>
+        <field name="model_id" ref="model_booking_history" />
+        <field name="binding_model_id" ref="model_booking_history" />
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            records.filtered(lambda rec: rec.status == 'pending').write({'status': 'rejected'})
+        </field>
+    </record>
+
+
+    <!-- Reminder Mail Server Action -->
+    <record id="action_send_return_reminder" model="ir.actions.server">
+        <field name="name">Send Return Reminder</field>
+        <field name="model_id" ref="model_booking_history" />
+        <field name="binding_model_id" ref="model_booking_history" />
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+            records.action_send_return_reminder()
+        </field>
+    </record>
+
+</odoo>
