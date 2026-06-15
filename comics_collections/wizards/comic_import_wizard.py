@@ -652,7 +652,17 @@ class ComicImportWizard(models.TransientModel):
                 existing_edition.write(write_vals)
             edition = existing_edition
         else:
-            edition = self.env["comic.edition"].create(edition_vals)
+            # Avoid creating a duplicate edition when the work already has a single
+            # edition with no ISBN (e.g. previously imported without ISBN, now with).
+            reuse_edition = self._find_updatable_edition(work)
+            if reuse_edition:
+                write_vals = {key: value for key, value in edition_vals.items() if key != "work_id"}
+                if write_vals:
+                    reuse_edition.write(write_vals)
+                edition = reuse_edition
+                action = "updated"
+            else:
+                edition = self.env["comic.edition"].create(edition_vals)
 
         if isbn and not self.env["comic.isbn"].search([("isbn_13", "=", isbn)], limit=1):
             self.env["comic.isbn"].create({"edition_id": edition.id, "isbn_13": isbn})
@@ -665,6 +675,17 @@ class ComicImportWizard(models.TransientModel):
             return self.env["comic.edition"].browse()
         isbn_rec = self.env["comic.isbn"].search([("isbn_13", "=", isbn)], limit=1)
         return isbn_rec.edition_id if isbn_rec else self.env["comic.edition"].browse()
+
+    def _find_updatable_edition(self, work):
+        """Return the single ISBN-less edition of a work, if exactly one exists.
+
+        Used to avoid creating a duplicate edition when the same album is imported
+        twice — once without ISBN and once with.
+        """
+        editions = work.edition_ids
+        if len(editions) == 1 and not editions.isbn_ids:
+            return editions
+        return self.env["comic.edition"].browse()
 
     def _get_or_create_work(self, serie, tome, title):
         """Create a comic.work, falling back to search on unique constraint violation."""
