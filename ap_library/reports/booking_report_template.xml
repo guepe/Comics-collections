@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="booking_history_report_template">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <style>
+                    .page { margin-top: 0px !important; padding-top: 0px !important; }
+                    body { margin-top: 0px !important; }
+                    .table-custom th { color: #666; width: 40%; font-size: 11px; text-transform:
+                    uppercase; }
+                    .table-custom td { font-size: 12px; }
+                </style>
+
+                <div class="page" style="font-family: 'Helvetica', sans-serif; color: #333;">
+
+                    <div class="row align-items-center mb-4 py-3 text-white"
+                        style="background-color: #714B67; margin-left: -15px; margin-right: -15px;">
+                        <div class="col-7">
+                            <h2 class="mb-0 ps-3" style="font-weight: bold; letter-spacing: 1px;">BOOKING
+                                SUMMARY REPORT</h2>
+                        </div>
+                        <div class="col-5 text-right pe-3">
+                            <small class="opacity-75">Generated: <span
+                                    t-esc="datetime.datetime.now().strftime('%d %b %Y | %H:%M')" /></small>
+                        </div>
+                    </div>
+
+                    <t t-foreach="docs" t-as="doc">
+                        <div class="booking_record mb-4 shadow-sm"
+                            style="border: 1px solid #dee2e6; border-radius: 8px; page-break-inside: avoid; overflow: hidden;">
+
+                            <div class="row g-0 align-items-center bg-light border-bottom px-3 py-2">
+                                <div class="col-6">
+                                    <span class="text-muted small uppercase">Reference:</span>
+                                    <span t-field="doc.name" class="fw-bold ms-2 text-primary"
+                                        style="font-size: 14px;" />
+                                </div>
+                                <div class="col-6 text-end">
+                                    <span
+                                        t-attf-class="badge rounded-pill #{
+                                        doc.status == 'approved' and 'bg-success' or 
+                                        doc.status == 'pending' and 'bg-warning text-dark' or 
+                                        doc.status == 'draft' and 'bg-secondary' or 'bg-info'}"
+                                        style="padding: 6px 12px; font-size: 10px; letter-spacing: 0.5px;">
+                                        <t t-esc="doc.status.upper() if doc.status else 'NEW'" />
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row p-3">
+                                <div class="col-4 border-end">
+                                    <h6 class="fw-bold text-uppercase mb-3"
+                                        style="color: #714B67; font-size: 11px;">
+                                        <i class="fa fa-user me-1" /> User Details </h6>
+                                    <table class="table table-sm table-borderless table-custom">
+                                        <tr>
+                                            <th>Customer</th>
+                                            <td>
+                                                <span t-field="doc.partner_id.name" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Assigned</th>
+                                            <td>
+                                                <span t-field="doc.assign_to.name" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div class="col-4 border-end">
+                                    <h6 class="fw-bold text-uppercase mb-3"
+                                        style="color: #714B67; font-size: 11px;">
+                                        <i class="fa fa-book me-1" /> Resource Details </h6>
+                                    <table class="table table-sm table-borderless table-custom">
+                                        <tr>
+                                            <th>Title</th>
+                                            <td class="fw-bold">
+                                                <span t-field="doc.book_id.name" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>ISBN</th>
+                                            <td>
+                                                <span t-field="doc.book_id.isbn" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div class="col-4">
+                                    <h6 class="fw-bold text-uppercase mb-3"
+                                        style="color: #714B67; font-size: 11px;">
+                                        <i class="fa fa-calendar me-1" /> Schedule </h6>
+                                    <table class="table table-sm table-borderless table-custom">
+                                        <tr>
+                                            <th>Issued</th>
+                                            <td>
+                                                <span t-field="doc.booking_date"
+                                                    t-options='{"widget": "date"}' />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Expiry</th>
+                                            <td class="text-danger fw-bold">
+                                                <span t-field="doc.expiry_date"
+                                                    t-options='{"widget": "date"}' />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total</th>
+                                            <td><span t-field="doc.total_days" /> Days</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="px-3 py-2 bg-white border-top"
+                                t-if="doc.book_id.description">
+                                <div class="d-flex align-items-top">
+                                    <i class="fa fa-info-circle text-muted me-2 mt-1"
+                                        style="font-size: 10px;" />
+                                    <p class="mb-0 text-muted"
+                                        style="font-size: 10px; line-height: 1.2;">
+                                        <strong>Description:</strong>
+                                        <span t-field="doc.book_id.description" />
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <div class="text-center mt-3 pt-3 border-top"
+                        style="font-size: 10px; color: #aaa;">
+                        *** END OF BOOKING LIST ***
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

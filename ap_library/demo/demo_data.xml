@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <function model="book.category" name="load_demo_categories" />
+        <function model="book.books" name="load_demo_books" />
+        <function model="booking.history" name="load_demo_bookings" />
+    </data>
+</odoo>

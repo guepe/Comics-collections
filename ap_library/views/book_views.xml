@@ -1,0 +1,271 @@
+<odoo>
+    <!-- List views -->
+
+    <record id="view_library_book_list" model="ir.ui.view">
+        <field name="name">book.list</field>
+        <field name="model">book.books</field>
+        <field name="arch" type="xml">
+            <list name="Books">
+                <field name="name" />
+                <field name="isbn" />
+                <field name="no_of_copies" />
+                <field name="availability" widget="boolean_toggle" readonly="1"
+                    groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user" />
+                <field name="author_ids" widget="many2many_tags" />
+                <field name="responsible" widget="many2one_avatar_user" />
+                <field name="category_ids" widget="many2many_tags" />
+                <field name="history_ids" />
+
+            </list>
+        </field>
+
+    </record>
+
+    <!-- Form view -->
+    <record id="view_library_book_form" model="ir.ui.view">
+        <field name="name">book.form</field>
+        <field name="model">book.books</field>
+        <field name="arch" type="xml">
+            <form string="Book">
+                <header>
+                    <button name="action_request_books"
+                        type="object"
+                        class="oe_stat_button btn-success"
+                        string="Request: Issue"
+                        invisible="not id"
+                        groups="wk_library_management.group_library_librarian,wk_library_management.group_library_admin"
+                    >
+                    </button>
+
+                    <button name="action_request_books_user"
+                        type="object"
+                        class="oe_stat_button btn-success"
+                        string="Request: Issue"
+                        invisible="not id"
+                        groups="wk_library_management.group_library_user"
+                    />
+
+                    <button name="%(wk_library_management.action_report_book_detail)d"
+                        type="action"
+                        string="Print Book Report"
+                        class="btn-primary"
+                        invisible="not id" />
+
+                </header>
+                <sheet>
+
+
+                    <group>
+                        <group>
+                            <div class="oe-title">
+                                <h1> Name: <field name="name" placeholder="Enter Book name..."
+                                        readonly="1"
+                                        groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user"></field>
+                                    <field
+                                        name="name" placeholder="Enter Book name..."
+                                        groups="wk_library_management.group_library_admin"></field>
+                                </h1>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="image" widget="image" class="oe-avatar"
+                                options="{'size':[150,150]}" readonly="1"
+                                groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user"></field>
+                            <field name="image" widget="image" class="oe-avatar"
+                                options="{'size':[150,150]}"
+                                groups="wk_library_management.group_library_admin"></field>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="General Information">
+                            <group>
+                                <!-- Isbn -->
+                                <field name="isbn" help="ISBN VALUES." readonly="1"
+                                    groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user"></field>
+                                <field name="isbn" help="ISBN VALUES."
+                                    groups="wk_library_management.group_library_admin"></field>
+                                <!-- No Of Copies -->
+                                <field name="no_of_copies" readonly="1"
+                                    groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user"></field>
+                                <field name="no_of_copies"
+                                    groups="wk_library_management.group_library_admin"></field>
+                                <!-- Availibility -->
+                                <field name="availability" widget="boolean_toggle" readonly="1"
+                                    groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user"></field>
+
+                                <field name="availability" widget="boolean_toggle"
+                                    groups="wk_library_management.group_library_admin"></field>
+                            </group>
+                        </page>
+                        <page string="Notes">
+                            <group>
+                                <field name="description" readonly="1"
+                                    groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user"></field>
+                                <field name="description"
+                                    groups="wk_library_management.group_library_admin"></field>
+                            </group>
+                        </page>
+                        <page string="Others">
+                            <group>
+                                <label for="author_ids" />
+                                <field name="author_ids" nolabel="1" widget="many2many_tags"
+                                    readonly="1"
+                                    groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user" />
+                                <field name="author_ids" nolabel="1" widget="many2many_tags"
+                                    groups="wk_library_management.group_library_admin" />
+                            </group>
+                            <group>
+                                <label for="responsible" />
+                                <field name="responsible" nolabel="1" widget="many2one_avatar_user"
+                                    readonly="1"
+                                    groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user" />
+                                <field name="responsible" nolabel="1" widget="many2one_avatar_user"
+                                    groups="wk_library_management.group_library_admin" />
+                            </group>
+                            <group>
+                                <label for="category_ids" />
+                                <field name="category_ids" nolabel="1" widget="many2many_tags"
+                                    readonly="1"
+                                    groups="wk_library_management.group_library_librarian,wk_library_management.group_library_user" />
+                                <field name="category_ids" nolabel="1" widget="many2many_tags"
+                                    groups="wk_library_management.group_library_admin" />
+                            </group>
+                            <!-- <group>
+                                <label for="history_ids" />
+                                <field name="history_ids" nolabel="1" />
+                            </group> -->
+                        </page>
+                    </notebook>
+                </sheet>
+
+            </form>
+        </field>
+
+    </record>
+
+
+    <record id="book_books_view_kanban" model="ir.ui.view">
+        <field name="name">book.books.kanban</field>
+        <field name="model">book.books</field>
+
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+
+
+                <field name="name" />
+                <field name="isbn" />
+                <field name="image" />
+                <field name="author_ids" />
+                <field name="availability" />
+                <field name="no_of_copies" />
+
+                <templates>
+                    <t t-name="card">
+
+                        <div style="display:flex; gap:15px; padding:8px;">
+
+                            <div>
+                                <field name="image"
+                                    widget="image"
+                                    options="{'size':[100,100]}" />
+                            </div>
+
+                            <div>
+
+                                <div style="font-weight:600;">
+                                    <field name="name" />
+                                </div>
+
+                                <div> Author: <field name="author_ids"
+                                        widget="many2many_tags" />
+                                </div>
+
+                                <div style="color:#666;"> ISBN [<field name="isbn" />] </div>
+
+                                <div
+                                    style="margin-top:5px; display:flex; align-items:center; gap:8px;">
+                                    <field name="availability"
+                                        widget="boolean_button"
+                                        options='{"terminology": "active"}' />
+
+                                    <span> Copies: <field name="no_of_copies" />
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </t>
+                </templates>
+
+            </kanban>
+        </field>
+    </record>
+    <record id="view_book_search" model="ir.ui.view">
+        <field name="name">book.search</field>
+        <field name="model">book.books</field>
+        <field name="arch" type="xml">
+
+            <search string="Search Books">
+
+
+                <field name="name"
+                    string="Name or ISBN"
+                    filter_domain="['|', ('name','ilike', self), ('isbn','ilike', self)]" />
+
+                <separator />
+
+                <filter name="has_isbn"
+                    string="Has ISBN"
+                    domain="[('isbn','!=',False)]" />
+
+                <filter name="no_isbn"
+                    string="No ISBN"
+                    domain="['|', ('isbn','=',False), ('isbn','=','')]" />
+
+
+                <group string="Group By">
+                    <filter name="group_availability"
+                        string="Availability"
+                        context="{'group_by': 'availability'}" />
+                </group>
+
+            </search>
+
+        </field>
+    </record>
+
+
+    <!-- Favorite Filter -->
+    <record id="filter_books_favorite" model="ir.filters">
+        <field name="name">Favorite</field>
+        <field name="model_id">book.books</field>
+        <field name="domain">[('is_favorite','=',True)]</field>
+        <field name="user_id" eval="False" />
+        <field name="context">{}</field>
+        <field name="is_default" eval="False" />
+    </record>
+
+    <!-- Not Favorite filter-->
+    <record id="filter_books_not_favorite" model="ir.filters">
+        <field name="name">Not Favorite</field>
+        <field name="model_id">book.books</field>
+        <field name="domain">[('is_favorite','=',False)]</field>
+        <field name="user_id" eval="False" />
+        <field name="context">{}</field>
+        <field name="is_default" eval="False" />
+    </record>
+
+    <!-- Action -->
+
+    <record id="action_books" model="ir.actions.act_window">
+        <field name="name">Books</field>
+        <field name="res_model">book.books</field>
+        <field name="view_mode">list,form,kanban,search</field>
+        <field name="search_view_id" ref="view_book_search" />
+
+    </record>
+
+</odoo>

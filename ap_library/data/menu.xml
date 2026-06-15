@@ -1,0 +1,5 @@
+<odoo>
+    <menuitem id="menu_booking_dashboard"
+              name="Booking Dashboard"
+              action="booking_dashboard_action"/>
+</odoo>

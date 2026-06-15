@@ -1,0 +1,55 @@
+<odoo>
+
+    <!-- Conflict Wizard -->
+    <record id="view_booking_conflict_wizard" model="ir.ui.view">
+        <field name="name">booking.conflict.wizard.form</field>
+        <field name="model">booking.conflict.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <!-- Red Warning Box -->
+                <group>
+                    <field name="warning_message" nolabel="1" readonly="1" />
+                </group>
+                <group>
+                    <field name="conflict_ids" readonly="1" nolabel="1">
+                        <list decoration-success="1">
+                            <field name="name" string="Booking No" />
+                            <field name="book_id" />
+                            <field name="booking_date" />
+                            <field name="expiry_date" />
+                        </list>
+                    </field>
+                </group>
+                <footer>
+                    <button name="action_check_available_slots"
+                        type="object"
+                        string="Check Available Slots"
+                        class="btn-primary" />
+                    <button string="Cancel" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Available Slot Wizard -->
+    <record id="view_available_slot_wizard" model="ir.ui.view">
+        <field name="name">available.slot.wizard.form</field>
+        <field name="model">available.slot.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Available Slots">
+                <group>
+                    <field name="slot_message" nolabel="1" readonly="1" decoration-danger="1" />
+                </group>
+                <footer>
+                    <button name="action_notify_user"
+                        type="object"
+                        string="Notify User"
+                        class="btn-primary" />
+                    <button string="Cancel" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

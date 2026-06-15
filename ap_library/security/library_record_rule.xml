@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="library_record_rule_user_own_history" model="ir.rule">
+        <field name="name">Library User: only own booking history</field>
+        <field name="model_id" ref="model_booking_history" />
+        <field name="groups" eval="[(4, ref('wk_library_management.group_library_user'))]" />
+        <field name="domain_force">[('assign_to', '=',user.id)]</field>
+    </record>
+
+    <record id="library_record_rule_admin" model="ir.rule">
+        <field name="name">Library User: only own booking history</field>
+        <field name="model_id" ref="model_booking_history" />
+        <field name="groups" eval="[(4, ref('wk_library_management.group_library_admin'))]" />
+        <field name="domain_force">[(1, '=',1)]</field>
+    </record>
+
+    <!-- <record id="library_record_rule_librarian" model="ir.rule">
+        <field name="name">Library User: only own booking history</field>
+        <field name="model_id" ref="model_booking_history" />
+        <field name="groups" eval="[(4, ref('wk_library_management.group_library_librarian'))]" />
+        <field name="domain_force">[(1, '=',1)]</field>
+    </record> -->
+
+
+    <record id="rule_librarian_exclude_library_admin" model="ir.rule">
+        <field name="name">Librarian: Manage all except Admins</field>
+        <field name="model_id" ref="base.model_res_users" />
+        <field name="groups" eval="[(4, ref('wk_library_management.group_library_librarian'))]" />
+        <field name="domain_force"
+            eval="str([('groups_id', 'not in', [ref('wk_library_management.group_library_admin')])])" />
+        <field name="perm_read" eval="True" />
+        <field name="perm_write" eval="True" />
+        <field name="perm_create" eval="True" />
+        <field name="perm_unlink" eval="False" />
+    </record>
+
+    <record id="rule_booking_history_librarian" model="ir.rule">
+        <field name="name">Librarian: See all non-drafts</field>
+        <field name="model_id" ref="model_booking_history" />
+        <field name="groups" eval="[(4, ref('wk_library_management.group_library_librarian'))]" />
+        <field name="domain_force">['|', ('status', '!=', 'draft'), ('create_uid', '=', user.id)]</field>
+    </record>
+</odoo>

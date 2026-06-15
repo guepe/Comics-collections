@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <t t-name="wk_library_management.Dashboard">
+        <div
+            class="text-center w-100 mb-4 p-4 bg-white shadow-sm rounded-bottom border-bottom border-primary border-3">
+            <h1 class="fw-bold text-uppercase" style="color: #714B67; letter-spacing: 2px;">
+                Library Dashboard
+            </h1>
+
+            <div class="mt-3 d-flex justify-content-center gap-2">
+                <button class="btn btn-primary rounded-pill px-4 shadow-sm o_counter_btn"
+                    t-on-click="incrementCounter">
+                    <i class="fa fa-plus-circle me-2" /> Click Counter: <span
+                        class="badge bg-white text-primary ms-2">
+                        <t t-esc="state.clickCount" />
+                    </span>
+                </button>
+
+                <button class="btn btn-outline-secondary rounded-circle shadow-sm o_refresh_btn"
+                    t-on-click="resetCounter"
+                    title="Reset Counter">
+                    <i class="fa fa-refresh" />
+                </button>
+            </div>
+        </div>
+        <div class="o_booking_dashboard">
+
+            <div class="dashboard_card approved"
+                t-on-click="openApproved">
+                <h3>Total Booking Issued(only Approved)</h3>
+                <h1>
+                    <t t-esc="state.approved" />
+                </h1>
+            </div>
+
+            <div class="dashboard_card pending"
+                t-on-click="openPending">
+                <h3>Pending Request</h3>
+                <h1>
+                    <t t-esc="state.pending" />
+                </h1>
+            </div>
+
+            <div class="dashboard_card total"
+                t-on-click="openAll">
+                <h3>Booking History</h3>
+                <h1>
+                    <t t-esc="state.total" />
+                </h1>
+            </div>
+
+        </div>
+        <div class="o_booking_dashboard">
+            <div class="dashboard_card approved"
+                t-on-click="openBooks">
+                <h3>Total Books</h3>
+                <h1>
+                    <t t-esc="state.total_books" />
+                </h1>
+            </div>
+
+            <div class="dashboard_card pending"
+                t-on-click="openCategory">
+                <h3>Total Category</h3>
+                <h1>
+                    <t t-esc="state.total_category" />
+                </h1>
+            </div>
+
+
+        </div>
+    </t>
+
+</templates>

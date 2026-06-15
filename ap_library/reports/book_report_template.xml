@@ -1,0 +1,82 @@
+<odoo>
+    <template id="book_detail_template">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-family: 'Helvetica', sans-serif; font-size: 13px;">
+
+                    <div class="text-center mb-4"
+                        style="border-bottom: 2px solid #333; padding-bottom: 10px;">
+                        <h2 style="font-weight: bold; text-transform: uppercase; margin: 0;">Book
+                            Information Report</h2>
+                        <small class="text-muted">Generated on: <span
+                                t-esc="datetime.datetime.now().strftime('%Y-%m-%d %H:%M')" /></small>
+                    </div>
+
+                    <t t-foreach="docs" t-as="doc">
+                        <div class="book_entry mb-5" style="page-break-inside: avoid;">
+
+                            <h4
+                                style="background-color: #f2f2f2; padding: 8px; border-left: 5px solid #714B67;">
+                                <span t-field="doc.name" />
+                                <small class="text-muted" style="font-size: 0.7em;"> (ISBN: <span
+                                        t-field="doc.isbn" />)</small>
+                            </h4>
+
+                            <table class="table table-sm table-bordered mt-2">
+                                <tbody>
+                                    <tr>
+                                        <th class="bg-light" style="width: 20%;">Authors</th>
+                                        <td style="width: 30%;">
+                                            <t t-foreach="doc.author_ids" t-as="a">
+                                                <span t-field="a.name" />
+                                                <t t-if="not a_last">, </t>
+                                            </t>
+                                        </td>
+                                        <th class="bg-light" style="width: 20%;">Categories</th>
+                                        <td style="width: 30%;">
+                                            <t t-foreach="doc.category_ids" t-as="c">
+                                                <span t-field="c.name" />
+                                                <t t-if="not c_last">, </t>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Copies</th>
+                                        <td>
+                                            <span t-field="doc.no_of_copies" />
+                                        </td>
+                                        <th class="bg-light">Availability</th>
+                                        <td>
+                                            <span
+                                                t-attf-class="badge #{'bg-success' if doc.availability else 'bg-danger'}"
+                                                style="color: white; padding: 3px 8px;">
+                                                <t
+                                                    t-out="'Available' if doc.availability else 'Not Available'" />
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="bg-light">Responsible</th>
+                                        <td>
+                                            <span t-field="doc.responsible.name" />
+                                        </td>
+                                        <th class="bg-light">History Count</th>
+                                        <td><span t-out="len(doc.history_ids)" /> Bookings</td>
+                                    </tr>
+                                    <tr t-if="doc.description">
+                                        <th class="bg-light">Description</th>
+                                        <td colspan="3">
+                                            <span t-field="doc.description" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

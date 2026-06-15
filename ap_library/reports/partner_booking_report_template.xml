@@ -1,0 +1,83 @@
+<odoo>
+    <template id="partner_booking_history_template">
+        <t t-call="web.html_container">
+            <t t-call="web.basic_layout">
+                <div class="page" style="font-family: 'Helvetica', sans-serif; font-size: 13px;">
+
+                    <div class="text-center mb-5"
+                        style="border-bottom: 2px solid #333; padding-bottom: 10px;">
+                        <h2 style="font-weight: bold; text-transform: uppercase; margin: 0;">All
+                            Booking Report</h2>
+                        <span class="text-muted">Report Date: <t
+                                t-esc="context_timestamp(datetime.datetime.now()).strftime('%Y-%m-%d')" /></span>
+                    </div>
+
+                    <t t-foreach="docs" t-as="partner">
+                        <div class="partner_block mb-5" style="page-break-inside: avoid;">
+
+                            <div
+                                style="background-color: #f8f9fa; padding: 10px; border-left: 4px solid #714B67; margin-bottom: 10px;">
+                                <h4 style="margin: 0;">
+                                    <strong>Member: </strong>
+                                    <span t-field="partner.name" />
+                                </h4>
+                            </div>
+
+                            <table class="table table-sm table-bordered">
+                                <thead style="background-color: #714B67; color: white;">
+                                    <tr>
+                                        <th style="width: 15%;">Booking No</th>
+                                        <th style="width: 35%;">Book Title</th>
+                                        <th style="width: 15%;">Assigned To</th>
+                                        <th style="width: 15%;">Booking Date</th>
+                                        <th style="width: 10%;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="partner.history_ids" t-as="line">
+                                        <tr>
+                                            <td class="text-center font-weight-bold">
+                                                <span t-field="line.name" />
+                                            </td>
+                                            <td>
+                                                <span t-field="line.book_id.name" />
+                                            </td>
+                                            <td>
+                                                <span t-field="line.assign_to.name" />
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-field="line.booking_date"
+                                                    t-options='{"widget": "date"}' />
+                                            </td>
+
+                                            <td class="text-center align-middle">
+                                                <span
+                                                    t-attf-class="badge #{
+            line.status == 'approved' and 'bg-success text-white' or 
+            line.status == 'pending' and 'bg-warning text-dark' or 
+            line.status == 'draft' and 'bg-secondary text-white' or 
+            line.status == 'returned' and 'bg-info text-white' or 
+            line.status == 'rejected' and 'bg-danger text-white' or 
+            'bg-light text-dark'}"
+                                                    style="padding: 5px 10px; border-radius: 4px; font-size: 10px; text-transform: uppercase;">
+                                                    <t
+                                                        t-esc="dict(line._fields['status'].selection).get(line.status)" />
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                    <tr t-if="not partner.history_ids">
+                                        <td colspan="5" class="text-center text-muted">No history
+                                            found for this member.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </t>
+
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,50 @@
+<odoo>
+
+    <record id="view_partner_form_booking_history" model="ir.ui.view">
+        <field name="name">res.partner.form.booking.history</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook" position="inside">
+                <page string="Booking History">
+
+                    <field name="history_ids" mode="list,form"
+                        context="{
+                        'list_view_ref':'wk_library_management.booking_history_list',
+                        'form_view_ref': 'wk_library_management.view_library_booking_history_form'}">
+
+
+                    </field>
+
+                    <button name="action_create_booking"
+                        type="object"
+                        string="Create Booking"
+                        class="btn-primary" />
+
+
+                </page>
+            </xpath>
+
+            <xpath expr="//field[@name='vat']" position="after">
+                <button name="action_open_update_booking_wizard"
+                    type="object"
+                    string="Update Booking"
+                    class="btn-primary" />
+            </xpath>
+
+            <xpath expr="//field[@name='category_id']" position="after">
+
+
+                <button name="action_download_booking_history"
+                    type="object"
+                    string="Download Booking History"
+                    class="btn-primary" />
+
+
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

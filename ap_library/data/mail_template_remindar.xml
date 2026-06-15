@@ -1,0 +1,101 @@
+<odoo>
+    <record id="mail_template_booking_reminder" model="mail.template">
+        <field name="name">Book Return Reminder (Modern Table)</field>
+        <field name="model_id" ref="wk_library_management.model_booking_history" />
+        <field name="email_from">ambuj.odoo026@webkul.in</field>
+        <field name="email_to">{{object.assign_to.partner_id.email}}</field>
+        <field name="subject">Reminder: Overdue Books Return - Library Team</field>
+
+        <field name="body_html" type="html">
+            <div
+                style="margin: 0px; padding: 0px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 14px; color: #333;">
+                <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%"
+                    style="background-color: #f8f9fa; padding: 20px;">
+                    <tr>
+                        <td align="center">
+                            <table role="presentation" border="0" cellpadding="0" cellspacing="0"
+                                width="600"
+                                style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                                <tr>
+                                    <td
+                                        style="background-color: #714B67; padding: 30px; text-align: center; color: #ffffff;">
+                                        <h2
+                                            style="margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px;">Return
+                                            Reminder</h2>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding: 30px;">
+                                        <p style="margin-bottom: 20px;">Dear <strong
+                                                t-out="object.partner_id.name" />,</p>
+                                        <p style="line-height: 1.6; color: #555;">
+                                            Our records indicate that the following book bookings
+                                            have expired.
+                                            Please return these items to the library at your
+                                            earliest convenience to avoid potential late fees.
+                                        </p>
+
+                                        <table border="0" cellpadding="10" cellspacing="0"
+                                            width="100%"
+                                            style="margin-top: 25px; border: 1px solid #eee;">
+                                            <thead>
+                                                <tr
+                                                    style="background-color: #f2f2f2; font-size: 12px; text-transform: uppercase; color: #714B67;">
+                                                    <th align="left"
+                                                        style="border-bottom: 2px solid #714B67;">Booking
+                                                        No</th>
+                                                    <th align="left"
+                                                        style="border-bottom: 2px solid #714B67;">Book
+                                                        Name</th>
+                                                    <th align="center"
+                                                        style="border-bottom: 2px solid #714B67;">Due
+                                                        Date</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="ctx.get('default_bookings', [])"
+                                                    t-as="booking">
+                                                    <tr style="border-bottom: 1px solid #eee;">
+                                                        <td
+                                                            style="font-family: monospace; color: #333;">
+                                                            <t t-esc="booking.name" />
+                                                        </td>
+                                                        <td>
+                                                            <strong>
+                                                                <t t-esc="booking.book_id.name" />
+                                                            </strong>
+                                                        </td>
+                                                        <td align="center" style="color: #d9534f;">
+                                                            <t
+                                                                t-esc="booking.expiry_date.strftime('%d %b %Y')" />
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+
+                                        <div
+                                            style="margin-top: 30px; padding: 15px; background-color: #fff4f4; border-left: 4px solid #d9534f; font-size: 13px;">
+                                            <strong>Note:</strong> If you have already returned
+                                            these books in the last 24 hours, please ignore this
+                                            message. </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td
+                                        style="padding: 20px; background-color: #f9f9f9; text-align: center; font-size: 12px; color: #999; border-top: 1px solid #eee;">
+                                        <p style="margin: 0;">Sent by <strong>Library Management
+                                            System</strong></p>
+                                        <p style="margin: 5px 0 0 0;">Webkul Software Pvt. Ltd.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </field>
+    </record>
+</odoo>
