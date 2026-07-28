@@ -1,3 +1,5 @@
+import time
+
 import requests
 from odoo import _, fields, models
 from odoo.exceptions import UserError
@@ -40,10 +42,18 @@ class ResConfigSettings(models.TransientModel):
         if api_key:
             params["key"] = api_key
 
-        try:
-            resp = requests.get(url, params=params, timeout=10)
-        except Exception as e:
-            raise UserError(f"Impossible de contacter Google Books : {e}\n" "Vérifiez votre connexion internet.")
+        retries = 3
+        backoff = 2
+        for attempt in range(retries):
+            try:
+                resp = requests.get(url, params=params, timeout=10)
+            except Exception as e:
+                raise UserError(f"Impossible de contacter Google Books : {e}\n" "Vérifiez votre connexion internet.")
+
+            if resp.status_code in (500, 502, 503, 504) and attempt < retries - 1:
+                time.sleep(backoff * (2**attempt))
+                continue
+            break
 
         if resp.status_code == 403:
             raise UserError(
@@ -62,7 +72,9 @@ class ResConfigSettings(models.TransientModel):
                 )
             )
         if resp.status_code != 200:
-            raise UserError(f"Google Books : erreur inattendue HTTP {resp.status_code}.")
+            raise UserError(
+                f"Google Books : erreur inattendue HTTP {resp.status_code} (après {retries} tentative(s))."
+            )
 
         data = resp.json()
         total = data.get("totalItems", 0)
