@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  push:
+    branches: [19.0]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update modules on VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          # La clé SSH est restreinte côté VPS (authorized_keys, option
+          # "command=") à exactement cette commande : ce qui suit n'a donc
+          # qu'une valeur documentaire, le serveur l'ignore et exécute
+          # toujours "git pull" + mise à jour des modules Odoo (-u) +
+          # redémarrage du service odoo.
+          script: |
+            cd ~/apps/odoo-vps/addons/comics-collections
+            git pull
+            docker compose -f ~/apps/odoo-vps/compose.yaml run --rm odoo odoo -d odoo -u comics_collections,comic_datasource,comic_shop --stop-after-init
+            docker compose -f ~/apps/odoo-vps/compose.yaml restart odoo
