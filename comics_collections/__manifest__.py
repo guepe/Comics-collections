@@ -2,16 +2,17 @@
     "name": "Comic Collection",
     "version": "19.0.2.0.0",
     "category": "Leisure",
-    "summary": "Gérez votre collection de bandes dessinées",
+    "summary": "Manage your comic book collection",
     "description": """
-        Module de gestion de collection de bandes dessinées.
-        Gérez vos séries, albums, auteurs, éditeurs et prêts.
+        Comic book collection management module.
+        Manage your series, albums, authors, publishers and loans.
     """,
     "author": "Belspace, OCA",
     "maintainers": ["guepe"],
     "website": "https://github.com/Belspace/Comics-collections",
     "license": "LGPL-3",
     "development_status": "Beta",
+    "images": ["static/description/overview.png"],
     "depends": ["base", "mail", "contacts"],
     "data": [
         "security/comic_security.xml",

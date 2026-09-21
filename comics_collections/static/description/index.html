@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8"/>
 </head>
@@ -8,10 +8,10 @@
 <section class="oe_container">
     <div class="oe_row oe_spaced">
         <h2 class="oe_slogan">Comic Collection</h2>
-        <h3 class="oe_slogan">Gérez votre collection de bandes dessinées directement dans Odoo 19.</h3>
+        <h3 class="oe_slogan">Manage your comic book collection directly in Odoo 19.</h3>
         <p class="oe_mt32 text-center">
-            Séries, albums, auteurs, éditeurs, wishlist, import CSV/Excel —
-            tout ce qu'il faut pour le collectionneur exigeant.
+            Series, albums, authors, publishers, CSV/Excel import —
+            everything the discerning collector needs.
         </p>
     </div>
 </section>
@@ -19,32 +19,30 @@
 <section class="oe_container oe_dark">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <img class="oe_screenshot" src="overview.png" alt="Vue kanban des séries et albums"/>
+            <img class="oe_screenshot" src="overview.png" alt="Kanban view of series and albums"/>
         </div>
     </div>
 </section>
 
 <section class="oe_container">
     <div class="oe_row oe_spaced">
-        <h2 class="oe_slogan" style="text-align:left;">Fonctionnalités principales</h2>
+        <h2 class="oe_slogan" style="text-align:left;">Key features</h2>
         <div class="oe_span6">
             <h4>📚 Collection</h4>
             <ul>
-                <li>Gérez vos <strong>séries</strong> et vos <strong>albums</strong> avec couvertures</li>
-                <li>Suivez les tomes possédés, en cours, terminés</li>
-                <li>Note 0 à 5 étoiles par album</li>
-                <li>État de lecture : Non lu / En cours / Lu</li>
-                <li>Wishlist pour les tomes à acquérir</li>
+                <li>Manage your <strong>series</strong> and <strong>albums</strong> with cover images</li>
+                <li>Link authors to albums with their role: scriptwriter, artist, colorist, other</li>
+                <li>Dedicated models for publishers and genres</li>
+                <li>EAN-13 / ISBN-10 management with uniqueness validation</li>
             </ul>
         </div>
         <div class="oe_span6">
-            <h4>🔍 Sources de données</h4>
+            <h4>📖 Loans</h4>
             <ul>
-                <li>Enrichissement depuis <strong>Google Books</strong> (ISBN ou titre)</li>
-                <li>Téléchargement automatique des couvertures HD</li>
-                <li>Détection automatique série / tome / auteurs / éditeur</li>
-                <li>Import de série complète en un clic</li>
-                <li>Sources Open Library et BnF (dépôt légal français)</li>
+                <li>Track who borrowed which album</li>
+                <li>Expected and effective return dates</li>
+                <li>Overdue loans highlighted automatically</li>
+                <li>Full chatter &amp; activity tracking on albums and editions</li>
             </ul>
         </div>
     </div>
@@ -52,18 +50,18 @@
         <div class="oe_span6">
             <h4>📥 Import</h4>
             <ul>
-                <li>Import depuis fichier <strong>CSV, XLS ou XLSX</strong></li>
-                <li>Wizard 4 étapes : Upload → Mapping → Prévisualisation → Import</li>
-                <li>Modèle de fichier téléchargeable</li>
-                <li>Rapport d'erreurs détaillé</li>
+                <li>Import from <strong>CSV, XLS or XLSX</strong> files</li>
+                <li>4-step wizard: Upload → Mapping → Preview → Import</li>
+                <li>Downloadable file template</li>
+                <li>Detailed error report for failed rows</li>
             </ul>
         </div>
         <div class="oe_span6">
-            <h4>🛒 Liens d'achat</h4>
+            <h4>🛒 Purchase links</h4>
             <ul>
-                <li>Liens <strong>Club.be, Amazon.be, FNAC.be</strong> générés automatiquement depuis l'ISBN</li>
-                <li>Ouverture en un clic dans un nouvel onglet</li>
-                <li>Régénération manuelle si besoin</li>
+                <li><strong>Club.be, Amazon.be, FNAC.be</strong> links generated automatically from the ISBN</li>
+                <li>One-click opening in a new tab</li>
+                <li>Weekly scheduled action fills in missing links</li>
             </ul>
         </div>
     </div>
@@ -72,32 +70,32 @@
 <section class="oe_container oe_dark">
     <div class="oe_row oe_spaced">
         <div class="oe_span12">
-            <img class="oe_screenshot" src="v2.png" alt="Formulaire album et wizard datasource"/>
+            <img class="oe_screenshot" src="v2.png" alt="Album form and duplicate detection"/>
         </div>
     </div>
 </section>
 
 <section class="oe_container">
     <div class="oe_row oe_spaced">
-        <h2 class="oe_slogan" style="text-align:left;">Vues Kanban avec couvertures</h2>
+        <h2 class="oe_slogan" style="text-align:left;">Kanban views with cover art</h2>
         <p>
-            Parcourez vos séries et albums sous forme de grille avec les couvertures en grand format.
-            Un placeholder éditorial coloré est affiché automatiquement si la couverture n'est pas encore disponible.
-            Une barre de progression indique les tomes possédés sur le total de chaque série.
+            Browse your series and albums as a grid with large cover images.
+            A colorful editorial placeholder is shown automatically when a cover is not yet available.
+            Each series card shows the total number of albums (tomes).
         </p>
     </div>
 </section>
 
 <section class="oe_container oe_dark">
     <div class="oe_row oe_spaced">
-        <h2 class="oe_slogan" style="text-align:left;">Pour qui ?</h2>
+        <h2 class="oe_slogan" style="text-align:left;">Who is it for?</h2>
         <p>
-            Tout collectionneur de bandes dessinées souhaitant gérer sa bibliothèque depuis Odoo :
-            suivi des séries, inventaire des albums, wishlist, auteurs, éditeurs, genres.
+            Any comic book collector who wants to manage their library from Odoo:
+            series tracking, album inventory, authors, publishers, genres, and loans.
         </p>
         <p>
-            Compatible avec les collections BD franco-belge, manga et comics.
-            Conçu pour Odoo 19 Community et Enterprise.
+            Compatible with Franco-Belgian comics, manga and American comics collections.
+            Built for Odoo 19 Community and Enterprise.
         </p>
     </div>
 </section>

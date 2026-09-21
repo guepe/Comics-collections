@@ -2,16 +2,17 @@
     "name": "Comic Shop",
     "version": "19.0.2.0.0",
     "category": "Leisure",
-    "summary": "Vendez vos BD en ligne et gérez la bibliothèque de vos clients",
+    "summary": "Sell your comics online and manage customer libraries",
     "description": """
-        Extension commerciale de Comic Collection.
-        Lien album ↔ produit, webshop BD, caisse (POS) et bibliothèque client sur le portail.
+        Commercial extension of Comic Collection.
+        Album ↔ product link, comic webshop, POS integration and customer portal library.
     """,
     "author": "Belspace, OCA",
     "maintainers": ["guepe"],
     "website": "https://github.com/Belspace/Comics-collections",
     "license": "LGPL-3",
     "development_status": "Beta",
+    "images": ["static/description/overview.png"],
     "depends": [
         "comics_collections",
         "comic_datasource",

@@ -2,18 +2,19 @@
     "name": "Comic Datasource",
     "version": "19.0.1.0.0",
     "category": "Leisure",
-    "summary": "Connecteur multi-sources pour enrichir les fiches BD",
+    "summary": "Multi-source connector to enrich comic book records",
     "description": """
-        Agrège plusieurs sources de données pour les bandes dessinées :
-        - Google Books API (clé API gratuite)
-        - Open Library API (sans clé)
-        - BnF SRU API (sans clé, dépôt légal)
+        Aggregates multiple data sources for comic books:
+        - Google Books API (free API key)
+        - Open Library API (no key required)
+        - BnF SRU API (no key required, French legal deposit)
     """,
     "author": "Belspace, OCA",
     "maintainers": ["guepe"],
     "website": "https://github.com/Belspace/Comics-collections",
     "license": "LGPL-3",
     "development_status": "Beta",
+    "images": ["static/description/overview.png"],
     "depends": ["comics_collections"],
     "data": [
         "security/ir.model.access.csv",
