@@ -15,7 +15,6 @@ class ComicPortalRefuseWizard(models.TransientModel):
             ("doublon", "Doublon d'un album existant"),
             ("incorrect", "Fiche incorrecte"),
         ],
-        string="Motif",
         required=True,
         default="doublon",
     )
@@ -103,14 +102,22 @@ class ComicPortalRefuseWizard(models.TransientModel):
         if not partner:
             return
         if motif == "doublon":
-            body = Markup(_("<p>Votre proposition « %(title)s » existait déjà dans notre catalogue : "
-                            "elle a été rattachée à « %(target)s » dans votre bibliothèque.</p>")) % {
+            body = Markup(
+                _(
+                    "<p>Votre proposition « %(title)s » existait déjà dans notre catalogue : "
+                    "elle a été rattachée à « %(target)s » dans votre bibliothèque.</p>"
+                )
+            ) % {
                 "title": title,
                 "target": target_name,
             }
         else:
-            body = Markup(_("<p>Votre proposition « %(title)s » n'a pas pu être ajoutée à notre "
-                            "catalogue et a été retirée de votre bibliothèque.</p>")) % {"title": title}
+            body = Markup(
+                _(
+                    "<p>Votre proposition « %(title)s » n'a pas pu être ajoutée à notre "
+                    "catalogue et a été retirée de votre bibliothèque.</p>"
+                )
+            ) % {"title": title}
         if message:
             body += Markup("<p>%s</p>") % message
         partner.sudo().message_post(

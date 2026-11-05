@@ -22,9 +22,13 @@ class TestPortalRefuse(TransactionCase):
         cls.target = cls.env["comic.work"].create({"titre_canonique": "Album Officiel", "tome": 1})
 
     def _propose(self, isbn="", serie="Série Proposée Unique", editeur="Éditeur Proposé Unique"):
-        edition = self.env["comic.edition"].sudo()._create_from_portal_data(
-            {"title": "Album Proposé", "serie_name": serie, "editeur_name": editeur, "isbn": isbn, "tome": 2},
-            self.partner,
+        edition = (
+            self.env["comic.edition"]
+            .sudo()
+            ._create_from_portal_data(
+                {"title": "Album Proposé", "serie_name": serie, "editeur_name": editeur, "isbn": isbn, "tome": 2},
+                self.partner,
+            )
         )
         self.Album.create({"partner_id": self.partner.id, "edition_id": edition.id, "source": "achete_ailleurs"})
         return edition.work_id
@@ -63,7 +67,9 @@ class TestPortalRefuse(TransactionCase):
 
     def test_customer_is_notified(self):
         work = self._propose()
-        before = self.env["mail.message"].search_count([("model", "=", "res.partner"), ("res_id", "=", self.partner.id)])
+        before = self.env["mail.message"].search_count(
+            [("model", "=", "res.partner"), ("res_id", "=", self.partner.id)]
+        )
         self.Wizard.create({"work_id": work.id, "motif": "incorrect", "message": "Titre illisible"}).action_refuse()
         msgs = self.env["mail.message"].search([("model", "=", "res.partner"), ("res_id", "=", self.partner.id)])
         self.assertEqual(len(msgs), before + 1)
