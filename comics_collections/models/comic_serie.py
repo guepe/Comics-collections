@@ -1,4 +1,4 @@
-from odoo import api, fields, models
+from odoo import Command, api, fields, models
 
 from ..utils.normalize import normalize_title
 
@@ -43,7 +43,21 @@ class ComicSerie(models.Model):
     bedetheque_url = fields.Char(string="URL Bedetheque")
     work_ids = fields.One2many("comic.work", "serie_id", string="Albums")
     nb_works_total = fields.Integer(string="Tomes au total", compute="_compute_works", store=True)
-    a_suivre = fields.Boolean(string="À suivre", default=False, tracking=True)
+    suivi_user_ids = fields.Many2many(
+        "res.users",
+        "comic_serie_suivi_user_rel",
+        "serie_id",
+        "user_id",
+        string="Suivie par",
+    )
+    # Catalogue partagé : le suivi est propre à chaque utilisateur. Ce booléen
+    # non stocké reflète l'utilisateur courant (présence dans suivi_user_ids).
+    a_suivre = fields.Boolean(
+        string="À suivre",
+        compute="_compute_a_suivre",
+        inverse="_inverse_a_suivre",
+        search="_search_a_suivre",
+    )
     first_edition_cover_id = fields.Many2one(
         "comic.edition",
         compute="_compute_first_edition_cover",
@@ -56,6 +70,43 @@ class ComicSerie(models.Model):
     def _compute_name_normalise(self):
         for rec in self:
             rec.name_normalise = normalize_title(rec.name)
+
+    @api.depends("suivi_user_ids")
+    @api.depends_context("uid")
+    def _compute_a_suivre(self):
+        user = self.env.user
+        for rec in self:
+            rec.a_suivre = user in rec.suivi_user_ids
+
+    def _inverse_a_suivre(self):
+        user = self.env.user
+        to_follow = self.filtered(lambda s: s.a_suivre and user not in s.suivi_user_ids)
+        to_unfollow = self.filtered(lambda s: not s.a_suivre and user in s.suivi_user_ids)
+        if to_follow:
+            to_follow.write({"suivi_user_ids": [Command.link(user.id)]})
+        if to_unfollow:
+            to_unfollow.write({"suivi_user_ids": [Command.unlink(user.id)]})
+
+    def _search_a_suivre(self, operator, value):
+        # Odoo 19 normalise '=' / '!=' en 'in' / 'not in' avant l'appel ;
+        # on accepte les deux formes.
+        if operator in ("=", "!="):
+            values = {bool(value)}
+        elif operator in ("in", "not in"):
+            values = {bool(v) for v in value}
+        else:
+            return NotImplemented
+        if operator in ("!=", "not in"):
+            values = {True, False} - values
+        followed = [("suivi_user_ids", "in", self.env.user.id)]
+        not_followed = [("suivi_user_ids", "not in", self.env.user.id)]
+        if values == {True, False}:
+            return []
+        if values == {True}:
+            return followed
+        if values == {False}:
+            return not_followed
+        return [("id", "=", False)]
 
     @api.depends("image_couverture")
     def _compute_has_cover(self):

@@ -49,6 +49,8 @@
                         <group>
                             <field name="nb_works_total"/>
                             <field name="a_suivre"/>
+                            <field name="suivi_user_ids" widget="many2many_tags"
+                                   groups="comics_collections.group_comic_manager"/>
                         </group>
                     </group>
                     <notebook>
@@ -89,7 +91,7 @@
                         domain="[('statut', '=', 'en_cours')]"/>
                 <filter string="Terminées" name="terminee"
                         domain="[('statut', '=', 'terminee')]"/>
-                <filter string="À suivre" name="a_suivre"
+                <filter string="Mes séries suivies" name="a_suivre"
                         domain="[('a_suivre', '=', True)]"/>
                 <separator/>
                 <filter string="BD" name="bd" domain="[('type', '=', 'bd')]"/>

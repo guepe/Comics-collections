@@ -33,7 +33,7 @@ class ComicSerie(models.Model):
     def _cron_check_missing_volumes(self):
         """Cron hebdomadaire : détecte et ajoute en wishlist les tomes manquants
         pour toutes les séries marquées «À suivre»."""
-        series = self.search([("a_suivre", "=", True)])
+        series = self.search([("suivi_user_ids", "!=", False)])
         if not series:
             _logger.info("Cron tomes manquants : aucune série à suivre.")
             return
