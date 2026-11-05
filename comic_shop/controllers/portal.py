@@ -1,4 +1,5 @@
 import base64
+import datetime
 import logging
 import re
 
@@ -9,7 +10,7 @@ from urllib.parse import urljoin, urlparse
 from odoo import http, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
-from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
 from odoo.addons.comic_datasource.aggregator import ComicDataAggregator
 from odoo.addons.comics_collections.models.comic_isbn import ComicIsbn
 
@@ -18,6 +19,9 @@ _logger = logging.getLogger(__name__)
 # Valeurs acceptées depuis le portail (un client ne peut pas se déclarer "achete_ici")
 _PORTAL_SOURCES = ("achete_ailleurs", "cadeau", "inconnu")
 _ETATS_LECTURE = ("non_lu", "en_cours", "lu")
+# Destination d'un album ajouté depuis le portail
+_ADD_TARGETS = ("collection", "wishlist")
+_LIBRARY_PAGE_SIZE = 24
 
 # Hôtes autorisés pour le téléchargement des couvertures (anti-SSRF)
 _COVER_ALLOWED_HOSTS = (
@@ -93,9 +97,15 @@ class ComicLibraryPortal(CustomerPortal):
 
     # ── /my/library — index ─────────────────────────────────────────────────
 
-    @http.route("/my/library", type="http", auth="user", website=True)
-    def my_library(self, filter="all", sort="date", view="kanban", **kw):
+    @http.route(
+        ["/my/library", "/my/library/page/<int:page>"],
+        type="http",
+        auth="user",
+        website=True,
+    )
+    def my_library(self, filter="all", sort="date", view="kanban", page=1, **kw):
         partner = request.env.user.partner_id
+        Album = request.env["comic.customer.album"].sudo()
 
         domain = [("partner_id", "=", partner.id)]
         if filter == "collection":
@@ -104,8 +114,10 @@ class ComicLibraryPortal(CustomerPortal):
             domain.append(("dans_wishlist", "=", True))
         elif filter == "reading":
             domain.append(("etat_lecture", "=", "en_cours"))
+        else:
+            filter = "all"
 
-        records = request.env["comic.customer.album"].sudo().search(domain)
+        records = Album.search(domain)
 
         if sort == "serie":
             records = records.sorted(
@@ -114,17 +126,28 @@ class ComicLibraryPortal(CustomerPortal):
         elif sort == "title":
             records = records.sorted(key=lambda r: r.edition_id.work_id.titre_canonique or "")
         else:
-            records = records.sorted(key=lambda r: r.date_ajout or "", reverse=True)
-
-        all_records = (
-            request.env["comic.customer.album"]
-            .sudo()
-            .search(
-                [
-                    ("partner_id", "=", partner.id),
-                ]
+            sort = "date"
+            # Clé homogène : les entrées sans date d'ajout passent en dernier
+            records = records.sorted(
+                key=lambda r: (bool(r.date_ajout), r.date_ajout or datetime.date.min),
+                reverse=True,
             )
+
+        try:
+            page = max(1, int(page))
+        except (ValueError, TypeError):
+            page = 1
+        pager = portal_pager(
+            url="/my/library",
+            url_args={"filter": filter, "sort": sort, "view": view},
+            total=len(records),
+            page=page,
+            step=_LIBRARY_PAGE_SIZE,
         )
+        records = records[pager["offset"] : pager["offset"] + _LIBRARY_PAGE_SIZE]
+
+        # Compteurs calculés sur toute la bibliothèque (indépendants du filtre / de la page)
+        all_records = Album.search([("partner_id", "=", partner.id)])
         nb_series = len(all_records.mapped("edition_id.work_id.serie_id").filtered("id"))
 
         return request.render(
@@ -134,6 +157,8 @@ class ComicLibraryPortal(CustomerPortal):
                 "filter": filter,
                 "sort": sort,
                 "view_mode": view,
+                "pager": pager,
+                "library_empty": not all_records,
                 "nb_albums": len(all_records),
                 "nb_series": nb_series,
                 "nb_reading": len(all_records.filtered(lambda r: r.etat_lecture == "en_cours")),
@@ -322,6 +347,9 @@ class ComicLibraryPortal(CustomerPortal):
         etat_lecture = post.get("etat_lecture")
         if etat_lecture not in _ETATS_LECTURE:
             etat_lecture = "non_lu"
+        ajouter_a = post.get("ajouter_a")
+        if ajouter_a not in _ADD_TARGETS:
+            ajouter_a = "collection"
         force_update = bool(post.get("force_update"))
 
         try:
@@ -369,7 +397,8 @@ class ComicLibraryPortal(CustomerPortal):
         update_vals = {
             "source": source,
             "etat_lecture": etat_lecture,
-            "dans_collection": True,
+            "dans_collection": ajouter_a == "collection",
+            "dans_wishlist": ajouter_a == "wishlist",
             "note": note,
         }
 

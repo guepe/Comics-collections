@@ -1,6 +1,6 @@
 {
     "name": "Comic Shop",
-    "version": "19.0.2.2.0",
+    "version": "19.0.2.3.0",
     "category": "Leisure",
     "summary": "Sell your comics online and manage customer libraries",
     "description": """
