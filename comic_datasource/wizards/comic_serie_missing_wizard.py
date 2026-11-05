@@ -4,7 +4,10 @@ import re
 
 import requests
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError
+
+from ..sources.google_books import GoogleBooksQuotaError
 
 _logger = logging.getLogger(__name__)
 
@@ -49,6 +52,22 @@ class ComicSerieMissingWizard(models.TransientModel):
     line_ids = fields.One2many("comic.serie.missing.line", "wizard_id", string="Tomes manquants")
     nb_missing = fields.Integer(compute="_compute_nb_missing")
     import_report = fields.Html(readonly=True)
+    nb_expected = fields.Integer(
+        string="Tomes attendus",
+        readonly=True,
+        help="Nombre de tomes attendus : « Nombre de tomes parus » de la série s'il est renseigné, "
+        "sinon le plus grand numéro de tome connu (albums en base et résultats des sources).",
+    )
+    has_customer_library = fields.Boolean(
+        compute="_compute_has_customer_library",
+        help="Vrai si la bibliothèque client (comic_shop) est installée : les tomes ajoutés "
+        "sont alors placés dans la wishlist de l'utilisateur.",
+    )
+
+    def _compute_has_customer_library(self):
+        has_lib = self.env.get("comic.customer.album") is not None
+        for rec in self:
+            rec.has_customer_library = has_lib
 
     @api.depends("serie_id.work_ids")
     def _compute_nb_existing(self):
@@ -62,7 +81,45 @@ class ComicSerieMissingWizard(models.TransientModel):
 
     # ── Recherche ──────────────────────────────────────────────────────────────
 
+    # ── Calcul des tomes attendus ──────────────────────────────────────────────
+
+    @api.model
+    def _compute_expected_count(self, serie, existing_tomes, found_tomes=()):
+        """Nombre de tomes attendus pour ``serie``.
+
+        - ``nb_tomes_parus`` (saisie manuelle) fait foi s'il est renseigné ;
+        - sinon : plus grand numéro de tome des albums existants, relevé par les
+          numéros plus élevés trouvés dans les sources externes.
+        Le tome 0 (hors-série) n'entre jamais dans le calcul.
+        """
+        if serie.nb_tomes_parus > 0:
+            return serie.nb_tomes_parus
+        numbers = [t for t in list(existing_tomes) + list(found_tomes) if t and t > 0]
+        return max(numbers) if numbers else 0
+
+    @api.model
+    def _missing_tome_numbers(self, expected, existing_tomes):
+        """Tomes 1..expected absents de ``existing_tomes`` (le tome 0 n'est jamais manquant)."""
+        existing = set(existing_tomes)
+        return [t for t in range(1, (expected or 0) + 1) if t not in existing]
+
+    # ── Recherche ──────────────────────────────────────────────────────────────
+
     def action_search(self):
+        self.ensure_one()
+        try:
+            return self._search_missing()
+        except GoogleBooksQuotaError as e:
+            raise UserError(
+                _(
+                    "Le quota de requêtes Google Books est atteint : la recherche des tomes "
+                    "manquants n'a pas pu aboutir. Réessayez plus tard, ou ajoutez une clé API "
+                    "Google Books dans Paramètres > Sources de données BD."
+                )
+            ) from e
+
+    def _search_missing(self):
+        """Recherche effective. Laisse remonter GoogleBooksQuotaError."""
         self.ensure_one()
         from ..sources.google_books import GoogleBooksSource
         from ..sources.bnf import BnfSource
@@ -71,7 +128,7 @@ class ComicSerieMissingWizard(models.TransientModel):
 
         # --- Données existantes (3 axes de déduplication) ---
         existing_works = self.serie_id.work_ids
-        existing_tomes = {t for t in existing_works.mapped("tome") if t}
+        existing_tomes = {t for t in existing_works.mapped("tome") if t and t > 0}
         existing_isbns = {
             _normalize_isbn(isbn.isbn_13)
             for work in existing_works
@@ -102,7 +159,7 @@ class ComicSerieMissingWizard(models.TransientModel):
         for result in self._fetch_bnf(bnf_source, serie_name):
             tome = result.tome
             norm_isbn = _normalize_isbn(result.isbn) if result.isbn else None
-            if not tome or tome in existing_tomes:
+            if not tome or tome < 0 or tome in existing_tomes or tome > 999:
                 continue
             if norm_isbn and norm_isbn in existing_isbns:
                 continue
@@ -152,16 +209,19 @@ class ComicSerieMissingWizard(models.TransientModel):
                 candidates[t]["isbn_unverified"] = True
 
         # --- Stubs pour les tomes attendus mais introuvables ---
-        if self.serie_id.nb_works_total:
-            for t in range(1, self.serie_id.nb_works_total + 1):
-                if t not in existing_tomes and t not in candidates:
-                    candidates[t] = {
-                        "name": f"{serie_name} - Tome {t}",
-                        "isbn": "",
-                        "cover_url": None,
-                        "date_parution": None,
-                        "source": "expected",
-                    }
+        # Attendu = nb_tomes_parus (manuel) sinon max(tome) connu, relevé par les
+        # tomes trouvés dans les sources. Manquants = 1..attendu moins l'existant.
+        expected = self._compute_expected_count(self.serie_id, existing_tomes, candidates.keys())
+        for t in self._missing_tome_numbers(expected, existing_tomes):
+            if t not in candidates:
+                candidates[t] = {
+                    "name": f"{serie_name} - Tome {t}",
+                    "isbn": "",
+                    "cover_url": None,
+                    "date_parution": None,
+                    "source": "expected",
+                }
+        self.nb_expected = expected
 
         # --- Création des lignes ---
         self.line_ids.unlink()
@@ -185,6 +245,7 @@ class ComicSerieMissingWizard(models.TransientModel):
         if lines:
             self.env["comic.serie.missing.line"].create(lines)
 
+        self.serie_id.sudo().missing_last_check = fields.Datetime.now()
         self.state = "results"
         return self._reopen()
 
@@ -231,7 +292,7 @@ class ComicSerieMissingWizard(models.TransientModel):
         norm_isbn = _normalize_isbn(parsed.isbn) if parsed.isbn else None
 
         tome = parsed.tome or _extract_tome_fallback(raw_title)
-        if not tome or tome in existing_tomes or tome > 999:
+        if not tome or tome < 0 or tome in existing_tomes or tome > 999:
             return
         if norm_isbn and norm_isbn in existing_isbns:
             return
@@ -294,61 +355,116 @@ class ComicSerieMissingWizard(models.TransientModel):
     # ── Actions ────────────────────────────────────────────────────────────────
 
     def action_add_to_wishlist(self):
+        """Ajoute les tomes sélectionnés au catalogue et, si la bibliothèque client
+        (comic_shop) est installée, à la wishlist de l'utilisateur courant."""
         self.ensure_one()
-        selected = self.line_ids.filtered("selected")
+        return self._add_selected_lines(to_wishlist=True)
+
+    def action_add_to_catalogue(self):
+        """Variante sans bibliothèque client : ajout au catalogue uniquement."""
+        self.ensure_one()
+        return self._add_selected_lines(to_wishlist=False)
+
+    def _add_selected_lines(self, to_wishlist=True):
+        self.ensure_one()
+        CustomerAlbum = self.env.get("comic.customer.album") if to_wishlist else None
+        partner = self.env.user.partner_id
         added = []
-        for line in selected:
-            isbn = _normalize_isbn(line.isbn) if line.isbn else False
-            isbn_rec = self.env["comic.isbn"].search([("isbn_13", "=", isbn)], limit=1) if isbn else False
-
-            if isbn_rec:
-                edition = isbn_rec.edition_id
-                work = edition.work_id
-                missing_vals = {}
-                if not work.serie_id:
-                    missing_vals["serie_id"] = self.serie_id.id
-                if line.tome and not work.tome:
-                    missing_vals["tome"] = line.tome
-                if line.name and not work.titre_canonique:
-                    missing_vals["titre_canonique"] = line.name
-                if missing_vals:
-                    work.write(missing_vals)
-                added.append(line)
-                continue
-
-            work = self.env["comic.work"].search(
-                [("serie_id", "=", self.serie_id.id), ("tome", "=", line.tome)],
-                limit=1,
-            )
-            if not work:
-                work = self.env["comic.work"].create(
-                    {
-                        "titre_canonique": line.name,
-                        "serie_id": self.serie_id.id,
-                        "tome": line.tome,
-                    }
-                )
-
-            edition = work.edition_ids[:1]
-            if not edition or isbn:
-                ed_vals = {"work_id": work.id}
-                if line.date_parution:
-                    ed_vals["date_parution"] = line.date_parution
-                if line.cover_data:
-                    ed_vals["image_couverture"] = line.cover_data
-                edition = self.env["comic.edition"].create(ed_vals)
-            if isbn:
-                self.env["comic.isbn"].create({"edition_id": edition.id, "isbn_13": isbn})
+        for line in self.line_ids.filtered("selected"):
+            edition = self._get_or_create_edition(line)
+            if CustomerAlbum is not None and edition and partner:
+                self._upsert_wishlist(CustomerAlbum, partner, edition)
             added.append(line)
 
         if added:
+            target = _("à votre wishlist") if CustomerAlbum is not None else _("au catalogue")
             items = "".join(f"<li>Tome {line.tome} — {line.name}</li>" for line in added)
-            self.import_report = f"<b>✅ {len(added)} tome(s) ajouté(s) à la wishlist :</b><ul>{items}</ul>"
+            self.import_report = f"<b>✅ {len(added)} tome(s) ajouté(s) {target} :</b><ul>{items}</ul>"
         else:
             self.import_report = "<p>Aucun tome sélectionné.</p>"
 
         self.state = "done"
         return self._reopen()
+
+    def _get_or_create_edition(self, line):
+        """Retourne l'édition correspondant à ``line`` en réutilisant au maximum l'existant.
+
+        1. ISBN déjà connu → son édition (on complète l'album si besoin).
+        2. Album (série + tome) existant, sinon création (qui crée l'édition principale).
+        3. ISBN fourni : rattaché à une édition de l'album qui n'a pas encore d'ISBN
+           (l'édition principale en priorité) ; une nouvelle édition n'est créée que
+           si toutes les éditions existantes portent déjà un autre ISBN.
+        """
+        Isbn = self.env["comic.isbn"]
+        Edition = self.env["comic.edition"]
+        isbn = _normalize_isbn(line.isbn) if line.isbn else False
+        isbn_rec = Isbn.search([("isbn_13", "=", isbn)], limit=1) if isbn else Isbn
+        if isbn_rec:
+            edition = isbn_rec.edition_id
+            work = edition.work_id
+            missing_vals = {}
+            if not work.serie_id:
+                missing_vals["serie_id"] = self.serie_id.id
+            if line.tome and not work.tome:
+                missing_vals["tome"] = line.tome
+            if line.name and not work.titre_canonique:
+                missing_vals["titre_canonique"] = line.name
+            if missing_vals:
+                work.write(missing_vals)
+            return edition
+
+        work = self.env["comic.work"].search(
+            [("serie_id", "=", self.serie_id.id), ("tome", "=", line.tome)],
+            limit=1,
+        )
+        if not work:
+            work = self.env["comic.work"].create(
+                {
+                    "titre_canonique": line.name,
+                    "serie_id": self.serie_id.id,
+                    "tome": line.tome,
+                }
+            )
+
+        editions = work.edition_ids.sorted("id")
+        if isbn:
+            # Édition principale d'abord, puis les autres éditions sans ISBN
+            edition = editions.filtered(lambda e: not e.isbn_ids)[:1]
+        else:
+            edition = editions[:1]
+        if not edition:
+            # Aucune édition, ou toutes portent déjà un autre ISBN : nouvelle édition
+            edition = Edition.create({"work_id": work.id})
+
+        ed_vals = {}
+        if line.date_parution and not edition.date_parution:
+            ed_vals["date_parution"] = line.date_parution
+        if line.cover_data and not edition.image_couverture:
+            ed_vals["image_couverture"] = line.cover_data
+        if ed_vals:
+            edition.write(ed_vals)
+        if isbn:
+            Isbn.create({"edition_id": edition.id, "isbn_13": isbn})
+        return edition
+
+    @api.model
+    def _upsert_wishlist(self, CustomerAlbum, partner, edition):
+        """Place ``edition`` dans la wishlist de ``partner`` (comic_shop installé).
+
+        Une entrée existante déjà « dans la collection » n'est pas déclassée :
+        l'album est possédé, il n'a rien à faire en wishlist.
+        """
+        existing = CustomerAlbum.search([("partner_id", "=", partner.id), ("edition_id", "=", edition.id)], limit=1)
+        if existing and existing.dans_collection:
+            return existing
+        vals = {"dans_wishlist": True, "dans_collection": False}
+        if hasattr(CustomerAlbum, "_upsert"):
+            record, _created = CustomerAlbum._upsert(partner, edition, vals)
+            return record
+        if existing:
+            existing.write(vals)
+            return existing
+        return CustomerAlbum.create({**vals, "partner_id": partner.id, "edition_id": edition.id})
 
     def action_back(self):
         self.state = "confirm"
