@@ -30,7 +30,9 @@ class ComicWorkMergeWizard(models.TransientModel):
 
         self.source_work_id._merge_into(self.target_work_id)
 
-        if self.pair_id:
+        # _merge_into already removed the pairs of the archived source; the
+        # selected pair may still exist if it did not involve the source.
+        if self.pair_id.exists():
             self.pair_id.unlink()
 
         return {

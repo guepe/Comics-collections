@@ -386,6 +386,8 @@ class ComicWork(models.Model):
             )
         )
         self.with_context(skip_dedup_check=True).write({"active": False})
+        # The source is archived: every dedup pair involving it is now obsolete
+        self.env["comic.dedup.pair"].sudo()._cleanup_for_works(self)
         return target_work
 
 
