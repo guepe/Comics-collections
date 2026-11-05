@@ -140,8 +140,24 @@
                         </div>
                     </div>
 
-                    <!-- Vide -->
-                    <t t-if="not records">
+                    <!-- Vide : filtre sans résultat (la bibliothèque contient des albums) -->
+                    <t t-if="not records and not library_empty">
+                        <div class="alert alert-light border text-center py-4 o_comic_library_filter_empty">
+                            <p class="mb-2">
+                                <t t-if="filter == 'wishlist'">Aucun album dans votre wishlist.</t>
+                                <t t-elif="filter == 'collection'">Aucun album dans votre collection.</t>
+                                <t t-elif="filter == 'reading'">Aucune lecture en cours.</t>
+                                <t t-else="">Aucun album sur cette page.</t>
+                            </p>
+                            <a t-attf-href="/my/library?filter=all&amp;sort={{ sort }}&amp;view={{ view_mode }}"
+                               class="btn btn-outline-primary btn-sm">
+                                Tout voir
+                            </a>
+                        </div>
+                    </t>
+
+                    <!-- Vide : bibliothèque réellement vide -->
+                    <t t-if="library_empty">
                         <div class="alert alert-info text-center py-5">
                             <i class="fa fa-book fa-3x text-muted mb-3 d-block"/>
                             <p class="mb-2">Votre bibliothèque est vide.</p>
@@ -297,6 +313,12 @@
                         </div>
                     </t>
 
+                    <!-- Pagination -->
+                    <div t-if="pager and pager.get('page_count', 0) &gt; 1"
+                         class="o_portal_pager d-flex justify-content-center mt-4">
+                        <t t-call="portal.pager"/>
+                    </div>
+
                 </div>
             </div>
         </t>
@@ -355,9 +377,7 @@
 
                             <!-- Titre -->
                             <h1 class="mb-1">
-                                <t t-if="record.edition_id.work_id.tome">
-                                    Tome <t t-esc="record.edition_id.work_id.tome"/> —
-                                </t>
+                                <t t-if="record.edition_id.work_id.tome">Tome <t t-esc="record.edition_id.work_id.tome"/> — </t>
                                 <t t-esc="record.edition_id.work_id.titre_canonique"/>
                             </h1>
 
@@ -585,6 +605,8 @@
                                 <input type="hidden" name="source" t-att-value="post.get('source', 'inconnu')"/>
                                 <input type="hidden" name="etat_lecture" t-att-value="post.get('etat_lecture', 'non_lu')"/>
                                 <input type="hidden" name="note" t-att-value="post.get('note', '0')"/>
+                                <input type="hidden" name="ajouter_a"
+                                       t-att-value="post.get('ajouter_a') if post.get('ajouter_a') in ('collection', 'wishlist') else 'collection'"/>
                                 <button type="submit" class="btn btn-warning me-2">
                                     <i class="fa fa-refresh me-1"/>Mettre à jour
                                 </button>
@@ -629,9 +651,7 @@
                                         <!-- Métadonnées -->
                                         <div class="col">
                                             <div class="fw-bold">
-                                                <t t-if="res.get('tome')">
-                                                    T<t t-esc="res['tome']"/> —
-                                                </t>
+                                                <t t-if="res.get('tome')">T<t t-esc="res['tome']"/> — </t>
                                                 <t t-esc="res.get('title', '—')"/>
                                             </div>
                                             <t t-if="res.get('serie_name')">
@@ -660,6 +680,13 @@
                                                 <input type="hidden" name="cover_url" t-att-value="res.get('cover_url', '')"/>
                                                 <input type="hidden" name="editeur_name" t-att-value="res.get('editeur_name', '')"/>
 
+                                                <div class="mb-2">
+                                                    <label class="form-label small fw-semibold mb-1">Ajouter à</label>
+                                                    <select name="ajouter_a" class="form-select form-select-sm">
+                                                        <option value="collection" selected="selected">Ma collection</option>
+                                                        <option value="wishlist">Ma wishlist</option>
+                                                    </select>
+                                                </div>
                                                 <div class="mb-2">
                                                     <label class="form-label small fw-semibold mb-1">Source</label>
                                                     <select name="source" class="form-select form-select-sm">

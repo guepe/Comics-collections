@@ -81,8 +81,12 @@ class ComicShopController(WebsiteSale):
             )
         in_library = False
         if not request.website.is_public_user():
+            # sudo : un employé sans groupe BD n'a pas accès au modèle ; le domaine
+            # reste restreint au partenaire de l'utilisateur courant.
             in_library = bool(
-                request.env["comic.customer.album"].search_count(
+                request.env["comic.customer.album"]
+                .sudo()
+                .search_count(
                     [
                         ("edition_id", "=", edition.id),
                         ("partner_id", "=", request.env.user.partner_id.id),
