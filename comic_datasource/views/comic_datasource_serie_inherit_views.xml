@@ -27,6 +27,10 @@
                         </div>
                     </button>
             </xpath>
+            <xpath expr="//group/field[@name='nb_works_total']" position="after">
+                <field name="nb_tomes_parus"/>
+                <field name="missing_last_check" readonly="1"/>
+            </xpath>
         </field>
     </record>
 

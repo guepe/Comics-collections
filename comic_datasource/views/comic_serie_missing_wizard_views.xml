@@ -16,9 +16,16 @@
                     </group>
                     <group>
                         <div class="alert alert-info" role="status">
-                            Cette action interroge Google Books pour trouver les tomes
+                            Cette action interroge Google Books et la BnF pour trouver les tomes
                             de la série qui ne sont pas encore dans votre base.
-                            Les tomes détectés pourront être ajoutés à votre wishlist.
+                            Le nombre de tomes attendus est le « Nombre de tomes parus » de la
+                            série s'il est renseigné, sinon le plus grand numéro de tome connu.
+                            <span invisible="not has_customer_library">
+                                Les tomes détectés pourront être ajoutés à votre wishlist.
+                            </span>
+                            <span invisible="has_customer_library">
+                                Les tomes détectés pourront être ajoutés au catalogue.
+                            </span>
                         </div>
                     </group>
                 </group>
@@ -31,9 +38,12 @@
                     </div>
                     <div class="alert alert-info" role="status" invisible="nb_missing == 0">
                         Tomes détectés via Google Books et BnF. Les lignes "Attendu" sont des
-                        tomes que la série devrait contenir (selon le total configuré) mais que
-                        les sources n'ont pas retournés — vous pouvez les désélectionner.
+                        tomes que la série devrait contenir (selon le nombre de tomes parus ou
+                        le plus grand tome connu) mais que les sources n'ont pas retournés —
+                        vous pouvez les désélectionner. Le tome 0 (hors-série) n'est jamais
+                        considéré comme manquant.
                     </div>
+                    <field name="nb_expected" readonly="1"/>
                     <field name="nb_missing" invisible="1"/>
                     <field name="line_ids" nolabel="1" invisible="nb_missing == 0">
                         <list editable="bottom"
@@ -64,6 +74,7 @@
 
                 <!-- Champs cachés -->
                 <field name="state" invisible="1"/>
+                <field name="has_customer_library" invisible="1"/>
 
                 <footer>
                     <!-- État : confirmation -->
@@ -78,7 +89,12 @@
                             string="Ajouter à la wishlist"
                             type="object"
                             class="btn-primary"
-                            invisible="state != 'results'"/>
+                            invisible="state != 'results' or not has_customer_library"/>
+                    <button name="action_add_to_catalogue"
+                            string="Ajouter au catalogue"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'results' or has_customer_library"/>
                     <button name="action_back"
                             string="Retour"
                             type="object"
