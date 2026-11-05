@@ -6,6 +6,9 @@ Les appels HTTP sont mockés — aucun accès réseau requis.
 # pylint: disable=odoo-addons-relative-import
 
 import unittest
+
+from odoo.tests import tagged
+from odoo.tests.common import BaseCase
 from unittest.mock import patch, MagicMock
 
 
@@ -35,7 +38,8 @@ GOOGLE_BOOKS_RESPONSE = {
 }
 
 
-class TestGoogleBooksSource(unittest.TestCase):
+@tagged("comic_datasource")
+class TestGoogleBooksSource(BaseCase):
 
     @patch("odoo.addons.comic_datasource.sources.google_books.requests.get")
     def test_search_by_isbn_found(self, mock_get):
@@ -68,11 +72,12 @@ class TestGoogleBooksSource(unittest.TestCase):
     @patch("odoo.addons.comic_datasource.sources.google_books.requests.get")
     def test_search_by_isbn_quota_exceeded(self, mock_get):
         mock_get.return_value = MagicMock(status_code=429)
-        from odoo.addons.comic_datasource.sources.google_books import GoogleBooksSource
+        from odoo.addons.comic_datasource.sources.google_books import GoogleBooksQuotaError, GoogleBooksSource
 
         source = GoogleBooksSource()
-        result = source.search_by_isbn("9782012101340")
-        self.assertIsNone(result)
+        # Le quota remonte en exception : l'agrégateur et les crons s'en servent de coupe-circuit
+        with self.assertRaises(GoogleBooksQuotaError):
+            source.search_by_isbn("9782012101340")
 
     @patch("odoo.addons.comic_datasource.sources.google_books.requests.get")
     def test_search_by_title(self, mock_get):
@@ -130,7 +135,8 @@ OL_RESPONSE = {
 }
 
 
-class TestOpenLibrarySource(unittest.TestCase):
+@tagged("comic_datasource")
+class TestOpenLibrarySource(BaseCase):
 
     @patch("odoo.addons.comic_datasource.sources.open_library.requests.head")
     @patch("odoo.addons.comic_datasource.sources.open_library.requests.get")
@@ -205,7 +211,8 @@ BNF_XML_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
 </srw:searchRetrieveResponse>"""
 
 
-class TestBnfSource(unittest.TestCase):
+@tagged("comic_datasource")
+class TestBnfSource(BaseCase):
 
     @patch("odoo.addons.comic_datasource.sources.bnf.requests.get")
     def test_search_by_isbn_found(self, mock_get):

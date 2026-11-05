@@ -8,8 +8,11 @@ Lancement :
         --test-tags /comics_collections:TestComicWork
 """
 
+from psycopg2 import IntegrityError
+
 from odoo.tests.common import TransactionCase
 from odoo.tests import tagged
+from odoo.tools import mute_logger
 
 
 @tagged("comics_collections", "comic_work")
@@ -135,11 +138,25 @@ class TestComicWork(TransactionCase):
 
     # ── Contrainte unique (serie_id, tome) ───────────────────────────────────
 
-    def test_unique_serie_tome_constraint_defined(self):
-        """La contrainte UNIQUE(serie_id, tome) est bien créée en base de données."""
-        self.env.cr.execute("SELECT COUNT(*) FROM pg_constraint WHERE conname = 'comic_work_unique_serie_tome'")
+    def test_unique_serie_tome_index_defined(self):
+        """L'index unique partiel (serie_id, tome) WHERE tome > 0 existe en DB."""
+        self.env.cr.execute("SELECT COUNT(*) FROM pg_indexes WHERE indexname = 'comic_work_unique_serie_tome_numbered'")
         count = self.env.cr.fetchone()[0]
-        self.assertEqual(count, 1, "La contrainte unique (serie_id, tome) doit exister en DB")
+        self.assertEqual(count, 1, "L'index unique (serie_id, tome) doit exister en DB")
+
+    def test_duplicate_numbered_tome_is_refused(self):
+        """Deux albums avec le même numéro de tome dans une série : refusé."""
+        self.env["comic.work"].create({"serie_id": self.serie.id, "titre_canonique": "Tome 7 A", "tome": 7})
+        with self.assertRaises(IntegrityError), mute_logger("odoo.sql_db"):
+            self.env["comic.work"].create({"serie_id": self.serie.id, "titre_canonique": "Tome 7 B", "tome": 7})
+            self.env.flush_all()
+
+    def test_several_unnumbered_works_allowed(self):
+        """Plusieurs hors-série (tome = 0) dans une même série : autorisé."""
+        w1 = self.env["comic.work"].create({"serie_id": self.serie.id, "titre_canonique": "Hors-série A"})
+        w2 = self.env["comic.work"].create({"serie_id": self.serie.id, "titre_canonique": "Hors-série B"})
+        self.env.flush_all()
+        self.assertEqual((w1.tome, w2.tome), (0, 0))
 
     def test_same_tome_different_serie_is_allowed(self):
         """Même numéro de tome pour deux séries différentes : OK."""

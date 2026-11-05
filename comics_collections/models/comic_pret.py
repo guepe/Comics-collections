@@ -7,7 +7,7 @@ class ComicPret(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "date_pret desc"
 
-    edition_id = fields.Many2one("comic.edition", string="Édition", required=True, ondelete="restrict", tracking=True)
+    edition_id = fields.Many2one("comic.edition", string="Album", required=True, ondelete="restrict", tracking=True)
     partner_id = fields.Many2one("res.partner", string="Prêté à", required=True, tracking=True)
     date_pret = fields.Date(string="Date de prêt", tracking=True)
     date_retour_prevue = fields.Date(string="Date retour prévue")

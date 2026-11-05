@@ -29,7 +29,7 @@
                                 class="oe_stat_button"
                                 icon="fa-book"
                                 invisible="nb_works_total == 0">
-                            <field name="nb_works_total" widget="statinfo" string="Œuvres"/>
+                            <field name="nb_works_total" widget="statinfo" string="Albums"/>
                         </button>
                     </div>
                     <field name="image_couverture" widget="image"

@@ -41,7 +41,7 @@ class ComicSerie(models.Model):
     synopsis = fields.Html()
     bdgest_id = fields.Integer(string="ID BDGest")
     bedetheque_url = fields.Char(string="URL Bedetheque")
-    work_ids = fields.One2many("comic.work", "serie_id", string="Œuvres")
+    work_ids = fields.One2many("comic.work", "serie_id", string="Albums")
     nb_works_total = fields.Integer(string="Tomes au total", compute="_compute_works", store=True)
     a_suivre = fields.Boolean(string="À suivre", default=False, tracking=True)
     first_edition_cover_id = fields.Many2one(
@@ -82,7 +82,7 @@ class ComicSerie(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": f"Œuvres — {self.name}",
+            "name": f"Albums — {self.name}",
             "res_model": "comic.work",
             "view_mode": "list,form",
             "domain": [("serie_id", "=", self.id)],

@@ -14,7 +14,7 @@ class ProductTemplate(models.Model):
     )
     comic_work_id = fields.Many2one(
         "comic.work",
-        string="Œuvre BD",
+        string="Titre BD",
         compute="_compute_comic_work_id",
         store=True,
     )
@@ -41,3 +41,11 @@ class ProductTemplate(models.Model):
         if not self.comic_edition_id:
             raise UserError(_("Aucune édition BD liée à ce produit."))
         self.comic_edition_id._sync_to_product()
+
+    def _get_comic_edition(self):
+        """Edition linked to this product — both link directions are checked
+        (product.comic_edition_id and comic.edition.product_tmpl_id)."""
+        self.ensure_one()
+        return self.comic_edition_id or self.env["comic.edition"].sudo().search(
+            [("product_tmpl_id", "=", self.id)], limit=1
+        )

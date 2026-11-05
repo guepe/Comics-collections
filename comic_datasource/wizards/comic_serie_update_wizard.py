@@ -3,6 +3,8 @@ import re
 
 from odoo import api, fields, models
 
+from ..models.comic_edition import _best_title_match
+
 _logger = logging.getLogger(__name__)
 
 
@@ -37,8 +39,11 @@ class ComicSerieUpdateWizard(models.TransientModel):
         self.ensure_one()
         from ..aggregator import ComicDataAggregator
 
+        from ..sources.google_books import GoogleBooksQuotaError
+
         aggregator = ComicDataAggregator(env=self.env)
         updated, skipped, errors = [], [], []
+        quota_hit = False
 
         for work in self.serie_id.work_ids.sorted("tome"):
             try:
@@ -51,34 +56,36 @@ class ComicSerieUpdateWizard(models.TransientModel):
                     agg = aggregator.search(isbn=clean or isbn)
                 elif work.titre_canonique:
                     results = aggregator.search_list(title=work.titre_canonique)
-                    if results:
-                        best = self._best_match_with_isbn(results, work)
-                        if best:
-                            agg = aggregator.search(isbn=best.isbn)
+                    best = _best_title_match(results or [], work)
+                    if best:
+                        agg = aggregator.search(isbn=best.isbn)
 
                 if not agg or not agg.data:
                     skipped.append(work)
                     continue
 
-                if edition:
-                    edition._apply_datasource_data(agg.data)
+                if not edition:
+                    skipped.append(work)
+                    continue
+                edition._apply_datasource_data(agg.data)
                 updated.append(work)
 
+            except GoogleBooksQuotaError:
+                quota_hit = True
+                break
             except Exception as e:
                 _logger.error('Serie update error on "%s": %s', work.titre_canonique, e)
                 errors.append(work)
 
-        self.import_report = self._build_report(updated, skipped, errors)
+        report = self._build_report(updated, skipped, errors)
+        if quota_hit:
+            report = (
+                "<p><b>⚠️ Quota Google Books atteint : mise à jour interrompue.</b> "
+                "Réessayez plus tard ou ajoutez une clé API dans les paramètres.</p>" + report
+            )
+        self.import_report = report
         self.state = "done"
         return self._reopen()
-
-    def _best_match_with_isbn(self, results, work):
-        """Returns the best result with an ISBN (exact tome match first)."""
-        if work.tome:
-            for r in results:
-                if r.isbn and r.tome == work.tome:
-                    return r
-        return next((r for r in results if r.isbn), None)
 
     def _build_report(self, updated, skipped, errors):
         lines = []

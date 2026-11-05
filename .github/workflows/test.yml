@@ -49,7 +49,7 @@ jobs:
         run: |
           pip install -r /opt/odoo/requirements.txt
           pip install \
-            requests beautifulsoup4 lxml xmltodict \
+            requests lxml xmltodict \
             openai anthropic openpyxl xlrd
 
       - name: Run tests

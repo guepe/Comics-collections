@@ -4,18 +4,79 @@ import re
 
 import requests as http_requests
 
+from urllib.parse import urljoin, urlparse
+
 from odoo import http, _
+from odoo.exceptions import UserError, ValidationError
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.comic_datasource.aggregator import ComicDataAggregator
+from odoo.addons.comics_collections.models.comic_isbn import ComicIsbn
 
 _logger = logging.getLogger(__name__)
 
+# Valeurs acceptées depuis le portail (un client ne peut pas se déclarer "achete_ici")
+_PORTAL_SOURCES = ("achete_ailleurs", "cadeau", "inconnu")
+_ETATS_LECTURE = ("non_lu", "en_cours", "lu")
+
+# Hôtes autorisés pour le téléchargement des couvertures (anti-SSRF)
+_COVER_ALLOWED_HOSTS = (
+    "books.google.com",
+    "books.googleusercontent.com",
+    "covers.openlibrary.org",
+    "archive.org",
+    "catalogue.bnf.fr",
+    "gallica.bnf.fr",
+)
+_COVER_MAX_BYTES = 5 * 1024 * 1024
+
 
 def _clean_isbn(raw):
-    """Strip spaces/dashes, return digits only (13 or 10 chars), or empty string."""
-    digits = re.sub(r"[\s\-]", "", raw or "")
-    return digits if len(digits) in (10, 13) else ""
+    """Return a valid ISBN-13 (ISBN-10 converted), or empty string."""
+    digits = re.sub(r"[\s\-]", "", raw or "").upper()
+    if len(digits) == 10 and ComicIsbn._validate_isbn10(digits):
+        base = "978" + digits[:9]
+        total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
+        return base + str((10 - total % 10) % 10)
+    if len(digits) == 13 and ComicIsbn._validate_ean13(digits):
+        return digits
+    return ""
+
+
+def _cover_url_allowed(url):
+    try:
+        parsed = urlparse(url)
+    except ValueError:
+        return False
+    host = (parsed.hostname or "").lower()
+    return parsed.scheme in ("http", "https") and any(
+        host == allowed or host.endswith("." + allowed) for allowed in _COVER_ALLOWED_HOSTS
+    )
+
+
+def _download_cover(url):
+    """Download a cover from an allowed host; return base64 bytes or None."""
+    try:
+        resp = None
+        for _hop in range(4):  # redirections suivies manuellement, hôte revérifié à chaque saut
+            if not _cover_url_allowed(url):
+                _logger.warning("Cover URL refused (host not allowed): %s", url)
+                return None
+            resp = http_requests.get(url, timeout=10, stream=True, allow_redirects=False)
+            if resp.is_redirect:
+                url = urljoin(url, resp.headers.get("Location", ""))
+                resp.close()
+                continue
+            break
+        if resp is None or resp.status_code != 200 or not resp.headers.get("Content-Type", "").startswith("image/"):
+            return None
+        content = resp.raw.read(_COVER_MAX_BYTES + 1, decode_content=True)
+        if len(content) > _COVER_MAX_BYTES or len(content) <= 100:
+            return None
+        return base64.b64encode(content)
+    except Exception as exc:
+        _logger.warning("Cover download failed: %s", exc)
+        return None
 
 
 class ComicLibraryPortal(CustomerPortal):
@@ -77,6 +138,7 @@ class ComicLibraryPortal(CustomerPortal):
                 "nb_series": nb_series,
                 "nb_reading": len(all_records.filtered(lambda r: r.etat_lecture == "en_cours")),
                 "page_name": "library",
+                "flash": request.session.pop("comic_library_flash", None),
             },
         )
 
@@ -110,8 +172,9 @@ class ComicLibraryPortal(CustomerPortal):
         if not record.exists() or record.partner_id.id != request.env.user.partner_id.id:
             return request.not_found()
 
+        etat_lecture = post.get("etat_lecture")
         vals = {
-            "etat_lecture": post.get("etat_lecture", record.etat_lecture),
+            "etat_lecture": etat_lecture if etat_lecture in _ETATS_LECTURE else record.etat_lecture,
             "dans_collection": bool(post.get("dans_collection")),
             "dans_wishlist": bool(post.get("dans_wishlist")),
             "commentaire": post.get("commentaire", ""),
@@ -249,9 +312,16 @@ class ComicLibraryPortal(CustomerPortal):
     def my_library_add_confirm(self, **post):
         partner = request.env.user.partner_id
         isbn = _clean_isbn(post.get("isbn", ""))
-        edition_id = int(post.get("edition_id") or 0)
-        source = post.get("source", "inconnu")
-        etat_lecture = post.get("etat_lecture", "non_lu")
+        try:
+            edition_id = int(post.get("edition_id") or 0)
+        except (ValueError, TypeError):
+            edition_id = 0
+        source = post.get("source")
+        if source not in _PORTAL_SOURCES:
+            source = "inconnu"
+        etat_lecture = post.get("etat_lecture")
+        if etat_lecture not in _ETATS_LECTURE:
+            etat_lecture = "non_lu"
         force_update = bool(post.get("force_update"))
 
         try:
@@ -270,7 +340,16 @@ class ComicLibraryPortal(CustomerPortal):
             if isbn_rec:
                 edition = isbn_rec.edition_id
         if not edition:
-            edition = self._create_edition_from_post(post)
+            try:
+                with request.env.cr.savepoint():
+                    edition = self._create_edition_from_post(post)
+            except (UserError, ValidationError) as exc:
+                _logger.info("Library add: edition creation refused: %s", exc)
+                request.session["comic_library_flash"] = {
+                    "type": "danger",
+                    "message": _("Impossible d'ajouter cet album : %s") % exc,
+                }
+                return request.redirect("/my/library/add")
 
         if not edition:
             return request.redirect("/my/library/add")
@@ -308,6 +387,9 @@ class ComicLibraryPortal(CustomerPortal):
 
         title = edition.work_id.titre_canonique or _("cet album")
         if existing:
+            if existing.source == "achete_ici":
+                # Un achat dans le shop ne doit pas être requalifié depuis le portail
+                update_vals.pop("source")
             existing.sudo().write(update_vals)
             request.session["comic_library_flash"] = {
                 "type": "success",
@@ -428,12 +510,9 @@ class ComicLibraryPortal(CustomerPortal):
             if editeur:
                 edition_vals["editeur_id"] = editeur.id
             if cover_url:
-                try:
-                    resp = http_requests.get(cover_url, timeout=10)
-                    if resp.status_code == 200 and len(resp.content) > 100:
-                        edition_vals["image_couverture"] = base64.b64encode(resp.content).decode()
-                except Exception as exc:
-                    _logger.warning("Cover download failed: %s", exc)
+                cover = _download_cover(cover_url)
+                if cover:
+                    edition_vals["image_couverture"] = cover
             edition = env["comic.edition"].sudo().create(edition_vals)
 
         # ISBN

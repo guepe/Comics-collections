@@ -30,17 +30,21 @@
         <field name="user_ids" eval="[Command.link(ref('base.user_root')), Command.link(ref('base.user_admin'))]"/>
     </record>
 
-    <!-- Record rules : comic.serie
-         Utilisateur voit uniquement sa propre collection.
-         Gestionnaire (qui implique utilisateur) voit tout grâce à la règle manager (OR). -->
+    <!-- Record rules — catalogue partagé
+         Séries, albums (comic.work) et éditions forment un référentiel commun :
+         tout utilisateur BD peut les lire, créer et modifier (aucune règle de
+         lecture → pas de restriction). La possession reste propre à chaque
+         utilisateur via comic.customer.album (module comic_shop).
+         Suppression : un utilisateur ne peut supprimer que ce qu'il a créé ;
+         le gestionnaire (règle OR) peut tout supprimer. -->
 
     <record id="rule_comic_serie_user" model="ir.rule">
-        <field name="name">Séries : utilisateur voit sa propre collection</field>
+        <field name="name">Séries : utilisateur ne supprime que ses propres fiches</field>
         <field name="model_id" ref="model_comic_serie"/>
-        <field name="groups" eval="[(4, ref('group_comic_user'))]"/>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="True"/>
         <field name="domain_force">[('create_uid', '=', user.id)]</field>
     </record>
@@ -48,43 +52,59 @@
     <record id="rule_comic_serie_manager" model="ir.rule">
         <field name="name">Séries : gestionnaire voit tout</field>
         <field name="model_id" ref="model_comic_serie"/>
-        <field name="groups" eval="[(4, ref('group_comic_manager'))]"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_manager'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 
-    <!-- Record rules : comic.work -->
-
     <record id="rule_comic_work_user" model="ir.rule">
-        <field name="name">Œuvres : utilisateur voit sa propre collection</field>
+        <field name="name">Albums : utilisateur ne supprime que ses propres fiches</field>
         <field name="model_id" ref="model_comic_work"/>
-        <field name="groups" eval="[(4, ref('group_comic_user'))]"/>
-        <field name="perm_read" eval="True"/>
-        <field name="perm_write" eval="True"/>
-        <field name="perm_create" eval="True"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="True"/>
         <field name="domain_force">[('create_uid', '=', user.id)]</field>
     </record>
 
     <record id="rule_comic_work_manager" model="ir.rule">
-        <field name="name">Œuvres : gestionnaire voit tout</field>
+        <field name="name">Albums : gestionnaire voit tout</field>
         <field name="model_id" ref="model_comic_work"/>
-        <field name="groups" eval="[(4, ref('group_comic_manager'))]"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_manager'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 
-    <!-- Record rules : comic.edition -->
-
     <record id="rule_comic_edition_user" model="ir.rule">
-        <field name="name">Éditions : utilisateur voit sa propre collection</field>
+        <field name="name">Éditions : utilisateur ne supprime que ses propres fiches</field>
         <field name="model_id" ref="model_comic_edition"/>
-        <field name="groups" eval="[(4, ref('group_comic_user'))]"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="True"/>
         <field name="domain_force">[('create_uid', '=', user.id)]</field>
     </record>
 
     <record id="rule_comic_edition_manager" model="ir.rule">
         <field name="name">Éditions : gestionnaire voit tout</field>
         <field name="model_id" ref="model_comic_edition"/>
-        <field name="groups" eval="[(4, ref('group_comic_manager'))]"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <!-- Record rules : comic.pret — les prêts sont privés -->
+
+    <record id="rule_comic_pret_user" model="ir.rule">
+        <field name="name">Prêts : utilisateur voit ses propres prêts</field>
+        <field name="model_id" ref="model_comic_pret"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+    </record>
+
+    <record id="rule_comic_pret_manager" model="ir.rule">
+        <field name="name">Prêts : gestionnaire voit tout</field>
+        <field name="model_id" ref="model_comic_pret"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_manager'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 

@@ -1,73 +1,14 @@
 """Tests unitaires pour les méthodes statiques/de classe du wizard d'import.
 
-Toutes ces méthodes sont pures (pas d'ORM) — testables sans Odoo.
-Lancement : python -m pytest comics_collections/tests/test_import_wizard.py -v
+Méthodes pures (pas d'ORM) — exécutées par le runner de tests Odoo.
+Lancement :
+    docker exec odoo-web odoo -d odoo -u comics_collections --test-tags /comics_collections
 """
 
-import unittest
+from odoo.tests import tagged
+from odoo.tests.common import BaseCase
 
-# ── Import direct du module wizard ────────────────────────────────────────────
-# On charge le fichier wizard avec importlib pour contourner comics_collections/__init__.py
-# (qui importe les modèles Odoo). Dans l'env odoo-bin, l'import standard fonctionne.
-
-import sys
-import os
-import importlib.util
-import types
-
-_WIZARD_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "wizards",
-    "comic_import_wizard.py",
-)
-
-# Stub odoo minimal pour que le wizard puisse être importé sans Odoo installé
-if "odoo" not in sys.modules:
-    _odoo = types.ModuleType("odoo")
-    _fields = types.ModuleType("odoo.fields")
-    _models = types.ModuleType("odoo.models")
-    _exceptions = types.ModuleType("odoo.exceptions")
-
-    class _TransientModel:
-        pass
-
-    class _UserError(Exception):
-        pass
-
-    _models.TransientModel = _TransientModel
-    _exceptions.UserError = _UserError
-    _odoo.fields = _fields
-    _odoo.models = _models
-    _odoo.exceptions = _exceptions
-
-    _field_stub = lambda *a, **kw: None  # noqa: E731
-    for _attr in (
-        "Char",
-        "Binary",
-        "Boolean",
-        "Html",
-        "Selection",
-        "One2many",
-        "Integer",
-        "Float",
-        "Text",
-        "Date",
-        "Image",
-        "Many2one",
-        "Many2many",
-    ):
-        setattr(_fields, _attr, _field_stub)
-
-    sys.modules["odoo"] = _odoo
-    sys.modules["odoo.fields"] = _fields
-    sys.modules["odoo.models"] = _models
-    sys.modules["odoo.exceptions"] = _exceptions
-
-# Chargement direct du module pour contourner le __init__.py du package
-_spec = importlib.util.spec_from_file_location("comic_import_wizard", _WIZARD_PATH)
-_wizard_mod = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_wizard_mod)
-ComicImportWizard = _wizard_mod.ComicImportWizard
+from odoo.addons.comics_collections.wizards.comic_import_wizard import ComicImportWizard
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -93,7 +34,8 @@ _normalize_author_name = ComicImportWizard._normalize_author_name
 # ── Tests _parse_date ─────────────────────────────────────────────────────────
 
 
-class TestParseDate(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestParseDate(BaseCase):
 
     def test_iso_format(self):
         self.assertEqual(_parse_date("1985-05-01"), "1985-05-01")
@@ -120,7 +62,8 @@ class TestParseDate(unittest.TestCase):
 # ── Tests _parse_integer ──────────────────────────────────────────────────────
 
 
-class TestParseInteger(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestParseInteger(BaseCase):
 
     def test_plain_number(self):
         self.assertEqual(_parse_integer("5"), 5)
@@ -144,7 +87,8 @@ class TestParseInteger(unittest.TestCase):
 # ── Tests _parse_float ────────────────────────────────────────────────────────
 
 
-class TestParseFloat(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestParseFloat(BaseCase):
 
     def test_integer_string(self):
         self.assertAlmostEqual(_parse_float("4"), 4.0)
@@ -168,7 +112,8 @@ class TestParseFloat(unittest.TestCase):
 # ── Tests _parse_reading_state ────────────────────────────────────────────────
 
 
-class TestParseReadingState(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestParseReadingState(BaseCase):
 
     def test_non_lu(self):
         self.assertEqual(_parse_reading_state("non_lu"), "non_lu")
@@ -198,7 +143,8 @@ class TestParseReadingState(unittest.TestCase):
 # ── Tests _parse_language / _parse_format ────────────────────────────────────
 
 
-class TestCanonicalSelections(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestCanonicalSelections(BaseCase):
 
     def test_parse_language_french_label(self):
         self.assertEqual(_parse_language("Français"), "fr")
@@ -216,7 +162,8 @@ class TestCanonicalSelections(unittest.TestCase):
 # ── Tests _normalise_header ───────────────────────────────────────────────────
 
 
-class TestNormaliseHeader(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestNormaliseHeader(BaseCase):
 
     def test_serie_alias(self):
         self.assertEqual(_normalise_header("serie"), "serie_name")
@@ -249,7 +196,8 @@ class TestNormaliseHeader(unittest.TestCase):
 # ── Tests _read_csv_rows ──────────────────────────────────────────────────────
 
 
-class TestReadCsvRows(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestReadCsvRows(BaseCase):
 
     def _csv(self, text):
         return _read_csv_rows(text.encode("utf-8"))
@@ -282,7 +230,8 @@ class TestReadCsvRows(unittest.TestCase):
 # ── Tests _split_series_title ─────────────────────────────────────────────────
 
 
-class TestSplitSeriesTitle(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestSplitSeriesTitle(BaseCase):
 
     def test_serie_tome_title_pattern(self):
         serie, tome, title = _split_series_title("Agent 212 (L') -5- Poulet aux amendes")
@@ -310,7 +259,8 @@ class TestSplitSeriesTitle(unittest.TestCase):
 # ── Tests _parse_collection_content ──────────────────────────────────────────
 
 
-class TestParseCollectionContent(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestParseCollectionContent(BaseCase):
 
     def test_full_line(self):
         result = _parse_collection_content("Agent 212 (L') -5- Poulet aux amendes 05/1985 Dupuis 11/03/2017")
@@ -333,7 +283,8 @@ class TestParseCollectionContent(unittest.TestCase):
 # ── Tests _clean_isbn ─────────────────────────────────────────────────────────
 
 
-class TestCleanIsbn(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestCleanIsbn(BaseCase):
 
     def test_ean13_unchanged(self):
         self.assertEqual(_clean_isbn("9782012101340"), "9782012101340")
@@ -366,7 +317,8 @@ class TestCleanIsbn(unittest.TestCase):
 # ── Tests _normalise_import_rows ──────────────────────────────────────────────
 
 
-class TestNormaliseImportRows(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestNormaliseImportRows(BaseCase):
 
     def test_standard_headers(self):
         rows = [
@@ -402,7 +354,8 @@ class TestNormaliseImportRows(unittest.TestCase):
 # ── Tests _split_names ────────────────────────────────────────────────────────
 
 
-class TestSplitNames(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestSplitNames(BaseCase):
 
     def test_single_name(self):
         self.assertEqual(_split_names("Goscinny"), ["Goscinny"])
@@ -427,7 +380,8 @@ class TestSplitNames(unittest.TestCase):
 # ── Tests _xlsx_column_index / _xlsx_column_name ──────────────────────────────
 
 
-class TestXlsxColumnHelpers(unittest.TestCase):
+@tagged("comics_collections", "import_wizard")
+class TestXlsxColumnHelpers(BaseCase):
 
     def test_column_A_is_1(self):
         self.assertEqual(_xlsx_column_index("A1"), 1)
@@ -450,7 +404,3 @@ class TestXlsxColumnHelpers(unittest.TestCase):
     def test_roundtrip(self):
         for i in range(1, 30):
             self.assertEqual(_xlsx_column_index(_xlsx_column_name(i) + "1"), i)
-
-
-if __name__ == "__main__":
-    unittest.main()

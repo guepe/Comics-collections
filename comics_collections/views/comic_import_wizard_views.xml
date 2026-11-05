@@ -31,7 +31,6 @@
                     <separator string="Mapping des colonnes" invisible="state != 'mapping'"/>
                     <field name="mapping_line_ids" invisible="state != 'mapping'">
                         <list editable="bottom" create="false" delete="false">
-                            <field name="sequence" widget="handle"/>
                             <field name="column_name"/>
                             <field name="sample_value"/>
                             <field name="target_field"/>

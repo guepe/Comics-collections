@@ -4,6 +4,12 @@ from odoo import models
 class ComicWork(models.Model):
     _inherit = "comic.work"
 
+    def write(self, vals):
+        res = super().write(vals)
+        if {"titre_canonique", "tome", "serie_id"} & set(vals):
+            self.edition_ids._auto_sync_products()
+        return res
+
     def _set_etat_lecture(self, etat):
         partner_id = self.env.user.partner_id.id
         CustomerAlbum = self.env["comic.customer.album"]

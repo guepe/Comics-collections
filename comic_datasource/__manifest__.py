@@ -1,6 +1,6 @@
 {
     "name": "Comic Datasource",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "category": "Leisure",
     "summary": "Multi-source connector to enrich comic book records",
     "description": """
@@ -30,7 +30,7 @@
         "data/comic_serie_cron.xml",
     ],
     "external_dependencies": {
-        "python": ["requests", "beautifulsoup4", "lxml", "xmltodict"],
+        "python": ["requests", "lxml", "xmltodict"],
     },
     "installable": True,
     "application": False,

@@ -103,9 +103,8 @@ class GoogleBooksSource(BaseComicSource):
         # Google Books a parfois seriesInfo (champ expérimental)
         series_info = info.get("seriesInfo", {})
         if series_info:
-            book_series = series_info.get("bookSeries", [{}])
-            if book_series:
-                serie_name = serie_name or book_series[0].get("seriesId")
+            # NB : bookSeries[].seriesId est un identifiant opaque Google, pas un nom
+            # de série — on ne l'utilise pas (il créait des séries "aBcD123…").
             volume_series = series_info.get("volumeSeries", [{}])
             if volume_series and not tome:
                 tome = volume_series[0].get("orderNumber")

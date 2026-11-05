@@ -4,6 +4,12 @@ from odoo import Command, _, api, fields, models
 class ComicSerie(models.Model):
     _inherit = "comic.serie"
 
+    def write(self, vals):
+        res = super().write(vals)
+        if "name" in vals:
+            self.work_ids.edition_ids._auto_sync_products()
+        return res
+
     nb_albums_with_product = fields.Integer(
         string="Produits liés",
         compute="_compute_nb_albums_with_product",

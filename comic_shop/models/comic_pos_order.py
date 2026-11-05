@@ -1,4 +1,8 @@
+import logging
+
 from odoo import models
+
+_logger = logging.getLogger(__name__)
 
 
 class PosOrder(models.Model):
@@ -6,35 +10,33 @@ class PosOrder(models.Model):
 
     def action_pos_order_paid(self):
         res = super().action_pos_order_paid()
-        self._add_comics_to_library()
+        try:
+            with self.env.cr.savepoint():
+                self._add_comics_to_library()
+        except Exception:
+            # La bibliothèque client ne doit jamais bloquer un encaissement
+            _logger.exception("Bibliothèque BD : échec de la mise à jour après paiement POS %s", self.ids)
         return res
 
     def _add_comics_to_library(self):
-        """Creates/updates comic.customer.album entries for BD sold at the POS."""
+        """Registers BD sold at the POS in the customer's library; reverts refunded ones."""
         CustomerAlbum = self.env["comic.customer.album"].sudo()
         for order in self:
-            partner = order.partner_id
-            if not partner or not partner.comic_auto_library:
-                continue
             for line in order.lines:
-                edition = line.product_id.product_tmpl_id.comic_edition_id
-                if not edition:
+                if line.qty < 0:
+                    self._revert_refunded_line(line)
                     continue
-                existing = CustomerAlbum.search(
-                    [
-                        ("partner_id", "=", partner.id),
-                        ("edition_id", "=", edition.id),
-                    ],
-                    limit=1,
-                )
-                if existing:
-                    existing.write({"source": "achete_ici", "dans_collection": True})
-                else:
-                    CustomerAlbum.create(
-                        {
-                            "partner_id": partner.id,
-                            "edition_id": edition.id,
-                            "source": "achete_ici",
-                            "dans_collection": True,
-                        }
-                    )
+                partner = order.partner_id
+                if not line.qty or not partner or not partner.comic_auto_library:
+                    continue
+                edition = line.product_id.product_tmpl_id._get_comic_edition()
+                if edition:
+                    CustomerAlbum._register_purchase(partner, edition, pos_line=line)
+
+    def _revert_refunded_line(self, refund_line):
+        """Refund line: if the original sale line is fully refunded, undo the library entry."""
+        origin = refund_line.refunded_orderline_id
+        if not origin or origin.refunded_qty < origin.qty:
+            return
+        albums = self.env["comic.customer.album"].sudo().search([("pos_order_line_id", "=", origin.id)])
+        albums._revert_purchase()

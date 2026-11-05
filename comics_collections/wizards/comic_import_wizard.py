@@ -100,6 +100,7 @@ class ComicImportWizard(models.TransientModel):
                     0,
                     {
                         "sequence": index + 1,
+                        "column_index": index,
                         "column_name": column_name,
                         "sample_value": sample_value,
                         "target_field": self._guess_target_field(column_name),
@@ -244,7 +245,7 @@ class ComicImportWizard(models.TransientModel):
             raise UserError(_("Le fichier ne contient aucune ligne."))
 
         mapped_columns = [
-            (line.sequence - 1, line.target_field)
+            (line.column_index, line.target_field)
             for line in self.mapping_line_ids.sorted("sequence")
             if line.target_field
         ]
@@ -701,7 +702,8 @@ class ComicImportWizard(models.TransientModel):
 
     def _find_work(self, serie, tome, title):
         Work = self.env["comic.work"]
-        if serie:
+        # Tome 0 = hors-série / sans numéro : jamais de rapprochement sur le seul tome
+        if serie and tome:
             work = Work.search([("serie_id", "=", serie.id), ("tome", "=", tome)], limit=1)
             if work:
                 return work
@@ -712,8 +714,9 @@ class ComicImportWizard(models.TransientModel):
             )
             if work:
                 return work
-        if title:
-            return Work.search([("titre_canonique", "=", title)], limit=1)
+        # Rapprochement sur le titre seul uniquement quand aucune série n'est connue
+        if title and not serie:
+            return Work.search([("serie_id", "=", False), ("titre_canonique", "=", title)], limit=1)
         return Work.browse()
 
     def _edition_values(self, row, work):
@@ -1435,6 +1438,8 @@ class ComicImportMappingLine(models.TransientModel):
         ondelete="cascade",
     )
     sequence = fields.Integer(string="Séquence", default=10)
+    # Index (0-based) de la colonne dans le fichier — indépendant de l'ordre d'affichage
+    column_index = fields.Integer(string="Index colonne", required=True, readonly=True)
     column_name = fields.Char(string="Colonne source", required=True, readonly=True)
     sample_value = fields.Char(string="Exemple", readonly=True)
     target_field = fields.Selection(

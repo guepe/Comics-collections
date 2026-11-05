@@ -78,7 +78,7 @@
                                 class="oe_stat_button"
                                 icon="fa-clone"
                                 invisible="nb_editions &lt;= 1">
-                            <field name="nb_editions" widget="statinfo" string="Éditions"/>
+                            <field name="nb_editions" widget="statinfo" string="Versions"/>
                         </button>
                     </div>
 
@@ -90,7 +90,8 @@
                         <label for="serie_id" string="Série"/>
                         <h2>
                             <field name="serie_id" placeholder="Série…"/>
-                            <field name="tome" class="d-inline-block ms-2" style="width:4rem;" invisible="not tome"/>
+                            <span class="ms-2">T°</span>
+                            <field name="tome" class="d-inline-block ms-1" style="width:4rem;" placeholder="—"/>
                         </h2>
                         <label for="titre_canonique" string="Titre"/>
                         <h1>
@@ -161,8 +162,8 @@
                             </group>
                         </page>
 
-                        <!-- Éditions multiples (masqué si une seule édition) -->
-                        <page string="Éditions multiples" invisible="nb_editions &lt;= 1">
+                        <!-- Éditions multiples (masqué si une seule édition) — libellé utilisateur : "versions" -->
+                        <page string="Autres versions" name="editions_multiples" invisible="nb_editions &lt;= 1">
                             <field name="edition_ids">
                                 <list>
                                     <field name="langue"/>

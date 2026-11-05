@@ -6,3 +6,4 @@ from . import comic_customer_album
 from . import comic_sale_order
 from . import comic_pos_order
 from . import res_partner
+from . import comic_isbn

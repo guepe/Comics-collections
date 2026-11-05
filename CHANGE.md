@@ -1738,3 +1738,180 @@ Tests lancés avec :
   ignorées sont préservées entre deux scans consécutifs.
 - `_merge_into` utilise `skip_dedup_check=True` pour archiver la source sans déclencher
   `@api.constrains` sur l'enregistrement archivé.
+
+---
+
+## 2026-11-05 — Revue fonctionnelle : corrections sécurité shop + saisie tome / import (lots 1 et 2)
+
+Suite à la revue fonctionnelle complète (plan : `~/.claude/plans/noble-churning-moler.md`).
+
+**Lot 1 — Sécurité comic_shop :**
+
+- `comic_shop/controllers/main.py` :
+  - `/shop/auteurs/<id>` : 404 si le partenaire n'est pas auteur d'un album en vente
+    (corrige une fuite de fiches clients via `res.partner` sudo).
+  - `_bd_params()` assainit les paramètres GET (`_to_int`, type limité à `_BD_TYPES`) →
+    plus d'erreur 500 sur `?bd_serie_id=abc`.
+- `comic_shop/controllers/portal.py` :
+  - `_download_cover()` + `_cover_url_allowed()` : anti-SSRF — liste blanche d'hôtes
+    (Google Books, Open Library/archive.org, BnF), redirections suivies manuellement avec
+    revalidation de l'hôte, `Content-Type` image obligatoire, taille max 5 Mo.
+  - `_clean_isbn()` valide la clé (EAN-13 / ISBN-10 via `ComicIsbn`) et convertit
+    l'ISBN-10 en ISBN-13 (corrige l'erreur 500 sur saisie ISBN-10).
+  - `source` / `etat_lecture` validés contre listes autorisées (`achete_ici` interdit
+    depuis le portail ; une source `achete_ici` existante n'est plus écrasée par `force_update`).
+  - `edition_id` non numérique toléré ; création d'édition dans un savepoint avec message
+    flash en cas d'erreur de validation.
+  - Message flash désormais affiché sur `/my/library` (critère US-044).
+- `comic_shop/views/portal_library_templates.xml` : bloc flash dans `portal_library_index`.
+
+**Lot 2 — Saisie tome / import :**
+
+- `comics_collections/views/comic_work_views.xml` : champ `tome` toujours visible dans le
+  formulaire album (était invisible tant que vide → impossible à saisir).
+- `comics_collections/wizards/comic_import_wizard.py` : nouveau champ
+  `comic.import.mapping.line.column_index` ; le mapping n'utilise plus `sequence - 1`
+  (réordonner les lignes décalait les colonnes). Poignée `handle` retirée de la vue.
+- `comics_collections/models/comic_work.py` : `UNIQUE(serie_id, tome)` remplacé par
+  `models.UniqueIndex("(serie_id, tome) WHERE tome > 0")` → plusieurs hors-série par série.
+- `_find_work()` (import wizard + `comic_datasource` search wizard) : pas de rapprochement
+  sur `tome = 0` ; rapprochement par titre seul uniquement si aucune série.
+- `comics_collections/migrations/19.0.2.1.0/pre-migrate.py` : suppression de l'ancienne
+  contrainte. Version → `19.0.2.1.0`.
+- `comics_collections/tests/test_comic_work.py` : test de l'index partiel, refus d'un tome
+  numéroté en double, acceptation de plusieurs tomes 0.
+
+**Non fait / à valider :** tests Odoo non exécutés (daemon Docker arrêté) ; lots 3 à 6 du
+plan en attente (lot 4 nécessite une décision : catalogue partagé vs collections privées).
+
+---
+
+## 2026-11-05 (suite) — Lot 4 : catalogue partagé
+
+**Décision :** les séries, albums (`comic.work`), éditions et ISBN forment un référentiel
+commun à tous les utilisateurs BD. La possession reste propre à chacun via
+`comic.customer.album` (déjà filtré par `partner_id`). Corrige les doublons de séries entre
+utilisateurs et l'erreur d'accès quand un ISBN avait été créé par un autre utilisateur
+(unicité ISBN globale vs règles par `create_uid`).
+
+- `comics_collections/security/comic_security.xml` :
+  - règles `rule_comic_{serie,work,edition}_user` : ne s'appliquent plus qu'à la
+    **suppression** (`create_uid = user`) — lecture / écriture / création libres ;
+    le gestionnaire supprime tout (règle manager inchangée).
+  - nouvelles règles `rule_comic_pret_user` / `rule_comic_pret_manager` : prêts privés.
+  - syntaxe `Command.link` au lieu de `(4, ref)`.
+- `comic_shop/models/comic_edition.py` : One2many `customer_album_ids` (inverse de
+  `comic.customer.album.edition_id`).
+- `comic_shop/views/comic_work_views.xml` (nouveau, ajouté au manifest) : filtres
+  « Ma collection » / « Ma wishlist » sur la recherche des albums.
+- `comics_collections/tests/test_security.py` (nouveau, branché dans `tests/__init__.py`) :
+  lecture et modification croisées, suppression refusée à un autre utilisateur, suppression
+  par le créateur et le gestionnaire, prêts privés.
+
+**Conséquences à suivre :**
+- `comic.serie.a_suivre` est désormais global (une série suivie l'est pour tous). À migrer
+  vers un suivi par utilisateur si plusieurs collectionneurs utilisent la même base.
+- Sans `comic_shop`, le module de base n'a pas de notion de possession : « Ma Collection »
+  affiche tout le catalogue.
+
+---
+
+## 2026-11-05 (suite 2) — Dockerfile + redéploiement local
+
+- `Dockerfile` : un seul stage `FROM odoo:19` qui installe `requirements.txt`. L'ancien
+  second stage écrasait le premier (dépendances jamais installées → `xmltodict` manquant,
+  `comic_datasource` non chargeable) et copiait le contenu de `comics_collections` à la
+  racine de `/mnt/extra-addons`. Les modules restent montés en volume par docker-compose.
+- Redéploiement local (`-u all`) OK : migration `19.0.2.1.0` exécutée, index
+  `comic_work_unique_serie_tome_numbered` (`WHERE tome > 0`) créé.
+- Tests : 101 exécutés, 0 échec (91 `comics_collections`, 10 `comic_shop`).
+  **0 test `comic_datasource` exécuté** — ses tests sont des `unittest.TestCase` simples,
+  non collectés par Odoo (à convertir, lot 6).
+
+---
+
+## 2026-11-05 (suite 3) — Lot 3 : fiabilité de comic_datasource
+
+- `comic_datasource/models/res_config_settings.py` : `comic_openlibrary_enabled` /
+  `comic_bnf_enabled` sans `config_parameter=` ; `get_values` / `set_values` stockent
+  explicitement `"True"` / `"False"`. Avant : décocher supprimait le paramètre → la source
+  relisait son défaut `"True"` et restait active.
+- `comic_datasource/models/comic_edition.py` :
+  - nouveau champ `datasource_last_try` (Datetime) ; le cron trie sur
+    `datasource_last_try asc nulls first` et marque chaque tentative → le lot avance
+    (avant : `write_date asc`, les mêmes 30 éditions introuvables revenaient chaque jour).
+  - `_apply_datasource_data` : synopsis et nb_pages remplis **uniquement s'ils sont vides**.
+  - `_best_title_match()` (module-level) : repli par titre strict — titre normalisé égal,
+    tome et série cohérents quand connus, sinon `None` (fini l'ISBN d'un autre livre).
+  - `_find_or_create_author()` : correspondance exacte `=ilike`, priorité aux partenaires
+    déjà auteurs ("Morris" ne matche plus "Morrison").
+  - coupe-circuit : `GoogleBooksQuotaError` arrête le lot du cron.
+- `comic_datasource/wizards/comic_serie_update_wizard.py` : utilise `_best_title_match` ;
+  arrêt + avertissement dans le rapport sur quota Google ; une œuvre sans édition est
+  comptée « ignorée » (plus « mise à jour »). `_best_match_with_isbn` supprimé.
+- `comic_datasource/wizards/comic_datasource_search_wizard.py` : auteurs via
+  `_find_or_create_author`, éditeur en `=ilike`, série via `name_normalise`.
+- `comic_datasource/sources/google_books.py` : `seriesInfo.bookSeries[].seriesId`
+  (identifiant opaque) n'est plus utilisé comme nom de série.
+- Tests :
+  - `tests/test_sources.py`, `tests/test_aggregator.py` : `unittest.TestCase` → `BaseCase`
+    + `@tagged` — **ils sont enfin exécutés par Odoo**. Test quota corrigé (la source lève
+    `GoogleBooksQuotaError` par design).
+  - `tests/test_enrichment.py` (nouveau, post_install) : non-écrasement, match strict,
+    auteurs exacts, réglages, rotation du cron + coupe-circuit.
+  - `comics_collections/tests/test_security.py` passé en post_install (registre complet).
+- Version `comic_datasource` → `19.0.1.1.0`.
+- Résultat : **132 tests, 0 échec** (91 comics_collections, 10 comic_shop, 31 comic_datasource).
+
+---
+
+## 2026-11-05 (suite 4) — Lot 5 : cohérence shop / caisse / bibliothèques
+
+- `comic_shop/models/comic_customer_album.py` :
+  - champs `pos_order_line_id` (origine caisse) et `auto_created` (entrée créée par un achat).
+  - `_upsert(partner, edition, vals)` : création/MAJ protégée par savepoint contre
+    `UniqueViolation` (ajouts concurrents).
+  - `_register_purchase(...)` : source `achete_ici`, en collection, **retiré de la wishlist**.
+  - `_revert_purchase()` : annulation / remboursement → entrée auto non touchée supprimée,
+    sinon conservée avec source `inconnu`.
+- `comic_shop/models/comic_pos_order.py` : lignes `qty <= 0` ignorées à l'ajout ;
+  remboursement complet (`refunded_qty >= qty`) → `_revert_purchase` ; le hook ne peut plus
+  bloquer un encaissement (savepoint + log).
+- `comic_shop/models/comic_sale_order.py` : `_action_cancel` → `_revert_purchase` ;
+  hook `action_confirm` protégé (savepoint + log) ; utilise `_register_purchase`.
+- `comic_shop/models/product_template.py` : `_get_comic_edition()` lit les deux sens du lien
+  produit ↔ édition (hooks vente et caisse désormais cohérents).
+- `comic_shop/models/comic_edition.py` : `_sync_to_product` ne force plus
+  `available_in_pos` (seulement à la création) et n'efface plus un code-barres saisi à la main
+  quand l'édition n'a pas d'ISBN ; `_auto_sync_products()` factorisé.
+- Déclencheurs de synchro ajoutés : `comic.work.write` (titre / tome / série),
+  `comic.serie.write` (nom), nouveau `comic_shop/models/comic_isbn.py` (create / write / unlink
+  d'un ISBN → code-barres).
+- `comic_shop/controllers/main.py` : pages publiques séries / auteurs / éditeurs et « autres
+  tomes » limitées aux produits **publiés et actifs** (`_ON_SALE`, `_on_sale()`).
+- `comic_shop/tests/test_purchase_library.py` (nouveau) : confirmation / annulation,
+  wishlist, idempotence `_upsert`, code-barres manuel, POS non forcé, ISBN → code-barres,
+  renommage série / album → nom produit.
+
+## 2026-11-05 (suite 5) — Lot 6 : tests, documentation, vocabulaire
+
+- Tests :
+  - `comics_collections/tests/test_import_wizard.py` : stub `odoo` + importlib remplacés par
+    l'import réel, `BaseCase` + `@tagged` ; branché dans `tests/__init__.py` (49 tests).
+  - `comics_collections/tests/test_computed_fields.py` **supprimé** (testait de faux objets
+    d'un modèle `comic.album` obsolète, jamais exécuté).
+  - Tests d'unicité réactivés : `test_unique_isbn13_constraint`,
+    `test_unique_partner_edition_constraint`.
+- `CLAUDE.md` : BDGest retiré (module, API, cascade, règle délai 2s) ; règles
+  d'enrichissement ; règle « catalogue partagé » ; section 🧪 Tests.
+- `beautifulsoup4` retiré (`requirements.txt`, manifest `comic_datasource`, README/INSTALL,
+  `static/description/index.html`, `.github/workflows/test.yml`).
+- Vocabulaire utilisateur (CLAUDE.md règle 9) : série « Œuvres » → « Albums » (bouton, titre
+  d'action, champ) ; album « Éditions » → « Versions », onglet « Éditions multiples » →
+  « Autres versions » (+ message de doublon) ; prêt / bibliothèque `edition_id` → « Album » ;
+  `comic.customer.album.work_id` → « Titre » ; `product.template.comic_work_id` → « Titre BD ».
+- Résultat : **216 tests, 0 échec** (166 comics_collections, 19 comic_shop, 31 comic_datasource).
+
+- `comic_datasource/sources/Comics-collections.code-workspace` déplacé à la racine du dépôt
+  (`Comics-collections.code-workspace`), chemins des dossiers recalculés — un fichier VS Code
+  n'a rien à faire dans le module (il était embarqué dans le paquet).

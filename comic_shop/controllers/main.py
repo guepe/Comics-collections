@@ -14,13 +14,33 @@ _ROLE_LABELS = {
 _BD_FILTER_PARAMS = ("bd_serie_id", "bd_genre", "bd_auteur", "bd_type")
 
 
+_BD_TYPES = ("bd", "manga", "comics", "one_shot")
+
+# Une édition est "en vente" si son produit est actif ET publié sur le site
+_ON_SALE = [("product_tmpl_id.is_published", "=", True), ("product_tmpl_id.active", "=", True)]
+
+
+def _on_sale(edition):
+    product = edition.product_tmpl_id
+    return bool(product and product.active and product.is_published)
+
+
+def _to_int(value):
+    try:
+        return int(value or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
 def _bd_params(params):
-    """Returns (serie_id, genre_id, auteur_id, type) from GET params."""
+    """Returns (serie_id, genre_id, auteur_id, type) from GET params, sanitized
+    (invalid ids → 0, unknown type → "")."""
+    bd_type = params.get("bd_type", "")
     return (
-        params.get("bd_serie_id", ""),
-        params.get("bd_genre", ""),
-        params.get("bd_auteur", ""),
-        params.get("bd_type", ""),
+        _to_int(params.get("bd_serie_id")),
+        _to_int(params.get("bd_genre")),
+        _to_int(params.get("bd_auteur")),
+        bd_type if bd_type in _BD_TYPES else "",
     )
 
 
@@ -53,7 +73,7 @@ class ComicShopController(WebsiteSale):
                 .search(
                     [
                         ("work_id.serie_id", "=", edition.work_id.serie_id.id),
-                        ("product_tmpl_id", "!=", False),
+                        *_ON_SALE,
                         ("id", "!=", edition.id),
                     ],
                     order="work_id",
@@ -128,7 +148,7 @@ class ComicShopController(WebsiteSale):
             .sudo()
             .search(
                 [
-                    ("work_ids.edition_ids.product_tmpl_id", "!=", False),
+                    ("work_ids.edition_ids", "any", _ON_SALE),
                 ]
             )
         )
@@ -138,7 +158,7 @@ class ComicShopController(WebsiteSale):
             .sudo()
             .search(
                 [
-                    ("work_id.edition_ids.product_tmpl_id", "!=", False),
+                    ("work_id.edition_ids", "any", _ON_SALE),
                     ("role", "in", ["scenariste", "dessinateur"]),
                 ]
             )
@@ -173,14 +193,14 @@ class ComicShopController(WebsiteSale):
             .sudo()
             .search(
                 [
-                    ("work_ids.edition_ids.product_tmpl_id", "!=", False),
+                    ("work_ids.edition_ids", "any", _ON_SALE),
                 ]
             )
         )
         cover_urls = {}
         for serie in series.filtered(lambda s: not s.image_couverture):
             first = serie.work_ids.edition_ids.filtered(
-                lambda e: e.product_tmpl_id and e.product_tmpl_id.image_512
+                lambda e: _on_sale(e) and e.product_tmpl_id.image_512
             ).sorted(key=lambda e: e.work_id.tome or 0)
             if first:
                 cover_urls[serie.id] = f"/web/image/product.template/{first[0].product_tmpl_id.id}/image_512"
@@ -203,7 +223,7 @@ class ComicShopController(WebsiteSale):
             .search(
                 [
                     ("work_id.serie_id", "=", serie.id),
-                    ("product_tmpl_id", "!=", False),
+                    *_ON_SALE,
                 ],
                 order="work_id",
             )
@@ -225,7 +245,7 @@ class ComicShopController(WebsiteSale):
             .sudo()
             .search(
                 [
-                    ("work_id.edition_ids.product_tmpl_id", "!=", False),
+                    ("work_id.edition_ids", "any", _ON_SALE),
                 ]
             )
         )
@@ -249,7 +269,20 @@ class ComicShopController(WebsiteSale):
     @http.route("/shop/auteurs/<int:auteur_id>", type="http", auth="public", website=True)
     def shop_auteur_detail(self, auteur_id, **kwargs):
         auteur = request.env["res.partner"].sudo().browse(auteur_id)
-        if not auteur.exists():
+        # N'exposer que des partenaires réellement auteurs d'un album en vente
+        # (sinon n'importe quelle fiche client serait lisible via l'URL).
+        is_author = (
+            request.env["comic.work.auteur.line"]
+            .sudo()
+            .search_count(
+                [
+                    ("partner_id", "=", auteur_id),
+                    ("work_id.edition_ids", "any", _ON_SALE),
+                ],
+                limit=1,
+            )
+        )
+        if not auteur.exists() or not is_author:
             return request.not_found()
         lines = (
             request.env["comic.work.auteur.line"]
@@ -257,7 +290,7 @@ class ComicShopController(WebsiteSale):
             .search(
                 [
                     ("partner_id", "=", auteur_id),
-                    ("work_id.edition_ids.product_tmpl_id", "!=", False),
+                    ("work_id.edition_ids", "any", _ON_SALE),
                 ]
             )
         )
@@ -267,7 +300,7 @@ class ComicShopController(WebsiteSale):
             label = _ROLE_LABELS.get(line.role, line.role)
             if label not in by_role:
                 by_role[label] = []
-            edition = line.work_id.edition_ids.filtered("product_tmpl_id")[:1]
+            edition = line.work_id.edition_ids.filtered(_on_sale)[:1]
             if edition:
                 by_role[label].append(edition)
         return request.render(
@@ -288,7 +321,7 @@ class ComicShopController(WebsiteSale):
             .sudo()
             .search(
                 [
-                    ("work_ids.edition_ids.product_tmpl_id", "!=", False),
+                    ("work_ids.edition_ids", "any", _ON_SALE),
                     ("editeur_id", "!=", False),
                 ]
             )
@@ -303,7 +336,7 @@ class ComicShopController(WebsiteSale):
                     "nb_albums": 0,
                 }
             editeur_map[eid]["nb_series"] += 1
-            editeur_map[eid]["nb_albums"] += len(serie.work_ids.edition_ids.filtered(lambda e: e.product_tmpl_id))
+            editeur_map[eid]["nb_albums"] += len(serie.work_ids.edition_ids.filtered(_on_sale))
         editeurs = sorted(editeur_map.values(), key=lambda d: (d["editeur"].name or "").lower())
         return request.render("comic_shop.shop_editeurs_page", {"editeurs": editeurs})
 
@@ -318,7 +351,7 @@ class ComicShopController(WebsiteSale):
             .search(
                 [
                     ("editeur_id", "=", editeur_id),
-                    ("work_ids.edition_ids.product_tmpl_id", "!=", False),
+                    ("work_ids.edition_ids", "any", _ON_SALE),
                 ]
             )
         )

@@ -8,7 +8,10 @@ Lancement :
         --test-tags /comics_collections:TestComicIsbn
 """
 
+from psycopg2 import IntegrityError
+
 from odoo.tests.common import TransactionCase
+from odoo.tools import mute_logger
 from odoo.tests import tagged
 from odoo.exceptions import ValidationError
 
@@ -108,12 +111,11 @@ class TestComicIsbn(TransactionCase):
 
     # ── Contrainte d'unicité ─────────────────────────────────────────────────
 
-    # def test_unique_isbn13_constraint(self):
-    #     """Deux comic.isbn avec le même isbn_13 → violation de contrainte."""
-    #     isbn_val = '9782012101395'
-    #     edition_a = self.env['comic.edition'].create({'work_id': self.work.id, 'langue': 'fr'})
-    #     edition_b = self.env['comic.edition'].create({'work_id': self.work.id, 'langue': 'nl'})
-    #     self.env['comic.isbn'].create({'edition_id': edition_a.id, 'isbn_13': isbn_val})
-    #     with self.assertRaises(Exception):
-    #         with self.env.cr.savepoint():
-    #             self.env['comic.isbn'].create({'edition_id': edition_b.id, 'isbn_13': isbn_val})
+    def test_unique_isbn13_constraint(self):
+        """Deux comic.isbn avec le même isbn_13 → violation de contrainte."""
+        isbn_val = "9782012101395"
+        edition_a = self.env["comic.edition"].create({"work_id": self.work.id, "langue": "fr"})
+        edition_b = self.env["comic.edition"].create({"work_id": self.work.id, "langue": "nl"})
+        self.env["comic.isbn"].create({"edition_id": edition_a.id, "isbn_13": isbn_val})
+        with self.assertRaises(IntegrityError), mute_logger("odoo.sql_db"):
+            self.env["comic.isbn"].create({"edition_id": edition_b.id, "isbn_13": isbn_val})

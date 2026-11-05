@@ -7,6 +7,9 @@ from datetime import date
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.addons.comics_collections.utils.normalize import normalize_title
+
+from ..models.comic_edition import _find_or_create_author
 
 _logger = logging.getLogger(__name__)
 
@@ -283,7 +286,8 @@ class ComicDatasourceSearchWizard(models.TransientModel):
 
     def _find_work(self, serie, tome, title):
         Work = self.env["comic.work"]
-        if serie:
+        # Tome 0 = hors-série / sans numéro : jamais de rapprochement sur le seul tome
+        if serie and tome:
             work = Work.search([("serie_id", "=", serie.id), ("tome", "=", tome)], limit=1)
             if work:
                 return work
@@ -294,8 +298,9 @@ class ComicDatasourceSearchWizard(models.TransientModel):
             )
             if work:
                 return work
-        if title:
-            return Work.search([("titre_canonique", "=", title)], limit=1)
+        # Rapprochement sur le titre seul uniquement quand aucune série n'est connue
+        if title and not serie:
+            return Work.search([("serie_id", "=", False), ("titre_canonique", "=", title)], limit=1)
         return Work.browse()
 
     def _sync_work_authors(self, work, auteurs):
@@ -303,9 +308,7 @@ class ComicDatasourceSearchWizard(models.TransientModel):
             name = auteur.get("name", "").strip()
             if not name:
                 continue
-            partner = self.env["res.partner"].search([("name", "ilike", name)], limit=1)
-            if not partner:
-                partner = self.env["res.partner"].create({"name": name})
+            partner = _find_or_create_author(self.env, name)
             role = auteur.get("role", "autre")
             already = work.auteur_line_ids.filtered(
                 lambda line, p=partner, r=role: line.partner_id == p and line.role == r
@@ -323,13 +326,13 @@ class ComicDatasourceSearchWizard(models.TransientModel):
     def _get_or_create_editeur(self, name):
         if not name:
             return None
-        editeur = self.env["comic.editeur"].search([("name", "ilike", name)], limit=1)
+        editeur = self.env["comic.editeur"].search([("name", "=ilike", name)], limit=1)
         return editeur or self.env["comic.editeur"].create({"name": name})
 
     def _get_or_create_serie(self, name, editeur):
         if not name:
             return None
-        serie = self.env["comic.serie"].search([("name", "ilike", name)], limit=1)
+        serie = self.env["comic.serie"].search([("name_normalise", "=", normalize_title(name))], limit=1)
         if not serie:
             serie = self.env["comic.serie"].create(
                 {

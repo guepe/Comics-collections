@@ -5,3 +5,5 @@ from . import test_comic_work
 from . import test_comic_edition
 from . import test_comic_pret
 from . import test_comic_dedup
+from . import test_security
+from . import test_import_wizard

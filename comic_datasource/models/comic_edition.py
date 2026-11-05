@@ -5,7 +5,8 @@ from datetime import date
 
 import requests
 
-from odoo import models
+from odoo import fields, models
+from odoo.addons.comics_collections.utils.normalize import normalize_title
 
 _logger = logging.getLogger(__name__)
 
@@ -20,17 +21,55 @@ def _normalize_isbn(isbn):
     return raw
 
 
+def _find_or_create_author(env, name):
+    """Exact (case-insensitive) name match, preferring partners already credited as
+    comic authors — avoids "Morris" matching "Morrison" or a customer homonym."""
+    Partner = env["res.partner"]
+    partner = Partner.search([("name", "=ilike", name), ("auteur_work_line_ids", "!=", False)], limit=1)
+    if not partner:
+        partner = Partner.search([("name", "=ilike", name), ("is_company", "=", False)], limit=1)
+    return partner or Partner.create({"name": name})
+
+
+def _best_title_match(results, work):
+    """Strict title fallback: return the first result with an ISBN whose normalized
+    title equals the work's, and whose serie / tome (when both sides know them) match.
+    Returns None rather than guessing — a wrong match would attach a foreign ISBN."""
+    work_title = normalize_title(work.titre_canonique)
+    work_serie = normalize_title(work.serie_id.name) if work.serie_id else ""
+    if not work_title:
+        return None
+    for r in results:
+        if not r.isbn or normalize_title(r.title) != work_title:
+            continue
+        if work.tome and r.tome and int(r.tome) != work.tome:
+            continue
+        if work_serie and r.serie_name and normalize_title(r.serie_name) != work_serie:
+            continue
+        return r
+    return None
+
+
 class ComicEdition(models.Model):
     _inherit = "comic.edition"
+
+    datasource_last_try = fields.Datetime(
+        string="Dernier enrichissement tenté",
+        readonly=True,
+        copy=False,
+        help="Date de la dernière tentative d'enrichissement automatique (cron). "
+        "Sert à faire tourner le lot : les éditions jamais tentées passent en premier.",
+    )
 
     def _apply_datasource_data(self, data):
         """Updates self (a comic.edition) with a normalized dict from the aggregator."""
         self.ensure_one()
         vals = {}
 
-        if data.get("synopsis"):
+        # Ne remplit que les champs vides : ne jamais écraser une saisie utilisateur
+        if data.get("synopsis") and not self.synopsis:
             vals["synopsis"] = data["synopsis"]
-        if data.get("nb_pages"):
+        if data.get("nb_pages") and not self.nb_pages:
             vals["nb_pages"] = data["nb_pages"]
 
         for field, key in [("date_parution", "date_parution"), ("date_depot_legal", "date_depot_legal")]:
@@ -65,9 +104,7 @@ class ComicEdition(models.Model):
             name = (auteur.get("name") or "").strip()
             if not name:
                 continue
-            partner = self.env["res.partner"].search([("name", "ilike", name)], limit=1)
-            if not partner:
-                partner = self.env["res.partner"].create({"name": name})
+            partner = _find_or_create_author(self.env, name)
             role = auteur.get("role", "autre")
             if not work.auteur_line_ids.filtered(
                 lambda line, p=partner, r=role: line.partner_id == p and line.role == r
@@ -91,7 +128,7 @@ class ComicEdition(models.Model):
             ("image_couverture", "=", False),
             ("isbn_ids", "=", False),
         ]
-        editions = self.search(domain, limit=batch_size, order="write_date asc")
+        editions = self.search(domain, limit=batch_size, order="datasource_last_try asc nulls first, id asc")
         if not editions:
             _logger.info("Cron éditions : aucune édition incomplète.")
             return
@@ -100,7 +137,12 @@ class ComicEdition(models.Model):
         aggregator = ComicDataAggregator(env=self.env)
         updated = 0
 
+        from ..sources.google_books import GoogleBooksQuotaError
+
         for edition in editions:
+            # Marque la tentative avant l'appel : une édition introuvable laisse
+            # sa place aux suivantes au prochain passage.
+            edition.datasource_last_try = fields.Datetime.now()
             try:
                 agg = None
                 isbn = edition._get_primary_isbn()
@@ -108,19 +150,19 @@ class ComicEdition(models.Model):
                     agg = aggregator.search(isbn=isbn)
                 elif edition.work_id.titre_canonique:
                     results = aggregator.search_list(title=edition.work_id.titre_canonique)
-                    if results:
-                        best = next(
-                            (r for r in results if r.isbn and r.tome == edition.work_id.tome),
-                            next((r for r in results if r.isbn), None),
-                        )
-                        if best:
-                            agg = aggregator.search(isbn=best.isbn)
+                    best = _best_title_match(results or [], edition.work_id)
+                    if best:
+                        agg = aggregator.search(isbn=best.isbn)
 
                 if not agg or not agg.data:
                     continue
 
                 edition._apply_datasource_data(agg.data)
                 updated += 1
+            except GoogleBooksQuotaError:
+                # Coupe-circuit : inutile de continuer à solliciter Google
+                _logger.warning("Cron éditions : quota Google Books atteint — arrêt du lot.")
+                break
             except Exception:
                 _logger.exception('Cron édition : erreur sur "%s"', edition.display_name)
 

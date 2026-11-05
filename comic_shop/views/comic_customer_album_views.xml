@@ -65,7 +65,7 @@
         <field name="arch" type="xml">
             <search string="Bibliothèques clients">
                 <field name="partner_id" string="Client"/>
-                <field name="edition_id" string="Édition"/>
+                <field name="edition_id" string="Album"/>
                 <filter string="Dans la collection" name="collection"
                         domain="[('dans_collection', '=', True)]"/>
                 <filter string="En wishlist" name="wishlist"

@@ -1,5 +1,10 @@
-from odoo import models
+import logging
+
 from markupsafe import Markup
+
+from odoo import models
+
+_logger = logging.getLogger(__name__)
 
 
 class SaleOrder(models.Model):
@@ -7,48 +12,37 @@ class SaleOrder(models.Model):
 
     def action_confirm(self):
         res = super().action_confirm()
-        self._add_comics_to_library()
+        try:
+            with self.env.cr.savepoint():
+                self._add_comics_to_library()
+        except Exception:
+            # La bibliothèque client ne doit jamais bloquer une confirmation de commande
+            _logger.exception("Bibliothèque BD : échec de la mise à jour pour la commande %s", self.ids)
+        return res
+
+    def _action_cancel(self):
+        res = super()._action_cancel()
+        self.env["comic.customer.album"].sudo().search(
+            [("sale_order_line_id", "in", self.order_line.ids)]
+        )._revert_purchase()
         return res
 
     def _add_comics_to_library(self):
         """Automatically adds purchased editions to the customer's library."""
         CustomerAlbum = self.env["comic.customer.album"].sudo()
-        Edition = self.env["comic.edition"].sudo()
         for order in self:
             partner = order.partner_id
             if not partner.comic_auto_library:
                 continue
             added = []
             for line in order.order_line:
-                tmpl_id = line.product_id.product_tmpl_id.id
-                edition = Edition.search([("product_tmpl_id", "=", tmpl_id)], limit=1)
+                if line.product_uom_qty <= 0 or not line.product_id:
+                    continue
+                edition = line.product_id.product_tmpl_id._get_comic_edition()
                 if not edition:
                     continue
-                existing = CustomerAlbum.search(
-                    [
-                        ("partner_id", "=", partner.id),
-                        ("edition_id", "=", edition.id),
-                    ],
-                    limit=1,
-                )
-                if existing:
-                    existing.write(
-                        {
-                            "source": "achete_ici",
-                            "dans_collection": True,
-                            "sale_order_line_id": line.id,
-                        }
-                    )
-                else:
-                    CustomerAlbum.create(
-                        {
-                            "partner_id": partner.id,
-                            "edition_id": edition.id,
-                            "source": "achete_ici",
-                            "dans_collection": True,
-                            "sale_order_line_id": line.id,
-                        }
-                    )
+                _record, created = CustomerAlbum._register_purchase(partner, edition, sale_line=line)
+                if created:
                     added.append(edition)
             if added:
                 self._notify_customer_library_added(order, partner, added)

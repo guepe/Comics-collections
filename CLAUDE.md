@@ -1,7 +1,7 @@
 # CLAUDE.md — Projet Odoo Comic Collection
 
 > Contexte principal pour Claude dans VS Code.
-> Architecture, conventions et règles du projet — à jour au 2026-05-23.
+> Architecture, conventions et règles du projet — à jour au 2026-11-05.
 
 ---
 
@@ -12,8 +12,7 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 | Module               | Rôle                                                                            | État                     |
 | -------------------- | ------------------------------------------------------------------------------- | ------------------------ |
 | `comics_collections` | Collection, catalogue, import CSV/XLSX, déduplication                           | ✅ livré                 |
-| `comic_datasource`   | Enrichissement multi-sources (Google Books, Open Library, BnF, BDGest fallback) | ✅ livré                 |
-| `comic_bdgest`       | Scraping BDGest enrichissement                                                  | ✅ livré                 |
+| `comic_datasource`   | Enrichissement multi-sources (Google Books, Open Library, BnF)                  | ✅ livré                 |
 | `comic_shop`         | Shop en ligne, caisse (POS partiel), bibliothèque client portail                | ✅ majeure partie livrée |
 | `comic_ai`           | Génération IA (synopsis, traduction) — Claude + OpenAI                          | ⏳ non commencé          |
 
@@ -31,7 +30,7 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 | Branche Git | `19.0`                     |
 | Style OCA   | (maintainer-quality-tools) |
 
-**Dépendances Python :** `requests`, `beautifulsoup4`, `lxml`, `openai`, `anthropic`, `openpyxl`, `xlrd`, `xmltodict`
+**Dépendances Python :** `requests`, `lxml`, `openpyxl`, `xlrd`, `xmltodict` (+ `openai`, `anthropic` pour le futur `comic_ai`)
 
 **APIs externes :**
 
@@ -40,7 +39,8 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 | Google Books | Clé API gratuite | Métadonnées + couvertures     | 1000 req/jour        |
 | Open Library | Aucune           | Couvertures + auteurs         | Illimitée            |
 | BnF SRU      | Aucune           | BD francophones (dépôt légal) | Illimitée            |
-| BDGest       | Login optionnel  | Fallback scraping uniquement  | Délai 2s obligatoire |
+
+> BDGest : module `comic_bdgest` et source `bdgest` **supprimés** (commit `1fd4595`, 2026-06-02).
 
 ---
 
@@ -63,15 +63,11 @@ Comics-collections/
 │   ├── security/
 │   └── tests/
 ├── comic_datasource/        # Enrichissement multi-sources
-│   ├── sources/             # google_books.py, open_library.py, bnf.py, bdgest.py
+│   ├── sources/             # google_books.py, open_library.py, bnf.py
 │   ├── aggregator.py        # ComicDataAggregator
 │   ├── models/comic_edition.py   # _inherit = 'comic.edition'
 │   ├── wizards/             # search_wizard, serie_missing_wizard, serie_update_wizard
 │   └── data/comic_datasource_config.xml, comic_serie_cron.xml
-├── comic_bdgest/            # Scraping BDGest
-│   ├── scraper/
-│   ├── models/comic_edition.py   # _inherit = 'comic.edition'
-│   └── wizards/
 └── comic_shop/              # Shop + bibliothèque client
     ├── models/
     │   ├── comic_edition.py      # _inherit = 'comic.edition' (product_tmpl_id, sync)
@@ -163,11 +159,16 @@ Chaque source retourne :
     'nb_pages': int|None, 'editeur': str|None,
     'auteurs': [{'name': str, 'role': 'scenariste'|'dessinateur'|'coloriste'|'autre'}],
     'synopsis': str|None, 'cover_url': str|None, 'cover_url_small': str|None,
-    'source': 'google'|'openlibrary'|'bnf'|'bdgest',
+    'source': 'google'|'openlibrary'|'bnf',
 }
 ```
 
-Cascade priorité : Google > Open Library > BnF > BDGest (fallback, délai 2s obligatoire).
+Cascade priorité : Google > Open Library > BnF (ordre configurable via `comic.datasource_order`).
+
+Règles d'enrichissement (`_apply_datasource_data`) : **ne remplir que les champs vides** —
+jamais écraser une saisie utilisateur. Repli par titre (édition sans ISBN) : uniquement via
+`_best_title_match()` (titre normalisé égal + série/tome cohérents), sinon rien.
+Quota Google : `GoogleBooksQuotaError` remonte volontairement → coupe-circuit des crons/wizards.
 
 ---
 
@@ -207,7 +208,9 @@ Cascade priorité : Google > Open Library > BnF > BDGest (fallback, délai 2s ob
 4. Toujours mettre les droits dans `ir.model.access.csv`
 5. `fields.Image` (pas `Binary`) pour les couvertures
 6. Clés API en `ir.config_parameter` — jamais en dur
-7. Scraping BDGest : délai **2 secondes** obligatoire entre requêtes
+7. **Catalogue partagé** : séries / albums / éditions / ISBN visibles et modifiables par tous
+   les utilisateurs BD (suppression : créateur ou gestionnaire). La possession est propre à
+   chacun via `comic.customer.album`. Les prêts (`comic.pret`) sont privés.
 8. Odoo 19 uniquement — pas d'API dépréciées
 9. **Vocabulaire UX** : "album" / "tome" / "série" pour les utilisateurs. "Œuvre" / "Édition" réservés au référentiel avancé (managers).
 10. Contraintes DB : `models.Constraint(...)` — pas `_sql_constraints` (déprécié Odoo 19)
@@ -256,3 +259,22 @@ Maintenir à jour en fin de session, avant le commit :
 
 - **`USER_STORIES_V3.md`** : cocher `[x]` dès qu'un critère est fait. Ajouter `✅` au titre quand tous les critères sont cochés. Ne jamais cocher par anticipation.
 - **`CHANGE.md`** : ajouter une entrée datée avec tous les fichiers modifiés, méthodes ajoutées, bugs corrigés, décisions techniques. Ne pas relire tout le fichier — juste appender.
+
+---
+
+## 🧪 Tests
+
+- Toute classe de test hérite d'une classe Odoo (`TransactionCase`, ou `BaseCase` pour du
+  code pur) **et** porte `@tagged(...)` — un `unittest.TestCase` simple n'est jamais exécuté.
+- Tests qui créent `res.partner` / `res.users` : `@tagged("post_install", "-at_install", ...)`
+  (sinon colonnes NOT NULL de modules non encore chargés, ex. `account`).
+- Tout nouveau fichier de test doit être importé dans `tests/__init__.py`.
+- Lancement local :
+
+```bash
+~/.docker/bin/docker exec odoo-web odoo --db_host postgres-Odoo -r odoo -w odoo -d odoo \
+  --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
+  -u comics_collections,comic_datasource,comic_shop \
+  --test-tags /comics_collections,/comic_datasource,/comic_shop --stop-after-init --http-port 8070
+```
+

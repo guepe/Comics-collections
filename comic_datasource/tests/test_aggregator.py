@@ -1,6 +1,9 @@
 """Tests unitaires pour ComicDataAggregator."""
 
 import unittest
+
+from odoo.tests import tagged
+from odoo.tests.common import BaseCase
 from unittest.mock import MagicMock
 from odoo.addons.comic_datasource.sources.base import ComicSourceResult
 
@@ -9,7 +12,8 @@ def _make_result(source, **kwargs):
     return ComicSourceResult(source=source, **kwargs)
 
 
-class TestComicDataAggregator(unittest.TestCase):
+@tagged("comic_datasource")
+class TestComicDataAggregator(BaseCase):
 
     def setUp(self):
         super().setUp()

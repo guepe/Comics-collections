@@ -67,8 +67,10 @@ class ComicWork(models.Model):
     nb_editions = fields.Integer(string="Nb éditions", compute="_compute_nb_editions", store=True)
     nb_auteurs = fields.Integer(string="Nb auteurs", compute="_compute_nb_auteurs", store=True)
 
-    _unique_serie_tome = models.Constraint(
-        "UNIQUE(serie_id, tome)",
+    # Unicité limitée aux tomes numérotés : tome = 0 (hors-série, album sans
+    # numéro) peut exister plusieurs fois dans une même série.
+    _unique_serie_tome_numbered = models.UniqueIndex(
+        "(serie_id, tome) WHERE tome > 0",
         "Un tome de cette série existe déjà. Chaque numéro de tome doit être unique par série.",
     )
 
@@ -296,7 +298,7 @@ class ComicWork(models.Model):
                         "Titre dupliqué détecté : « %(other)s » (Tome %(tome)s) existe "
                         "déjà dans cette série avec un titre identique après normalisation.\n"
                         "Si ce sont deux éditions différentes du même album, ouvrez l'album "
-                        "existant et ajoutez une édition depuis l'onglet « Éditions multiples ».",
+                        "existant et ajoutez une version depuis l'onglet « Autres versions ».",
                         other=duplicate.display_name,
                         tome=duplicate.tome,
                     )
@@ -338,7 +340,7 @@ class ComicWorkAuteurLine(models.Model):
     _name = "comic.work.auteur.line"
     _description = "Auteur d'une œuvre BD"
 
-    work_id = fields.Many2one("comic.work", string="Œuvre", required=True, ondelete="cascade", index=True)
+    work_id = fields.Many2one("comic.work", string="Album", required=True, ondelete="cascade", index=True)
     partner_id = fields.Many2one("res.partner", string="Auteur", required=True)
     role = fields.Selection(
         [

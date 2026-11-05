@@ -31,6 +31,7 @@
         "data/comic_shop_server_actions.xml",
         "views/comic_serie_views.xml",
         "views/comic_edition_views.xml",
+        "views/comic_work_views.xml",
         "views/comic_customer_album_views.xml",
         "views/product_template_views.xml",
         "views/website_sale_templates.xml",

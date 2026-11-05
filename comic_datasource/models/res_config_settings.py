@@ -1,7 +1,7 @@
 import time
 
 import requests
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -16,19 +16,37 @@ class ResConfigSettings(models.TransientModel):
         "Sans clé, les requêtes sont limitées à ~100/jour.",
     )
 
-    # ── Open Library (activé par défaut) ─────────────────────────────────────
+    # ── Open Library / BnF (activées par défaut) ─────────────────────────────
+    # Pas de `config_parameter=` : Odoo supprime le paramètre quand la case est
+    # décochée, et les sources (défaut "True") restaient alors actives.
+    # On stocke explicitement "True" / "False" (voir get_values / set_values).
     comic_openlibrary_enabled = fields.Boolean(
         string="Activer Open Library",
-        config_parameter="comic.openlibrary_enabled",
         help="Source de couvertures et métadonnées. Gratuite, sans clé API.",
     )
-
-    # ── BnF SRU (activée par défaut) ─────────────────────────────────────────
     comic_bnf_enabled = fields.Boolean(
         string="Activer BnF (Bibliothèque nationale de France)",
-        config_parameter="comic.bnf_enabled",
         help="Données officielles de dépôt légal pour les BD francophones. Gratuite, sans clé API.",
     )
+
+    _SOURCE_TOGGLES = {
+        "comic_openlibrary_enabled": "comic.openlibrary_enabled",
+        "comic_bnf_enabled": "comic.bnf_enabled",
+    }
+
+    @api.model
+    def get_values(self):
+        res = super().get_values()
+        icp = self.env["ir.config_parameter"].sudo()
+        for field_name, key in self._SOURCE_TOGGLES.items():
+            res[field_name] = icp.get_param(key, "True") != "False"
+        return res
+
+    def set_values(self):
+        super().set_values()
+        icp = self.env["ir.config_parameter"].sudo()
+        for field_name, key in self._SOURCE_TOGGLES.items():
+            icp.set_param(key, "True" if self[field_name] else "False")
 
     # ── Actions ───────────────────────────────────────────────────────────────
 

@@ -13,6 +13,12 @@ class ComicEdition(models.Model):
         copy=False,
         help="Produit Odoo associé à cette édition pour la vente en ligne et en caisse.",
     )
+    customer_album_ids = fields.One2many(
+        "comic.customer.album",
+        "edition_id",
+        string="Bibliothèques",
+        help="Entrées de bibliothèque (clients et utilisateurs) qui possèdent ou suivent cet album.",
+    )
     sync_product = fields.Boolean(
         string="Synchro auto",
         default=True,
@@ -79,9 +85,13 @@ class ComicEdition(models.Model):
     def write(self, vals):
         res = super().write(vals)
         if self._SYNC_TRIGGER_FIELDS & set(vals):
-            for edition in self.filtered(lambda e: e.product_tmpl_id and e.sync_product):
-                edition._sync_to_product()
+            self._auto_sync_products()
         return res
+
+    def _auto_sync_products(self):
+        """Sync linked products (editions with sync_product enabled only)."""
+        for edition in self.filtered(lambda e: e.product_tmpl_id and e.sync_product):
+            edition._sync_to_product()
 
     # --- Helpers ------------------------------------------------------------
 
@@ -93,10 +103,14 @@ class ComicEdition(models.Model):
         vals = {
             "name": self._get_product_name(),
             "image_1920": self.image_couverture or False,
-            "barcode": self._get_primary_isbn() or False,
             "description_sale": html2plaintext(self.synopsis) if self.synopsis else False,
-            "available_in_pos": True,
+            # available_in_pos n'est fixé qu'à la création du produit : le commerçant
+            # doit pouvoir retirer un album de la caisse sans que la synchro le remette.
         }
+        isbn = self._get_primary_isbn()
+        if isbn:
+            # Pas d'ISBN → on garde le code-barres éventuellement saisi à la main
+            vals["barcode"] = isbn
         if pos_category and pos_category not in self.product_tmpl_id.pos_categ_ids:
             vals["pos_categ_ids"] = [Command.link(pos_category.id)]
         self.product_tmpl_id.write(vals)
