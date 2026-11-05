@@ -73,7 +73,9 @@ class TestEnrichment(TransactionCase):
 
     def test_settings_toggle_persists_false(self):
         icp = self.env["ir.config_parameter"].sudo()
-        settings = self.env["res.config.settings"].create({"comic_bnf_enabled": False, "comic_openlibrary_enabled": True})
+        settings = self.env["res.config.settings"].create(
+            {"comic_bnf_enabled": False, "comic_openlibrary_enabled": True}
+        )
         settings.set_values()
         self.assertEqual(icp.get_param("comic.bnf_enabled"), "False")
         self.assertEqual(icp.get_param("comic.openlibrary_enabled"), "True")
@@ -87,9 +89,10 @@ class TestEnrichment(TransactionCase):
         Edition.search([]).write({"datasource_last_try": False})
         agg = "odoo.addons.comic_datasource.aggregator.ComicDataAggregator"
         quota = GoogleBooksQuotaError("quota")
-        with patch(f"{agg}.search", side_effect=quota) as m_search, patch(
-            f"{agg}.search_list", side_effect=quota
-        ) as m_list:
+        with (
+            patch(f"{agg}.search", side_effect=quota) as m_search,
+            patch(f"{agg}.search_list", side_effect=quota) as m_list,
+        ):
             Edition._cron_update_editions(batch_size=50)
         # Coupe-circuit : un seul appel réseau malgré plusieurs éditions incomplètes
         self.assertEqual(m_search.call_count + m_list.call_count, 1)

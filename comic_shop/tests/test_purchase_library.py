@@ -36,8 +36,14 @@ class TestPurchaseLibrary(TransactionCase):
     # ── Commandes en ligne ───────────────────────────────────────────────────
 
     def test_confirm_adds_album_and_leaves_wishlist(self):
-        self.Album.create({"partner_id": self.partner.id, "edition_id": self.edition.id,
-                           "dans_wishlist": True, "dans_collection": False})
+        self.Album.create(
+            {
+                "partner_id": self.partner.id,
+                "edition_id": self.edition.id,
+                "dans_wishlist": True,
+                "dans_collection": False,
+            }
+        )
         self._order().action_confirm()
         album = self._album()
         self.assertEqual(album.source, "achete_ici")

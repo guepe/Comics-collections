@@ -277,4 +277,3 @@ Maintenir à jour en fin de session, avant le commit :
   -u comics_collections,comic_datasource,comic_shop \
   --test-tags /comics_collections,/comic_datasource,/comic_shop --stop-after-init --http-port 8070
 ```
-

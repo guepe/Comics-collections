@@ -16,7 +16,7 @@
     "development_status": "Beta",
     "images": ["static/description/overview.png"],
     "depends": ["comics_collections"],
-    "price":40.00,
+    "price": 40.00,
     "currency": "EUR",
     "data": [
         "security/ir.model.access.csv",

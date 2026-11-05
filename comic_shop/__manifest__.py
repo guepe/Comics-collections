@@ -13,7 +13,7 @@
     "license": "LGPL-3",
     "development_status": "Beta",
     "images": ["static/description/overview.png"],
-    "price":200.00,
+    "price": 200.00,
     "currency": "EUR",
     "depends": [
         "comics_collections",

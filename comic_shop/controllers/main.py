@@ -199,9 +199,9 @@ class ComicShopController(WebsiteSale):
         )
         cover_urls = {}
         for serie in series.filtered(lambda s: not s.image_couverture):
-            first = serie.work_ids.edition_ids.filtered(
-                lambda e: _on_sale(e) and e.product_tmpl_id.image_512
-            ).sorted(key=lambda e: e.work_id.tome or 0)
+            first = serie.work_ids.edition_ids.filtered(lambda e: _on_sale(e) and e.product_tmpl_id.image_512).sorted(
+                key=lambda e: e.work_id.tome or 0
+            )
             if first:
                 cover_urls[serie.id] = f"/web/image/product.template/{first[0].product_tmpl_id.id}/image_512"
         return request.render(

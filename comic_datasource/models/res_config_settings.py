@@ -43,10 +43,11 @@ class ResConfigSettings(models.TransientModel):
         return res
 
     def set_values(self):
-        super().set_values()
+        res = super().set_values()
         icp = self.env["ir.config_parameter"].sudo()
         for field_name, key in self._SOURCE_TOGGLES.items():
             icp.set_param(key, "True" if self[field_name] else "False")
+        return res
 
     # ── Actions ───────────────────────────────────────────────────────────────
 
@@ -90,9 +91,7 @@ class ResConfigSettings(models.TransientModel):
                 )
             )
         if resp.status_code != 200:
-            raise UserError(
-                f"Google Books : erreur inattendue HTTP {resp.status_code} (après {retries} tentative(s))."
-            )
+            raise UserError(f"Google Books : erreur inattendue HTTP {resp.status_code} (après {retries} tentative(s)).")
 
         data = resp.json()
         total = data.get("totalItems", 0)
