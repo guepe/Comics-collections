@@ -114,16 +114,21 @@ class ComicEdition(models.Model):
             work._schedule_portal_validation_activity()
 
         # Edition
-        edition = env["comic.edition"].search([("work_id", "=", work.id)], limit=1)
+        # NB : comic.work.create crée déjà une édition vide — on la complète (champs vides
+        # uniquement) au lieu de n'agir que s'il n'y a aucune édition (sinon l'éditeur et la
+        # couverture proposés n'étaient jamais enregistrés).
+        edition = work.primary_edition_id or env["comic.edition"].search([("work_id", "=", work.id)], limit=1)
         if not edition:
-            edition_vals = {"work_id": work.id}
-            if editeur:
-                edition_vals["editeur_id"] = editeur.id
-            if cover_url and cover_fetcher:
-                cover = cover_fetcher(cover_url)
-                if cover:
-                    edition_vals["image_couverture"] = cover
-            edition = env["comic.edition"].create(edition_vals)
+            edition = env["comic.edition"].create({"work_id": work.id})
+        edition_vals = {}
+        if editeur and not edition.editeur_id:
+            edition_vals["editeur_id"] = editeur.id
+        if cover_url and cover_fetcher and not edition.image_couverture:
+            cover = cover_fetcher(cover_url)
+            if cover:
+                edition_vals["image_couverture"] = cover
+        if edition_vals:
+            edition.write(edition_vals)
 
         # ISBN
         if isbn:

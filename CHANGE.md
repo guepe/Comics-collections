@@ -1986,3 +1986,45 @@ nouveau `test_import_orm.py` (import CSV de bout en bout). **230 tests, 0 échec
     bouton « Albums » de la fiche série (`comic.serie.action_view_works`).
 - `comics_collections/models/comic_work.py` : champ calculé `auteur_names` (noms des auteurs,
   dédoublonnés) pour la liste.
+
+---
+
+## 2026-11-05 (suite 9) — Fin de revue : tomes manquants, doublons, portail, séries suivies
+
+Réalisé en parallèle (4 branches de worktree fusionnées sur `integ/revue-suite`).
+
+**Séries suivies par utilisateur** (`comics_collections`, version 19.0.2.2.0)
+- `comic.serie.suivi_user_ids` (Many2many res.users, `comic_serie_suivi_user_rel`) ;
+  `a_suivre` devient calculé non stocké pour l'utilisateur courant (inverse + search) —
+  actions serveur et filtre « Mes séries suivies » inchangés côté usage.
+- Migration 19.0.2.2.0 : `a_suivre` → `a_suivre_legacy` (pre), rattachement au créateur de
+  la série puis suppression de la colonne (post).
+- Cron tomes manquants : séries suivies par au moins un utilisateur.
+
+**Doublons** (`comics_collections`)
+- Scan par *blocking* (même série, ou mêmes 4 premiers caractères titre + série normalisés)
+  + préfiltres `real_quick_ratio` / `quick_ratio` → fin du O(n²). Scores inchangés
+  (`_score_pair`). Compromis : deux séries différentes dont les 4 premiers caractères
+  diffèrent ne sont plus comparées.
+- Paires nettoyées après fusion (`_cleanup_for_works`) et masquées si un album est archivé.
+- Bouton « Fusionner B → A ».
+
+**Tomes manquants** (`comic_datasource`, version 19.0.1.2.0)
+- `comic.serie.nb_tomes_parus` (saisi) et `missing_last_check`.
+- Nombre attendu = `nb_tomes_parus`, sinon tome max connu (existants + sources) ; tome 0 ignoré.
+- « Ajouter à la wishlist » : réutilise l'album / l'édition existants (plus d'édition en
+  double) et crée une vraie entrée wishlist (`comic.customer.album`) ; sans comic_shop →
+  « Ajouter au catalogue ».
+- Quota Google → message propre ; cron par lots de 20, séries les moins récemment vérifiées
+  d'abord.
+
+**Modération portail** (`comic_shop`, version 19.0.2.1.0)
+- `a_valider` + `portal_partner_id` sur série / album / éditeur créés depuis le portail ;
+  bouton « Valider », bandeau, filtre « À valider », menu « À valider (portail) » ;
+  activité pour le gestionnaire shop ; mise en vente refusée tant que l'album est à valider.
+- Logique déplacée du contrôleur vers `comic.edition._create_from_portal_data()` (testable).
+- **Bug corrigé à l'intégration** : l'éditeur et la couverture proposés par le client
+  n'étaient jamais enregistrés (l'album crée déjà une édition vide → `if not edition`
+  toujours faux). Ils complètent maintenant l'édition (champs vides uniquement).
+
+**Résultat : 266 tests, 0 échec** (198 comics_collections, 27 comic_shop, 41 comic_datasource).
