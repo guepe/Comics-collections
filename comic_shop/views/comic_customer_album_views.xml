@@ -113,4 +113,11 @@
               action="action_comic_customer_album"
               sequence="10"/>
 
+    <menuitem id="menu_comic_shop_a_valider"
+              name="À valider (portail)"
+              parent="menu_comic_shop_root"
+              action="action_comic_work_a_valider"
+              groups="comic_shop.group_shop_manager"
+              sequence="20"/>
+
 </odoo>
