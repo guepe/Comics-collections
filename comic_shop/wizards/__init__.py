@@ -1,1 +1,1 @@
-# wizards will be added here as US are implemented
+from . import comic_portal_refuse_wizard

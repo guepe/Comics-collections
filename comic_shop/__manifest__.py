@@ -1,6 +1,6 @@
 {
     "name": "Comic Shop",
-    "version": "19.0.2.1.0",
+    "version": "19.0.2.2.0",
     "category": "Leisure",
     "summary": "Sell your comics online and manage customer libraries",
     "description": """
@@ -29,6 +29,7 @@
         "security/ir.model.access.csv",
         "data/comic_shop_data.xml",
         "data/comic_shop_server_actions.xml",
+        "views/comic_portal_refuse_wizard_views.xml",
         "views/comic_serie_views.xml",
         "views/comic_edition_views.xml",
         "views/comic_work_views.xml",

@@ -2028,3 +2028,21 @@ Réalisé en parallèle (4 branches de worktree fusionnées sur `integ/revue-sui
   toujours faux). Ils complètent maintenant l'édition (champs vides uniquement).
 
 **Résultat : 266 tests, 0 échec** (198 comics_collections, 27 comic_shop, 41 comic_datasource).
+
+---
+
+## 2026-11-05 (suite 10) — Portail : refus d'un album proposé
+
+- Nouveau wizard `comic.portal.refuse.wizard` (`comic_shop/wizards/`), bouton « Refuser » à
+  côté de « Valider » (formulaire album + liste « À valider (portail) »), gestionnaire shop.
+  - **Doublon d'un album existant** : l'entrée de bibliothèque du client est reportée sur
+    l'album choisi (supprimée s'il le possède déjà), l'ISBN proposé rejoint l'album existant
+    s'il n'en avait pas, puis l'album proposé est supprimé.
+  - **Fiche incorrecte** : album, édition, ISBN et entrée de bibliothèque supprimés.
+  - Dans les deux cas : série / éditeur créés par le client supprimés s'ils sont devenus
+    inutiles ; le client est notifié (message sur sa fiche contact, avec message facultatif).
+  - Valeurs lues avant suppression : l'assistant (m2o requis vers l'album) est supprimé en
+    cascade avec l'album.
+- Liste dédiée `view_comic_work_list_a_valider` (couverture, série, tome, titre, proposé par,
+  date) avec boutons Valider / Refuser par ligne.
+- `comic_shop` version 19.0.2.2.0 ; tests `test_portal_refuse.py`. **272 tests, 0 échec.**
