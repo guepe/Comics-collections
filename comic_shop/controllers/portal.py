@@ -471,53 +471,18 @@ class ComicLibraryPortal(CustomerPortal):
         if not title:
             return None
 
-        env = request.env
-
-        # Editeur
-        editeur = None
-        if editeur_name:
-            editeur = env["comic.editeur"].sudo().search([("name", "=", editeur_name)], limit=1)
-            if not editeur:
-                editeur = env["comic.editeur"].sudo().create({"name": editeur_name})
-
-        # Série
-        serie = None
-        if serie_name:
-            serie = env["comic.serie"].sudo().search([("name", "=", serie_name)], limit=1)
-            if not serie:
-                serie = env["comic.serie"].sudo().create({"name": serie_name})
-
-        # Work
-        work = None
-        if serie and tome:
-            work = env["comic.work"].sudo().search([("serie_id", "=", serie.id), ("tome", "=", tome)], limit=1)
-        if not work and serie:
-            work = (
-                env["comic.work"].sudo().search([("serie_id", "=", serie.id), ("titre_canonique", "=", title)], limit=1)
-            )
-        if not work:
-            work_vals = {"titre_canonique": title}
-            if serie:
-                work_vals["serie_id"] = serie.id
-            if tome:
-                work_vals["tome"] = tome
-            work = env["comic.work"].sudo().create(work_vals)
-
-        # Edition
-        edition = env["comic.edition"].sudo().search([("work_id", "=", work.id)], limit=1)
-        if not edition:
-            edition_vals = {"work_id": work.id}
-            if editeur:
-                edition_vals["editeur_id"] = editeur.id
-            if cover_url:
-                cover = _download_cover(cover_url)
-                if cover:
-                    edition_vals["image_couverture"] = cover
-            edition = env["comic.edition"].sudo().create(edition_vals)
-
-        # ISBN
-        if isbn:
-            if not env["comic.isbn"].sudo().search([("isbn_13", "=", isbn)], limit=1):
-                env["comic.isbn"].sudo().create({"edition_id": edition.id, "isbn_13": isbn})
-
-        return edition
+        data = {
+            "isbn": isbn,
+            "title": title,
+            "serie_name": serie_name,
+            "editeur_name": editeur_name,
+            "cover_url": cover_url,
+            "tome": tome,
+        }
+        # Création déléguée au modèle (testable sans HTTP) : les fiches créées
+        # sont marquées « à valider » et signalées au gestionnaire du shop.
+        return (
+            request.env["comic.edition"]
+            .sudo()
+            ._create_from_portal_data(data, request.env.user.partner_id, cover_fetcher=_download_cover)
+        )

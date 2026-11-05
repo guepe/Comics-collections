@@ -32,9 +32,40 @@
             <xpath expr="//div[@name='button_box']" position="after">
                 <field name="nb_albums_with_product" invisible="1"/>
                 <field name="nb_albums_isbn_sans_produit" invisible="1"/>
+                <field name="a_valider" invisible="1"/>
+                <div class="alert alert-warning" role="alert" invisible="not a_valider">
+                    Série proposée par un client depuis le portail
+                    (<field name="portal_partner_id" class="oe_inline" readonly="1"/>) :
+                    à vérifier avant mise en vente.
+                </div>
+            </xpath>
+
+            <!-- Modération des séries proposées depuis le portail -->
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_valider_portail"
+                            type="object"
+                            string="Valider"
+                            class="btn-primary"
+                            invisible="not a_valider"
+                            groups="comic_shop.group_shop_manager"/>
+                </header>
             </xpath>
 
 
+        </field>
+    </record>
+
+    <record id="view_comic_serie_search_inherit_shop" model="ir.ui.view">
+        <field name="name">comic.serie.search.inherit.shop</field>
+        <field name="model">comic.serie</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_serie_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='bd']" position="before">
+                <filter string="À valider" name="a_valider_portail"
+                        domain="[('a_valider', '=', True)]"/>
+                <separator/>
+            </xpath>
         </field>
     </record>
 

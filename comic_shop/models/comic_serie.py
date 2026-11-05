@@ -10,6 +10,22 @@ class ComicSerie(models.Model):
             self.work_ids.edition_ids._auto_sync_products()
         return res
 
+    a_valider = fields.Boolean(
+        string="À valider",
+        default=False,
+        tracking=True,
+        index=True,
+        copy=False,
+        help="Série proposée par un client depuis le portail, à contrôler avant mise en vente.",
+    )
+    portal_partner_id = fields.Many2one(
+        "res.partner",
+        string="Proposé par",
+        readonly=True,
+        copy=False,
+        ondelete="set null",
+    )
+
     nb_albums_with_product = fields.Integer(
         string="Produits liés",
         compute="_compute_nb_albums_with_product",
@@ -21,18 +37,30 @@ class ComicSerie(models.Model):
         store=True,
     )
 
-    @api.depends("work_ids.edition_ids.product_tmpl_id", "work_ids.edition_ids.isbn_ids")
+    @api.depends(
+        "work_ids.a_valider",
+        "work_ids.edition_ids.product_tmpl_id",
+        "work_ids.edition_ids.isbn_ids",
+    )
     def _compute_nb_albums_with_product(self):
         for serie in self:
             all_editions = serie.work_ids.edition_ids
             serie.nb_albums_with_product = len(all_editions.filtered("product_tmpl_id"))
             serie.nb_albums_isbn_sans_produit = len(
-                all_editions.filtered(lambda e: e.isbn_ids and not e.product_tmpl_id)
+                all_editions.filtered(lambda e: e.isbn_ids and not e.product_tmpl_id and not e.work_id.a_valider)
             )
+
+    def action_valider_portail(self):
+        """Validate series proposed from the portal."""
+        self.write({"a_valider": False})
+        return True
 
     def action_create_products_bulk(self):
         """Crée un produit pour chaque édition sans produit, sur plusieurs séries."""
-        editions = self.mapped("work_ids.edition_ids").filtered(lambda e: not e.product_tmpl_id)
+        # Les albums proposés depuis le portail et non validés ne sont pas mis en vente
+        editions = self.mapped("work_ids.edition_ids").filtered(
+            lambda e: not e.product_tmpl_id and not e.work_id.a_valider
+        )
         category = self.env.ref("comic_shop.product_category_bd", raise_if_not_found=False)
         pos_category = self.env.ref("comic_shop.pos_category_bd", raise_if_not_found=False)
         for edition in editions:
@@ -62,7 +90,9 @@ class ComicSerie(models.Model):
     def action_create_products_from_isbn(self):
         """Creates a product for each edition with an ISBN but no linked product."""
         self.ensure_one()
-        editions = self.work_ids.edition_ids.filtered(lambda e: e.isbn_ids and not e.product_tmpl_id)
+        editions = self.work_ids.edition_ids.filtered(
+            lambda e: e.isbn_ids and not e.product_tmpl_id and not e.work_id.a_valider
+        )
         if not editions:
             return {
                 "type": "ir.actions.client",
