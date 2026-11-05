@@ -138,11 +138,9 @@ OL_RESPONSE = {
 @tagged("comic_datasource")
 class TestOpenLibrarySource(BaseCase):
 
-    @patch("odoo.addons.comic_datasource.sources.open_library.requests.head")
     @patch("odoo.addons.comic_datasource.sources.open_library.requests.get")
-    def test_search_by_isbn_found(self, mock_get, mock_head):
+    def test_search_by_isbn_found(self, mock_get):
         mock_get.return_value = MagicMock(status_code=200, json=lambda: OL_RESPONSE)
-        mock_head.return_value = MagicMock(status_code=200, headers={"Content-Length": "50000"})
         from odoo.addons.comic_datasource.sources.open_library import OpenLibrarySource
 
         source = OpenLibrarySource()
@@ -154,15 +152,16 @@ class TestOpenLibrarySource(BaseCase):
 
     @patch("odoo.addons.comic_datasource.sources.open_library.requests.head")
     @patch("odoo.addons.comic_datasource.sources.open_library.requests.get")
-    def test_cover_absent_returns_none(self, mock_get, mock_head):
+    def test_cover_url_without_head_request(self, mock_get, mock_head):
+        """Plus de HEAD : l'URL `?default=false` renvoie 404 si la couverture est
+        absente, et c'est le téléchargeur qui l'écarte."""
         mock_get.return_value = MagicMock(status_code=200, json=lambda: OL_RESPONSE)
-        # Couverture absente (Content-Length = 1)
-        mock_head.return_value = MagicMock(status_code=200, headers={"Content-Length": "1"})
         from odoo.addons.comic_datasource.sources.open_library import OpenLibrarySource
 
         source = OpenLibrarySource()
         result = source.search_by_isbn("9782012101340")
-        self.assertIsNone(result.cover_url)
+        mock_head.assert_not_called()
+        self.assertTrue(result.cover_url.endswith("?default=false"))
 
     @patch("odoo.addons.comic_datasource.sources.open_library.requests.get")
     def test_search_by_isbn_empty(self, mock_get):

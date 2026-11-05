@@ -13,7 +13,7 @@ class ResConfigSettings(models.TransientModel):
         string="Clé API Google Books",
         config_parameter="comic.google_books_api_key",
         help="Clé API gratuite à créer sur console.cloud.google.com. "
-        "Sans clé, les requêtes sont limitées à ~100/jour.",
+        "Sans clé, quota anonyme réduit et partagé ; avec clé, 1000 requêtes/jour.",
     )
 
     # ── Open Library / BnF (activées par défaut) ─────────────────────────────
@@ -87,7 +87,8 @@ class ResConfigSettings(models.TransientModel):
                 _(
                     "Google Books : quota dépassé (HTTP 429).\n"
                     "Vous avez atteint la limite de requêtes gratuite. "
-                    "Ajoutez une clé API pour augmenter le quota (1000 req/jour)."
+                    "Ajoutez une clé API dans Paramètres > Bandes Dessinées > "
+                    "Sources de données pour augmenter le quota (1000 req/jour)."
                 )
             )
         if resp.status_code != 200:

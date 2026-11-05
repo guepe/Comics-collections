@@ -1,24 +1,15 @@
 import base64
 import logging
-import re
 from datetime import date
 
 import requests
 
 from odoo import fields, models
 from odoo.addons.comics_collections.utils.normalize import normalize_title
+from ..sources.base import normalize_isbn as _normalize_isbn
+
 
 _logger = logging.getLogger(__name__)
-
-
-def _normalize_isbn(isbn):
-    raw = re.sub(r"[\-\s]", "", isbn or "")
-    if len(raw) == 10 and raw[:9].isdigit():
-        base = "978" + raw[:9]
-        total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
-        check = (10 - total % 10) % 10
-        return base + str(check)
-    return raw
 
 
 def _find_or_create_author(env, name):

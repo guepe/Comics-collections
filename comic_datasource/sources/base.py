@@ -27,7 +27,126 @@ import logging
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Optional
+
+
+def _isbn10_is_valid(isbn10: str) -> bool:
+    """Vérifie la clé de contrôle d'un ISBN-10 (9 chiffres + chiffre ou X)."""
+    if len(isbn10) != 10 or not isbn10[:9].isdigit():
+        return False
+    last = isbn10[9].upper()
+    if not (last.isdigit() or last == "X"):
+        return False
+    values = [int(d) for d in isbn10[:9]] + [10 if last == "X" else int(last)]
+    return sum((10 - i) * v for i, v in enumerate(values)) % 11 == 0
+
+
+def normalize_isbn(isbn):
+    """Normalise un ISBN : supprime espaces/tirets et convertit un ISBN-10
+    valide (clé de contrôle vérifiée, X accepté) en ISBN-13.
+
+    Retourne l'ISBN-13 ou, si la conversion est impossible, la chaîne nettoyée.
+    """
+    raw = re.sub(r"[\-\s]", "", isbn or "")
+    if len(raw) == 10 and _isbn10_is_valid(raw):
+        base = "978" + raw[:9]
+        total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
+        check = (10 - total % 10) % 10
+        return base + str(check)
+    return raw
+
+
+def cql_quote(value) -> str:
+    """Échappe une valeur pour l'insérer entre guillemets dans une requête CQL
+    (SRU) : antislash et guillemets doubles sont précédés d'un antislash."""
+    return (value or "").replace("\\", "\\\\").replace('"', '\\"')
+
+
+_MONTHS = {
+    # Anglais (Open Library) et français (BnF)
+    "january": 1,
+    "jan": 1,
+    "janvier": 1,
+    "janv": 1,
+    "february": 2,
+    "feb": 2,
+    "fevrier": 2,
+    "février": 2,
+    "fevr": 2,
+    "févr": 2,
+    "march": 3,
+    "mar": 3,
+    "mars": 3,
+    "april": 4,
+    "apr": 4,
+    "avril": 4,
+    "avr": 4,
+    "may": 5,
+    "mai": 5,
+    "june": 6,
+    "jun": 6,
+    "juin": 6,
+    "july": 7,
+    "jul": 7,
+    "juillet": 7,
+    "juil": 7,
+    "august": 8,
+    "aug": 8,
+    "aout": 8,
+    "août": 8,
+    "september": 9,
+    "sep": 9,
+    "sept": 9,
+    "septembre": 9,
+    "october": 10,
+    "oct": 10,
+    "octobre": 10,
+    "november": 11,
+    "nov": 11,
+    "novembre": 11,
+    "december": 12,
+    "dec": 12,
+    "decembre": 12,
+    "décembre": 12,
+    "déc": 12,
+}
+
+
+def parse_full_date(value):
+    """Convertit une date complète (jour, mois, année) en 'YYYY-MM-DD'.
+
+    Une valeur partielle (année seule, mois + année) retourne None : on ne
+    fabrique pas de date fictive du type 'YYYY-01-01'.
+    Formats acceptés : 2005-03-14, 2005/03/14, 14/03/2005, 14.03.2005,
+    'March 14, 2005', '14 March 2005', '14 mars 2005'.
+    """
+    text = (value or "").strip().lower()
+    if not text:
+        return None
+    year = month = day = None
+    m = re.search(r"\b(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\b", text)
+    if m:
+        year, month, day = (int(g) for g in m.groups())
+    else:
+        m = re.search(r"\b(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})\b", text)
+        if m:
+            day, month, year = (int(g) for g in m.groups())
+        else:
+            m = re.search(r"\b([^\W\d_]+)\.?\s+(\d{1,2})(?:st|nd|rd|th)?,?\s+(\d{4})\b", text)
+            if m and m.group(1) in _MONTHS:
+                month, day, year = _MONTHS[m.group(1)], int(m.group(2)), int(m.group(3))
+            else:
+                m = re.search(r"\b(\d{1,2})(?:er)?\s+([^\W\d_]+)\.?\s+(\d{4})\b", text)
+                if m and m.group(2) in _MONTHS:
+                    day, month, year = int(m.group(1)), _MONTHS[m.group(2)], int(m.group(3))
+    if not year:
+        return None
+    try:
+        return date(year, month, day).isoformat()
+    except ValueError:
+        return None
+
 
 # Patterns pour extraire la série et le tome depuis un titre Google Books
 # Ex: "Astérix - Tome 1 : Astérix le Gaulois"  → serie="Astérix", tome=1, title="Astérix le Gaulois"

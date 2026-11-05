@@ -2,11 +2,11 @@ import logging
 import re
 import requests
 import xmltodict
-from .base import BaseComicSource, ComicSourceResult
+from .base import BaseComicSource, ComicSourceResult, cql_quote, parse_full_date
 
 _logger = logging.getLogger(__name__)
 
-BNF_SRU_URL = "http://catalogue.bnf.fr/api/SRU"
+BNF_SRU_URL = "https://catalogue.bnf.fr/api/SRU"
 
 
 class BnfSource(BaseComicSource):
@@ -98,8 +98,8 @@ class BnfSource(BaseComicSource):
 
         editeur = get_subfield("210", "c") or get_subfield("214", "c")
         date_str = get_subfield("210", "d") or get_subfield("214", "d") or ""
-        year_match = re.search(r"(\d{4})", date_str)
-        date_parution = f"{year_match.group(1)}-01-01" if year_match else None
+        # Année seule (cas usuel en UNIMARC 210$d) → None : pas de date fictive.
+        date_parution = parse_full_date(date_str)
 
         depot_str = get_subfield("099", "b") or ""
         year_depot = re.search(r"(\d{4})", depot_str)
@@ -148,7 +148,7 @@ class BnfSource(BaseComicSource):
         )
 
     def search_by_isbn(self, isbn: str):
-        data = self._sru_query(f'bib.isbn adj "{isbn}"')
+        data = self._sru_query(f'bib.isbn adj "{cql_quote(isbn)}"')
         if not data:
             return None
         records = self._extract_records(data)
@@ -161,7 +161,7 @@ class BnfSource(BaseComicSource):
         Essaie bib.serie adj d'abord, puis bib.title adj si peu de résultats."""
         # Essai 1 : champ série UNIMARC 225 — le plus précis
         results = self._paginate_query(
-            f'bib.serie adj "{serie_name}"',
+            f'bib.serie adj "{cql_quote(serie_name)}"',
             page_size,
             max_results,
         )
@@ -169,7 +169,7 @@ class BnfSource(BaseComicSource):
         # On cumule uniquement si le premier essai a retourné peu de résultats
         if len(results) < 5:
             title_results = self._paginate_query(
-                f'bib.title adj "{serie_name}"',
+                f'bib.title adj "{cql_quote(serie_name)}"',
                 page_size,
                 max_results,
             )
@@ -222,9 +222,9 @@ class BnfSource(BaseComicSource):
         return results
 
     def search_by_title(self, title: str, author: str = None) -> list:
-        query = f'bib.title adj "{title}"'
+        query = f'bib.title adj "{cql_quote(title)}"'
         if author:
-            query += f' and bib.author adj "{author}"'
+            query += f' and bib.author adj "{cql_quote(author)}"'
         data = self._sru_query(query)
         if not data:
             return []

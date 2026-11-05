@@ -1,6 +1,6 @@
 {
     "name": "Comic Datasource",
-    "version": "19.0.1.2.0",
+    "version": "19.0.1.3.0",
     "category": "Leisure",
     "summary": "Multi-source connector to enrich comic book records",
     "description": """

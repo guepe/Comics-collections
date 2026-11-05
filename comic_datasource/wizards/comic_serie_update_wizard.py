@@ -1,21 +1,12 @@
 import logging
-import re
 
 from odoo import api, fields, models
 
 from ..models.comic_edition import _best_title_match
+from ..sources.base import normalize_isbn as _normalize_isbn
+
 
 _logger = logging.getLogger(__name__)
-
-
-def _normalize_isbn(isbn):
-    raw = re.sub(r"[\-\s]", "", isbn or "")
-    if len(raw) == 10 and raw[:9].isdigit():
-        base = "978" + raw[:9]
-        total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
-        check = (10 - total % 10) % 10
-        return base + str(check)
-    return raw
 
 
 class ComicSerieUpdateWizard(models.TransientModel):

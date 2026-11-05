@@ -10,6 +10,8 @@ from odoo.exceptions import UserError
 from odoo.addons.comics_collections.utils.normalize import normalize_title
 
 from ..models.comic_edition import _find_or_create_author
+from ..sources.base import normalize_isbn as _normalize_isbn
+
 
 _logger = logging.getLogger(__name__)
 
@@ -19,16 +21,6 @@ ISBN_RE = re.compile(r"^[\d\-X]{10,17}$")
 def _clean_isbn(term):
     cleaned = re.sub(r"[^0-9X]", "", (term or "").upper())
     return cleaned if len(cleaned) in (10, 13) else None
-
-
-def _normalize_isbn(isbn):
-    raw = re.sub(r"[\-\s]", "", isbn or "")
-    if len(raw) == 10 and raw[:9].isdigit():
-        base = "978" + raw[:9]
-        total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
-        check = (10 - total % 10) % 10
-        return base + str(check)
-    return raw
 
 
 class ComicDatasourceSearchWizard(models.TransientModel):
