@@ -84,7 +84,12 @@ class ComicSerie(models.Model):
             "type": "ir.actions.act_window",
             "name": f"Albums — {self.name}",
             "res_model": "comic.work",
-            "view_mode": "list,form",
+            "view_mode": "list,kanban,form",
+            "views": [
+                (self.env.ref("comics_collections.view_comic_work_list_serie").id, "list"),
+                (False, "kanban"),
+                (False, "form"),
+            ],
             "domain": [("serie_id", "=", self.id)],
             "context": {"default_serie_id": self.id},
         }

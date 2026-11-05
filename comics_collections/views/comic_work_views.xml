@@ -6,15 +6,30 @@
         <field name="name">comic.work.list</field>
         <field name="model">comic.work</field>
         <field name="arch" type="xml">
-            <list string="Albums" default_order="serie_id,tome">
-                <field name="serie_id"/>
-                <field name="tome" string="T°"/>
+            <list string="Albums" default_order="serie_id,tome" default_group_by="serie_id">
+                <field name="image_couverture" string=" " widget="image"
+                       options="{'size': [32, 48]}" width="44px"/>
+                <field name="serie_id" optional="hide"/>
+                <field name="tome" string="T°" width="50px"/>
                 <field name="titre_canonique" string="Titre"/>
-                <field name="editeur_id"/>
-                <field name="date_parution"/>
-                <field name="nb_auteurs" string="Auteurs"/>
-                <field name="nb_editions" string="Éd." optional="hide"/>
+                <field name="auteur_names" string="Auteurs"/>
+                <field name="editeur_id" optional="show"/>
+                <field name="date_parution" optional="show"/>
+                <field name="nb_editions" string="Versions" optional="hide"/>
             </list>
+        </field>
+    </record>
+
+    <!-- Variante sans groupement : albums d'UNE série (bouton « Albums » de la fiche série) -->
+    <record id="view_comic_work_list_serie" model="ir.ui.view">
+        <field name="name">comic.work.list.serie</field>
+        <field name="model">comic.work</field>
+        <field name="inherit_id" ref="view_comic_work_list"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="default_group_by"></attribute>
+            </xpath>
         </field>
     </record>
 
@@ -23,7 +38,7 @@
         <field name="name">comic.work.kanban</field>
         <field name="model">comic.work</field>
         <field name="arch" type="xml">
-            <kanban class="o_comic_kanban_series" sample="1">
+            <kanban class="o_comic_kanban_series" sample="1" default_order="serie_id,tome">
                 <field name="id"/>
                 <field name="titre_canonique"/>
                 <field name="tome"/>
@@ -99,24 +114,18 @@
                         </h1>
                     </div>
 
-                    <!-- Champ invisible pour primary_edition_id (conditions invisible) -->
                     <field name="primary_edition_id" invisible="1"/>
 
                     <!-- Infos éditoriales -->
                     <group>
                         <group>
-                            <field name="editeur_id"
-                                   invisible="not primary_edition_id"/>
-                            <field name="langue"
-                                   invisible="not primary_edition_id"/>
-                            <field name="format"
-                                   invisible="not primary_edition_id"/>
+                            <field name="editeur_id"/>
+                            <field name="langue"/>
+                            <field name="format"/>
                         </group>
                         <group>
-                            <field name="date_parution"
-                                   invisible="not primary_edition_id"/>
-                            <field name="nb_pages"
-                                   invisible="not primary_edition_id"/>
+                            <field name="date_parution"/>
+                            <field name="nb_pages"/>
                             <field name="nb_auteurs" string="Nb auteurs" readonly="1"/>
                         </group>
                     </group>
@@ -133,7 +142,7 @@
                         </page>
 
                         <!-- ISBNs -->
-                        <page string="ISBNs" invisible="not primary_edition_id">
+                        <page string="ISBNs">
                             <field name="isbn_ids">
                                 <list editable="bottom">
                                     <field name="isbn_13"/>
@@ -143,12 +152,12 @@
                         </page>
 
                         <!-- Synopsis -->
-                        <page string="Synopsis" invisible="not primary_edition_id">
+                        <page string="Synopsis">
                             <field name="synopsis" nolabel="1"/>
                         </page>
 
                         <!-- Liens d'achat -->
-                        <page string="Liens d'achat" invisible="not primary_edition_id">
+                        <page string="Liens d'achat">
                             <button name="action_generate_purchase_links"
                                     string="Générer les liens depuis l'ISBN"
                                     type="object"
@@ -226,9 +235,11 @@
     <record id="action_comic_work" model="ir.actions.act_window">
         <field name="name">Albums / Tomes</field>
         <field name="res_model">comic.work</field>
-        <field name="view_mode">kanban,list,form</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="search_view_id" ref="view_comic_work_search"/>
-        <field name="context">{'search_default_groupby_serie': 1}</field>
+        <!-- Groupement par série porté par la vue liste (default_group_by) :
+             la galerie kanban reste une grille, sans une colonne par série. -->
+        <field name="context">{}</field>
     </record>
 
 </odoo>

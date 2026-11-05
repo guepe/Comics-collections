@@ -40,11 +40,7 @@ class TestImportOrm(TransactionCase):
         self.assertEqual(work.titre_canonique, "Titre original")
 
     def test_serie_matched_on_normalized_name(self):
-        self._run(
-            "serie_name;tome;titre_canonique\n"
-            "Agent 999 (L');1;Un\n"
-            "L'Agent 999;2;Deux\n"
-        )
+        self._run("serie_name;tome;titre_canonique\n" "Agent 999 (L');1;Un\n" "L'Agent 999;2;Deux\n")
         self.assertEqual(self.env["comic.serie"].search_count([("name_normalise", "=", "agent 999")]), 1)
 
     def test_error_reports_real_file_line(self):

@@ -1,4 +1,4 @@
-from odoo import models
+from odoo import _, models
 
 
 class ComicWork(models.Model):
@@ -9,6 +9,22 @@ class ComicWork(models.Model):
         if {"titre_canonique", "tome", "serie_id"} & set(vals):
             self.edition_ids._auto_sync_products()
         return res
+
+    def _get_unlink_blockers(self):
+        blockers = super()._get_unlink_blockers()
+        editions = self.edition_ids
+        albums = self.env["comic.customer.album"].sudo().search_count([("edition_id", "in", editions.ids)])
+        if albums:
+            blockers.append(_("%(count)s entrée(s) de bibliothèque client contiennent ces albums.", count=albums))
+        products = editions.product_tmpl_id.filtered("active")
+        if products:
+            blockers.append(
+                _(
+                    "%(count)s produit(s) en vente sont liés à ces albums (archivez-les ou dissociez-les d'abord).",
+                    count=len(products),
+                )
+            )
+        return blockers
 
     def _set_etat_lecture(self, etat):
         partner_id = self.env.user.partner_id.id

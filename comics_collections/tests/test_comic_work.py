@@ -232,3 +232,50 @@ class TestComicWork(TransactionCase):
         self.env["comic.edition"].create({"work_id": work.id, "langue": "nl"})
         self.env["comic.edition"].create({"work_id": work.id, "langue": "en"})
         self.assertEqual(work.nb_editions, 3)
+
+    # ── Façade album : création en une étape, édition principale, suppression ─
+
+    def test_create_with_edition_fields_in_one_step(self):
+        editeur = self.env["comic.editeur"].create({"name": "Éditeur Test"})
+        work = self.env["comic.work"].create(
+            {
+                "serie_id": self.serie.id,
+                "titre_canonique": "Création directe",
+                "tome": 31,
+                "editeur_id": editeur.id,
+                "nb_pages": 46,
+                "synopsis": "<p>Résumé</p>",
+                "isbn_ids": [(0, 0, {"isbn_13": "9782800152851"})],
+            }
+        )
+        self.assertEqual(len(work.edition_ids), 1)
+        self.assertEqual(work.editeur_id, editeur)
+        self.assertEqual(work.nb_pages, 46)
+        self.assertIn("Résumé", work.synopsis)
+        self.assertEqual(work.isbn_ids.isbn_13, "9782800152851")
+        self.assertEqual(work.primary_edition_id.langue, "fr", "Défaut conservé")
+
+    def test_primary_edition_is_stable(self):
+        from datetime import date
+
+        work = self.env["comic.work"].create({"serie_id": self.serie.id, "titre_canonique": "Stable", "tome": 32})
+        first = work.primary_edition_id
+        first.date_parution = date(2020, 1, 1)
+        self.env["comic.edition"].create({"work_id": work.id, "date_parution": date(1990, 1, 1)})
+        self.assertEqual(work.primary_edition_id, first)
+
+    def test_unlink_album_with_auto_edition(self):
+        work = self.env["comic.work"].create({"serie_id": self.serie.id, "titre_canonique": "À supprimer", "tome": 33})
+        edition = work.edition_ids
+        work.unlink()
+        self.assertFalse(work.exists())
+        self.assertFalse(edition.exists())
+
+    def test_unlink_blocked_by_loan(self):
+        from odoo.exceptions import UserError
+
+        work = self.env["comic.work"].create({"serie_id": self.serie.id, "titre_canonique": "Prêté", "tome": 34})
+        partner = self.env["res.partner"].create({"name": "Emprunteur"})
+        self.env["comic.pret"].create({"edition_id": work.edition_ids.id, "partner_id": partner.id})
+        with self.assertRaises(UserError):
+            work.unlink()

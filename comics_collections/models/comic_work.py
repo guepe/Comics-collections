@@ -66,6 +66,7 @@ class ComicWork(models.Model):
 
     nb_editions = fields.Integer(string="Nb éditions", compute="_compute_nb_editions", store=True)
     nb_auteurs = fields.Integer(string="Nb auteurs", compute="_compute_nb_auteurs", store=True)
+    auteur_names = fields.Char(string="Auteurs", compute="_compute_auteur_names")
 
     # Unicité limitée aux tomes numérotés : tome = 0 (hors-série, album sans
     # numéro) peut exister plusieurs fois dans une même série.
@@ -146,8 +147,10 @@ class ComicWork(models.Model):
 
     @api.depends("edition_ids")
     def _compute_primary_edition_id(self):
+        # Édition principale = la première créée (stable). Avant : edition_ids[:1] suivait
+        # l'ordre par date de parution et changeait dès qu'une édition plus ancienne arrivait.
         for rec in self:
-            rec.primary_edition_id = rec.edition_ids[:1] if rec.edition_ids else False
+            rec.primary_edition_id = rec.edition_ids.sorted("id")[:1]
 
     @api.depends("edition_ids")
     def _compute_nb_editions(self):
@@ -158,6 +161,11 @@ class ComicWork(models.Model):
     def _compute_nb_auteurs(self):
         for rec in self:
             rec.nb_auteurs = len(rec.auteur_line_ids)
+
+    @api.depends("auteur_line_ids.partner_id.name")
+    def _compute_auteur_names(self):
+        for rec in self:
+            rec.auteur_names = ", ".join(dict.fromkeys(rec.auteur_line_ids.partner_id.mapped("name")))
 
     @api.depends("titre_canonique")
     def _compute_titre_normalise(self):
@@ -184,25 +192,70 @@ class ComicWork(models.Model):
 
     # ── Création + édition par défaut ────────────────────────────────────────
 
+    # Champs de la façade « album » stockés sur l'édition principale
+    _EDITION_FIELDS = (
+        "image_couverture",
+        "editeur_id",
+        "langue",
+        "format",
+        "nb_pages",
+        "date_parution",
+        "synopsis",
+        "isbn_ids",
+        "url_club_be",
+        "url_amazon_be",
+        "url_fnac_be",
+    )
+
     @api.model_create_multi
     def create(self, vals_list):
+        # Les champs d'édition saisis à la création (éditeur, ISBN, couverture…) ne
+        # peuvent pas passer par le related : l'édition n'existe pas encore. On les
+        # retire ici et on les donne à l'édition créée juste après.
+        edition_vals_list = []
         for vals in vals_list:
             if not vals.get("slug"):
                 vals["slug"] = self._generate_slug(vals)
+            edition_vals_list.append({f: vals.pop(f) for f in self._EDITION_FIELDS if f in vals})
         records = super().create(vals_list)
-        # Skip auto-edition during data/demo file loading (install_mode) — the XML
-        # provides explicit editions. Only auto-create in interactive/API context.
-        if not self.env.context.get("install_mode"):
-            for record in records:
-                if not record.edition_ids:
-                    self.env["comic.edition"].create(
-                        {
-                            "work_id": record.id,
-                            "langue": "fr",
-                            "format": "cartonne",
-                        }
-                    )
+        install_mode = self.env.context.get("install_mode")
+        for record, edition_vals in zip(records, edition_vals_list):
+            edition_vals = {k: v for k, v in edition_vals.items() if v}
+            if record.edition_ids:
+                if edition_vals:
+                    record.primary_edition_id.write(edition_vals)
+            elif edition_vals or not install_mode:
+                # install_mode (données XML/démo) : les éditions sont fournies explicitement
+                self.env["comic.edition"].create(
+                    {"work_id": record.id, "langue": "fr", "format": "cartonne", **edition_vals}
+                )
         return records
+
+    # ── Suppression ──────────────────────────────────────────────────────────
+
+    def _get_unlink_blockers(self):
+        """Messages expliquant pourquoi ces albums ne peuvent pas être supprimés.
+        Étendu par les modules qui référencent les éditions (ex. comic_shop)."""
+        blockers = []
+        prets = self.env["comic.pret"].sudo().search([("edition_id", "in", self.edition_ids.ids)])
+        if prets:
+            blockers.append(_("%(count)s prêt(s) concernent ces albums (supprimez-les d'abord).", count=len(prets)))
+        return blockers
+
+    @api.ondelete(at_uninstall=False)
+    def _unlink_except_blocked(self):
+        blockers = self._get_unlink_blockers()
+        if blockers:
+            raise UserError(_("Suppression impossible :") + "\n- " + "\n- ".join(blockers))
+
+    def unlink(self):
+        # Contrôle explicite AVANT de toucher aux éditions (sinon un prêt lèverait une
+        # erreur SQL brute) ; il est aussi rejoué par l'ORM via @api.ondelete.
+        self._unlink_except_blocked()
+        # L'édition est liée en ondelete="restrict" : on supprime d'abord les éditions
+        # (créées automatiquement avec l'album), puis l'album lui-même.
+        self.edition_ids.unlink()
+        return super().unlink()
 
     # ── Actions ───────────────────────────────────────────────────────────────
 

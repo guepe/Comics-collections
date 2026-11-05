@@ -97,3 +97,17 @@ class TestPurchaseLibrary(TransactionCase):
         self.assertIn("Série Renommée", self.edition.product_tmpl_id.name)
         self.work.titre_canonique = "Titre Renommé"
         self.assertIn("Titre Renommé", self.edition.product_tmpl_id.name)
+
+    # ── Suppression d'album bloquée par la bibliothèque / le produit ─────────
+
+    def test_unlink_blocked_by_library_and_product(self):
+        from odoo.exceptions import UserError
+
+        with self.assertRaises(UserError) as ctx:
+            self.work.unlink()
+        self.assertIn("produit", str(ctx.exception))
+        self.edition.product_tmpl_id.active = False
+        self.Album.create({"partner_id": self.partner.id, "edition_id": self.edition.id})
+        with self.assertRaises(UserError) as ctx:
+            self.work.unlink()
+        self.assertIn("bibliothèque", str(ctx.exception))

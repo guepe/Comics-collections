@@ -1949,3 +1949,40 @@ utilisateurs et l'erreur d'accès quand un ISBN avait été créé par un autre 
 
 **Tests :** `test_comic_pret.py` étendu (défauts, retour, double prêt, dates, retard + rappel),
 nouveau `test_import_orm.py` (import CSV de bout en bout). **230 tests, 0 échec.**
+
+---
+
+## 2026-11-05 (suite 7) — Albums : création, édition principale, suppression
+
+- `comics_collections/models/comic_work.py` :
+  - `_compute_primary_edition_id` : édition principale = la première créée
+    (`edition_ids.sorted("id")[:1]`) — stable ; avant, elle suivait l'ordre par date de
+    parution et basculait quand on ajoutait une édition plus ancienne.
+  - `create` : les champs de la façade (`_EDITION_FIELDS` : couverture, éditeur, langue,
+    format, pages, parution, synopsis, ISBN, liens) saisis à la création sont transmis à
+    l'édition créée automatiquement — ils étaient perdus (le related n'avait pas encore
+    d'édition). Une couverture chargée à la création était notamment perdue.
+  - `unlink` : contrôle `@api.ondelete` `_unlink_except_blocked` puis suppression des éditions (`ondelete="restrict"` rendait la
+    suppression impossible) ; `_get_unlink_blockers()` → message clair si des prêts existent.
+- `comic_shop/models/comic_work.py` : `_get_unlink_blockers` étendu (entrées de bibliothèque
+  client, produits actifs liés).
+- `comics_collections/views/comic_work_views.xml` : éditeur, langue, format, parution, pages,
+  onglets ISBN / Synopsis / Liens d'achat visibles dès la création (plus de
+  `invisible="not primary_edition_id"`).
+- Tests : création en une étape, stabilité de l'édition principale, suppression, blocage par
+  prêt / bibliothèque / produit. **235 tests, 0 échec.**
+
+---
+
+## 2026-11-05 (suite 8) — Vue « Albums / Tomes » : liste groupée par série
+
+- `comics_collections/views/comic_work_views.xml` :
+  - action `action_comic_work` : `list,kanban,form` (avant : kanban d'abord, groupé par série
+    via `search_default_groupby_serie` → une colonne par série, défilement horizontal).
+  - liste : `default_group_by="serie_id"` (groupes repliables), miniature de couverture,
+    tome, titre, auteurs, éditeur, date ; colonne série / versions en optionnel.
+  - galerie kanban : non groupée, `default_order="serie_id,tome"`.
+  - nouvelle vue `view_comic_work_list_serie` (primary, sans groupement) utilisée par le
+    bouton « Albums » de la fiche série (`comic.serie.action_view_works`).
+- `comics_collections/models/comic_work.py` : champ calculé `auteur_names` (noms des auteurs,
+  dédoublonnés) pour la liste.
