@@ -1915,3 +1915,37 @@ utilisateurs et l'erreur d'accès quand un ISBN avait été créé par un autre 
 - `comic_datasource/sources/Comics-collections.code-workspace` déplacé à la racine du dépôt
   (`Comics-collections.code-workspace`), chemins des dossiers recalculés — un fichier VS Code
   n'a rien à faire dans le module (il était embarqué dans le paquet).
+
+---
+
+## 2026-11-05 (suite 6) — Prêts et import
+
+**Prêts (`comics_collections/models/comic_pret.py`) :**
+- Valeurs par défaut : date de prêt = aujourd'hui, retour prévu = +30 jours.
+- `retourne` / `date_retour_effective` cohérents (`_normalize_return_vals` en create/write +
+  onchange) : cocher « Retourné » remplit la date, décocher l'efface, saisir une date coche.
+- Bouton `action_retourner` (en-tête du formulaire + ligne de liste), rubans « En retard » /
+  « Retourné ».
+- Champ calculé `en_retard` (avec recherche) ; filtre « En retard » et décoration de la liste
+  basés dessus.
+- Contraintes : dates de retour ≥ date de prêt ; un même prêteur ne peut pas prêter deux fois
+  simultanément le même album (deux collectionneurs différents : oui, catalogue partagé).
+- Cron quotidien `cron_remind_overdue_loans` → `_cron_remind_overdue()` : activité « À faire »
+  pour le prêteur sur chaque prêt en retard (une seule activité ouverte par prêt).
+
+**Import (`comics_collections/wizards/comic_import_wizard.py`) :**
+- `import_policy` enfin utilisé : `update` (compléter) / `skip` (ignorer les albums déjà présents,
+  ancienne valeur `create` inutilisée supprimée).
+- Compteurs justes : « créé » seulement si l'album n'existait pas ; nouveau compteur « ignorés ».
+- Numéros de ligne d'erreur = ligne réelle du fichier (`_source_line`), message des
+  `UserError` sans artefacts.
+- ISBN à clé invalide : l'album est importé sans ISBN + avertissement (avant : ligne rejetée).
+- Album sans titre : « Série — Tome N » (avant : nom de la série, doublon dès le 2e tome).
+- Séries rapprochées par `name_normalise` (« Agent 212 (L') » = « L'Agent 212 »).
+- Auteurs : `_get_or_create_author()` — `=ilike`, priorité aux auteurs existants, jamais une
+  société.
+- Colonne `url_couverture` prise en compte (`_download_cover` : http/https, image/*, ≤ 5 Mo).
+- Code mort `_author_commands` supprimé.
+
+**Tests :** `test_comic_pret.py` étendu (défauts, retour, double prêt, dates, retard + rappel),
+nouveau `test_import_orm.py` (import CSV de bout en bout). **230 tests, 0 échec.**

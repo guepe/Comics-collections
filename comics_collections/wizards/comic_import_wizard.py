@@ -8,8 +8,19 @@ from xml.etree import ElementTree as ET
 from zipfile import ZIP_DEFLATED, ZipFile
 from xml.sax.saxutils import escape
 
+import logging
+
+import requests
+
 from odoo import _, fields, models
 from odoo.exceptions import UserError
+
+from ..models.comic_isbn import ComicIsbn
+from ..utils.normalize import normalize_title
+
+_logger = logging.getLogger(__name__)
+
+_COVER_MAX_BYTES = 5 * 1024 * 1024
 
 
 class ComicImportWizard(models.TransientModel):
@@ -41,10 +52,12 @@ class ComicImportWizard(models.TransientModel):
     import_filename = fields.Char(string="Nom du fichier importé")
     import_policy = fields.Selection(
         selection=[
-            ("update", "Mettre à jour si ISBN existant"),
-            ("create", "Toujours créer"),
+            ("update", "Mettre à jour les albums existants"),
+            ("skip", "Ignorer les albums déjà présents"),
         ],
-        string="Politique d'import",
+        string="Albums déjà présents",
+        help="Un album est « déjà présent » si son ISBN est connu, ou si la même série + tome "
+        "(ou série + titre) existe. « Ignorer » n'y touche pas ; « Mettre à jour » complète la fiche.",
         default="update",
         required=True,
     )
@@ -139,22 +152,22 @@ class ComicImportWizard(models.TransientModel):
         stats = {
             "created": 0,
             "updated": 0,
+            "skipped": 0,
             "errors": [],
+            "warnings": [],
         }
         for index, row in enumerate(rows, start=2):
+            line = row.pop("_source_line", index)
+            warnings = []
             try:
                 with self.env.cr.savepoint():
-                    result = self._import_row(row)
+                    result = self._import_row(row, warnings=warnings)
             except Exception as exc:
-                stats["errors"].append(
-                    {
-                        "line": index,
-                        "error": str(exc),
-                        "row": row,
-                    }
-                )
+                message = exc.args[0] if isinstance(exc, UserError) and exc.args else str(exc)
+                stats["errors"].append({"line": line, "error": message, "row": row})
                 continue
             stats[result] += 1
+            stats["warnings"] += [{"line": line, "warning": w} for w in warnings]
 
         report = self._build_error_report_csv(stats["errors"])
         self.write(
@@ -253,7 +266,7 @@ class ComicImportWizard(models.TransientModel):
             raise UserError(_("Veuillez mapper au moins une colonne."))
 
         normalised = []
-        for row in rows[1:]:
+        for line_number, row in enumerate(rows[1:], start=2):
             values = {}
             for index, target_field in mapped_columns:
                 value = row[index] if index < len(row) else ""
@@ -267,6 +280,7 @@ class ComicImportWizard(models.TransientModel):
                 else:
                     values[target_field] = value
             if any(values.values()):
+                values["_source_line"] = line_number
                 normalised.append(values)
 
         if not normalised:
@@ -282,18 +296,19 @@ class ComicImportWizard(models.TransientModel):
         data_rows = rows[1:]
         if headers[:2] == ["n", "contenu"]:
             normalised = [
-                cls._parse_collection_content(row[1] if len(row) > 1 else "")
-                for row in data_rows
+                {**cls._parse_collection_content(row[1]), "_source_line": line_number}
+                for line_number, row in enumerate(data_rows, start=2)
                 if len(row) > 1 and row[1]
             ]
         else:
             normalised = []
-            for row in data_rows:
+            for line_number, row in enumerate(data_rows, start=2):
                 values = {}
                 for index, header in enumerate(headers):
                     if header:
                         values[header] = row[index] if index < len(row) else ""
                 if any(values.values()):
+                    values["_source_line"] = line_number
                     normalised.append(values)
 
         # BDGest files contain multiple record types after the ALBUM rows
@@ -605,19 +620,27 @@ class ComicImportWizard(models.TransientModel):
             return (date(1904, 1, 1) + timedelta(days=int(serial))).isoformat()
         return (date(1899, 12, 30) + timedelta(days=int(serial))).isoformat()
 
-    def _import_row(self, row):
+    def _import_row(self, row, warnings=None):
+        warnings = warnings if warnings is not None else []
         title = (row.get("titre_canonique") or row.get("titre_album") or row.get("name") or "").strip()
         serie_name = (row.get("serie_name") or "").strip()
         if not title and not serie_name:
             raise UserError(_("le titre ou la série est obligatoire"))
-        if not title:
-            title = serie_name
 
         isbn = self._clean_isbn(row.get("isbn"))
+        if isbn and not ComicIsbn._validate_ean13(isbn):
+            warnings.append(_("ISBN « %s » invalide (clé de contrôle) : album importé sans ISBN.") % row.get("isbn"))
+            isbn = False
         tome = self._parse_integer(row.get("tome"))
+        if not title:
+            # Album sans titre : on le nomme d'après la série (+ tome pour rester unique)
+            title = _("%(serie)s — Tome %(tome)s", serie=serie_name, tome=tome) if tome else serie_name
 
         existing_edition = self._find_edition_by_isbn(isbn)
         serie = self._get_or_create_serie(serie_name, row) if serie_name else self.env["comic.serie"].browse()
+
+        if self.import_policy == "skip" and (existing_edition or self._find_work(serie, tome, title)):
+            return "skipped"
 
         if existing_edition:
             work = existing_edition.work_id
@@ -632,7 +655,9 @@ class ComicImportWizard(models.TransientModel):
             work = self._find_work(serie, tome, title)
             if not work:
                 work = self._get_or_create_work(serie, tome, title)
+                action = "created"
             else:
+                action = "updated"
                 missing_vals = {}
                 if title and not work.titre_canonique:
                     missing_vals["titre_canonique"] = title
@@ -642,7 +667,6 @@ class ComicImportWizard(models.TransientModel):
                     missing_vals["serie_id"] = serie.id
                 if missing_vals:
                     work.write(missing_vals)
-            action = "created"
 
         self._sync_work_authors(work, row)
 
@@ -658,16 +682,42 @@ class ComicImportWizard(models.TransientModel):
                 write_vals = {key: value for key, value in edition_vals.items() if key != "work_id"}
                 if write_vals:
                     reuse_edition.write(write_vals)
+                # Édition vide créée automatiquement avec l'album : on la complète.
+                # Le statut créé / mis à jour est déjà fixé par la recherche de l'album.
                 edition = reuse_edition
-                action = "updated"
             else:
                 edition = self.env["comic.edition"].create(edition_vals)
 
         if isbn and not self.env["comic.isbn"].search([("isbn_13", "=", isbn)], limit=1):
             self.env["comic.isbn"].create({"edition_id": edition.id, "isbn_13": isbn})
 
+        cover_url = self._clean_text(row.get("url_couverture"))
+        if cover_url and not edition.image_couverture:
+            cover = self._download_cover(cover_url)
+            if cover:
+                edition.image_couverture = cover
+            else:
+                warnings.append(_("Couverture non téléchargée : %s") % cover_url)
+
         self._sync_customer_album(edition, row)
         return action
+
+    @staticmethod
+    def _download_cover(url):
+        """Download an image (http/https, image/*, ≤ 5 Mo). Returns base64 bytes or None."""
+        if not re.match(r"^https?://", url or "", re.IGNORECASE):
+            return None
+        try:
+            resp = requests.get(url, timeout=10, stream=True)
+            if resp.status_code != 200 or not resp.headers.get("Content-Type", "").startswith("image/"):
+                return None
+            content = resp.raw.read(_COVER_MAX_BYTES + 1, decode_content=True)
+            if len(content) > _COVER_MAX_BYTES or len(content) <= 100:
+                return None
+            return base64.b64encode(content)
+        except Exception as exc:
+            _logger.info("Import BD : couverture non téléchargée (%s) : %s", url, exc)
+            return None
 
     def _find_edition_by_isbn(self, isbn):
         if not isbn:
@@ -749,7 +799,7 @@ class ComicImportWizard(models.TransientModel):
             ("coloriste", "coloriste"),
         ]:
             for name in self._split_names(row.get(column)):
-                partner = self._get_or_create_by_name("res.partner", name)
+                partner = self._get_or_create_author(name)
                 already = work.auteur_line_ids.filtered(
                     lambda line, p=partner, r=role: line.partner_id == p and line.role == r
                 )
@@ -796,7 +846,8 @@ class ComicImportWizard(models.TransientModel):
             )
 
     def _get_or_create_serie(self, serie_name, row):
-        serie = self.env["comic.serie"].search([("name", "=", serie_name)], limit=1)
+        # Nom normalisé : « Agent 212 (L') » = « L'Agent 212 » (cf. utils/normalize.py)
+        serie = self.env["comic.serie"].search([("name_normalise", "=", normalize_title(serie_name))], limit=1)
         if serie:
             return serie
         values = {
@@ -812,27 +863,14 @@ class ComicImportWizard(models.TransientModel):
             values["editeur_id"] = editeur.id
         return self.env["comic.serie"].create(values)
 
-    def _author_commands(self, row):
-        commands = [(5, 0, 0)]
-        for column, role in [
-            ("scenariste", "scenariste"),
-            ("dessinateur", "dessinateur"),
-            ("coloriste", "coloriste"),
-        ]:
-            names = self._split_names(row.get(column))
-            for name in names:
-                partner = self._get_or_create_by_name("res.partner", name)
-                commands.append(
-                    (
-                        0,
-                        0,
-                        {
-                            "partner_id": partner.id,
-                            "role": role,
-                        },
-                    )
-                )
-        return commands if len(commands) > 1 else []
+    def _get_or_create_author(self, name):
+        """Exact (case-insensitive) match, preferring partners already credited as
+        authors, never a company — avoids attaching a customer or a homonym firm."""
+        Partner = self.env["res.partner"]
+        partner = Partner.search([("name", "=ilike", name), ("auteur_work_line_ids", "!=", False)], limit=1)
+        if not partner:
+            partner = Partner.search([("name", "=ilike", name), ("is_company", "=", False)], limit=1)
+        return partner or Partner.create({"name": name})
 
     def _get_or_create_by_name(self, model_name, name):
         record = self.env[model_name].search([("name", "=", name)], limit=1)
@@ -1008,16 +1046,27 @@ class ComicImportWizard(models.TransientModel):
             for error in stats["errors"]
         )
         error_block = "<ul>%s</ul>" % errors if errors else "<p>Aucune erreur.</p>"
+        warnings = stats.get("warnings") or []
+        warning_block = ""
+        if warnings:
+            warning_block = "<p><strong>%s</strong> avertissement(s) :</p><ul>%s</ul>" % (
+                len(warnings),
+                "".join("<li>Ligne %s : %s</li>" % (w["line"], escape(str(w["warning"]))) for w in warnings),
+            )
         return """
             <p><strong>%s</strong> album(s) créé(s).</p>
             <p><strong>%s</strong> album(s) mis à jour.</p>
+            <p><strong>%s</strong> album(s) ignoré(s) (déjà présents).</p>
             <p><strong>%s</strong> erreur(s).</p>
+            %s
             %s
         """ % (
             stats["created"],
             stats["updated"],
+            stats.get("skipped", 0),
             len(stats["errors"]),
             error_block,
+            warning_block,
         )
 
     @classmethod

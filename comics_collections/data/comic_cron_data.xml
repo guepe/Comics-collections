@@ -12,5 +12,15 @@
             <field name="active">True</field>
         </record>
 
+        <record id="cron_remind_overdue_loans" model="ir.cron">
+            <field name="name">BD — Rappel des prêts en retard</field>
+            <field name="model_id" ref="model_comic_pret"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_remind_overdue()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+        </record>
+
     </data>
 </odoo>

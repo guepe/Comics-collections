@@ -7,3 +7,4 @@ from . import test_comic_pret
 from . import test_comic_dedup
 from . import test_security
 from . import test_import_wizard
+from . import test_import_orm

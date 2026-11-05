@@ -7,14 +7,17 @@
         <field name="model">comic.pret</field>
         <field name="arch" type="xml">
             <list string="Prêts" default_order="date_pret desc"
-                  decoration-danger="not retourne and date_retour_prevue and date_retour_prevue &lt; current_date"
+                  decoration-danger="en_retard"
                   decoration-success="retourne">
+                <field name="en_retard" column_invisible="1"/>
                 <field name="edition_id" string="Album"/>
                 <field name="partner_id" string="Prêté à"/>
                 <field name="date_pret"/>
                 <field name="date_retour_prevue"/>
                 <field name="date_retour_effective" optional="hide"/>
                 <field name="retourne" widget="boolean_toggle"/>
+                <button name="action_retourner" type="object" string="Retourner" icon="fa-undo"
+                        invisible="retourne"/>
             </list>
         </field>
     </record>
@@ -25,7 +28,14 @@
         <field name="model">comic.pret</field>
         <field name="arch" type="xml">
             <form string="Prêt">
+                <header>
+                    <button name="action_retourner" type="object" string="Album retourné"
+                            class="btn-primary" invisible="retourne"/>
+                </header>
                 <sheet>
+                    <widget name="web_ribbon" title="En retard" bg_color="text-bg-danger" invisible="not en_retard"/>
+                    <widget name="web_ribbon" title="Retourné" bg_color="text-bg-success" invisible="not retourne"/>
+                    <field name="en_retard" invisible="1"/>
                     <group>
                         <group>
                             <field name="edition_id" string="Album prêté"/>
@@ -56,8 +66,7 @@
                 <separator/>
                 <filter string="En cours" name="en_cours" domain="[('retourne', '=', False)]"/>
                 <filter string="Retournés" name="retournes" domain="[('retourne', '=', True)]"/>
-                <filter string="En retard" name="en_retard"
-                        domain="[('retourne', '=', False), ('date_retour_prevue', '&lt;', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="En retard" name="en_retard" domain="[('en_retard', '=', True)]"/>
             </search>
         </field>
     </record>
