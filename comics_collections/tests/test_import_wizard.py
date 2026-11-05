@@ -212,6 +212,11 @@ class TestReadCsvRows(BaseCase):
         self.assertEqual(rows[0], ["serie_name", "tome"])
         self.assertEqual(rows[1], ["Astérix", "1"])
 
+    def test_tab_delimiter(self):
+        rows = self._csv("serie_name\ttome\ttitre_album\nAstérix\t1\tLe Gaulois, l'irréductible")
+        self.assertEqual(rows[0], ["serie_name", "tome", "titre_album"])
+        self.assertEqual(rows[1], ["Astérix", "1", "Le Gaulois, l'irréductible"])
+
     def test_bom_utf8(self):
         # Simule un fichier Excel sauvegardé en UTF-8 avec BOM
         rows = _read_csv_rows("col1;col2\nval1;val2".encode("utf-8-sig"))

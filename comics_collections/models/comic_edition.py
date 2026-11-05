@@ -80,7 +80,9 @@ class ComicEdition(models.Model):
 
     def _get_primary_isbn(self):
         self.ensure_one()
-        return self.isbn_ids[:1].isbn_13 if self.isbn_ids else False
+        # Ordre déterministe : le plus ancien ISBN-13 enregistré (par id).
+        isbns = self.isbn_ids.filtered("isbn_13").sorted("id")
+        return isbns[:1].isbn_13 or False
 
     def action_generate_purchase_links(self):
         for edition in self:

@@ -10,3 +10,4 @@ from . import test_import_wizard
 from . import test_import_orm
 from . import test_serie_suivi
 from . import test_dedup_scan
+from . import test_minor_fixes

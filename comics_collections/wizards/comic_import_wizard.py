@@ -419,8 +419,10 @@ class ComicImportWizard(models.TransientModel):
             text = content.decode("utf-8-sig")
         except UnicodeDecodeError:
             text = content.decode("cp1252")
-        sample = text[:2048]
-        delimiter = ";" if sample.count(";") >= sample.count(",") else ","
+        # Délimiteur = caractère le plus fréquent dans la ligne d'en-tête
+        # (à égalité, l'ordre ; , tab départage : « ; » reste le défaut).
+        header = text.splitlines()[0] if text else ""
+        delimiter = max((";", ",", "\t"), key=header.count)
         reader = csv.reader(StringIO(text), delimiter=delimiter)
         return [[cell.strip() for cell in row] for row in reader]
 

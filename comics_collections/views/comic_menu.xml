@@ -85,13 +85,6 @@
               groups="comics_collections.group_comic_manager"
               sequence="10"/>
 
-    <menuitem id="menu_comic_works"
-              name="Œuvres"
-              parent="menu_comic_referentiel"
-              action="action_comic_work"
-              groups="comics_collections.group_comic_manager"
-              sequence="10"/>
-
     <menuitem id="menu_comic_editions"
               name="Éditions"
               parent="menu_comic_referentiel"

@@ -23,14 +23,30 @@ class ComicIsbn(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
-        self._normalize_isbn_vals(vals)
+        # Ne pas écraser un ISBN-13 déjà présent quand seul l'ISBN-10 change.
+        derive = "isbn_13" in vals or not any(self.mapped("isbn_13"))
+        self._normalize_isbn_vals(vals, derive_isbn13=derive)
         return super().write(vals)
 
-    @staticmethod
-    def _normalize_isbn_vals(vals):
+    @classmethod
+    def _normalize_isbn_vals(cls, vals, derive_isbn13=True):
         for field in ("isbn_13", "isbn_10"):
             if vals.get(field):
                 vals[field] = vals[field].replace("-", "").replace(" ", "")
+        # ISBN-10 seul (valide) → on calcule l'EAN-13 correspondant (préfixe 978).
+        if derive_isbn13 and vals.get("isbn_10") and not vals.get("isbn_13"):
+            isbn13 = cls._isbn10_to_isbn13(vals["isbn_10"])
+            if isbn13:
+                vals["isbn_13"] = isbn13
+
+    @classmethod
+    def _isbn10_to_isbn13(cls, isbn10):
+        """Convertit un ISBN-10 valide en ISBN-13 (978 + 9 chiffres + clé EAN)."""
+        if not isbn10 or not cls._validate_isbn10(isbn10):
+            return False
+        base = "978" + isbn10.replace("-", "").replace(" ", "")[:9]
+        total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
+        return base + str((10 - total % 10) % 10)
 
     @api.constrains("isbn_13")
     def _check_isbn_13(self):

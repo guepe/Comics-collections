@@ -5,7 +5,7 @@ Lancement :
         --test-tags /comics_collections:TestNormalize,TestDedupEngine,TestMerge
 """
 
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tests.common import TransactionCase
 from odoo.tests import tagged
 
@@ -121,7 +121,7 @@ class TestDedupEngine(TransactionCase):
 
     def test_constrains_blocks_same_normalized_title_same_serie(self):
         self._make_work("Les Landes perdues", self.serie_a, 3)
-        with self.assertRaises(UserError):
+        with self.assertRaises(ValidationError):
             # "Landes perdues (Les)" normalise identiquement
             self._make_work("Landes perdues (Les)", self.serie_a, 4)
 

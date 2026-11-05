@@ -1,8 +1,9 @@
 import difflib
 import re
+import unicodedata
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 from ..utils.normalize import normalize_title
 
@@ -231,6 +232,19 @@ class ComicWork(models.Model):
                 )
         return records
 
+    def write(self, vals):
+        res = super().write(vals)
+        if ("serie_id" in vals or "tome" in vals) and "slug" not in vals:
+            # Le slug dépend de la série et du tome : on le régénère s'ils changent.
+            for record in self:
+                slug = record._generate_slug(
+                    {"serie_id": record.serie_id.id, "tome": record.tome},
+                    exclude_id=record.id,
+                )
+                if slug != record.slug:
+                    super(ComicWork, record).write({"slug": slug})
+        return res
+
     # ── Suppression ──────────────────────────────────────────────────────────
 
     def _get_unlink_blockers(self):
@@ -277,16 +291,24 @@ class ComicWork(models.Model):
 
     # ── Slug ──────────────────────────────────────────────────────────────────
 
-    def _generate_slug(self, vals):
+    @staticmethod
+    def _slugify(text):
+        """Translittère (NFKD, sans diacritiques) puis remplace le reste par des tirets."""
+        text = unicodedata.normalize("NFKD", text or "")
+        text = "".join(c for c in text if not unicodedata.combining(c))
+        return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+    def _generate_slug(self, vals, exclude_id=None):
         serie_slug = ""
         if vals.get("serie_id"):
             serie = self.env["comic.serie"].browse(vals["serie_id"])
-            serie_slug = re.sub(r"[^a-z0-9]+", "-", serie.name.lower()).strip("-")
-        tome = vals.get("tome", 0)
+            serie_slug = self._slugify(serie.name)
+        tome = vals.get("tome") or 0
         base = f"{serie_slug}-t{tome:02d}" if serie_slug else f"t{tome:02d}"
         slug = base
         n = 1
-        while self.search_count([("slug", "=", slug)]):
+        exclude_domain = [("id", "!=", exclude_id)] if exclude_id else []
+        while self.search_count([("slug", "=", slug)] + exclude_domain):
             slug = f"{base}-{n}"
             n += 1
         return slug
@@ -346,7 +368,7 @@ class ComicWork(models.Model):
                 limit=1,
             )
             if duplicate:
-                raise UserError(
+                raise ValidationError(
                     _(
                         "Titre dupliqué détecté : « %(other)s » (Tome %(tome)s) existe "
                         "déjà dans cette série avec un titre identique après normalisation.\n"
@@ -410,3 +432,12 @@ class ComicWorkAuteurLine(models.Model):
         required=True,
         default="dessinateur",
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        lines = super().create(vals_list)
+        # Tout partenaire crédité sur un album devient « Auteur BD ».
+        partners = lines.partner_id.filtered(lambda p: not p.is_comic_author)
+        if partners:
+            partners.sudo().write({"is_comic_author": True})
+        return lines
