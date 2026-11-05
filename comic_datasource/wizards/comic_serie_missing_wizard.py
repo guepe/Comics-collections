@@ -8,6 +8,8 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 from ..sources.google_books import GoogleBooksQuotaError
+from ..sources.base import normalize_isbn as _normalize_isbn
+
 
 _logger = logging.getLogger(__name__)
 
@@ -21,17 +23,6 @@ _TOME_PATTERNS = re.compile(
 def _extract_tome_fallback(title: str):
     m = _TOME_PATTERNS.search(title or "")
     return int(m.group(1)) if m else None
-
-
-def _normalize_isbn(isbn: str) -> str:
-    """Normalise un ISBN : supprime tirets/espaces, convertit ISBN-10 → ISBN-13."""
-    raw = re.sub(r"[\-\s]", "", isbn or "")
-    if len(raw) == 10 and raw[:9].isdigit():
-        base = "978" + raw[:9]
-        total = sum(int(d) * (1 if i % 2 == 0 else 3) for i, d in enumerate(base))
-        check = (10 - total % 10) % 10
-        return base + str(check)
-    return raw
 
 
 def _normalize_title(title: str) -> str:

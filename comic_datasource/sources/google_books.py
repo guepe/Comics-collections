@@ -37,11 +37,12 @@ class GoogleBooksSource(BaseComicSource):
             if resp.status_code == 429:
                 _logger.error(
                     "Google Books: quota dépassé (HTTP 429). "
-                    "Ajoutez une clé API dans Paramètres > Bandes Dessinées "
-                    "pour augmenter la limite (1000 req/jour)."
+                    "Ajoutez une clé API dans Paramètres > Bandes Dessinées > "
+                    "Sources de données pour augmenter la limite (1000 req/jour)."
                 )
                 raise GoogleBooksQuotaError(
-                    "Quota Google Books dépassé. " "Ajoutez une clé API dans Paramètres > Sources de données BD."
+                    "Quota Google Books dépassé. Ajoutez une clé API dans "
+                    "Paramètres > Bandes Dessinées > Sources de données."
                 )
             if resp.status_code == 403:
                 _logger.error("Google Books: accès refusé (HTTP 403) — clé API invalide ou API non activée.")
@@ -145,7 +146,8 @@ class GoogleBooksSource(BaseComicSource):
     def search_by_title(self, title: str, author: str = None) -> list:
         query = f"intitle:{title}"
         if author:
-            query += f"+inauthor:{author}"
+            # Séparateur espace : requests encoderait un "+" littéral en %2B.
+            query += f" inauthor:{author}"
         data = self._fetch({"q": query, "maxResults": 10})
         if not data or not data.get("items"):
             return []
