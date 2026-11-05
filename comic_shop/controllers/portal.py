@@ -154,7 +154,8 @@ class ComicLibraryPortal(CustomerPortal):
             "comic_shop.portal_library_index",
             {
                 "records": records,
-                "filter": filter,
+                # « filter » est un builtin Python : dans QWeb il masquerait la valeur
+                "current_filter": filter,
                 "sort": sort,
                 "view_mode": view,
                 "pager": pager,

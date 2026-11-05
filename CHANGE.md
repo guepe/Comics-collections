@@ -2046,3 +2046,44 @@ Réalisé en parallèle (4 branches de worktree fusionnées sur `integ/revue-sui
 - Liste dédiée `view_comic_work_list_a_valider` (couverture, série, tome, titre, proposé par,
   date) avec boutons Valider / Refuser par ligne.
 - `comic_shop` version 19.0.2.2.0 ; tests `test_portal_refuse.py`. **272 tests, 0 échec.**
+
+---
+
+## 2026-11-05 (suite 11) — Lot de petits défauts (fin de revue) + CI
+
+Réalisé en parallèle (3 branches de worktree fusionnées sur `integ/petits-defauts`).
+
+**comics_collections** (19.0.2.3.0)
+- Slug : accents translittérés (`_slugify`, « Écume » → `ecume`), recalculé quand la série
+  ou le tome change (aucune URL publique n'utilise le slug).
+- Import CSV : séparateur tabulation détecté (`;`, `,`, `\t` — le plus fréquent dans l'en-tête).
+- `_get_primary_isbn()` : ISBN-13 le plus ancien (plus d'ordre arbitraire pour les liens d'achat).
+- Auteurs : `res.partner.is_comic_author` — un auteur créé depuis le menu Auteurs ne disparaît
+  plus de la liste ; posé automatiquement quand le partenaire est crédité sur un album.
+- Menu « Œuvres » (doublon d'« Albums / Tomes ») supprimé.
+- Doublon de titre : `ValidationError` au lieu de `UserError` dans la contrainte.
+- `comic.isbn` : ISBN-13 calculé depuis un ISBN-10 valide si absent.
+
+**comic_datasource** (19.0.1.3.0)
+- BnF en https, saisie utilisateur échappée dans les requêtes CQL (`cql_quote`).
+- Open Library : plus de requête HEAD par résultat (couverture via `cover_i` /
+  `?default=false`) ; une année seule n'est plus convertie en date (`parse_full_date`) —
+  idem BnF.
+- Google Books : requête `intitle: inauthor:` (plus de `+` encodé), messages de quota
+  unifiés, aide de la clé API corrigée.
+- `normalize_isbn()` unique dans `sources/base.py` (remplace 4 copies), clé ISBN-10 vérifiée.
+
+**comic_shop** (19.0.2.3.0)
+- `/my/library` : tri par date robuste (dates vides), pagination 24/page, messages vides
+  propres à chaque filtre, ajout direct en wishlist depuis « Ajouter une BD ».
+- **Bug corrigé à l'intégration** : la variable de template `filter` était masquée par le
+  builtin Python `filter` dans QWeb → le filtre actif n'était jamais reconnu (bouton non
+  surligné, liens tri/vue perdant le filtre). Renommée `current_filter`.
+- Page produit : comptage de bibliothèque en sudo filtré sur le partenaire (plus
+  d'`AccessError` pour un employé sans droits BD).
+
+**CI** (`.github/workflows/test.yml`) : `--test-tags /comics_collections,/comic_datasource,/comic_shop`
+— la CI ne lançait pas que nos tests mais ceux de tous les modules installés ; les échecs
+(web, phone_validation, qweb barcode) venaient d'Odoo lui-même, et le job durait ~50 min.
+
+**Résultat : 303 tests, 0 échec** (212 comics_collections, 37 comic_shop, 54 comic_datasource).

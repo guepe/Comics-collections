@@ -100,19 +100,19 @@
                         <!-- Filtres onglets -->
                         <div class="d-flex gap-1 flex-wrap">
                             <a t-attf-href="/my/library?filter=all&amp;sort={{ sort }}&amp;view={{ view_mode }}"
-                               t-attf-class="btn btn-sm {{ 'btn-primary' if filter == 'all' else 'btn-outline-secondary' }}">
+                               t-attf-class="btn btn-sm {{ 'btn-primary' if current_filter == 'all' else 'btn-outline-secondary' }}">
                                 Tous
                             </a>
                             <a t-attf-href="/my/library?filter=collection&amp;sort={{ sort }}&amp;view={{ view_mode }}"
-                               t-attf-class="btn btn-sm {{ 'btn-primary' if filter == 'collection' else 'btn-outline-secondary' }}">
+                               t-attf-class="btn btn-sm {{ 'btn-primary' if current_filter == 'collection' else 'btn-outline-secondary' }}">
                                 <i class="fa fa-check-circle me-1"/>Ma collection
                             </a>
                             <a t-attf-href="/my/library?filter=wishlist&amp;sort={{ sort }}&amp;view={{ view_mode }}"
-                               t-attf-class="btn btn-sm {{ 'btn-primary' if filter == 'wishlist' else 'btn-outline-secondary' }}">
+                               t-attf-class="btn btn-sm {{ 'btn-primary' if current_filter == 'wishlist' else 'btn-outline-secondary' }}">
                                 <i class="fa fa-heart me-1"/>Wishlist
                             </a>
                             <a t-attf-href="/my/library?filter=reading&amp;sort={{ sort }}&amp;view={{ view_mode }}"
-                               t-attf-class="btn btn-sm {{ 'btn-primary' if filter == 'reading' else 'btn-outline-secondary' }}">
+                               t-attf-class="btn btn-sm {{ 'btn-primary' if current_filter == 'reading' else 'btn-outline-secondary' }}">
                                 <i class="fa fa-book-open me-1"/>En cours
                             </a>
                         </div>
@@ -120,18 +120,18 @@
                         <!-- Tri + toggle vue -->
                         <div class="d-flex gap-2 align-items-center">
                             <select class="form-select form-select-sm" style="width:auto;"
-                                    t-attf-onchange="window.location='/my/library?filter={{ filter }}&amp;sort='+this.value+'&amp;view={{ view_mode }}'">
+                                    t-attf-onchange="window.location='/my/library?filter={{ current_filter }}&amp;sort='+this.value+'&amp;view={{ view_mode }}'">
                                 <option value="date" t-att-selected="'selected' if sort == 'date' else None">Date d'ajout</option>
                                 <option value="serie" t-att-selected="'selected' if sort == 'serie' else None">Série</option>
                                 <option value="title" t-att-selected="'selected' if sort == 'title' else None">Titre</option>
                             </select>
                             <div class="btn-group btn-group-sm">
-                                <a t-attf-href="/my/library?filter={{ filter }}&amp;sort={{ sort }}&amp;view=kanban"
+                                <a t-attf-href="/my/library?filter={{ current_filter }}&amp;sort={{ sort }}&amp;view=kanban"
                                    t-attf-class="btn {{ 'btn-primary' if view_mode == 'kanban' else 'btn-outline-secondary' }}"
                                    title="Vue grille">
                                     <i class="fa fa-th-large"/>
                                 </a>
-                                <a t-attf-href="/my/library?filter={{ filter }}&amp;sort={{ sort }}&amp;view=list"
+                                <a t-attf-href="/my/library?filter={{ current_filter }}&amp;sort={{ sort }}&amp;view=list"
                                    t-attf-class="btn {{ 'btn-primary' if view_mode == 'list' else 'btn-outline-secondary' }}"
                                    title="Vue liste">
                                     <i class="fa fa-list"/>
@@ -144,9 +144,9 @@
                     <t t-if="not records and not library_empty">
                         <div class="alert alert-light border text-center py-4 o_comic_library_filter_empty">
                             <p class="mb-2">
-                                <t t-if="filter == 'wishlist'">Aucun album dans votre wishlist.</t>
-                                <t t-elif="filter == 'collection'">Aucun album dans votre collection.</t>
-                                <t t-elif="filter == 'reading'">Aucune lecture en cours.</t>
+                                <t t-if="current_filter == 'wishlist'">Aucun album dans votre wishlist.</t>
+                                <t t-elif="current_filter == 'collection'">Aucun album dans votre collection.</t>
+                                <t t-elif="current_filter == 'reading'">Aucune lecture en cours.</t>
                                 <t t-else="">Aucun album sur cette page.</t>
                             </p>
                             <a t-attf-href="/my/library?filter=all&amp;sort={{ sort }}&amp;view={{ view_mode }}"
