@@ -284,6 +284,23 @@ class ComicWork(models.Model):
             "context": {"default_work_id": self.id},
         }
 
+    @api.model
+    def _action_open_works(self, works, title):
+        """Liste des albums donnés, groupée par série (fiches auteur / éditeur)."""
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Albums — %s", title),
+            "res_model": "comic.work",
+            "view_mode": "list,kanban,form",
+            "views": [
+                (self.env.ref("comics_collections.view_comic_work_list").id, "list"),
+                (False, "kanban"),
+                (False, "form"),
+            ],
+            "domain": [("id", "in", works.ids)],
+            "context": {"create": False},
+        }
+
     def action_generate_purchase_links(self):
         self.ensure_one()
         if self.primary_edition_id:
@@ -419,6 +436,8 @@ class ComicWorkAuteurLine(models.Model):
 
     work_id = fields.Many2one("comic.work", string="Album", required=True, ondelete="cascade", index=True)
     partner_id = fields.Many2one("res.partner", string="Auteur", required=True)
+    serie_id = fields.Many2one(related="work_id.serie_id", store=True, string="Série")
+    tome = fields.Integer(related="work_id.tome", store=True, string="Tome")
     role = fields.Selection(
         [
             ("scenariste", "Scénariste"),

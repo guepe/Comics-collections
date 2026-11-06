@@ -9,6 +9,8 @@
                 <field name="name"/>
                 <field name="pays_id"/>
                 <field name="site_web" widget="url"/>
+                <field name="comic_serie_count" string="Séries" optional="show"/>
+                <field name="comic_work_count" string="Albums" optional="show"/>
             </list>
         </field>
     </record>
@@ -19,9 +21,23 @@
         <field name="arch" type="xml">
             <form string="Éditeur">
                 <sheet>
+                    <div name="button_box" class="oe_button_box">
+                        <button name="action_view_comic_series" type="object"
+                                class="oe_stat_button" icon="fa-folder-open"
+                                invisible="not comic_serie_count">
+                            <field name="comic_serie_count" widget="statinfo" string="Séries"/>
+                        </button>
+                        <button name="action_view_comic_works" type="object"
+                                class="oe_stat_button" icon="fa-book"
+                                invisible="not comic_work_count">
+                            <field name="comic_work_count" widget="statinfo" string="Albums"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Nom de l'éditeur"/></h1>
+                    </div>
                     <group>
                         <group>
-                            <field name="name"/>
                             <field name="pays_id"/>
                             <field name="site_web" widget="url"/>
                         </group>
@@ -30,6 +46,29 @@
                             <field name="bdgest_editeur_id"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Séries" name="comic_series">
+                            <field name="comic_serie_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="type" optional="show"/>
+                                    <field name="statut" optional="show"/>
+                                    <field name="nb_works_total" string="Albums"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Albums" name="comic_works">
+                            <field name="comic_work_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="serie_id"/>
+                                    <field name="tome" string="T°"/>
+                                    <field name="titre_canonique" string="Titre"/>
+                                    <field name="auteur_names" string="Auteurs" optional="show"/>
+                                    <field name="date_parution" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

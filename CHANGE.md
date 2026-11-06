@@ -2099,3 +2099,19 @@ Réalisé en parallèle (3 branches de worktree fusionnées sur `integ/petits-de
 - Tests : `test_portal_minor.py` (+2 : wishlist sur album possédé, collection sort de la
   wishlist), `test_sources.py` (`test_date_normalization_year_only` attend `None`).
 - `AGENTS.md` (non versionné) resynchronisé sur `CLAUDE.md`.
+
+## 2026-11-06 — Bibliographie sur les fiches auteur et éditeur (comics_collections 19.0.2.4.0)
+
+- `models/res_partner.py` : champs calculés `comic_work_ids`, `comic_serie_ids`,
+  `comic_work_count`, `comic_serie_count` (via `auteur_work_line_ids`, un album compté une
+  fois même avec plusieurs rôles) ; `action_view_comic_works` / `action_view_comic_series`.
+- `models/comic_editeur.py` : `serie_ids` / `edition_ids` (One2many), catalogue calculé
+  `comic_work_ids` (albums dont une édition porte l'éditeur) et `comic_serie_ids` (séries de
+  ces albums + séries dont il est l'éditeur principal), compteurs et mêmes actions.
+- `comic.work._action_open_works()` / `comic.serie._action_open_series()` : listes filtrées
+  (albums groupés par série), sans création.
+- `comic.work.auteur.line` : `serie_id` et `tome` related stockés (tri de la liste des rôles).
+- Vues : fiche contact (héritage `base.view_partner_form`) — boutons « Séries BD » /
+  « Albums BD » et onglet « Bandes dessinées » (séries + albums et rôles), réservés au groupe
+  utilisateur BD ; fiche éditeur — boutons, onglets « Séries » / « Albums », compteurs en liste.
+- Tests : `test_bibliography.py` (5). Après mise à jour du code : `-u comics_collections`.

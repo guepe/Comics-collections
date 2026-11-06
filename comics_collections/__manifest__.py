@@ -1,6 +1,6 @@
 {
     "name": "Comic Collection",
-    "version": "19.0.2.3.0",
+    "version": "19.0.2.4.0",
     "category": "Leisure",
     "summary": "Manage your comic book collection",
     "description": """

@@ -1,4 +1,4 @@
-from odoo import Command, api, fields, models
+from odoo import Command, _, api, fields, models
 
 from ..utils.normalize import normalize_title
 
@@ -128,6 +128,18 @@ class ComicSerie(models.Model):
     def _compute_works(self):
         for serie in self:
             serie.nb_works_total = len(serie.work_ids)
+
+    @api.model
+    def _action_open_series(self, series, title):
+        """Liste des séries données (fiches auteur / éditeur)."""
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Séries — %s", title),
+            "res_model": "comic.serie",
+            "view_mode": "list,kanban,form",
+            "domain": [("id", "in", series.ids)],
+            "context": {"create": False},
+        }
 
     def action_view_works(self):
         self.ensure_one()

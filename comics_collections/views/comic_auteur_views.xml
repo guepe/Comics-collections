@@ -1,6 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Fiche contact : bibliographie BD (séries et albums auxquels l'auteur a participé) -->
+    <record id="view_partner_form_comic_author" model="ir.ui.view">
+        <field name="name">res.partner.form.comic.author</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_comic_series" type="object"
+                        class="oe_stat_button" icon="fa-folder-open"
+                        groups="comics_collections.group_comic_user"
+                        invisible="not comic_serie_count">
+                    <field name="comic_serie_count" widget="statinfo" string="Séries BD"/>
+                </button>
+                <button name="action_view_comic_works" type="object"
+                        class="oe_stat_button" icon="fa-book"
+                        groups="comics_collections.group_comic_user"
+                        invisible="not comic_work_count">
+                    <field name="comic_work_count" widget="statinfo" string="Albums BD"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Bandes dessinées" name="comic_bibliography"
+                      groups="comics_collections.group_comic_user"
+                      invisible="not is_comic_author and not comic_work_count">
+                    <field name="is_comic_author" invisible="1"/>
+                    <group string="Séries">
+                        <field name="comic_serie_ids" nolabel="1" colspan="2" readonly="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="editeur_id" optional="show"/>
+                                <field name="statut" optional="show"/>
+                                <field name="nb_works_total" string="Albums"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Albums et rôles">
+                        <field name="auteur_work_line_ids" nolabel="1" colspan="2" readonly="1">
+                            <list default_order="serie_id,tome">
+                                <field name="serie_id"/>
+                                <field name="tome" string="T°"/>
+                                <field name="work_id" string="Album"/>
+                                <field name="role"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
     <record id="action_comic_auteurs" model="ir.actions.act_window">
         <field name="name">Auteurs</field>
         <field name="res_model">res.partner</field>
