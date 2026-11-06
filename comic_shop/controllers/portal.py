@@ -420,6 +420,9 @@ class ComicLibraryPortal(CustomerPortal):
             if existing.source == "achete_ici":
                 # Un achat dans le shop ne doit pas être requalifié depuis le portail
                 update_vals.pop("source")
+            if ajouter_a == "wishlist":
+                # Mettre en wishlist un album déjà possédé ne le retire pas de la collection
+                update_vals.pop("dans_collection")
             existing.sudo().write(update_vals)
             request.session["comic_library_flash"] = {
                 "type": "success",

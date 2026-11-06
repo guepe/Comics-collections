@@ -6,6 +6,7 @@ Lancement :
 
 import re
 
+from odoo import http
 from odoo.tests import HttpCase, new_test_user, tagged
 
 
@@ -66,3 +67,31 @@ class TestPortalMinor(HttpCase):
         resp = self.url_open("/my/library")
         self.assertEqual(resp.status_code, 200)
         self.assertIn("Votre bibliothèque est vide", resp.text)
+
+    def _confirm_add(self, edition, ajouter_a):
+        return self.url_open(
+            "/my/library/add/confirm",
+            data={
+                "edition_id": edition.id,
+                "ajouter_a": ajouter_a,
+                "force_update": "1",
+                "csrf_token": http.Request.csrf_token(self),
+            },
+        )
+
+    def test_wishlist_keeps_owned_album_in_collection(self):
+        album = self._add_albums(1, dans_collection=True, dans_wishlist=False)
+        self.authenticate(self.login, self.login)
+        resp = self._confirm_add(album.edition_id, "wishlist")
+        self.assertEqual(resp.status_code, 200)
+        album.invalidate_recordset()
+        self.assertTrue(album.dans_collection)
+        self.assertTrue(album.dans_wishlist)
+
+    def test_collection_removes_album_from_wishlist(self):
+        album = self._add_albums(1, dans_collection=False, dans_wishlist=True)
+        self.authenticate(self.login, self.login)
+        self._confirm_add(album.edition_id, "collection")
+        album.invalidate_recordset()
+        self.assertTrue(album.dans_collection)
+        self.assertFalse(album.dans_wishlist)

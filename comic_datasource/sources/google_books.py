@@ -1,7 +1,7 @@
 import logging
 import time
 import requests
-from .base import BaseComicSource, ComicSourceResult, parse_bd_title
+from .base import BaseComicSource, ComicSourceResult, parse_bd_title, parse_full_date
 
 _logger = logging.getLogger(__name__)
 
@@ -90,11 +90,9 @@ class GoogleBooksSource(BaseComicSource):
 
             isbn = _re.sub(r"[\-\s]", "", isbn)
 
-        published = info.get("publishedDate", "")
-        if published and len(published) == 4:
-            published = published + "-01-01"
-        elif published and len(published) == 7:
-            published = published + "-01"
+        # Uniquement une date complète, comme Open Library et la BnF :
+        # une année seule (« 1995 ») ou un mois (« 1995-03 ») ne devient pas une date fictive.
+        published = parse_full_date(info.get("publishedDate"))
 
         # Extraction série + tome depuis le titre Google Books
         raw_title = info.get("title", "")

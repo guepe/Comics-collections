@@ -116,7 +116,9 @@ class TestGoogleBooksSource(BaseCase):
             },
         }
         result = source._parse_volume(item)
-        self.assertEqual(result.date_parution, "1995-01-01")
+        self.assertIsNone(result.date_parution)
+        item["volumeInfo"]["publishedDate"] = "1995-03"
+        self.assertIsNone(source._parse_volume(item).date_parution)
 
 
 # ── Open Library ──────────────────────────────────────────────────────────────

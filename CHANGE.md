@@ -2087,3 +2087,15 @@ Réalisé en parallèle (3 branches de worktree fusionnées sur `integ/petits-de
 (web, phone_validation, qweb barcode) venaient d'Odoo lui-même, et le job durait ~50 min.
 
 **Résultat : 303 tests, 0 échec** (212 comics_collections, 37 comic_shop, 54 comic_datasource).
+
+## 2026-11-06 — Décisions en suspens : wishlist et dates Google Books
+
+- `comic_shop/controllers/portal.py` (`my_library_add_confirm`) : mettre en wishlist un album
+  déjà présent ne le retire plus de la collection (`dans_collection` conservé). L'ajout en
+  collection continue de le sortir de la wishlist.
+- `comic_datasource/sources/google_books.py` : `publishedDate` passe par `parse_full_date()`
+  comme Open Library et la BnF — une année seule ou un mois/année ne donnent plus de date
+  fictive (`YYYY-01-01`), `date_parution` reste vide.
+- Tests : `test_portal_minor.py` (+2 : wishlist sur album possédé, collection sort de la
+  wishlist), `test_sources.py` (`test_date_normalization_year_only` attend `None`).
+- `AGENTS.md` (non versionné) resynchronisé sur `CLAUDE.md`.
