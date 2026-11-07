@@ -4,7 +4,8 @@
 [![pre-commit](https://github.com/Belspace/Comics-collections/actions/workflows/pre-commit.yml/badge.svg?branch=19.0)](https://github.com/Belspace/Comics-collections/actions/workflows/pre-commit.yml)
 [![License: LGPL-3](https://img.shields.io/badge/license-LGPL--3-blue.svg)](http://www.gnu.org/licenses/lgpl-3.0-standalone.html)
 
-Ensemble de modules Odoo 19 pour gérer une collection personnelle de bandes dessinées.
+Ensemble de modules Odoo 19 pour gérer une collection de bandes dessinées, l'enrichir
+depuis des sources en ligne et la vendre (webshop, caisse, bibliothèque client).
 Auteur : Belspace — Licence : LGPL-3
 
 ---
@@ -14,8 +15,8 @@ Auteur : Belspace — Licence : LGPL-3
 ```
 Comics-collections/
 ├── comics_collections/    # Module principal (requis)
-├── comic_datasource/      # Enrichissement multi-sources (optionnel)
-└── comic_bdgest/          # Connecteur BDGest legacy (déprécié)
+├── comic_datasource/      # Enrichissement multi-sources (optionnel, recommandé)
+└── comic_shop/            # Shop, caisse, bibliothèque client (optionnel)
 ```
 
 Les modules se déposent dans le répertoire `addons` de votre instance Odoo.
@@ -28,14 +29,18 @@ Les modules se déposent dans le répertoire `addons` de votre instance Odoo.
 
 ### Ce qu'il fait
 
-- Séries et albums avec couvertures, synopsis, auteurs, éditeurs
-- Vues Kanban avec grille de couvertures et barre de progression par série
-- Wishlist, état de lecture (Non lu / En cours / Lu), notes par album
-- Gestion des prêts, genres, éditeurs
+- **Catalogue partagé** : séries, albums, éditions et ISBN visibles et modifiables par tous
+  les utilisateurs BD (suppression : créateur ou gestionnaire)
+- Séries et albums avec couvertures, synopsis, auteurs, éditeurs ; liste des albums groupée
+  par série, tome `0` = hors-série / sans numéro
+- Séries suivies par utilisateur (alimente la détection des tomes manquants)
+- Auteurs = contacts Odoo (`res.partner`) avec rôle ; fiches auteur et éditeur listant
+  leurs séries et albums
+- Prêts privés : dates par défaut, bouton *Retourner*, retards signalés et rappel quotidien
 - Liens d'achat auto-générés (Club.be, Amazon.be, FNAC.be)
-- Import CSV / XLS / XLSX via wizard
-- Auteurs liés aux contacts Odoo natifs (`res.partner`)
-- Deux groupes de sécurité : **Utilisateur BD** et **Gestionnaire BD**
+- Import CSV / TSV / XLS / XLSX via wizard (mapping, mise à jour ou ignorer, couverture par URL)
+- Détection et fusion des doublons
+- Deux groupes de sécurité : **Utilisateur** et **Gestionnaire** (catégorie *Bandes Dessinées*)
 
 ### Dépendances Odoo
 
@@ -45,7 +50,8 @@ depends = ['base', 'mail', 'contacts']
 
 ### Dépendances Python
 
-Aucune dépendance Python externe requise.
+Aucune dépendance Python externe (`openpyxl` / `xlrd` pour l'import Excel sont fournis
+avec les images Odoo officielles).
 
 ### Installation
 
@@ -67,21 +73,19 @@ Aucune dépendance Python externe requise.
 
 ### Ce qu'il fait
 
-Recherche et fusionne les métadonnées depuis quatre sources, dans cet ordre de priorité :
+Recherche et fusionne les métadonnées depuis trois sources, dans cet ordre de priorité :
 
 | Priorité | Source | Auth | Données |
 |---|---|---|---|
 | 1 | **Google Books API** | Clé API gratuite | Synopsis, couvertures HD, métadonnées |
 | 2 | **Open Library API** | Aucune | Couvertures, auteurs, éditions |
 | 3 | **BnF SRU API** | Aucune | BD francophones (dépôt légal officiel) |
-| 4 | **BDGest scraping** | Login optionnel | Fallback uniquement — voir avertissement |
 
-> **Avertissement BDGest :** Le scraping de BDGest est un fallback de dernier recours.
-> Un avertissement légal s'affiche dans l'interface avant toute activation.
-> Un délai de 2 secondes entre chaque requête est imposé automatiquement.
-
-Inclut un wizard de recherche par ISBN ou titre, avec prévisualisation des résultats
-et sélection des champs à importer.
+- Ne remplit que les **champs vides** : une saisie utilisateur n'est jamais écrasée.
+- Wizard de recherche par ISBN ou titre, avec comparaison des résultats et import.
+- Mise à jour d'une série en un clic, détection des tomes manquants (ajout au catalogue
+  ou à la wishlist).
+- Deux crons optionnels (désactivés par défaut) ; coupe-circuit si le quota Google est atteint.
 
 ### Dépendances Odoo
 
@@ -92,7 +96,7 @@ depends = ['comics_collections']
 ### Dépendances Python
 
 ```bash
-pip install requests beautifulsoup4 lxml xmltodict
+pip install requests lxml xmltodict
 ```
 
 ### Installation
@@ -109,42 +113,23 @@ Aller dans **Bandes Dessinées → Configuration → Sources de données** :
 | Paramètre | Description |
 |---|---|
 | Clé Google Books | Clé API gratuite — créer sur [console.cloud.google.com](https://console.cloud.google.com) |
-| Login BDGest | Optionnel — active les résultats membres |
-| Mot de passe BDGest | Stocké chiffré |
-| Ordre des sources | Priorité personnalisable |
-| Délai BDGest | Délai entre requêtes (défaut : 2 s) |
+| Open Library / BnF | Activables / désactivables (actives par défaut) |
+| Ordre des sources | Paramètre système `comic.datasource_order` (liste JSON) |
 
 ---
 
-## Module 3 — `comic_bdgest`
+## Module 3 — `comic_shop` *(optionnel)*
 
-**Connecteur BDGest / Bedetheque.**
+**Vente en ligne, caisse et bibliothèque client.**
 
-Scraping ciblé sur BDGest : recherche par ISBN ou titre, import détaillé par album,
-enrichissement en lot depuis la vue liste. Inclut un parser HTML autonome et des tests
-unitaires offline.
-
-> **Avertissement :** N'utiliser que si vous disposez du droit légal de scraper BDGest.
-> Un délai de 2 secondes entre requêtes est imposé automatiquement.
-
-### Dépendances Python
-
-```bash
-pip install requests beautifulsoup4 lxml
-```
-
----
-
-## Module 4 — `comic_shop`
-
-**Vente en ligne et bibliothèque client.**
-
-- Synchronisation album ↔ `product.template` (couverture, titre, ISBN → code-barres)
+- Synchronisation édition ↔ `product.template` (nom, couverture, ISBN → code-barres)
 - Création de produits en masse depuis une série
-- Webshop sur `/shop` (filtres genre / série / auteur)
-- Bibliothèque client sur `/my/library` : collection, wishlist, état de lecture, notes
-- Intégration POS : scan ISBN, transfert automatique vers la bibliothèque à la vente
-- Import auto bibliothèque lors d'une commande en ligne confirmée
+- Pages webshop `/shop/series`, `/shop/auteurs`, `/shop/editeurs` (produits publiés uniquement)
+- Bibliothèque client sur `/my/library` : collection, wishlist, état de lecture, notes,
+  ajout de BD achetées ailleurs (recherche ISBN / titre)
+- Achats (commande confirmée, POS payé) ajoutés à la bibliothèque ; annulations et
+  remboursements POS les retirent
+- Modération des fiches créées depuis le portail : *Valider* ou *Refuser* (doublon / incorrect)
 
 ### Dépendances Odoo
 
@@ -176,6 +161,7 @@ depends = ['comics_collections', 'comic_datasource', 'sale',
 ```
 1. comics_collections       ← toujours en premier
 2. comic_datasource          ← si enrichissement souhaité
+3. comic_shop                ← si vente / bibliothèque client (requiert les deux autres)
 ```
 
 ---
@@ -185,7 +171,8 @@ depends = ['comics_collections', 'comic_datasource', 'sale',
 ```
 odoo/addons/
 ├── comics_collections/
-└── comic_datasource/
+├── comic_datasource/
+└── comic_shop/
 ```
 
 Ajouter le chemin dans `odoo.conf` :
@@ -193,6 +180,9 @@ Ajouter le chemin dans `odoo.conf` :
 ```ini
 addons_path = /chemin/vers/odoo/addons,/chemin/vers/Comics-collections
 ```
+
+> Après chaque mise à jour du code : `odoo -d <base> -u comics_collections,comic_datasource,comic_shop
+> --stop-after-init`, puis redémarrer Odoo (sinon : colonnes manquantes / champs inconnus).
 
 ---
 
@@ -251,16 +241,16 @@ find . -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 
 ### Tests
 
-```bash
-# Tests unitaires standalone (sans Odoo)
-python -m pytest comics_collections/tests/test_import_wizard.py -v
-python -m pytest comic_bdgest/tests/ -v
-python -m pytest comic_datasource/tests/ -v
+Tous les tests sont des tests Odoo (`TransactionCase` / `BaseCase` / `HttpCase`, avec
+`@tagged`) ; ils ne se lancent pas avec pytest seul.
 
-# Tests Odoo (nécessite une instance en cours)
-./odoo-bin -d mydb --test-enable --stop-after-init \
-  -i comics_collections,comic_datasource,comic_shop
+```bash
+odoo -d mydb --stop-after-init \
+  -u comics_collections,comic_datasource,comic_shop \
+  --test-tags /comics_collections,/comic_datasource,/comic_shop
 ```
+
+La CI GitHub (`tests`, `pre-commit`) exécute la même sélection à chaque push sur `19.0`.
 
 ### Workflow Git
 

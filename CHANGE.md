@@ -2115,3 +2115,18 @@ Réalisé en parallèle (3 branches de worktree fusionnées sur `integ/petits-de
   « Albums BD » et onglet « Bandes dessinées » (séries + albums et rôles), réservés au groupe
   utilisateur BD ; fiche éditeur — boutons, onglets « Séries » / « Albums », compteurs en liste.
 - Tests : `test_bibliography.py` (5). Après mise à jour du code : `-u comics_collections`.
+
+## 2026-11-06 — Préparation OCA : LICENSE, .gitignore, documentation
+
+- `LICENSE` : texte GNU LGPL v3 à la racine (US-059 ✅).
+- `.gitignore` : entrées Odoo (`.odoo/`, `filestore/`, `sessions/`, `*.log`, `odoo.conf`,
+  `.odoorc`, dumps `*.sql` / `*.dump` / `*.zip`), environnements et caches Python,
+  fichiers de fusion. Aucun fichier suivi n'est concerné.
+- `readme/*.rst` des 3 modules réécrits selon l'état actuel du code (catalogue partagé,
+  prêts, import, doublons, fiches auteur / éditeur, règles d'enrichissement, quota Google,
+  modération portail, remboursements…) ; `README.rst` et `static/description/index.html`
+  régénérés via `oca-gen-addon-readme`.
+- `README.md` racine : BDGest et beautifulsoup4 retirés, `comic_shop` décrit, ordre
+  d'installation, rappel `-u` + redémarrage, section tests (tests Odoo uniquement).
+- `USER_STORIES_V3.md` : US-059 cochée, US-062 « Tests validés dans Odoo » et US-064
+  « .gitignore adapté Odoo » cochés.

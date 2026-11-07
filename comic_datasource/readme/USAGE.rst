@@ -1,20 +1,21 @@
-**Enrich a single edition**
+**Find and import albums**
 
-Open any edition (``comic.edition``) and click **Enrich from online sources**.
-The wizard searches by ISBN first, then by title. Select the best result and confirm.
+*Bandes Dessinées → Ma Collection → Rechercher des BD*: search by ISBN or title,
+select the results and click *Importer la sélection*.
+
+**Enrich an edition**
+
+Open an edition and click *Rechercher sur les sources*. Only the empty fields of
+the edition are filled.
+
+**Update a series**
+
+Open a series and click *Mettre à jour les albums*: every incomplete album of the
+series is enriched.
 
 **Detect missing tomes**
 
-Open a series and click **Detect missing tomes**.
-The wizard lists tomes found online but absent from your catalogue.
-Check the ones you want and click **Add to wishlist**.
-
-**Batch update a series**
-
-Open a series and click **Update all editions**.
-All editions missing synopsis, cover or publisher data will be enriched automatically.
-
-**Search result line**
-
-Each source hit is stored as a ``comic.datasource.result.line`` record, allowing you
-to compare results from multiple sources and select the best match before importing.
+Open a series and click *Tomes manquants*, then *Rechercher les tomes manquants*.
+Select the tomes you want and click *Ajouter à la wishlist* (creates the albums and,
+with ``comic_shop``, adds them to your wishlist) or *Ajouter au catalogue*.
+Mark a series as *Suivie* to include it in the weekly automatic detection.

@@ -1,35 +1,40 @@
-Sell comic books online and manage your customers' reading libraries.
-Extends ``comics_collections`` with product synchronisation, a webshop, a POS
-integration and a customer portal library.
+Sell comic books online and at the counter, and give customers their own
+library on the portal. Extends ``comics_collections`` and ``comic_datasource``.
 
 **Product synchronisation**
 
-Each ``comic.edition`` can be linked to a ``product.template``. A *Sync to shop*
-button creates or updates the product from edition metadata (title, cover, synopsis,
-price). Bulk product creation is available directly from the series form view.
-An ``uninstall_hook`` cleans up shop-specific fields when the module is removed.
+A ``comic.edition`` can be linked to a ``product.template`` (*Créer produit*).
+Name (``Série — Titre (T1)``), cover, description and barcode (ISBN-13) follow the
+edition, and are resynchronised when the series, the album or an ISBN changes.
+A barcode typed by hand is kept, and *Available in POS* is only set when the
+product is created. Products can be bulk-created from a series for all editions
+that have an ISBN. An ``uninstall_hook`` cleans up shop-specific data.
 
-**Webshop**
+**Webshop pages**
 
-Browse comics by series, genre or author on a dedicated shop page (``/shop``).
-Product pages display the cover, synopsis, volume number, authors and links to
-external retailers. Search and filtering by genre and series are available out of
-the box.
+``/shop/series``, ``/shop/auteurs`` and ``/shop/editeurs`` browse the comics on
+sale (published and active products only), with filters on series type. An
+author page only exists for partners credited on an album on sale.
 
-**Customer portal library** (``/my/library``)
+**Customer library** (``/my/library``)
 
-Authenticated customers can maintain a personal reading library via
-``comic.customer.album`` records. Albums can be marked as *In collection* or
-*In wishlist*, rated (0–5 stars) and annotated with free-text comments.
+Each customer keeps their own library (``comic.customer.album``): *Ma collection*
+and *Ma wishlist*, reading status, 0–5 rating and comments, with pagination and
+sorting. Albums bought outside the shop are added by ISBN or title search
+(local catalogue + online sources); cover downloads are restricted to the known
+source hosts. Putting an owned album in the wishlist keeps it in the collection;
+adding it to the collection removes it from the wishlist.
 
-**Point of Sale integration**
+**Purchases**
 
-POS category and barcode fields are synchronised from the edition's ISBN.
-Comic products are available in the POS interface (``available_in_pos = True``).
-Sales at the POS automatically create ``comic.customer.album`` records when a
-customer is identified.
+Confirmed sale orders and paid POS orders add the albums to the buyer's library
+(source *Acheté ici*), unless the customer switched this off on their library page.
+Cancelled orders and POS refunds remove the entries they created.
 
-**Sale order integration**
+**Moderation of portal records**
 
-Confirming a sale order automatically creates ``comic.customer.album`` records
-for the buyer.
+Series, albums and publishers created from the portal are flagged *À valider*
+and a review activity is scheduled for a manager. Managers validate them, or
+refuse them — as a duplicate of an existing album (the customer's library entry
+and ISBN are moved onto it) or as incorrect (removed) — and the customer is
+notified. Products cannot be created for albums awaiting validation.

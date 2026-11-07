@@ -24,7 +24,7 @@
 | US-028 | Traduction synopsis par IA                         | 🟡       |
 | US-029 | Découverte IA par profil de goûts                  | 🟡       |
 | —      | **ÉPIC OCA — Publication & Qualité**               |          |
-| US-059 | Fichier LICENSE LGPL-3                             | 🟡       |
+| US-059 | ✅ Fichier LICENSE LGPL-3                           | 🟡       |
 | US-060 | ✅ README.rst format OCA par module                 | 🟡       |
 | US-061 | ✅ `__manifest__.py` valide format OCA strict       | 🟡       |
 | US-062 | ✅ Tests unitaires de base (CI-compatible)          | 🟡       |
@@ -398,7 +398,7 @@ pre-commit run --all-files
 
 ---
 
-**US-059 — Fichier LICENSE LGPL-3** ⏳ 🟡
+**US-059 — Fichier LICENSE LGPL-3** ✅ 🟡
 
 ```
 En tant que développeur OCA
@@ -406,8 +406,8 @@ Je veux un fichier LICENSE à la racine du projet
 Afin de satisfaire les exigences légales OCA (LGPL-3 obligatoire pour toute PR)
 
 Critères d'acceptance :
-- [ ] Fichier LICENSE à la racine (texte GNU Lesser General Public License v3.0)
-- [ ] Chaque __manifest__.py a "license": "LGPL-3" (déjà fait en US-030)
+- [x] Fichier LICENSE à la racine (texte GNU Lesser General Public License v3.0)
+- [x] Chaque __manifest__.py a "license": "LGPL-3" (déjà fait en US-030)
 
 Fichiers à créer :
   LICENSE
@@ -508,7 +508,7 @@ Critères d'acceptance :
 - [x] comic_datasource/tests/ : test_sources.py (HTTP mocks) + test_aggregator.py ✅
 - [x] comic_shop/tests/ : test_comic_customer_album.py + test_sync_product.py ✅ (créé)
 - [x] pre-commit passe sur tous les fichiers de test (black + flake8 + pylint) ✅
-- [ ] Tests validés dans Odoo (odoo-bin --test-enable) — à vérifier en lançant Docker
+- [x] Tests validés dans Odoo (odoo-bin --test-enable) — 310 tests, 0 échec en local (Docker) et en CI (2026-11-06)
 
 Fichiers à créer :
   {module}/tests/__init__.py
@@ -556,7 +556,7 @@ Contexte technique :
 
 Critères d'acceptance :
 - [ ] Dépôt GitHub public créé, branche principale 19.0
-- [ ] .gitignore adapté Odoo (__pycache__, *.pyc, .odoo, filestore/, etc.)
+- [x] .gitignore adapté Odoo (__pycache__, *.pyc, .odoo, filestore/, etc.)
 - [ ] Premier push propre : pre-commit OK, pas de secrets, pas de __pycache__
 - [ ] Issue ouverte sur OCA/maintainer-tools pour proposer le(s) module(s)
 - [ ] PR soumise sur le dépôt OCA cible (ou dépôt "incoming" OCA)

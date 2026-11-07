@@ -8,6 +8,31 @@ __pycache__/
 # Odoo
 *.pyc
 .odoo_history
+.odoo/
+filestore/
+sessions/
+*.log
+# Configuration locale (mots de passe DB / admin)
+odoo.conf
+.odoorc
+# Sauvegardes et dumps de base
+*.dump
+*.sql
+*.sql.gz
+*.zip
+
+# Python — outils et environnements
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Fichiers de fusion
+*.orig
+*.rej
 
 # IDEs
 .vscode/

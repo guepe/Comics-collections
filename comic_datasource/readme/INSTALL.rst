@@ -4,4 +4,4 @@ Install the following Python packages on the Odoo server before installing the m
 
    pip install requests lxml xmltodict
 
-This module also depends on ``comics_collections``, which must be installed first.
+This module depends on ``comics_collections``.
