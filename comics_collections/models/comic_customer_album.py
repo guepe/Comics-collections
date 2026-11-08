@@ -12,6 +12,8 @@ from collections import defaultdict
 from psycopg2 import errors as pg_errors
 
 from odoo import api, fields, models
+from odoo.exceptions import UserError
+from odoo.tools import format_amount
 
 _logger = logging.getLogger(__name__)
 
@@ -89,6 +91,14 @@ class ComicCustomerAlbum(models.Model):
         index=True,
     )
     genre_id = fields.Many2one(related="work_id.genre_id", store=True, string="Genre")
+    currency_id = fields.Many2one(
+        "res.currency",
+        string="Devise",
+        compute="_compute_currency_id",
+        help="Devise de la société courante, utilisée pour le prix d'achat et la valeur estimée.",
+    )
+    prix_achat = fields.Monetary(string="Prix d'achat", currency_field="currency_id")
+    valeur_estimee = fields.Monetary(string="Valeur estimée", currency_field="currency_id")
 
     _unique_partner_edition = models.Constraint(
         "UNIQUE(partner_id, edition_id)",
@@ -99,6 +109,10 @@ class ComicCustomerAlbum(models.Model):
     def _compute_work_id(self):
         for rec in self:
             rec.work_id = rec.edition_id.work_id if rec.edition_id else False
+
+    @api.depends_context("company")
+    def _compute_currency_id(self):
+        self.currency_id = self.env.company.currency_id
 
     @api.depends("note")
     def _compute_note_etoiles(self):
@@ -203,6 +217,10 @@ class ComicCustomerAlbum(models.Model):
             "by_reading": by_reading,
             "top_series": top_series,
             "recent": recent,
+            # Valeur de la collection (US-071) : montants facultatifs, 0 = non renseigné
+            "total_prix_achat": sum(owned.mapped("prix_achat")),
+            "total_valeur": sum(owned.mapped("valeur_estimee")),
+            "nb_values": len(owned.filtered(lambda e: e.prix_achat or e.valeur_estimee)),
         }
         if include_loans:
             stats["loans_late"] = self.env["comic.pret"].search_count(
@@ -223,8 +241,12 @@ class ComicCustomerAlbum(models.Model):
         def percent(count):
             return round(100.0 * count / total, 1) if total else 0.0
 
+        currency = self.env.company.currency_id
         return {
             **stats,
+            "has_values": bool(stats["nb_values"]),
+            "total_prix_achat_display": format_amount(self.env, stats["total_prix_achat"], currency),
+            "total_valeur_display": format_amount(self.env, stats["total_valeur"], currency),
             "by_genre": [
                 {"label": label, "count": count, "percent": percent(count)} for label, count in stats["by_genre"]
             ],
@@ -235,4 +257,57 @@ class ComicCustomerAlbum(models.Model):
             "recent": [
                 {**row, "date": fields.Date.to_string(row["date"]) if row["date"] else False} for row in stats["recent"]
             ],
+        }
+
+    # ── Inventaire PDF (US-071) ─────────────────────────────────────────────
+
+    @api.model
+    def action_print_my_inventory(self):
+        """Return the inventory report action on the current user's collection."""
+        entries = self.search([("partner_id", "=", self.env.user.partner_id.id), ("dans_collection", "=", True)])
+        if not entries:
+            raise UserError(self.env._("Votre collection est vide : aucun album à inventorier."))
+        return self.env.ref("comics_collections.action_report_comic_collection_inventory").report_action(entries)
+
+    def _get_inventory_data(self):
+        """Group ``self`` by series for the inventory report, with subtotals and totals."""
+        groups = defaultdict(self.browse)
+        for entry in self:
+            groups[entry.work_id.serie_id] |= entry
+
+        def tome_key(entry):
+            return (entry.work_id.tome or 0, entry.work_id.titre_canonique or "", entry.id)
+
+        series = []
+        for serie, entries in sorted(groups.items(), key=lambda item: (not item[0], item[0].name or "")):
+            lines = [
+                {
+                    "tome": entry.work_id.tome or "",
+                    "titre": entry.work_id.titre_canonique or entry.edition_id.display_name,
+                    "isbn": entry.edition_id.isbn_ids.filtered("isbn_13")[:1].isbn_13 or "",
+                    "etat_lecture": dict(self._fields["etat_lecture"]._description_selection(self.env)).get(
+                        entry.etat_lecture, ""
+                    ),
+                    "note": entry.note,
+                    "prix_achat": entry.prix_achat,
+                    "valeur_estimee": entry.valeur_estimee,
+                }
+                for entry in entries.sorted(tome_key)
+            ]
+            series.append(
+                {
+                    "name": serie.name or self.env._("Sans série"),
+                    "lines": lines,
+                    "count": len(lines),
+                    "prix_achat": sum(entries.mapped("prix_achat")),
+                    "valeur_estimee": sum(entries.mapped("valeur_estimee")),
+                }
+            )
+        return {
+            "series": series,
+            "owners": ", ".join(self.partner_id.mapped("name")),
+            "count": len(self),
+            "prix_achat": sum(self.mapped("prix_achat")),
+            "valeur_estimee": sum(self.mapped("valeur_estimee")),
+            "currency": self.env.company.currency_id,
         }

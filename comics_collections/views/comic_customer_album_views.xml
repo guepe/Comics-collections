@@ -16,6 +16,9 @@
                 <field name="dans_wishlist"/>
                 <field name="note_etoiles" widget="priority"/>
                 <field name="note" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="prix_achat" optional="show" sum="Total prix d'achat"/>
+                <field name="valeur_estimee" optional="show" sum="Total valeur estimée"/>
                 <field name="date_ajout"/>
             </list>
         </field>
@@ -40,6 +43,13 @@
                             <field name="etat_lecture"/>
                             <field name="note_etoiles" widget="priority"/>
                             <field name="note" groups="base.group_no_one"/>
+                        </group>
+                    </group>
+                    <group name="valeur">
+                        <group string="Valeur" name="valeur_montants">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="prix_achat"/>
+                            <field name="valeur_estimee"/>
                         </group>
                     </group>
                     <group name="commentaire">

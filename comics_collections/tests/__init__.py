@@ -16,3 +16,4 @@ from . import test_comic_customer_album
 from . import test_collection_stats
 from . import test_filters_stars
 from . import test_collection_dashboard
+from . import test_collection_export

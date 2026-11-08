@@ -3,6 +3,17 @@
 
     <t t-name="comics_collections.CollectionDashboard">
         <Layout display="display" className="'o_comic_dashboard'">
+            <t t-set-slot="control-panel-always-buttons">
+                <t t-if="!isEmpty">
+                    <button type="button" class="btn btn-secondary o_comic_export_csv" t-on-click="exportCsv">
+                        <i class="fa fa-download me-1" aria-hidden="true"/>Exporter (CSV)
+                    </button>
+                    <button t-if="state.data.nb_albums" type="button" class="btn btn-secondary o_comic_print_inventory"
+                            t-on-click="printInventory">
+                        <i class="fa fa-print me-1" aria-hidden="true"/>Inventaire (PDF)
+                    </button>
+                </t>
+            </t>
             <t t-set="data" t-value="state.data"/>
             <div class="o_comic_dashboard_content container-fluid py-3 px-lg-4">
 
@@ -41,6 +52,34 @@
                                 </div>
                             </div>
                         </t>
+                    </div>
+
+                    <!-- Valeur de la collection (US-071) -->
+                    <div t-if="data.has_values" class="row g-3 mb-3">
+                        <div class="col-12">
+                            <div class="card o_comic_value_card">
+                                <div class="card-header bg-transparent fw-bold">Valeur de la collection</div>
+                                <div class="card-body">
+                                    <div class="row g-3 text-center text-lg-start">
+                                        <div class="col-12 col-md-4">
+                                            <div class="text-muted small">Prix d'achat total</div>
+                                            <div class="fs-4 fw-bold" t-esc="data.total_prix_achat_display"/>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <div class="text-muted small">Valeur estimée totale</div>
+                                            <div class="fs-4 fw-bold" t-esc="data.total_valeur_display"/>
+                                        </div>
+                                        <div class="col-12 col-md-4">
+                                            <div class="text-muted small">Albums valorisés</div>
+                                            <div class="fs-4 fw-bold">
+                                                <t t-esc="data.nb_values"/>
+                                                <small class="text-muted fs-6"> / <t t-esc="data.nb_albums"/></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Répartitions -->

@@ -32,6 +32,7 @@
         "views/comic_dedup_views.xml",
         "views/comic_dashboard_views.xml",
         "views/comic_menu.xml",
+        "report/report_comic_collection_inventory.xml",
         "views/comic_fonts_template.xml",
     ],
     "demo": [
