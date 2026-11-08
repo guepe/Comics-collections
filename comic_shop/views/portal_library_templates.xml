@@ -117,6 +117,51 @@
                         </div>
                     </form>
 
+                    <!-- Partage de la wishlist (US-073) : bloc repliable -->
+                    <details class="o_comic_wishlist_share mb-3 small" t-att-open="'open' if wishlist_url else None">
+                        <summary class="text-muted">
+                            <i class="fa fa-share-alt me-1"/>Partager ma wishlist
+                            <span t-if="wishlist_url" class="badge bg-success ms-1">Lien actif</span>
+                        </summary>
+                        <div class="card card-body mt-2 border-0 bg-light">
+                            <t t-if="wishlist_url">
+                                <p class="mb-2 text-muted">
+                                    Toute personne disposant de ce lien peut voir votre wishlist
+                                    (albums, séries et tomes uniquement).
+                                </p>
+                                <div class="input-group input-group-sm mb-2">
+                                    <input type="text" readonly="readonly" class="form-control"
+                                           id="comic_wishlist_link"
+                                           aria-label="Lien de partage de la wishlist"
+                                           t-att-value="wishlist_url"
+                                           onfocus="this.select()"/>
+                                    <button type="button" class="btn btn-outline-primary"
+                                            onclick="var i=document.getElementById('comic_wishlist_link');i.select();if(navigator.clipboard){navigator.clipboard.writeText(i.value).then(()=&gt;{this.textContent='Copié ✓';});}">
+                                        Copier
+                                    </button>
+                                </div>
+                                <form action="/my/library/wishlist/revoke" method="post" class="d-inline">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="fa fa-ban me-1"/>Révoquer le lien
+                                    </button>
+                                </form>
+                            </t>
+                            <t t-else="">
+                                <p class="mb-2 text-muted">
+                                    Créez un lien secret pour montrer votre wishlist à vos proches,
+                                    sans compte. Vous pourrez le révoquer à tout moment.
+                                </p>
+                                <form action="/my/library/wishlist/share" method="post" class="d-inline">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class="fa fa-link me-1"/>Créer un lien de partage
+                                    </button>
+                                </form>
+                            </t>
+                        </div>
+                    </details>
+
                     <!-- Bouton Ajouter une BD -->
                     <div class="mb-3 text-end">
                         <a href="/my/library/add" class="btn btn-outline-primary btn-sm">
@@ -971,6 +1016,68 @@
                         </div>
                     </t>
 
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ── /wishlist/<token> — wishlist partagée publique (US-073) ──────────── -->
+    <!-- Le contrôleur ne transmet que des valeurs extraites (items, owner_name) :
+         aucun enregistrement sudo n'est accessible depuis ce template. -->
+
+    <template id="wishlist_public_page" name="Wishlist BD partagée">
+        <t t-set="head">
+            <meta name="robots" content="noindex"/>
+        </t>
+        <t t-set="additional_title" t-value="'La wishlist BD de %s' % owner_name"/>
+        <t t-call="website.layout">
+            <div id="wrap" class="o_comic_wishlist_public">
+                <div class="container mt-4 mb-5">
+                    <h1 class="h3 mb-4">
+                        <i class="fa fa-heart text-danger me-2"/>La wishlist BD de <t t-esc="owner_name"/>
+                    </h1>
+
+                    <t t-if="not items">
+                        <div class="alert alert-light border text-center py-4 o_comic_wishlist_empty">
+                            Cette wishlist est vide pour le moment.
+                        </div>
+                    </t>
+
+                    <div t-if="items" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-3">
+                        <t t-foreach="items" t-as="item">
+                            <div class="col">
+                                <div class="card h-100 shadow-sm border-0 o_comic_wishlist_item">
+                                    <t t-if="item['cover_url']">
+                                        <img t-att-src="item['cover_url']"
+                                             class="card-img-top"
+                                             style="object-fit:contain;background:#f5f5f5;height:200px;"
+                                             t-att-alt="item['title']"
+                                             loading="lazy"/>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="bg-light d-flex align-items-center justify-content-center"
+                                             style="height:200px;">
+                                            <i class="fa fa-book fa-2x text-muted"/>
+                                        </div>
+                                    </t>
+                                    <div class="card-body p-2 d-flex flex-column">
+                                        <div t-if="item['serie']" class="text-muted" style="font-size:0.7rem;">
+                                            <t t-esc="item['serie']"/>
+                                        </div>
+                                        <div class="fw-semibold lh-sm" style="font-size:0.8rem;">
+                                            <t t-if="item['tome']">T<t t-esc="item['tome']"/> — </t>
+                                            <t t-esc="item['title']"/>
+                                        </div>
+                                        <div t-if="item['shop_url']" class="mt-auto pt-2">
+                                            <a t-att-href="item['shop_url']" class="btn btn-sm btn-outline-primary w-100">
+                                                <i class="fa fa-shopping-cart me-1"/>Voir dans la boutique
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
                 </div>
             </div>
         </t>

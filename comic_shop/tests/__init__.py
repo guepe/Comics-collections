@@ -5,3 +5,4 @@ from . import test_portal_refuse
 from . import test_portal_minor
 from . import test_portal_stars
 from . import test_portal_dashboard
+from . import test_wishlist_share

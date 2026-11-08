@@ -152,6 +152,15 @@ class ComicLibraryPortal(CustomerPortal):
         all_records = Album.search([("partner_id", "=", partner.id)])
         nb_series = len(all_records.mapped("edition_id.work_id.serie_id").filtered("id"))
 
+        # Partage de la wishlist (US-073) : jeton réservé aux admins, lu en sudo
+        partner_sudo = partner.sudo()
+        wishlist_url = False
+        if partner_sudo.comic_wishlist_shared and partner_sudo.comic_wishlist_token:
+            wishlist_url = "%s/wishlist/%s" % (
+                request.website.get_base_url().rstrip("/"),
+                partner_sudo.comic_wishlist_token,
+            )
+
         return request.render(
             "comic_shop.portal_library_index",
             {
@@ -167,6 +176,7 @@ class ComicLibraryPortal(CustomerPortal):
                 "nb_reading": len(all_records.filtered(lambda r: r.etat_lecture == "en_cours")),
                 "page_name": "library",
                 "flash": request.session.pop("comic_library_flash", None),
+                "wishlist_url": wishlist_url,
             },
         )
 
@@ -282,6 +292,133 @@ class ComicLibraryPortal(CustomerPortal):
         auto_library = bool(post.get("comic_auto_library"))
         request.env.user.partner_id.sudo().write({"comic_auto_library": auto_library})
         return request.redirect("/my/library")
+
+    # ── Wishlist partageable (US-073) ───────────────────────────────────────
+
+    @http.route(
+        "/my/library/wishlist/share",
+        type="http",
+        auth="user",
+        methods=["POST"],
+        website=True,
+        csrf=True,
+    )
+    def my_library_wishlist_share(self, **post):
+        request.env.user.partner_id._comic_wishlist_enable()
+        request.session["comic_library_flash"] = {
+            "type": "success",
+            "message": _("Le lien de partage de votre wishlist est prêt."),
+        }
+        return request.redirect("/my/library")
+
+    @http.route(
+        "/my/library/wishlist/revoke",
+        type="http",
+        auth="user",
+        methods=["POST"],
+        website=True,
+        csrf=True,
+    )
+    def my_library_wishlist_revoke(self, **post):
+        request.env.user.partner_id._comic_wishlist_revoke()
+        request.session["comic_library_flash"] = {
+            "type": "info",
+            "message": _("Le lien de partage a été révoqué : l'ancien lien ne fonctionne plus."),
+        }
+        return request.redirect("/my/library")
+
+    @staticmethod
+    def _wishlist_partner(token):
+        """Return the partner sharing its wishlist under ``token`` (sudo), or None."""
+        if not token:
+            return None
+        partner = (
+            request.env["res.partner"]
+            .sudo()
+            .search(
+                [
+                    ("comic_wishlist_shared", "=", True),
+                    ("comic_wishlist_token", "!=", False),
+                    ("comic_wishlist_token", "=", token),
+                ],
+                limit=1,
+            )
+        )
+        return partner or None
+
+    @staticmethod
+    def _wishlist_entries(partner):
+        return (
+            request.env["comic.customer.album"]
+            .sudo()
+            .search([("partner_id", "=", partner.id), ("dans_wishlist", "=", True)])
+            .sorted(key=lambda r: (r.edition_id.work_id.serie_id.name or "", r.edition_id.work_id.tome or 0))
+        )
+
+    @http.route(
+        "/wishlist/<string:token>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def wishlist_public(self, token, **kw):
+        partner = self._wishlist_partner(token)
+        if not partner:
+            return request.not_found()
+        # Seules des valeurs extraites (pas les enregistrements sudo) vont au template :
+        # rien d'autre que série, tome, titre, couverture et lien boutique n'est exposé.
+        items = []
+        for entry in self._wishlist_entries(partner):
+            edition = entry.edition_id
+            work = edition.work_id
+            product = edition.product_tmpl_id
+            published = bool(product and product.is_published)
+            items.append(
+                {
+                    "title": work.titre_canonique or "",
+                    "serie": work.serie_id.name or "",
+                    "tome": work.tome or 0,
+                    "cover_url": (
+                        "/wishlist/%s/cover/%d" % (token, entry.id)
+                        if edition.image_couverture or (product and product.image_512)
+                        else False
+                    ),
+                    "shop_url": product.website_url if published else False,
+                }
+            )
+        owner_name = (partner.name or "").split()[0] if (partner.name or "").strip() else partner.display_name
+        response = request.render(
+            "comic_shop.wishlist_public_page",
+            {"items": items, "owner_name": owner_name},
+        )
+        response.headers["X-Robots-Tag"] = "noindex"
+        return response
+
+    @http.route(
+        "/wishlist/<string:token>/cover/<int:entry_id>",
+        type="http",
+        auth="public",
+        website=True,
+        sitemap=False,
+    )
+    def wishlist_public_cover(self, token, entry_id, **kw):
+        """Serve a wishlist cover in sudo, only for an entry of the shared wishlist."""
+        partner = self._wishlist_partner(token)
+        if not partner:
+            return request.not_found()
+        entry = request.env["comic.customer.album"].sudo().browse(entry_id)
+        if not entry.exists() or entry.partner_id != partner or not entry.dans_wishlist:
+            return request.not_found()
+        edition = entry.edition_id
+        if edition.image_couverture:
+            record, field = edition, "image_couverture"
+        elif edition.product_tmpl_id.image_512:
+            record, field = edition.product_tmpl_id, "image_512"
+        else:
+            return request.not_found()
+        stream = request.env["ir.binary"]._get_image_stream_from(record, field, width=512, height=512)
+        return stream.get_response()
 
     # ── /my/library/add — formulaire de recherche (étape 1) ────────────────
 
