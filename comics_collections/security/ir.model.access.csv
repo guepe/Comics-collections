@@ -21,3 +21,4 @@ access_comic_dedup_pair_manager,comic.dedup.pair manager,model_comic_dedup_pair,
 access_comic_work_merge_wizard_manager,comic.work.merge.wizard manager,model_comic_work_merge_wizard,comics_collections.group_comic_manager,1,1,1,1
 access_comic_customer_album_user,comic.customer.album user,model_comic_customer_album,comics_collections.group_comic_user,1,1,1,0
 access_comic_customer_album_comic_manager,comic.customer.album manager,model_comic_customer_album,comics_collections.group_comic_manager,1,1,1,1
+access_comic_wishlist_item_user,comic.wishlist.item user,model_comic_wishlist_item,comics_collections.group_comic_user,1,0,0,0

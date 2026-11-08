@@ -40,6 +40,7 @@
                         <group string="Ma collection" name="ma_collection">
                             <field name="dans_collection"/>
                             <field name="dans_wishlist"/>
+                            <field name="ignore_wishlist"/>
                             <field name="etat_lecture"/>
                             <field name="note_etoiles" widget="priority"/>
                             <field name="note" groups="base.group_no_one"/>
