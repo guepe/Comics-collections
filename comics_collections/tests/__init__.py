@@ -18,3 +18,4 @@ from . import test_filters_stars
 from . import test_collection_dashboard
 from . import test_new_release
 from . import test_collection_export
+from . import test_wishlist

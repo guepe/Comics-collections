@@ -49,7 +49,7 @@ export class CollectionDashboard extends Component {
                 key: "nb_wishlist",
                 label: "Wishlist",
                 value: data.nb_wishlist,
-                hint: "Albums souhaités",
+                hint: `${plural(data.nb_manques, "manque")} · ${plural(data.nb_souhaits, "souhait")}`,
                 icon: "fa-heart",
                 color: "danger",
                 onClick: () => this.openWishlist(),
@@ -85,9 +85,7 @@ export class CollectionDashboard extends Component {
     }
 
     openWishlist() {
-        this.action.doAction("comics_collections.action_comic_my_library", {
-            additionalContext: {search_default_collection: 0, search_default_wishlist: 1},
-        });
+        this.action.doAction("comics_collections.action_comic_wishlist");
     }
 
     openSeries() {

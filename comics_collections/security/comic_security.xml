@@ -121,4 +121,12 @@
         <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
     </record>
 
+    <!-- Wishlist (vue SQL, US-089) : chacun ne voit que ses propres manques et souhaits. -->
+    <record id="rule_comic_wishlist_item_user" model="ir.rule">
+        <field name="name">Wishlist : utilisateur voit ses propres lignes</field>
+        <field name="model_id" ref="model_comic_wishlist_item"/>
+        <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+    </record>
+
 </odoo>

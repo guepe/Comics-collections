@@ -69,6 +69,12 @@ class ComicCustomerAlbum(models.Model):
     )
     dans_collection = fields.Boolean(string="Dans la collection", default=True)
     dans_wishlist = fields.Boolean(string="En wishlist", default=False)
+    ignore_wishlist = fields.Boolean(
+        string="Ignoré dans la wishlist",
+        default=False,
+        help="Tome manquant d'une série suivie que l'utilisateur ne veut pas (« ne pas acheter ») : "
+        "il n'apparaît plus dans les manques de sa wishlist.",
+    )
     note = fields.Float(digits=(2, 1))
     note_etoiles = fields.Selection(
         NOTE_ETOILES,
@@ -207,9 +213,24 @@ class ComicCustomerAlbum(models.Model):
             for entry in owned.sorted(lambda e: (e.date_ajout or datetime.date.min, e.id), reverse=True)[:RECENT_LIMIT]
         ]
 
+        # Wishlist (US-089) : souhaits manuels + manques des séries suivies. Les manques
+        # n'existent que pour les utilisateurs internes (le suivi porte sur res.users) :
+        # un partenaire portail sans utilisateur interne ne compte que ses souhaits.
+        nb_souhaits = len(entries.filtered("dans_wishlist"))
+        internal_users = partner.sudo().user_ids.filtered(lambda u: not u.share)
+        nb_manques = (
+            self.env["comic.wishlist.item"]
+            .sudo()
+            .search_count([("type", "=", "manque"), ("user_id", "in", internal_users.ids)])
+            if internal_users
+            else 0
+        )
+
         stats = {
             "nb_albums": len(owned),
-            "nb_wishlist": len(entries.filtered("dans_wishlist")),
+            "nb_souhaits": nb_souhaits,
+            "nb_manques": nb_manques,
+            "nb_wishlist": nb_souhaits + nb_manques,
             "nb_series": len(series),
             "series_completes": completes,
             "series_en_cours": len(series) - completes,

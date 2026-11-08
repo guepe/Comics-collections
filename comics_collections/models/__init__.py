@@ -8,3 +8,4 @@ from . import comic_pret
 from . import comic_customer_album
 from . import comic_dedup_pair
 from . import res_partner
+from . import comic_wishlist_item
