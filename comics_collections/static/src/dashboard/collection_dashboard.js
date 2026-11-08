@@ -101,6 +101,19 @@ export class CollectionDashboard extends Component {
         this.action.doAction("comics_collections.action_comic_pret", {additionalContext: context});
     }
 
+    exportCsv() {
+        this.action.doAction({
+            type: "ir.actions.act_url",
+            url: "/comics/collection/export.csv",
+            target: "download",
+        });
+    }
+
+    async printInventory() {
+        const action = await this.orm.call("comic.customer.album", "action_print_my_inventory", []);
+        await this.action.doAction(action);
+    }
+
     openImport() {
         this.action.doAction("comics_collections.action_comic_import_wizard");
     }

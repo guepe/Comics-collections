@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inventaire de la collection (US-071) : imprimable depuis « Ma bibliothèque »
+         et depuis le tableau de bord (action_print_my_inventory). -->
+    <record id="action_report_comic_collection_inventory" model="ir.actions.report">
+        <field name="name">Inventaire de ma collection</field>
+        <field name="model">comic.customer.album</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">comics_collections.report_comic_collection_inventory</field>
+        <field name="report_file">comics_collections.report_comic_collection_inventory</field>
+        <field name="print_report_name">'Inventaire collection'</field>
+        <field name="binding_model_id" ref="model_comic_customer_album"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_comic_collection_inventory">
+        <t t-call="web.html_container">
+            <t t-set="inventory" t-value="docs._get_inventory_data()"/>
+            <t t-set="currency" t-value="inventory['currency']"/>
+            <t t-call="web.external_layout">
+                <div class="page o_comic_inventory">
+                    <h2>Inventaire de ma collection</h2>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>Propriétaire :</strong>
+                            <span t-out="inventory['owners']"/>
+                        </div>
+                        <div class="col-6 text-end">
+                            <strong>Date :</strong>
+                            <span t-out="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm o_main_table">
+                        <thead>
+                            <tr>
+                                <th class="text-end">Tome</th>
+                                <th>Titre</th>
+                                <th>ISBN</th>
+                                <th>État de lecture</th>
+                                <th class="text-end">Note</th>
+                                <th class="text-end">Prix d'achat</th>
+                                <th class="text-end">Valeur estimée</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="inventory['series']" t-as="serie">
+                                <tr class="o_comic_inventory_serie">
+                                    <td colspan="7"><strong t-out="serie['name']"/></td>
+                                </tr>
+                                <tr t-foreach="serie['lines']" t-as="line">
+                                    <td class="text-end" t-out="line['tome']"/>
+                                    <td t-out="line['titre']"/>
+                                    <td t-out="line['isbn']"/>
+                                    <td t-out="line['etat_lecture']"/>
+                                    <td class="text-end">
+                                        <t t-if="line['note']" t-out="'%.1f' % line['note']"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-if="line['prix_achat']" t-out="line['prix_achat']"
+                                           t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <t t-if="line['valeur_estimee']" t-out="line['valeur_estimee']"
+                                           t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                </tr>
+                                <tr class="o_comic_inventory_subtotal">
+                                    <td colspan="5" class="text-end">
+                                        <em>Sous-total <t t-out="serie['name']"/>
+                                            (<t t-out="serie['count']"/> album<t t-if="serie['count'] &gt; 1">s</t>)</em>
+                                    </td>
+                                    <td class="text-end">
+                                        <em t-out="serie['prix_achat']"
+                                            t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <em t-out="serie['valeur_estimee']"
+                                            t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                        <tfoot>
+                            <tr class="o_comic_inventory_total">
+                                <td colspan="5" class="text-end">
+                                    <strong>Total général
+                                        (<t t-out="inventory['count']"/> album<t t-if="inventory['count'] &gt; 1">s</t>)</strong>
+                                </td>
+                                <td class="text-end">
+                                    <strong t-out="inventory['prix_achat']"
+                                            t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                </td>
+                                <td class="text-end">
+                                    <strong t-out="inventory['valeur_estimee']"
+                                            t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <p>Nombre d'albums : <strong t-out="inventory['count']"/></p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

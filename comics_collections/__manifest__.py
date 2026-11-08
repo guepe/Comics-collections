@@ -1,6 +1,6 @@
 {
     "name": "Comic Collection",
-    "version": "19.0.3.0.0",
+    "version": "19.0.3.1.0",
     "category": "Leisure",
     "summary": "Manage your comic book collection",
     "description": """
@@ -33,6 +33,7 @@
         "views/comic_dedup_views.xml",
         "views/comic_dashboard_views.xml",
         "views/comic_menu.xml",
+        "report/report_comic_collection_inventory.xml",
         "views/comic_fonts_template.xml",
     ],
     "demo": [
