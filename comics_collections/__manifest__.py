@@ -30,6 +30,7 @@
         "views/comic_customer_album_views.xml",
         "views/comic_import_wizard_views.xml",
         "views/comic_dedup_views.xml",
+        "views/comic_dashboard_views.xml",
         "views/comic_menu.xml",
         "views/comic_fonts_template.xml",
     ],
@@ -39,6 +40,9 @@
     "assets": {
         "web.assets_backend": [
             "comics_collections/static/src/scss/comics_theme.scss",
+            "comics_collections/static/src/dashboard/collection_dashboard.js",
+            "comics_collections/static/src/dashboard/collection_dashboard.xml",
+            "comics_collections/static/src/dashboard/collection_dashboard.scss",
         ],
     },
     "installable": True,

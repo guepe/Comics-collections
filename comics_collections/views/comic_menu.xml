@@ -15,6 +15,13 @@
               groups="comics_collections.group_comic_user"
               sequence="10"/>
 
+    <menuitem id="menu_comic_dashboard"
+              name="Tableau de bord"
+              parent="menu_comic_collection"
+              action="action_comic_collection_dashboard"
+              groups="comics_collections.group_comic_user"
+              sequence="5"/>
+
     <menuitem id="menu_comic_series"
               name="Séries"
               parent="menu_comic_collection"

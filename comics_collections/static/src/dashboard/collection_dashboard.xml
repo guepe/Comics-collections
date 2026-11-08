@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="comics_collections.CollectionDashboard">
+        <div class="o_comic_dashboard h-100 overflow-auto">
+            <div class="o_comic_dashboard_inner">
+                <header class="o_comic_dashboard_header">
+                    <span class="o_comic_dashboard_kicker">Ma Collection</span>
+                    <h1 class="o_comic_dashboard_title">Tableau de bord</h1>
+                </header>
+
+                <t t-set="data" t-value="state.data"/>
+
+                <!-- État vide -->
+                <section t-if="isEmpty" class="o_comic_dashboard_empty">
+                    <div class="o_comic_dashboard_empty_icon"><i class="fa fa-book" aria-hidden="true"/></div>
+                    <h2>Votre bibliothèque est encore vide</h2>
+                    <p>
+                        Ajoutez vos premiers albums depuis la liste des albums, ou importez votre
+                        collection depuis un fichier CSV ou Excel. Vos statistiques apparaîtront ici.
+                    </p>
+                    <div class="o_comic_dashboard_empty_actions">
+                        <button type="button" class="btn btn-primary" t-on-click="openAlbums">Parcourir les albums</button>
+                        <button type="button" class="btn btn-secondary" t-on-click="openImport">Importer un fichier</button>
+                    </div>
+                </section>
+
+                <t t-else="">
+                    <!-- Tuiles KPI -->
+                    <section class="o_comic_kpis">
+                        <button type="button" class="o_comic_kpi" t-on-click="openAlbums">
+                            <span class="o_comic_kpi_label">Albums possédés</span>
+                            <span class="o_comic_kpi_value" t-esc="data.nb_albums"/>
+                            <span class="o_comic_kpi_hint">Voir ma collection</span>
+                        </button>
+                        <button type="button" class="o_comic_kpi" t-on-click="openWishlist">
+                            <span class="o_comic_kpi_label">Wishlist</span>
+                            <span class="o_comic_kpi_value" t-esc="data.nb_wishlist"/>
+                            <span class="o_comic_kpi_hint">Albums souhaités</span>
+                        </button>
+                        <button type="button" class="o_comic_kpi" t-on-click="openSeries">
+                            <span class="o_comic_kpi_label">Séries</span>
+                            <span class="o_comic_kpi_value" t-esc="data.nb_series"/>
+                            <span class="o_comic_kpi_hint">
+                                <t t-esc="data.series_completes"/> complète<t t-if="data.series_completes > 1">s</t>
+                                · <t t-esc="data.series_en_cours"/> en cours
+                            </span>
+                        </button>
+                        <button type="button" class="o_comic_kpi"
+                                t-att-class="{'o_comic_kpi_alert': data.loans_late > 0}"
+                                t-on-click="openLoans">
+                            <span class="o_comic_kpi_label">Prêts en retard</span>
+                            <span class="o_comic_kpi_value" t-esc="data.loans_late"/>
+                            <span class="o_comic_kpi_hint">
+                                <t t-if="data.loans_late > 0">À récupérer</t>
+                                <t t-else="">Aucun retard</t>
+                            </span>
+                        </button>
+                    </section>
+
+                    <!-- Répartitions -->
+                    <section class="o_comic_panels">
+                        <div class="o_comic_panel">
+                            <h3 class="o_comic_panel_title">Par genre</h3>
+                            <p t-if="!data.by_genre.length" class="o_comic_panel_empty">Aucun album possédé.</p>
+                            <ul class="o_comic_bars">
+                                <li t-foreach="data.by_genre" t-as="row" t-key="row.label" class="o_comic_bar">
+                                    <div class="o_comic_bar_head">
+                                        <span class="o_comic_bar_label" t-esc="row.label"/>
+                                        <span class="o_comic_bar_count"><t t-esc="row.count"/> album<t t-if="row.count > 1">s</t></span>
+                                    </div>
+                                    <div class="o_comic_bar_track">
+                                        <div class="o_comic_bar_fill" t-attf-style="width: {{row.percent}}%"/>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="o_comic_panel">
+                            <h3 class="o_comic_panel_title">État de lecture</h3>
+                            <p t-if="!data.nb_albums" class="o_comic_panel_empty">Aucun album possédé.</p>
+                            <ul t-else="" class="o_comic_bars">
+                                <li t-foreach="data.by_reading" t-as="row" t-key="row.key"
+                                    t-attf-class="o_comic_bar o_comic_bar_{{row.key}}">
+                                    <div class="o_comic_bar_head">
+                                        <span class="o_comic_bar_label" t-esc="row.label"/>
+                                        <span class="o_comic_bar_count"><t t-esc="row.count"/> · <t t-esc="row.percent"/> %</span>
+                                    </div>
+                                    <div class="o_comic_bar_track">
+                                        <div class="o_comic_bar_fill" t-attf-style="width: {{row.percent}}%"/>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Listes -->
+                    <section class="o_comic_panels">
+                        <div class="o_comic_panel">
+                            <h3 class="o_comic_panel_title">Séries les mieux notées</h3>
+                            <p t-if="!data.top_series.length" class="o_comic_panel_empty">
+                                Notez vos albums dans « Ma bibliothèque » pour voir apparaître vos séries préférées.
+                            </p>
+                            <ol t-else="" class="o_comic_list">
+                                <li t-foreach="data.top_series" t-as="serie" t-key="serie.id">
+                                    <a href="#" class="o_comic_list_item"
+                                       t-on-click.prevent="() => this.openRecord('comic.serie', serie.id)">
+                                        <span class="o_comic_list_rank" t-esc="serie_index + 1"/>
+                                        <span class="o_comic_list_name" t-esc="serie.name"/>
+                                        <span class="o_comic_list_meta">
+                                            <i class="fa fa-star" aria-hidden="true"/>
+                                            <t t-esc="serie.note"/>
+                                            <small>(<t t-esc="serie.count"/> noté<t t-if="serie.count > 1">s</t>)</small>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ol>
+                        </div>
+                        <div class="o_comic_panel">
+                            <h3 class="o_comic_panel_title">Derniers ajouts</h3>
+                            <p t-if="!data.recent.length" class="o_comic_panel_empty">Aucun album possédé.</p>
+                            <ul t-else="" class="o_comic_list">
+                                <li t-foreach="data.recent" t-as="album" t-key="album.id">
+                                    <a href="#" class="o_comic_list_item"
+                                       t-on-click.prevent="() => this.openRecord('comic.work', album.work_id)">
+                                        <i class="fa fa-book o_comic_list_icon" aria-hidden="true"/>
+                                        <span class="o_comic_list_name" t-esc="album.name"/>
+                                        <span class="o_comic_list_meta" t-esc="formatDate(album.date)"/>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>
