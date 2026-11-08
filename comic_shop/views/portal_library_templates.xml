@@ -449,11 +449,35 @@
 
                                             <!-- Note -->
                                             <div class="col-md-4">
-                                                <label class="form-label fw-semibold">Ma note (0–5)</label>
-                                                <input type="number" name="note"
-                                                       class="form-control"
-                                                       min="0" max="5" step="0.5"
-                                                       t-att-value="record.note or ''"/>
+                                                <fieldset class="o_comic_star_rating">
+                                                    <legend class="form-label fw-semibold">Ma note</legend>
+                                                    <div class="o_comic_stars">
+                                                        <input type="radio" name="note" value="5" class="o_comic_star_input"
+                                                               t-attf-id="note-edit-{{ record.id }}-5"
+                                                               t-att-checked="'checked' if round(record.note or 0) == 5 else None"/>
+                                                        <label t-attf-for="note-edit-{{ record.id }}-5" class="o_comic_star" title="5 étoiles">★<span class="visually-hidden">5 étoiles</span></label>
+                                                        <input type="radio" name="note" value="4" class="o_comic_star_input"
+                                                               t-attf-id="note-edit-{{ record.id }}-4"
+                                                               t-att-checked="'checked' if round(record.note or 0) == 4 else None"/>
+                                                        <label t-attf-for="note-edit-{{ record.id }}-4" class="o_comic_star" title="4 étoiles">★<span class="visually-hidden">4 étoiles</span></label>
+                                                        <input type="radio" name="note" value="3" class="o_comic_star_input"
+                                                               t-attf-id="note-edit-{{ record.id }}-3"
+                                                               t-att-checked="'checked' if round(record.note or 0) == 3 else None"/>
+                                                        <label t-attf-for="note-edit-{{ record.id }}-3" class="o_comic_star" title="3 étoiles">★<span class="visually-hidden">3 étoiles</span></label>
+                                                        <input type="radio" name="note" value="2" class="o_comic_star_input"
+                                                               t-attf-id="note-edit-{{ record.id }}-2"
+                                                               t-att-checked="'checked' if round(record.note or 0) == 2 else None"/>
+                                                        <label t-attf-for="note-edit-{{ record.id }}-2" class="o_comic_star" title="2 étoiles">★<span class="visually-hidden">2 étoiles</span></label>
+                                                        <input type="radio" name="note" value="1" class="o_comic_star_input"
+                                                               t-attf-id="note-edit-{{ record.id }}-1"
+                                                               t-att-checked="'checked' if round(record.note or 0) == 1 else None"/>
+                                                        <label t-attf-for="note-edit-{{ record.id }}-1" class="o_comic_star" title="1 étoile">★<span class="visually-hidden">1 étoile</span></label>
+                                                        <input type="radio" name="note" value="0" class="o_comic_star_input"
+                                                               t-attf-id="note-edit-{{ record.id }}-0"
+                                                               t-att-checked="'checked' if round(record.note or 0) == 0 else None"/>
+                                                        <label t-attf-for="note-edit-{{ record.id }}-0" class="o_comic_star_clear" title="Pas de note"><i class="fa fa-times-circle" aria-hidden="true"/><span class="visually-hidden">Pas de note</span></label>
+                                                    </div>
+                                                </fieldset>
                                             </div>
 
                                             <!-- Checkboxes -->
@@ -704,9 +728,35 @@
                                                     </select>
                                                 </div>
                                                 <div class="mb-2">
-                                                    <label class="form-label small fw-semibold mb-1">Note (0–5)</label>
-                                                    <input type="number" name="note" class="form-control form-control-sm"
-                                                           min="0" max="5" step="0.5" value="0"/>
+                                                    <fieldset class="o_comic_star_rating o_comic_star_rating_sm">
+                                                        <legend class="form-label small fw-semibold mb-1">Note</legend>
+                                                        <div class="o_comic_stars">
+                                                            <input type="radio" name="note" value="5" class="o_comic_star_input"
+                                                                   t-attf-id="note-add-{{ res_index }}-5"
+                                                                   t-att-checked="'checked' if 0 == 5 else None"/>
+                                                            <label t-attf-for="note-add-{{ res_index }}-5" class="o_comic_star" title="5 étoiles">★<span class="visually-hidden">5 étoiles</span></label>
+                                                            <input type="radio" name="note" value="4" class="o_comic_star_input"
+                                                                   t-attf-id="note-add-{{ res_index }}-4"
+                                                                   t-att-checked="'checked' if 0 == 4 else None"/>
+                                                            <label t-attf-for="note-add-{{ res_index }}-4" class="o_comic_star" title="4 étoiles">★<span class="visually-hidden">4 étoiles</span></label>
+                                                            <input type="radio" name="note" value="3" class="o_comic_star_input"
+                                                                   t-attf-id="note-add-{{ res_index }}-3"
+                                                                   t-att-checked="'checked' if 0 == 3 else None"/>
+                                                            <label t-attf-for="note-add-{{ res_index }}-3" class="o_comic_star" title="3 étoiles">★<span class="visually-hidden">3 étoiles</span></label>
+                                                            <input type="radio" name="note" value="2" class="o_comic_star_input"
+                                                                   t-attf-id="note-add-{{ res_index }}-2"
+                                                                   t-att-checked="'checked' if 0 == 2 else None"/>
+                                                            <label t-attf-for="note-add-{{ res_index }}-2" class="o_comic_star" title="2 étoiles">★<span class="visually-hidden">2 étoiles</span></label>
+                                                            <input type="radio" name="note" value="1" class="o_comic_star_input"
+                                                                   t-attf-id="note-add-{{ res_index }}-1"
+                                                                   t-att-checked="'checked' if 0 == 1 else None"/>
+                                                            <label t-attf-for="note-add-{{ res_index }}-1" class="o_comic_star" title="1 étoile">★<span class="visually-hidden">1 étoile</span></label>
+                                                            <input type="radio" name="note" value="0" class="o_comic_star_input"
+                                                                   t-attf-id="note-add-{{ res_index }}-0"
+                                                                   t-att-checked="'checked' if 0 == 0 else None"/>
+                                                            <label t-attf-for="note-add-{{ res_index }}-0" class="o_comic_star_clear" title="Pas de note"><i class="fa fa-times-circle" aria-hidden="true"/><span class="visually-hidden">Pas de note</span></label>
+                                                        </div>
+                                                    </fieldset>
                                                 </div>
                                                 <button type="submit" class="btn btn-primary btn-sm w-100">
                                                     <i class="fa fa-plus me-1"/>Ajouter à ma bibliothèque

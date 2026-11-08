@@ -221,6 +221,13 @@
                         domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True)])]"/>
                 <filter string="Ma wishlist" name="ma_wishlist"
                         domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_wishlist', '=', True)])]"/>
+                <filter string="Prêtés" name="pretes"
+                        domain="[('edition_ids.pret_ids', 'any', [('retourne', '=', False)])]"/>
+                <separator/>
+                <filter string="Note ≥ 3★" name="note_3"
+                        domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('note', '>=', 3)])]"/>
+                <filter string="Note ≥ 4★" name="note_4"
+                        domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('note', '>=', 4)])]"/>
                 <separator/>
                 <filter string="Sans couverture" name="sans_couverture"
                         domain="[('image_couverture', '=', False)]"/>
@@ -231,6 +238,8 @@
                 <group name="group_by">
                     <filter string="Série" name="groupby_serie" context="{'group_by': 'serie_id'}"/>
                     <filter string="Éditeur" name="groupby_editeur" context="{'group_by': 'editeur_id'}"/>
+                    <filter string="Genre" name="groupby_genre" context="{'group_by': 'genre_id'}"/>
+                    <filter string="Type de série" name="groupby_serie_type" context="{'group_by': 'serie_type'}"/>
                 </group>
             </search>
         </field>

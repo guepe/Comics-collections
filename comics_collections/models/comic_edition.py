@@ -55,6 +55,12 @@ class ComicEdition(models.Model):
         string="Bibliothèques",
         help="Entrées de bibliothèque (clients et utilisateurs) qui possèdent ou suivent cet album.",
     )
+    pret_ids = fields.One2many(
+        "comic.pret",
+        "edition_id",
+        string="Prêts",
+        help="Prêts de cet album (privés : les règles d'accès ne montrent que les siens).",
+    )
     active = fields.Boolean(default=True)
 
     nb_isbn = fields.Integer(string="Nb ISBN", compute="_compute_nb_isbn", store=True)

@@ -17,6 +17,14 @@ _logger = logging.getLogger(__name__)
 
 TOP_SERIES_LIMIT = 5
 RECENT_LIMIT = 5
+NOTE_ETOILES = [
+    ("0", "Pas de note"),
+    ("1", "1 étoile"),
+    ("2", "2 étoiles"),
+    ("3", "3 étoiles"),
+    ("4", "4 étoiles"),
+    ("5", "5 étoiles"),
+]
 
 
 class ComicCustomerAlbum(models.Model):
@@ -60,6 +68,14 @@ class ComicCustomerAlbum(models.Model):
     dans_collection = fields.Boolean(string="Dans la collection", default=True)
     dans_wishlist = fields.Boolean(string="En wishlist", default=False)
     note = fields.Float(digits=(2, 1))
+    note_etoiles = fields.Selection(
+        NOTE_ETOILES,
+        string="Note (étoiles)",
+        compute="_compute_note_etoiles",
+        inverse="_inverse_note_etoiles",
+        readonly=False,
+        help="Saisie en étoiles de la note ; la note décimale reste la seule valeur enregistrée.",
+    )
     commentaire = fields.Text()
     date_ajout = fields.Date(
         string="Date d'ajout",
@@ -72,6 +88,7 @@ class ComicCustomerAlbum(models.Model):
         store=True,
         index=True,
     )
+    genre_id = fields.Many2one(related="work_id.genre_id", store=True, string="Genre")
 
     _unique_partner_edition = models.Constraint(
         "UNIQUE(partner_id, edition_id)",
@@ -82,6 +99,15 @@ class ComicCustomerAlbum(models.Model):
     def _compute_work_id(self):
         for rec in self:
             rec.work_id = rec.edition_id.work_id if rec.edition_id else False
+
+    @api.depends("note")
+    def _compute_note_etoiles(self):
+        for rec in self:
+            rec.note_etoiles = str(min(5, max(0, round(rec.note or 0.0))))
+
+    def _inverse_note_etoiles(self):
+        for rec in self:
+            rec.note = float(rec.note_etoiles or 0)
 
     # ── Création / mise à jour idempotente ──────────────────────────────────
 

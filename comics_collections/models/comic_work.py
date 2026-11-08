@@ -65,6 +65,10 @@ class ComicWork(models.Model):
     edition_ids = fields.One2many("comic.edition", "work_id", string="Éditions")
     active = fields.Boolean(default=True)
 
+    # Regroupements de la recherche (genre / type portés par la série)
+    genre_id = fields.Many2one(related="serie_id.genre_id", store=True, string="Genre", index=True)
+    serie_type = fields.Selection(related="serie_id.type", store=True, string="Type de série")
+
     nb_editions = fields.Integer(string="Nb éditions", compute="_compute_nb_editions", store=True)
     nb_auteurs = fields.Integer(string="Nb auteurs", compute="_compute_nb_auteurs", store=True)
     auteur_names = fields.Char(string="Auteurs", compute="_compute_auteur_names")

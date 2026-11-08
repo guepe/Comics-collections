@@ -14,7 +14,8 @@
                 <field name="etat_lecture"/>
                 <field name="dans_collection"/>
                 <field name="dans_wishlist"/>
-                <field name="note"/>
+                <field name="note_etoiles" widget="priority"/>
+                <field name="note" optional="hide"/>
                 <field name="date_ajout"/>
             </list>
         </field>
@@ -37,7 +38,8 @@
                             <field name="dans_collection"/>
                             <field name="dans_wishlist"/>
                             <field name="etat_lecture"/>
-                            <field name="note"/>
+                            <field name="note_etoiles" widget="priority"/>
+                            <field name="note" groups="base.group_no_one"/>
                         </group>
                     </group>
                     <group name="commentaire">
@@ -66,6 +68,9 @@
                 <filter string="Non lus" name="non_lu" domain="[('etat_lecture', '=', 'non_lu')]"/>
                 <filter string="En cours" name="en_cours" domain="[('etat_lecture', '=', 'en_cours')]"/>
                 <filter string="Lus" name="lu" domain="[('etat_lecture', '=', 'lu')]"/>
+                <separator/>
+                <filter string="Note ≥ 3★" name="note_3" domain="[('note', '>=', 3)]"/>
+                <filter string="Note ≥ 4★" name="note_4" domain="[('note', '>=', 4)]"/>
                 <group name="group_by">
                     <filter string="Propriétaire" name="by_partner"
                             context="{'group_by': 'partner_id'}"/>
@@ -73,6 +78,8 @@
                             context="{'group_by': 'source'}"/>
                     <filter string="État de lecture" name="by_etat"
                             context="{'group_by': 'etat_lecture'}"/>
+                    <filter string="Genre" name="by_genre"
+                            context="{'group_by': 'genre_id'}"/>
                 </group>
             </search>
         </field>

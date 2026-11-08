@@ -3,3 +3,4 @@ from . import test_purchase_library
 from . import test_portal_moderation
 from . import test_portal_refuse
 from . import test_portal_minor
+from . import test_portal_stars
