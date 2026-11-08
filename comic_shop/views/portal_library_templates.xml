@@ -25,6 +25,15 @@
                         </div>
                     </a>
                 </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <a href="/my/library/dashboard" class="card h-100 text-center text-decoration-none o_portal_docs_entry o_comic_dashboard_entry">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center py-4">
+                            <i class="fa fa-bar-chart fa-3x text-primary mb-3" role="img" aria-label="Tableau de bord"/>
+                            <p class="o_portal_docs_label fw-bold mb-1">Tableau de bord BD</p>
+                            <p class="text-muted small mb-0">Statistiques de ma collection</p>
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </template>
@@ -49,6 +58,13 @@
                             <button type="button" class="btn-close" data-bs-dismiss="alert"/>
                         </div>
                     </t>
+
+                    <!-- Accès au tableau de bord (US-065) -->
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="/my/library/dashboard" class="btn btn-primary btn-sm o_comic_dashboard_link">
+                            <i class="fa fa-bar-chart me-1"/>Tableau de bord
+                        </a>
+                    </div>
 
                     <!-- Compteurs -->
                     <div class="row g-3 mb-4">
@@ -325,6 +341,169 @@
     </template>
 
     <!-- ── /my/library/<id> — fiche détail ──────────────────────────────────── -->
+
+    <!-- ── /my/library/dashboard — tableau de bord collectionneur (US-065) ─── -->
+
+    <template id="portal_library_dashboard" name="Tableau de bord — Ma Bibliothèque">
+        <t t-call="portal.portal_layout">
+            <t t-set="o_portal_fullwidth_alert" t-value="False"/>
+
+            <div class="o_portal_wrap o_comic_dashboard">
+                <div class="container mt-4 mb-5">
+
+                    <!-- Fil d'Ariane -->
+                    <nav aria-label="breadcrumb" class="mb-4">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/my/home">Mon compte</a></li>
+                            <li class="breadcrumb-item"><a href="/my/library">Ma Bibliothèque</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Tableau de bord</li>
+                        </ol>
+                    </nav>
+
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+                        <h2 class="h4 mb-0">Tableau de bord de ma collection</h2>
+                        <a href="/my/library" class="btn btn-outline-secondary btn-sm">
+                            <i class="fa fa-th-large me-1"/>Voir ma bibliothèque
+                        </a>
+                    </div>
+
+                    <!-- État vide -->
+                    <t t-if="dashboard_empty">
+                        <div class="alert alert-info text-center py-5 o_comic_dashboard_empty">
+                            <i class="fa fa-bar-chart fa-3x text-muted mb-3 d-block"/>
+                            <p class="mb-2">Votre collection est encore vide : aucune statistique à afficher.</p>
+                            <a href="/my/library/add" class="btn btn-primary">
+                                <i class="fa fa-plus me-1"/>Ajouter une BD
+                            </a>
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <!-- Tuiles KPI -->
+                        <div class="row g-3 mb-4">
+                            <div class="col-6 col-md-3">
+                                <div class="o_comic_kpi card border-0 shadow-sm h-100 text-center py-3">
+                                    <div class="o_comic_kpi_value" data-kpi="nb_albums" t-esc="stats['nb_albums']"/>
+                                    <div class="o_comic_kpi_label">Album<t t-if="stats['nb_albums'] != 1">s</t> possédé<t t-if="stats['nb_albums'] != 1">s</t></div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="o_comic_kpi card border-0 shadow-sm h-100 text-center py-3">
+                                    <div class="o_comic_kpi_value" data-kpi="nb_wishlist" t-esc="stats['nb_wishlist']"/>
+                                    <div class="o_comic_kpi_label">Dans ma wishlist</div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="o_comic_kpi card border-0 shadow-sm h-100 text-center py-3">
+                                    <div class="o_comic_kpi_value" data-kpi="series_completes" t-esc="stats['series_completes']"/>
+                                    <div class="o_comic_kpi_label">Série<t t-if="stats['series_completes'] != 1">s</t> complète<t t-if="stats['series_completes'] != 1">s</t></div>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <div class="o_comic_kpi card border-0 shadow-sm h-100 text-center py-3">
+                                    <div class="o_comic_kpi_value" data-kpi="series_en_cours" t-esc="stats['series_en_cours']"/>
+                                    <div class="o_comic_kpi_label">Série<t t-if="stats['series_en_cours'] != 1">s</t> en cours</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row g-4">
+                            <!-- Répartition par genre -->
+                            <div class="col-12 col-lg-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h3 class="h6 fw-bold mb-3">Par genre</h3>
+                                        <t t-if="genre_bars">
+                                            <t t-foreach="genre_bars" t-as="bar">
+                                                <div class="o_comic_bar_row">
+                                                    <div class="o_comic_bar_head">
+                                                        <span class="o_comic_bar_label" t-esc="bar['label']"/>
+                                                        <span class="o_comic_bar_count"><t t-esc="bar['count']"/> (<t t-esc="bar['pct']"/> %)</span>
+                                                    </div>
+                                                    <div class="o_comic_bar_track">
+                                                        <div class="o_comic_bar_fill" t-attf-style="width: {{ bar['pct'] }}%;"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <p t-else="" class="text-muted small mb-0">Aucun album possédé pour l'instant.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Répartition par état de lecture -->
+                            <div class="col-12 col-lg-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h3 class="h6 fw-bold mb-3">Par état de lecture</h3>
+                                        <t t-if="stats['nb_albums']">
+                                            <t t-foreach="reading_bars" t-as="bar">
+                                                <div class="o_comic_bar_row">
+                                                    <div class="o_comic_bar_head">
+                                                        <span class="o_comic_bar_label" t-esc="bar['label']"/>
+                                                        <span class="o_comic_bar_count"><t t-esc="bar['count']"/> (<t t-esc="bar['pct']"/> %)</span>
+                                                    </div>
+                                                    <div class="o_comic_bar_track">
+                                                        <div t-attf-class="o_comic_bar_fill o_comic_bar_{{ bar['key'] }}"
+                                                             t-attf-style="width: {{ bar['pct'] }}%;"/>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </t>
+                                        <p t-else="" class="text-muted small mb-0">Aucun album possédé pour l'instant.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Top 5 séries les mieux notées -->
+                            <div class="col-12 col-lg-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h3 class="h6 fw-bold mb-3">Mes séries les mieux notées</h3>
+                                        <ol t-if="stats['top_series']" class="list-unstyled mb-0 o_comic_top_series">
+                                            <t t-foreach="stats['top_series']" t-as="serie">
+                                                <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                    <span>
+                                                        <span class="text-muted me-2"><t t-esc="serie_index + 1"/>.</span>
+                                                        <t t-esc="serie['name']"/>
+                                                    </span>
+                                                    <span class="text-nowrap">
+                                                        <i class="fa fa-star text-warning me-1"/>
+                                                        <strong><t t-esc="'%.1f' % serie['note']"/></strong>/5
+                                                        <span class="text-muted small ms-1">(<t t-esc="serie['count']"/> album<t t-if="serie['count'] != 1">s</t> noté<t t-if="serie['count'] != 1">s</t>)</span>
+                                                    </span>
+                                                </li>
+                                            </t>
+                                        </ol>
+                                        <p t-else="" class="text-muted small mb-0">Notez vos albums pour voir apparaître vos séries préférées.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 5 derniers ajouts -->
+                            <div class="col-12 col-lg-6">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <h3 class="h6 fw-bold mb-3">Derniers ajouts</h3>
+                                        <ul t-if="stats['recent']" class="list-unstyled mb-0 o_comic_recent">
+                                            <t t-foreach="stats['recent']" t-as="entry">
+                                                <li class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                                                    <a t-attf-href="/my/library/{{ entry['id'] }}" t-esc="entry['name']"/>
+                                                    <span t-if="entry['date']" class="text-muted small text-nowrap ms-2"
+                                                          t-esc="entry['date'].strftime('%d/%m/%Y')"/>
+                                                </li>
+                                            </t>
+                                        </ul>
+                                        <p t-else="" class="text-muted small mb-0">Aucun album possédé pour l'instant.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
 
     <template id="portal_library_detail" name="Détail album — Ma Bibliothèque">
         <t t-call="portal.portal_layout">
