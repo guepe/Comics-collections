@@ -1,88 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Vue liste -->
+    <!-- Bibliothèque (modèle et vues de base dans comics_collections) : volet commercial -->
 
-    <record id="view_comic_customer_album_list" model="ir.ui.view">
-        <field name="name">comic.customer.album.list</field>
+    <record id="view_comic_customer_album_list_inherit_shop" model="ir.ui.view">
+        <field name="name">comic.customer.album.list.inherit.shop</field>
         <field name="model">comic.customer.album</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_customer_album_list"/>
         <field name="arch" type="xml">
-            <list string="Bibliothèques clients">
-                <field name="partner_id"/>
-                <field name="edition_id"/>
-                <field name="source"/>
-                <field name="etat_lecture"/>
-                <field name="dans_collection"/>
-                <field name="dans_wishlist"/>
-                <field name="note"/>
-                <field name="date_ajout"/>
+            <field name="date_ajout" position="after">
                 <field name="has_product" optional="hide"/>
-            </list>
+            </field>
         </field>
     </record>
 
-    <!-- Vue formulaire -->
-
-    <record id="view_comic_customer_album_form" model="ir.ui.view">
-        <field name="name">comic.customer.album.form</field>
+    <record id="view_comic_customer_album_form_inherit_shop" model="ir.ui.view">
+        <field name="name">comic.customer.album.form.inherit.shop</field>
         <field name="model">comic.customer.album</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_customer_album_form"/>
         <field name="arch" type="xml">
-            <form string="Bibliothèque client">
-                <sheet>
-                    <group>
-                        <group string="Identification">
-                            <field name="partner_id"/>
-                            <field name="edition_id"/>
-                            <field name="source"/>
-                            <field name="date_ajout"/>
-                        </group>
-                        <group string="Ma collection">
-                            <field name="dans_collection"/>
-                            <field name="dans_wishlist"/>
-                            <field name="etat_lecture"/>
-                            <field name="note"/>
-                        </group>
-                    </group>
-                    <group>
-                        <field name="commentaire"
-                               placeholder="Notes personnelles du client..."
-                               nolabel="1"/>
-                    </group>
-                    <group string="Commercial" groups="comic_shop.group_shop_manager">
-                        <field name="has_product" readonly="1"/>
-                        <field name="sale_order_line_id" readonly="1"/>
-                    </group>
-                </sheet>
-            </form>
+            <xpath expr="//group[@name='commentaire']" position="after">
+                <group string="Commercial" name="commercial" groups="comic_shop.group_shop_manager">
+                    <field name="has_product" readonly="1"/>
+                    <field name="sale_order_line_id" readonly="1"/>
+                    <field name="pos_order_line_id" readonly="1"/>
+                </group>
+            </xpath>
         </field>
     </record>
 
-    <!-- Vue recherche -->
-
-    <record id="view_comic_customer_album_search" model="ir.ui.view">
-        <field name="name">comic.customer.album.search</field>
+    <record id="view_comic_customer_album_search_inherit_shop" model="ir.ui.view">
+        <field name="name">comic.customer.album.search.inherit.shop</field>
         <field name="model">comic.customer.album</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_customer_album_search"/>
         <field name="arch" type="xml">
-            <search string="Bibliothèques clients">
-                <field name="partner_id" string="Client"/>
-                <field name="edition_id" string="Album"/>
-                <filter string="Dans la collection" name="collection"
-                        domain="[('dans_collection', '=', True)]"/>
-                <filter string="En wishlist" name="wishlist"
-                        domain="[('dans_wishlist', '=', True)]"/>
+            <filter name="wishlist" position="after">
                 <filter string="Acheté ici" name="achete_ici"
                         domain="[('source', '=', 'achete_ici')]"/>
                 <filter string="Sans produit shop" name="sans_produit"
                         domain="[('has_product', '=', False)]"/>
-                <group name="group_by">
-                    <filter string="Client" name="by_partner"
-                            context="{'group_by': 'partner_id'}"/>
-                    <filter string="Source" name="by_source"
-                            context="{'group_by': 'source'}"/>
-                    <filter string="État de lecture" name="by_etat"
-                            context="{'group_by': 'etat_lecture'}"/>
-                </group>
-            </search>
+            </filter>
         </field>
     </record>
 
@@ -92,7 +49,8 @@
         <field name="name">Bibliothèques clients</field>
         <field name="res_model">comic.customer.album</field>
         <field name="view_mode">list,form</field>
-        <field name="search_view_id" ref="view_comic_customer_album_search"/>
+        <field name="search_view_id" ref="comics_collections.view_comic_customer_album_search"/>
+        <field name="context">{'search_default_by_partner': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Aucune bibliothèque client pour l'instant.

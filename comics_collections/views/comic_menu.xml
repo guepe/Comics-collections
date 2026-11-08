@@ -29,6 +29,13 @@
               groups="comics_collections.group_comic_user"
               sequence="20"/>
 
+    <menuitem id="menu_comic_my_library"
+              name="Ma bibliothèque"
+              parent="menu_comic_collection"
+              action="action_comic_my_library"
+              groups="comics_collections.group_comic_user"
+              sequence="25"/>
+
     <menuitem id="menu_comic_prets"
               name="Prêts"
               parent="menu_comic_collection"
@@ -49,6 +56,13 @@
               parent="menu_comic_root"
               groups="comics_collections.group_comic_user"
               sequence="20"/>
+
+    <menuitem id="menu_comic_catalogue_albums"
+              name="Tous les albums"
+              parent="menu_comic_catalogues"
+              action="action_comic_work_catalogue"
+              groups="comics_collections.group_comic_user"
+              sequence="5"/>
 
     <menuitem id="menu_comic_auteurs"
               name="Auteurs"

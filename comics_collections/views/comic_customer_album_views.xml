@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Bibliothèque personnelle : ce que chaque utilisateur possède, souhaite, lit et note -->
+
+    <record id="view_comic_customer_album_list" model="ir.ui.view">
+        <field name="name">comic.customer.album.list</field>
+        <field name="model">comic.customer.album</field>
+        <field name="arch" type="xml">
+            <list string="Bibliothèque">
+                <field name="partner_id" optional="hide"/>
+                <field name="edition_id"/>
+                <field name="source" optional="show"/>
+                <field name="etat_lecture"/>
+                <field name="dans_collection"/>
+                <field name="dans_wishlist"/>
+                <field name="note"/>
+                <field name="date_ajout"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_comic_customer_album_form" model="ir.ui.view">
+        <field name="name">comic.customer.album.form</field>
+        <field name="model">comic.customer.album</field>
+        <field name="arch" type="xml">
+            <form string="Bibliothèque">
+                <sheet>
+                    <group name="main">
+                        <group string="Identification" name="identification">
+                            <field name="partner_id"/>
+                            <field name="edition_id"/>
+                            <field name="source"/>
+                            <field name="date_ajout"/>
+                        </group>
+                        <group string="Ma collection" name="ma_collection">
+                            <field name="dans_collection"/>
+                            <field name="dans_wishlist"/>
+                            <field name="etat_lecture"/>
+                            <field name="note"/>
+                        </group>
+                    </group>
+                    <group name="commentaire">
+                        <field name="commentaire"
+                               placeholder="Notes personnelles..."
+                               nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_comic_customer_album_search" model="ir.ui.view">
+        <field name="name">comic.customer.album.search</field>
+        <field name="model">comic.customer.album</field>
+        <field name="arch" type="xml">
+            <search string="Bibliothèque">
+                <field name="edition_id" string="Album"/>
+                <field name="work_id" string="Titre"/>
+                <field name="partner_id" string="Propriétaire"/>
+                <filter string="Dans la collection" name="collection"
+                        domain="[('dans_collection', '=', True)]"/>
+                <filter string="En wishlist" name="wishlist"
+                        domain="[('dans_wishlist', '=', True)]"/>
+                <separator/>
+                <filter string="Non lus" name="non_lu" domain="[('etat_lecture', '=', 'non_lu')]"/>
+                <filter string="En cours" name="en_cours" domain="[('etat_lecture', '=', 'en_cours')]"/>
+                <filter string="Lus" name="lu" domain="[('etat_lecture', '=', 'lu')]"/>
+                <group name="group_by">
+                    <filter string="Propriétaire" name="by_partner"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter string="Source" name="by_source"
+                            context="{'group_by': 'source'}"/>
+                    <filter string="État de lecture" name="by_etat"
+                            context="{'group_by': 'etat_lecture'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_comic_my_library" model="ir.actions.act_window">
+        <field name="name">Ma bibliothèque</field>
+        <field name="res_model">comic.customer.album</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_comic_customer_album_search"/>
+        <field name="domain">[('partner_id.user_ids', 'in', [uid])]</field>
+        <field name="context">{'search_default_collection': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Votre bibliothèque est vide.
+            </p>
+            <p>
+                Ajoutez des albums à votre collection ou à votre wishlist, depuis la liste des
+                albums (action « Marquer comme lu ») ou par import CSV/Excel.
+            </p>
+        </field>
+    </record>
+
+</odoo>

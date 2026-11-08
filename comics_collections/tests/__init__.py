@@ -12,3 +12,5 @@ from . import test_serie_suivi
 from . import test_dedup_scan
 from . import test_minor_fixes
 from . import test_bibliography
+from . import test_comic_customer_album
+from . import test_collection_stats

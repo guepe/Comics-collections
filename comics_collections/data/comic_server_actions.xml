@@ -21,4 +21,33 @@
         <field name="code">records.write({'a_suivre': False})</field>
     </record>
 
+    <!-- ── Actions engrenage sur comic.work ─────────────────────────────────── -->
+
+    <record id="action_work_mark_lu" model="ir.actions.server">
+        <field name="name">Marquer comme Lu</field>
+        <field name="model_id" ref="model_comic_work"/>
+        <field name="binding_model_id" ref="model_comic_work"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">records.action_mark_lu()</field>
+    </record>
+
+    <record id="action_work_mark_en_cours" model="ir.actions.server">
+        <field name="name">Marquer comme En cours</field>
+        <field name="model_id" ref="model_comic_work"/>
+        <field name="binding_model_id" ref="model_comic_work"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">records.action_mark_en_cours()</field>
+    </record>
+
+    <record id="action_work_mark_non_lu" model="ir.actions.server">
+        <field name="name">Marquer comme Non lu</field>
+        <field name="model_id" ref="model_comic_work"/>
+        <field name="binding_model_id" ref="model_comic_work"/>
+        <field name="binding_type">action</field>
+        <field name="state">code</field>
+        <field name="code">records.action_mark_non_lu()</field>
+    </record>
+
 </odoo>

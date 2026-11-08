@@ -1,58 +1,18 @@
-import datetime
-import logging
+"""Extension commerciale de la bibliothèque personnelle (modèle défini dans comics_collections).
 
-from psycopg2 import errors as pg_errors
+Ajoute la source « Acheté ici », le lien vers la vente d'origine (shop ou caisse) et
+l'enregistrement / l'annulation automatiques des achats.
+"""
 
-from odoo import models, fields, api
-
-_logger = logging.getLogger(__name__)
+from odoo import api, fields, models
 
 
 class ComicCustomerAlbum(models.Model):
-    _name = "comic.customer.album"
-    _description = "Bibliothèque client — édition"
-    _order = "partner_id, edition_id"
-    _rec_name = "edition_id"
+    _inherit = "comic.customer.album"
 
-    partner_id = fields.Many2one(
-        "res.partner",
-        string="Client",
-        required=True,
-        ondelete="cascade",
-        index=True,
-    )
-    edition_id = fields.Many2one(
-        "comic.edition",
-        string="Album",
-        required=True,
-        ondelete="restrict",
-        index=True,
-    )
     source = fields.Selection(
-        [
-            ("achete_ici", "Acheté ici"),
-            ("achete_ailleurs", "Acheté ailleurs"),
-            ("cadeau", "Cadeau"),
-            ("inconnu", "Inconnu"),
-        ],
-        default="inconnu",
-    )
-    etat_lecture = fields.Selection(
-        [
-            ("non_lu", "Non lu"),
-            ("en_cours", "En cours"),
-            ("lu", "Lu"),
-        ],
-        string="État de lecture",
-        default="non_lu",
-    )
-    dans_collection = fields.Boolean(string="Dans la collection", default=True)
-    dans_wishlist = fields.Boolean(string="En wishlist", default=False)
-    note = fields.Float(digits=(2, 1))
-    commentaire = fields.Text()
-    date_ajout = fields.Date(
-        string="Date d'ajout",
-        default=lambda self: datetime.date.today(),
+        selection_add=[("achete_ici", "Acheté ici")],
+        ondelete={"achete_ici": "set default"},
     )
     sale_order_line_id = fields.Many2one(
         "sale.order.line",
@@ -74,20 +34,6 @@ class ComicCustomerAlbum(models.Model):
         help="Entrée créée automatiquement par une vente (shop ou caisse). "
         "Sert à la retirer proprement en cas d'annulation ou de remboursement.",
     )
-
-    work_id = fields.Many2one(
-        "comic.work",
-        string="Titre",
-        compute="_compute_work_id",
-        store=True,
-        index=True,
-    )
-
-    @api.depends("edition_id.work_id")
-    def _compute_work_id(self):
-        for rec in self:
-            rec.work_id = rec.edition_id.work_id if rec.edition_id else False
-
     has_product = fields.Boolean(
         string="Produit disponible",
         compute="_compute_has_product",
@@ -96,41 +42,12 @@ class ComicCustomerAlbum(models.Model):
         help="True si l'édition est liée à un produit vendable dans le shop.",
     )
 
-    _unique_partner_edition = models.Constraint(
-        "UNIQUE(partner_id, edition_id)",
-        "Ce client possède déjà une entrée pour cette édition dans sa bibliothèque.",
-    )
-
     @api.depends("edition_id.product_tmpl_id")
     def _compute_has_product(self):
         for rec in self:
             rec.has_product = bool(rec.edition_id.product_tmpl_id)
 
     # ── Enregistrement / annulation d'achats ────────────────────────────────
-
-    @api.model
-    def _upsert(self, partner, edition, vals):
-        """Create or update the (partner, edition) entry. Returns (record, created).
-
-        Protégé contre la violation de UNIQUE(partner_id, edition_id) si une autre
-        transaction crée la même entrée en parallèle : on ne fait jamais échouer
-        l'opération appelante (paiement caisse, confirmation de commande).
-        """
-        domain = [("partner_id", "=", partner.id), ("edition_id", "=", edition.id)]
-        record = self.search(domain, limit=1)
-        if record:
-            record.write(vals)
-            return record, False
-        try:
-            with self.env.cr.savepoint():
-                record = self.create({**vals, "partner_id": partner.id, "edition_id": edition.id})
-            return record, True
-        except pg_errors.UniqueViolation:
-            _logger.info("Bibliothèque : entrée %s/%s créée en parallèle", partner.id, edition.id)
-            record = self.search(domain, limit=1)
-            if record:
-                record.write(vals)
-            return record, False
 
     @api.model
     def _register_purchase(self, partner, edition, sale_line=None, pos_line=None):

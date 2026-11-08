@@ -19,3 +19,5 @@ access_comic_import_wizard_user,comic.import.wizard user,model_comic_import_wiza
 access_comic_import_mapping_line_user,comic.import.mapping.line user,model_comic_import_mapping_line,comics_collections.group_comic_user,1,1,1,1
 access_comic_dedup_pair_manager,comic.dedup.pair manager,model_comic_dedup_pair,comics_collections.group_comic_manager,1,1,1,1
 access_comic_work_merge_wizard_manager,comic.work.merge.wizard manager,model_comic_work_merge_wizard,comics_collections.group_comic_manager,1,1,1,1
+access_comic_customer_album_user,comic.customer.album user,model_comic_customer_album,comics_collections.group_comic_user,1,1,1,0
+access_comic_customer_album_comic_manager,comic.customer.album manager,model_comic_customer_album,comics_collections.group_comic_manager,1,1,1,1

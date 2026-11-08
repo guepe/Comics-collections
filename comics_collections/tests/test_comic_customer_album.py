@@ -2,11 +2,11 @@
 
 Teste : contrainte unique (partner_id, edition_id) et work_id computed.
 
-Nécessite le module comic_shop installé.
+Modèle défini dans comics_collections (bibliothèque personnelle).
 
 Lancement :
-    docker exec odoo-web odoo-bin -d odoo -u comic_shop \
-        --test-tags /comic_shop:TestComicCustomerAlbum
+    docker exec odoo-web odoo-bin -d odoo -u comics_collections \
+        --test-tags /comics_collections:TestComicCustomerAlbum
 """
 
 from psycopg2 import IntegrityError
@@ -16,7 +16,7 @@ from odoo.tools import mute_logger
 from odoo.tests import tagged
 
 
-@tagged("comic_shop", "comic_customer_album")
+@tagged("post_install", "-at_install", "comics_collections", "comic_customer_album")
 class TestComicCustomerAlbum(TransactionCase):
 
     @classmethod

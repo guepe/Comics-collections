@@ -13,12 +13,6 @@ class ComicEdition(models.Model):
         copy=False,
         help="Produit Odoo associé à cette édition pour la vente en ligne et en caisse.",
     )
-    customer_album_ids = fields.One2many(
-        "comic.customer.album",
-        "edition_id",
-        string="Bibliothèques",
-        help="Entrées de bibliothèque (clients et utilisateurs) qui possèdent ou suivent cet album.",
-    )
     sync_product = fields.Boolean(
         string="Synchro auto",
         default=True,

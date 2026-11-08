@@ -217,6 +217,11 @@
                 <field name="edition_ids" string="ISBN"
                        filter_domain="[('edition_ids.isbn_ids.isbn_13', 'ilike', self)]"/>
                 <separator/>
+                <filter string="Ma collection" name="ma_collection"
+                        domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True)])]"/>
+                <filter string="Ma wishlist" name="ma_wishlist"
+                        domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_wishlist', '=', True)])]"/>
+                <separator/>
                 <filter string="Sans couverture" name="sans_couverture"
                         domain="[('image_couverture', '=', False)]"/>
                 <filter string="Sans ISBN" name="sans_isbn"
@@ -239,6 +244,15 @@
         <field name="search_view_id" ref="view_comic_work_search"/>
         <!-- Groupement par série porté par la vue liste (default_group_by) :
              la galerie kanban reste une grille, sans une colonne par série. -->
+        <field name="context">{'search_default_ma_collection': 1}</field>
+    </record>
+
+    <!-- Catalogue partagé complet (sans filtre « Ma collection ») -->
+    <record id="action_comic_work_catalogue" model="ir.actions.act_window">
+        <field name="name">Tous les albums</field>
+        <field name="res_model">comic.work</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_comic_work_search"/>
         <field name="context">{}</field>
     </record>
 

@@ -49,6 +49,12 @@ class ComicEdition(models.Model):
     url_amazon_be = fields.Char(string="Lien Amazon.be")
     url_fnac_be = fields.Char(string="Lien FNAC.be")
     isbn_ids = fields.One2many("comic.isbn", "edition_id", string="ISBNs")
+    customer_album_ids = fields.One2many(
+        "comic.customer.album",
+        "edition_id",
+        string="Bibliothèques",
+        help="Entrées de bibliothèque (clients et utilisateurs) qui possèdent ou suivent cet album.",
+    )
     active = fields.Boolean(default=True)
 
     nb_isbn = fields.Integer(string="Nb ISBN", compute="_compute_nb_isbn", store=True)

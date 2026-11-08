@@ -254,6 +254,9 @@ class ComicWork(models.Model):
         prets = self.env["comic.pret"].sudo().search([("edition_id", "in", self.edition_ids.ids)])
         if prets:
             blockers.append(_("%(count)s prêt(s) concernent ces albums (supprimez-les d'abord).", count=len(prets)))
+        albums = self.env["comic.customer.album"].sudo().search_count([("edition_id", "in", self.edition_ids.ids)])
+        if albums:
+            blockers.append(_("%(count)s entrée(s) de bibliothèque contiennent ces albums.", count=albums))
         return blockers
 
     @api.ondelete(at_uninstall=False)
@@ -270,6 +273,27 @@ class ComicWork(models.Model):
         # (créées automatiquement avec l'album), puis l'album lui-même.
         self.edition_ids.unlink()
         return super().unlink()
+
+    # ── Bibliothèque personnelle : état de lecture ───────────────────────────
+
+    def _set_etat_lecture(self, etat):
+        """Set the reading state in the current user's library (adds the album if needed)."""
+        partner = self.env.user.partner_id
+        CustomerAlbum = self.env["comic.customer.album"]
+        for work in self:
+            edition = work.primary_edition_id
+            if not edition:
+                continue
+            CustomerAlbum._upsert(partner, edition, {"etat_lecture": etat})
+
+    def action_mark_lu(self):
+        self._set_etat_lecture("lu")
+
+    def action_mark_en_cours(self):
+        self._set_etat_lecture("en_cours")
+
+    def action_mark_non_lu(self):
+        self._set_etat_lecture("non_lu")
 
     # ── Actions ───────────────────────────────────────────────────────────────
 
