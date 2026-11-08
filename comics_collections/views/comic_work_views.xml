@@ -88,6 +88,13 @@
                 <sheet>
                     <!-- Smartbutton éditions multiples (uniquement si > 1) -->
                     <div name="button_box" class="oe_button_box">
+                        <!-- Dans la button box : comic_shop ajoute déjà un <header> avant la feuille -->
+                        <button name="action_add_to_my_wishlist"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-heart-o"
+                                string="Ajouter à ma wishlist"
+                                invisible="not id"/>
                         <button name="action_view_editions"
                                 type="object"
                                 class="oe_stat_button"
