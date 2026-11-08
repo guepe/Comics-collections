@@ -38,6 +38,20 @@
         </div>
     </template>
 
+    <!-- ── Menu du compte (en haut à droite du site) ─────────────────────────── -->
+
+    <template id="user_dropdown_library" name="Ma bibliothèque BD (menu du compte)"
+              inherit_id="portal.user_dropdown" priority="20">
+        <xpath expr="//*[@id='o_logout_divider']" position="before">
+            <a href="/my/library" role="menuitem" class="dropdown-item ps-3">
+                <i class="fa fa-fw fa-book me-1 small text-primary-emphasis"/> Ma bibliothèque BD
+            </a>
+            <a href="/my/library/dashboard" role="menuitem" class="dropdown-item ps-3">
+                <i class="fa fa-fw fa-bar-chart me-1 small text-primary-emphasis"/> Tableau de bord BD
+            </a>
+        </xpath>
+    </template>
+
     <!-- ── /my/library — page index ─────────────────────────────────────────── -->
 
     <template id="portal_library_index" name="Ma Bibliothèque BD">

@@ -126,3 +126,13 @@ class TestPortalDashboard(HttpCase):
         self.authenticate(self.login, self.login)
         html = self.url_open("/my").text
         self.assertRegex(html, r"\b3\s*</t>\s*album|\b3 album")
+
+    def test_site_menu_ma_collection(self):
+        """Menu « Ma collection » du site et liens du menu du compte : connectés uniquement."""
+        self.authenticate(self.login, self.login)
+        html = self.url_open("/shop").text
+        self.assertIn("Ma collection", html)
+        self.assertIn('href="/my/library/dashboard"', html)  # menu du compte
+        self.assertIn("Ma bibliothèque BD", html)
+        self.authenticate(None, None)
+        self.assertNotIn('href="/my/library/dashboard"', self.url_open("/shop").text)
