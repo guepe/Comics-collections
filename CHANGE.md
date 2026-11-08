@@ -2156,3 +2156,51 @@ Réalisé en parallèle (3 branches de worktree fusionnées sur `integ/petits-de
 - US-048 fusionnée dans US-069 (suivi de séries client + notification à la mise en vente).
   US-068 : seuls les tomes récemment parus déclenchent une alerte. US-070 / US-072 : notes
   techniques (HTTPS caméra ; « Me prévenir » natif de website_sale_stock à vérifier).
+
+## 2026-11-08 — E5 lot 1 : bibliothèque personnelle dans le cœur, tableau de bord, filtres, étoiles
+
+Livré : US-086 (nouvelle), US-065, US-066, US-067. Réalisé en multi-agents (socle séquentiel,
+puis trois branches parallèles fusionnées).
+
+**Socle — US-086** (`comics_collections` 19.0.3.0.0, `comic_shop` 19.0.3.0.0)
+- `comics_collections/models/comic_customer_album.py` (nouveau) : `comic.customer.album` défini
+  dans le cœur (partner, édition, work_id, source, état de lecture, collection, wishlist, note,
+  commentaire, date d'ajout, contrainte unique), `_upsert()`, `_get_collection_stats(partner,
+  include_loans)` = seule source des tableaux de bord.
+- `comic_shop/models/comic_customer_album.py` : passe en `_inherit` (selection_add `achete_ici`,
+  lignes de vente / caisse, `auto_created`, `has_product`, `_register_purchase` / `_revert_purchase`).
+- Déplacés vers le cœur : `comic.edition.customer_album_ids`, `comic.work._set_etat_lecture` et
+  `action_mark_*` (désormais via `_upsert`), actions serveur « Marquer comme… », blocage de
+  suppression d'un album présent en bibliothèque, filtres « Ma collection / Ma wishlist ».
+- Sécurité : ACL utilisateur / gestionnaire et règle « ses propres entrées » dans le cœur ;
+  portail et « gestionnaire shop voit tout » restent dans `comic_shop`.
+- Migration `comics_collections/migrations/19.0.3.0.0/pre-migrate.py` : réattribue 33 identifiants
+  XML (modèle, champs, sélections, contrainte, règle, ACL, vues, actions serveur) de `comic_shop`
+  au cœur, sinon la mise à jour du shop supprimerait colonnes / modèle. SQL brut justifié
+  (ir_model_data avant chargement du registre), idempotent. Vérifié sur la base locale :
+  594 entrées conservées, aucune colonne perdue.
+- Vues / menus : `comic_customer_album_views.xml` dans le cœur (le shop hérite : volet
+  Commercial, filtres Acheté ici / Sans produit) ; menus *Ma Collection → Ma bibliothèque* et
+  *Catalogues → Tous les albums* ; *Albums / Tomes* ouvert filtré sur « Ma collection ».
+- `comics_collections` installé seul : vérifié sur une base vierge (231 tests verts).
+
+**US-065 — Tableau de bord**
+- Back-office : `get_dashboard_data()` (sérialisable, pourcentages), action client OWL
+  `comic_collection_dashboard` (`static/src/dashboard/`), `views/comic_dashboard_views.xml`, menu
+  *Ma Collection → Tableau de bord*. Tuiles cliquables (albums, wishlist, séries, prêts en retard),
+  barres CSS genre / lecture, top 5 séries, derniers ajouts, état vide.
+- Portail : route `/my/library/dashboard`, template `portal_library_dashboard`, bouton sur
+  `/my/library`, carte sur `/my`, styles `.o_comic_dashboard`.
+- Corrigé : le compteur de la carte « Ma Bibliothèque BD » sur `/my` restait à 0 (page rendue
+  avec `counters=[]`) — calculé à chaque rendu, albums possédés uniquement.
+
+**US-066 — Filtres** : `comic.work.genre_id` / `serie_type` (related stockés),
+`comic.edition.pret_ids`, filtres Prêtés (record rules respectées), Note ≥ 3★ / ≥ 4★,
+regroupements genre / type ; `comic.customer.album.genre_id` (related stocké).
+
+**US-067 — Étoiles** : `note_etoiles` (Selection 0–5, calcul + inverse, `note` reste stocké),
+widget `priority` en liste / formulaire ; saisie par étoiles (radios CSS) sur le portail.
+
+**Tests** : `test_comic_customer_album` déplacé dans le cœur ; nouveaux `test_collection_stats`,
+`test_collection_dashboard` (2 HttpCase navigateur ignorés : pas de Chrome dans le conteneur),
+`test_filters_stars`, `test_portal_dashboard`, `test_portal_stars`. Suite complète : 339 + 1 verts.

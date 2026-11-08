@@ -18,8 +18,9 @@ author page only exists for partners credited on an album on sale.
 
 **Customer library** (``/my/library``)
 
-Each customer keeps their own library (``comic.customer.album``): *Ma collection*
-and *Ma wishlist*, reading status, 0–5 rating and comments, with pagination and
+Each customer keeps their own library (``comic.customer.album``, the personal
+library of ``comics_collections``): *Ma collection* and *Ma wishlist*, reading
+status, star rating and comments, a dashboard (``/my/library/dashboard``), with pagination and
 sorting. Albums bought outside the shop are added by ISBN or title search
 (local catalogue + online sources); cover downloads are restricted to the known
 source hosts. Putting an owned album in the wishlist keeps it in the collection;

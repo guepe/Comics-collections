@@ -87,12 +87,14 @@ class ComicLibraryPortal(CustomerPortal):
 
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
-        if "library_count" in counters:
-            values["library_count"] = request.env["comic.customer.album"].search_count(
-                [
-                    ("partner_id", "=", request.env.user.partner_id.id),
-                ]
-            )
+        # Calculé à chaque rendu : la carte « Ma Bibliothèque BD » affiche le nombre
+        # directement (pas de data-placeholder_count), et /my est rendu avec counters=[].
+        values["library_count"] = request.env["comic.customer.album"].search_count(
+            [
+                ("partner_id", "=", request.env.user.partner_id.id),
+                ("dans_collection", "=", True),
+            ]
+        )
         return values
 
     # ── /my/library — index ─────────────────────────────────────────────────

@@ -52,6 +52,7 @@ Comics-collections/
 │   ├── models/
 │   │   ├── comic_serie.py, comic_work.py, comic_edition.py
 │   │   ├── comic_isbn.py, comic_pret.py, comic_editeur.py
+│   │   ├── comic_customer_album.py   # bibliothèque personnelle + _get_collection_stats
 │   │   ├── comic_genre.py, comic_dedup_pair.py, res_partner.py
 │   ├── views/               # Vues back-office
 │   ├── wizards/
@@ -72,7 +73,7 @@ Comics-collections/
     ├── models/
     │   ├── comic_edition.py      # _inherit = 'comic.edition' (product_tmpl_id, sync)
     │   ├── comic_serie.py        # _inherit = 'comic.serie' (création produits en masse)
-    │   ├── comic_customer_album.py
+    │   ├── comic_customer_album.py   # _inherit : achats, « Acheté ici »
     │   ├── comic_sale_order.py
     │   ├── product_template.py
     │   └── res_partner.py
@@ -105,9 +106,10 @@ comic.serie
                 └──< comic.isbn
                        edition_id, isbn_13 (EAN-13 validé, UNIQUE), isbn_10 (optionnel)
 
-comic.customer.album   (comic_shop)
+comic.customer.album   (comics_collections — bibliothèque personnelle ; étendu par comic_shop)
   partner_id, edition_id, work_id (compute), source, etat_lecture
-  dans_collection, dans_wishlist, note, commentaire, date_ajout
+  dans_collection, dans_wishlist, note (+ note_etoiles), commentaire, date_ajout
+  comic_shop ajoute : sale_order_line_id, pos_order_line_id, auto_created, has_product
   Constraint UNIQUE(partner_id, edition_id)
 
 comic.pret

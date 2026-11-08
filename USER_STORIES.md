@@ -11,7 +11,7 @@
 - Format : *En tant que… / Je veux… / Afin de…*, puis contexte technique et critères `- [ ]`.
 - Cocher `[x]` dès qu'un critère est réellement livré — jamais par anticipation. Une US dont
   tous les critères sont cochés prend ✅, puis passe en une ligne dans l'[annexe](#4-annexe--livré).
-- Numérotation continue : **prochaine US = US-086**. Une piste 💡 garde son numéro quand elle est
+- Numérotation continue : **prochaine US = US-087**. Une piste 💡 garde son numéro quand elle est
   priorisée.
 - Le détail technique de chaque livraison est dans `CHANGE.md` (entrées datées).
 
@@ -21,7 +21,7 @@
 
 | Horizon        | Épic                                                                      | US                          | État |
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
-| **Maintenant** | [E5 — Tableau de bord & suivi de séries](#e5--tableau-de-bord--suivi-de-séries) | US-065 → 068, US-071  | ⏳   |
+| **Maintenant** | [E5 — Tableau de bord & suivi de séries](#e5--tableau-de-bord--suivi-de-séries) | US-068, US-071        | 🔄   |
 | **Maintenant** | [E6 — Séries sur le portail](#e6--séries-sur-le-portail) (gain rapide)    | US-073                      | ⏳   |
 | **Ensuite**    | [E6 — Séries sur le portail](#e6--séries-sur-le-portail)                  | US-069, US-070              | ⏳   |
 | **Ensuite**    | [E7 — IA (`comic_ai`)](#e7--ia-comic_ai)                                  | US-026 → 029                | ⏳   |
@@ -40,7 +40,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E2   | Enrichissement multi-sources         | `comic_datasource`                  | ✅   | 11 US  | —                         |
 | E3   | Shop & caisse                        | `comic_shop`                        | ✅   | 12 US  | —                         |
 | E4   | Bibliothèque client (portail)        | `comic_shop`                        | ✅   | 6 US   | —                         |
-| E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ⏳   | —      | US-065 → 068, US-071      |
+| E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | 🔄   | 4 US   | US-068, US-071            |
 | E6   | Séries sur le portail                | `comic_shop`                        | ⏳   | —      | US-069, US-070, US-073    |
 | E7   | IA                                   | `comic_ai` (nouveau)                | ⏳   | —      | US-026 → 029              |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064                    |
@@ -52,54 +52,11 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 
 ### E5 — Tableau de bord & suivi de séries
 
-> Priorité 1 : piloter sa collection et ses séries depuis le back-office.
-> Reprend les restes d'US-011, US-012 et US-013 (V1), plus les pistes retenues US-068 et US-071.
-> Point d'architecture à trancher au démarrage : la possession par utilisateur vit dans
-> `comic.customer.album` (`comic_shop`). Le tableau de bord doit donc soit vivre dans
-> `comic_shop`, soit faire remonter la possession dans `comics_collections`.
-
-**US-065 — Statistiques de ma collection** ⏳ *(ex-US-013)*
-
-```
-En tant que collectionneur
-Je veux un tableau de bord de ma collection
-Afin de connaître l'état de ma bibliothèque d'un coup d'œil
-
-Critères d'acceptance :
-- [ ] Nb d'albums possédés, nb de séries (complètes / en cours)
-- [ ] Répartition par genre (camembert) et par état de lecture (barres)
-- [ ] Top 5 des séries les mieux notées
-- [ ] Prêts en retard (alerte, lien vers les prêts)
-- [ ] Albums récemment ajoutés
-```
-
-**US-066 — Filtres et regroupements restants** ⏳ *(reste d'US-012)*
-
-```
-En tant que collectionneur
-Je veux retrouver mes albums par prêt, genre, type ou note
-Afin de naviguer dans une grande collection
-
-Contexte technique :
-  Déjà livré : recherche titre / série / ISBN / auteur / éditeur, regroupement série / éditeur.
-
-Critères d'acceptance :
-- [ ] Filtre « Prêtés » (prêt en cours)
-- [ ] Regroupement par genre et par type de série
-- [ ] Filtre par note (≥ 3★, ≥ 4★)
-```
-
-**US-067 — Note en étoiles** ⏳ *(reste d'US-011)*
-
-```
-En tant que collectionneur
-Je veux noter un album en étoiles directement dans les vues
-Afin de saisir et lire mes notes plus vite
-
-Critères d'acceptance :
-- [ ] Widget étoiles (priority) sur la note, en formulaire et en liste
-- [ ] Même rendu sur le portail /my/library
-```
+> Priorité 1 : piloter sa collection et ses séries, en back-office comme sur le portail.
+> Livré le 2026-11-08 : US-086 (bibliothèque personnelle dans `comics_collections`), US-065,
+> US-066, US-067 — voir l'[annexe](#e5--tableau-de-bord--suivi-de-séries-livré).
+> `comics_collections` seul offre la bibliothèque et le tableau de bord ; `comic_shop` ajoute
+> les achats et la même chose pour les clients sur le portail.
 
 **US-068 — Alerte nouveautés sur les séries suivies** ⏳
 
@@ -475,6 +432,15 @@ anciens fichiers V1 / V2 / V3.
 | US-081 | Modération des fiches créées depuis le portail : valider / refuser (doublon ou incorrect), client notifié — 2026-11-05 |
 | US-082 | Bibliothèque portail : pagination, messages, ISBN-10, wishlist sur un album possédé — 2026-11-05 / 06 |
 
+### E5 — Tableau de bord & suivi de séries (livré)
+
+| US     | Titre                                                                    |
+| ------ | ------------------------------------------------------------------------ |
+| US-086 | Bibliothèque personnelle (`comic.customer.album`) descendue dans `comics_collections` : module utilisable seul, migration des identifiants, menus Ma bibliothèque / Tous les albums — 2026-11-08 |
+| US-065 | Tableau de bord collectionneur : back-office (action OWL, prêts en retard) et portail `/my/library/dashboard` — 2026-11-08 |
+| US-066 | Filtres Prêtés, Note ≥ 3★ / ≥ 4★, regroupements par genre et type de série — 2026-11-08 |
+| US-067 | Note en étoiles : widget en back-office, saisie par étoiles sur le portail — 2026-11-08 |
+
 ### E8 — Qualité & publication OCA (livré)
 
 | US      | Titre                                                                  |
@@ -494,7 +460,7 @@ anciens fichiers V1 / V2 / V3.
 
 | US     | Statut                                                                    |
 | ------ | ------------------------------------------------------------------------- |
-| US-013 | Repris en US-065                                                          |
+| US-013 | Repris en US-065 (livré)                                                  |
 | US-048 | Fusionné dans US-069 (notification des clients à la mise en vente)        |
 | US-021 | ❌ Source BDGest (scraping) — module `comic_bdgest` supprimé le 2026-06-02 |
 | US-038 | Numéro jamais attribué                                                    |

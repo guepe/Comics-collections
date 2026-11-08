@@ -13,7 +13,8 @@ album is added to their library at payment.
 **Customer portal**
 
 Customers open *Ma Bibliothèque BD* (``/my/library``) from their portal, filter
-collection / wishlist, update reading status and rating, and add albums with
+collection / wishlist, update reading status and star rating, open their
+*Tableau de bord BD* (``/my/library/dashboard``), and add albums with
 *Ajouter une BD*. The *Ajouter automatiquement mes achats à ma bibliothèque*
 switch disables the automatic addition of their purchases.
 
@@ -29,7 +30,6 @@ album, or incorrect record, with an optional message to the customer).
     comic.edition
       └── product_tmpl_id → product.template
 
-    comic.customer.album        (unique per partner + edition)
-      partner_id, edition_id, work_id (compute)
-      source, etat_lecture, dans_collection, dans_wishlist
-      note, commentaire, date_ajout
+    comic.customer.album        (defined in comics_collections, extended here)
+      + source « achete_ici », sale_order_line_id, pos_order_line_id
+      + auto_created, has_product

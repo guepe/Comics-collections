@@ -120,3 +120,9 @@ class TestPortalDashboard(HttpCase):
         self.authenticate(self.login, self.login)
         self.assertIn('href="/my/library/dashboard"', self.url_open("/my/library").text)
         self.assertIn('href="/my/library/dashboard"', self.url_open("/my").text)
+
+    def test_home_library_card_counts_owned_albums(self):
+        """La carte « Ma Bibliothèque BD » de /my affiche le vrai nombre (3 possédés, wishlist exclue)."""
+        self.authenticate(self.login, self.login)
+        html = self.url_open("/my").text
+        self.assertRegex(html, r"\b3\s*</t>\s*album|\b3 album")
