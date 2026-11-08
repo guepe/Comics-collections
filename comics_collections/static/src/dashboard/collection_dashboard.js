@@ -1,5 +1,6 @@
 import {Component, onWillStart, useState} from "@odoo/owl";
 import {registry} from "@web/core/registry";
+import {Layout} from "@web/search/layout";
 import {standardActionServiceProps} from "@web/webclient/actions/action_service";
 import {useService} from "@web/core/utils/hooks";
 
@@ -11,9 +12,13 @@ import {useService} from "@web/core/utils/hooks";
  */
 export class CollectionDashboard extends Component {
     static template = "comics_collections.CollectionDashboard";
+    static components = {Layout};
     static props = {...standardActionServiceProps};
 
     setup() {
+        // Panneau de contrôle Odoo standard (fil d'Ariane), sans barre de recherche
+        this.display = {controlPanel: {}};
+        this.readingColors = {non_lu: "bg-secondary", en_cours: "bg-info", lu: "bg-success"};
         this.orm = useService("orm");
         this.action = useService("action");
         this.state = useState({data: null});
@@ -25,6 +30,54 @@ export class CollectionDashboard extends Component {
     get isEmpty() {
         const data = this.state.data;
         return !data.nb_albums && !data.nb_wishlist;
+    }
+
+    get kpis() {
+        const data = this.state.data;
+        const plural = (count, word) => `${count} ${word}${count > 1 ? "s" : ""}`;
+        return [
+            {
+                key: "nb_albums",
+                label: "Albums possédés",
+                value: data.nb_albums,
+                hint: "Voir ma collection",
+                icon: "fa-book",
+                color: "primary",
+                onClick: () => this.openAlbums(),
+            },
+            {
+                key: "nb_wishlist",
+                label: "Wishlist",
+                value: data.nb_wishlist,
+                hint: "Albums souhaités",
+                icon: "fa-heart",
+                color: "danger",
+                onClick: () => this.openWishlist(),
+            },
+            {
+                key: "nb_series",
+                label: "Séries",
+                value: data.nb_series,
+                hint: `${plural(data.series_completes, "complète")} · ${data.series_en_cours} en cours`,
+                icon: "fa-th-large",
+                color: "info",
+                onClick: () => this.openSeries(),
+            },
+            {
+                key: "loans_late",
+                label: "Prêts en retard",
+                value: data.loans_late,
+                hint: data.loans_late ? "À récupérer" : "Aucun retard",
+                icon: "fa-exchange",
+                color: data.loans_late ? "warning" : "success",
+                alert: data.loans_late > 0,
+                onClick: () => this.openLoans(),
+            },
+        ];
+    }
+
+    openCatalogue() {
+        this.action.doAction("comics_collections.action_comic_work_catalogue");
     }
 
     openAlbums() {

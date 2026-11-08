@@ -2,137 +2,127 @@
 <templates xml:space="preserve">
 
     <t t-name="comics_collections.CollectionDashboard">
-        <div class="o_comic_dashboard h-100 overflow-auto">
-            <div class="o_comic_dashboard_inner">
-                <header class="o_comic_dashboard_header">
-                    <span class="o_comic_dashboard_kicker">Ma Collection</span>
-                    <h1 class="o_comic_dashboard_title">Tableau de bord</h1>
-                </header>
-
-                <t t-set="data" t-value="state.data"/>
+        <Layout display="display" className="'o_comic_dashboard'">
+            <t t-set="data" t-value="state.data"/>
+            <div class="o_comic_dashboard_content container-fluid py-3 px-lg-4">
 
                 <!-- État vide -->
-                <section t-if="isEmpty" class="o_comic_dashboard_empty">
-                    <div class="o_comic_dashboard_empty_icon"><i class="fa fa-book" aria-hidden="true"/></div>
-                    <h2>Votre bibliothèque est encore vide</h2>
-                    <p>
-                        Ajoutez vos premiers albums depuis la liste des albums, ou importez votre
-                        collection depuis un fichier CSV ou Excel. Vos statistiques apparaîtront ici.
-                    </p>
-                    <div class="o_comic_dashboard_empty_actions">
-                        <button type="button" class="btn btn-primary" t-on-click="openAlbums">Parcourir les albums</button>
-                        <button type="button" class="btn btn-secondary" t-on-click="openImport">Importer un fichier</button>
+                <div t-if="isEmpty" class="o_view_nocontent">
+                    <div class="o_nocontent_help">
+                        <p class="o_view_nocontent_smiling_face">Votre bibliothèque est encore vide</p>
+                        <p>
+                            Ajoutez vos albums depuis la liste des albums, ou importez votre collection
+                            depuis un fichier CSV ou Excel.
+                        </p>
+                        <p>
+                            <button type="button" class="btn btn-primary me-2" t-on-click="openCatalogue">Parcourir les albums</button>
+                            <button type="button" class="btn btn-secondary" t-on-click="openImport">Importer un fichier</button>
+                        </p>
                     </div>
-                </section>
+                </div>
 
                 <t t-else="">
-                    <!-- Tuiles KPI -->
-                    <section class="o_comic_kpis">
-                        <button type="button" class="o_comic_kpi" t-on-click="openAlbums">
-                            <span class="o_comic_kpi_label">Albums possédés</span>
-                            <span class="o_comic_kpi_value" t-esc="data.nb_albums"/>
-                            <span class="o_comic_kpi_hint">Voir ma collection</span>
-                        </button>
-                        <button type="button" class="o_comic_kpi" t-on-click="openWishlist">
-                            <span class="o_comic_kpi_label">Wishlist</span>
-                            <span class="o_comic_kpi_value" t-esc="data.nb_wishlist"/>
-                            <span class="o_comic_kpi_hint">Albums souhaités</span>
-                        </button>
-                        <button type="button" class="o_comic_kpi" t-on-click="openSeries">
-                            <span class="o_comic_kpi_label">Séries</span>
-                            <span class="o_comic_kpi_value" t-esc="data.nb_series"/>
-                            <span class="o_comic_kpi_hint">
-                                <t t-esc="data.series_completes"/> complète<t t-if="data.series_completes > 1">s</t>
-                                · <t t-esc="data.series_en_cours"/> en cours
-                            </span>
-                        </button>
-                        <button type="button" class="o_comic_kpi"
-                                t-att-class="{'o_comic_kpi_alert': data.loans_late > 0}"
-                                t-on-click="openLoans">
-                            <span class="o_comic_kpi_label">Prêts en retard</span>
-                            <span class="o_comic_kpi_value" t-esc="data.loans_late"/>
-                            <span class="o_comic_kpi_hint">
-                                <t t-if="data.loans_late > 0">À récupérer</t>
-                                <t t-else="">Aucun retard</t>
-                            </span>
-                        </button>
-                    </section>
+                    <!-- Indicateurs -->
+                    <div class="row g-3 mb-3">
+                        <t t-foreach="kpis" t-as="kpi" t-key="kpi.key">
+                            <div class="col-6 col-lg-3">
+                                <div class="card h-100 o_comic_kpi" role="button" t-on-click="kpi.onClick"
+                                     t-att-data-kpi="kpi.key">
+                                    <div class="card-body d-flex align-items-center gap-3">
+                                        <span t-attf-class="o_comic_kpi_icon rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 text-bg-{{kpi.color}}">
+                                            <i t-attf-class="fa fa-fw {{kpi.icon}}" aria-hidden="true"/>
+                                        </span>
+                                        <div class="min-w-0">
+                                            <div class="text-muted small text-truncate" t-esc="kpi.label"/>
+                                            <div t-attf-class="fs-3 fw-bold lh-sm {{kpi.alert ? 'text-danger' : ''}}" t-esc="kpi.value"/>
+                                            <div class="text-muted small text-truncate" t-esc="kpi.hint"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
 
                     <!-- Répartitions -->
-                    <section class="o_comic_panels">
-                        <div class="o_comic_panel">
-                            <h3 class="o_comic_panel_title">Par genre</h3>
-                            <p t-if="!data.by_genre.length" class="o_comic_panel_empty">Aucun album possédé.</p>
-                            <ul class="o_comic_bars">
-                                <li t-foreach="data.by_genre" t-as="row" t-key="row.label" class="o_comic_bar">
-                                    <div class="o_comic_bar_head">
-                                        <span class="o_comic_bar_label" t-esc="row.label"/>
-                                        <span class="o_comic_bar_count"><t t-esc="row.count"/> album<t t-if="row.count > 1">s</t></span>
-                                    </div>
-                                    <div class="o_comic_bar_track">
-                                        <div class="o_comic_bar_fill" t-attf-style="width: {{row.percent}}%"/>
-                                    </div>
-                                </li>
-                            </ul>
+                    <div class="row g-3 mb-3">
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-transparent fw-bold">Albums par genre</div>
+                                <div class="card-body">
+                                    <t t-foreach="data.by_genre" t-as="row" t-key="row.label">
+                                        <div class="d-flex justify-content-between small mb-1">
+                                            <span t-esc="row.label"/>
+                                            <span class="text-muted"><t t-esc="row.count"/> (<t t-esc="row.percent"/> %)</span>
+                                        </div>
+                                        <div class="progress mb-3" role="progressbar" t-att-aria-valuenow="row.percent"
+                                             aria-valuemin="0" aria-valuemax="100" t-att-aria-label="row.label">
+                                            <div class="progress-bar bg-primary" t-attf-style="width: {{row.percent}}%"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
                         </div>
-                        <div class="o_comic_panel">
-                            <h3 class="o_comic_panel_title">État de lecture</h3>
-                            <p t-if="!data.nb_albums" class="o_comic_panel_empty">Aucun album possédé.</p>
-                            <ul t-else="" class="o_comic_bars">
-                                <li t-foreach="data.by_reading" t-as="row" t-key="row.key"
-                                    t-attf-class="o_comic_bar o_comic_bar_{{row.key}}">
-                                    <div class="o_comic_bar_head">
-                                        <span class="o_comic_bar_label" t-esc="row.label"/>
-                                        <span class="o_comic_bar_count"><t t-esc="row.count"/> · <t t-esc="row.percent"/> %</span>
-                                    </div>
-                                    <div class="o_comic_bar_track">
-                                        <div class="o_comic_bar_fill" t-attf-style="width: {{row.percent}}%"/>
-                                    </div>
-                                </li>
-                            </ul>
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-transparent fw-bold">État de lecture</div>
+                                <div class="card-body">
+                                    <t t-foreach="data.by_reading" t-as="row" t-key="row.key">
+                                        <div class="d-flex justify-content-between small mb-1">
+                                            <span t-esc="row.label"/>
+                                            <span class="text-muted"><t t-esc="row.count"/> (<t t-esc="row.percent"/> %)</span>
+                                        </div>
+                                        <div class="progress mb-3" role="progressbar" t-att-aria-valuenow="row.percent"
+                                             aria-valuemin="0" aria-valuemax="100" t-att-aria-label="row.label">
+                                            <div t-attf-class="progress-bar {{readingColors[row.key]}}" t-attf-style="width: {{row.percent}}%"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
                         </div>
-                    </section>
+                    </div>
 
                     <!-- Listes -->
-                    <section class="o_comic_panels">
-                        <div class="o_comic_panel">
-                            <h3 class="o_comic_panel_title">Séries les mieux notées</h3>
-                            <p t-if="!data.top_series.length" class="o_comic_panel_empty">
-                                Notez vos albums dans « Ma bibliothèque » pour voir apparaître vos séries préférées.
-                            </p>
-                            <ol t-else="" class="o_comic_list">
-                                <li t-foreach="data.top_series" t-as="serie" t-key="serie.id">
-                                    <a href="#" class="o_comic_list_item"
+                    <div class="row g-3">
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-transparent fw-bold">Séries les mieux notées</div>
+                                <div t-if="!data.top_series.length" class="card-body text-muted small">
+                                    Notez vos albums dans « Ma bibliothèque » pour voir apparaître vos séries préférées.
+                                </div>
+                                <div t-else="" class="list-group list-group-flush">
+                                    <a t-foreach="data.top_series" t-as="serie" t-key="serie.id" href="#"
+                                       class="list-group-item list-group-item-action d-flex align-items-center gap-2"
                                        t-on-click.prevent="() => this.openRecord('comic.serie', serie.id)">
-                                        <span class="o_comic_list_rank" t-esc="serie_index + 1"/>
-                                        <span class="o_comic_list_name" t-esc="serie.name"/>
-                                        <span class="o_comic_list_meta">
-                                            <i class="fa fa-star" aria-hidden="true"/>
+                                        <span class="badge rounded-pill text-bg-light" t-esc="serie_index + 1"/>
+                                        <span class="flex-grow-1 text-truncate" t-esc="serie.name"/>
+                                        <span class="text-nowrap">
+                                            <i class="fa fa-star text-warning" aria-hidden="true"/>
                                             <t t-esc="serie.note"/>
-                                            <small>(<t t-esc="serie.count"/> noté<t t-if="serie.count > 1">s</t>)</small>
+                                            <small class="text-muted">(<t t-esc="serie.count"/>)</small>
                                         </span>
                                     </a>
-                                </li>
-                            </ol>
+                                </div>
+                            </div>
                         </div>
-                        <div class="o_comic_panel">
-                            <h3 class="o_comic_panel_title">Derniers ajouts</h3>
-                            <p t-if="!data.recent.length" class="o_comic_panel_empty">Aucun album possédé.</p>
-                            <ul t-else="" class="o_comic_list">
-                                <li t-foreach="data.recent" t-as="album" t-key="album.id">
-                                    <a href="#" class="o_comic_list_item"
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-transparent fw-bold">Derniers ajouts</div>
+                                <div t-if="!data.recent.length" class="card-body text-muted small">Aucun album possédé.</div>
+                                <div t-else="" class="list-group list-group-flush">
+                                    <a t-foreach="data.recent" t-as="album" t-key="album.id" href="#"
+                                       class="list-group-item list-group-item-action d-flex align-items-center gap-2"
                                        t-on-click.prevent="() => this.openRecord('comic.work', album.work_id)">
-                                        <i class="fa fa-book o_comic_list_icon" aria-hidden="true"/>
-                                        <span class="o_comic_list_name" t-esc="album.name"/>
-                                        <span class="o_comic_list_meta" t-esc="formatDate(album.date)"/>
+                                        <i class="fa fa-book text-muted" aria-hidden="true"/>
+                                        <span class="flex-grow-1 text-truncate" t-esc="album.name"/>
+                                        <small class="text-muted text-nowrap" t-esc="formatDate(album.date)"/>
                                     </a>
-                                </li>
-                            </ul>
+                                </div>
+                            </div>
                         </div>
-                    </section>
+                    </div>
                 </t>
             </div>
-        </div>
+        </Layout>
     </t>
 
 </templates>

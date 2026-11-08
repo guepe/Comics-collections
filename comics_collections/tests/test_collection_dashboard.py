@@ -133,6 +133,6 @@ class TestCollectionDashboardUi(HttpCase):
     def test_dashboard_empty_state(self):
         self.browser_js(
             "/odoo/action-comics_collections.action_comic_collection_dashboard",
-            WAIT_FOR_DASHBOARD % ".o_comic_dashboard_empty",
+            WAIT_FOR_DASHBOARD % ".o_comic_dashboard .o_view_nocontent",
             login="dash_ui_empty",
         )
