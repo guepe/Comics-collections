@@ -44,7 +44,11 @@ class TestCollectionStats(TransactionCase):
     def test_counts(self):
         stats = self._stats()
         self.assertEqual(stats["nb_albums"], 3)
-        self.assertEqual(stats["nb_wishlist"], 1)
+        # Suivi automatique (US-088) : posséder un album fait suivre sa série, donc le
+        # tome 2 de la série partielle (possédé par un autre) devient un manque (US-089).
+        self.assertEqual(stats["nb_souhaits"], 1)
+        self.assertEqual(stats["nb_manques"], 1)
+        self.assertEqual(stats["nb_wishlist"], 2)
         self.assertEqual(stats["nb_series"], 2)
         self.assertEqual(stats["series_completes"], 1)
         self.assertEqual(stats["series_en_cours"], 1)
