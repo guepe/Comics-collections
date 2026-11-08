@@ -257,7 +257,10 @@ find /chemin/module -name "__pycache__" -exec rm -rf {} +
 
 Maintenir à jour en fin de session, avant le commit :
 
-- **`USER_STORIES_V3.md`** : cocher `[x]` dès qu'un critère est fait. Ajouter `✅` au titre quand tous les critères sont cochés. Ne jamais cocher par anticipation.
+- **`USER_STORIES.md`** (document unique : feuille de route, épics, US à venir, annexe du livré) :
+  cocher `[x]` dès qu'un critère est fait, jamais par anticipation. US terminée → `✅`, puis une
+  ligne dans l'annexe « Livré » de son épic et mise à jour de la feuille de route. Nouvelle US =
+  numéro suivant (indiqué dans les conventions en tête du fichier).
 - **`CHANGE.md`** : ajouter une entrée datée avec tous les fichiers modifiés, méthodes ajoutées, bugs corrigés, décisions techniques. Ne pas relire tout le fichier — juste appender.
 
 ---

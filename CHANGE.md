@@ -2130,3 +2130,29 @@ Réalisé en parallèle (3 branches de worktree fusionnées sur `integ/petits-de
   d'installation, rappel `-u` + redémarrage, section tests (tests Odoo uniquement).
 - `USER_STORIES_V3.md` : US-059 cochée, US-062 « Tests validés dans Odoo » et US-064
   « .gitignore adapté Odoo » cochés.
+
+## 2026-11-07 — User stories : document unique
+
+- `USER_STORIES.md` réécrit : feuille de route (Maintenant : IA · Ensuite : tableau de bord
+  collectionneur, rapports commerçant · Plus tard : publication OCA, pistes candidates),
+  vue d'ensemble des épics E1–E9, détail des US ouvertes, annexe « Livré » (une ligne par US).
+- `USER_STORIES_V2.md` et `USER_STORIES_V3.md` supprimés (contenu fusionné ; historique git).
+- Nouvelles US : US-065 → 067 (tableau de bord collectionneur, reprise des restes d'US-011 / 012 /
+  013), US-068 → 073 (pistes candidates 💡), US-074 → 085 (rattrapage du livré des 5–6 novembre).
+- Numérotation : doublon US-030 levé (pre-commit OCA → US-030b) ; US-021 (BDGest) abandonnée ;
+  US-038 jamais attribuée. Modèle Claude par défaut d'US-026 actualisé.
+- `CLAUDE.md` (section Suivi de projet), `memory/feedback_user_stories_checkbox.md`,
+  `memory/MEMORY.md` : renvoient au document unique. `AGENTS.md` (non versionné) resynchronisé.
+
+## 2026-11-08 — User stories : épics réordonnés par priorité
+
+- `USER_STORIES.md` : épics ouverts renumérotés dans l'ordre de priorité —
+  E5 Tableau de bord & suivi de séries (US-065 → 068, US-071) · E6 Séries sur le portail
+  (US-073, US-069, US-070) · E7 IA (US-026 → 029) · E8 Qualité & publication OCA (US-064) ·
+  E9 Shop & commerçant (US-046, 047, 049, 072). Section « Pistes candidates » supprimée :
+  toutes les pistes sont classées.
+- Feuille de route : Maintenant = E5 + US-073 (gain rapide) · Ensuite = E6, E7 IA ·
+  Plus tard = E8, E9.
+- US-048 fusionnée dans US-069 (suivi de séries client + notification à la mise en vente).
+  US-068 : seuls les tomes récemment parus déclenchent une alerte. US-070 / US-072 : notes
+  techniques (HTTPS caméra ; « Me prévenir » natif de website_sale_stock à vérifier).

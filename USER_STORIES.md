@@ -1,778 +1,500 @@
-# USER STORIES — Odoo Comic Collection
+# User stories — Comic Collection (Odoo 19)
 
-> Projet Odoo 19 — Gestion de collection de bandes dessinées
-> Format : `US-XXX | En tant que... | Je veux... | Afin de...`
-> **Sources de données :** Google Books API (gratuite) + Open Library (gratuite, sans clé)
->
-> - BnF SRU (gratuite, sans clé) + BDGest scraping (fallback, opt-in légal)
->   **Pas de scraping par défaut** — toutes les sources primaires sont des APIs officielles ouvertes.
+> Document unique de suivi fonctionnel : feuille de route, épics, US à venir et historique du livré.
+> Remplace `USER_STORIES.md` (V1), `USER_STORIES_V2.md` et `USER_STORIES_V3.md` (fusionnés le
+> 2026-11-07 ; les versions précédentes restent dans l'historique git).
 
----
+**Légende :** ⏳ à faire · 🔄 partiel · ✅ livré · 💡 piste candidate (à prioriser) · ❌ abandonné
 
-## 🗺️ Table des matières — Ce qui reste à faire
+**Conventions**
 
-> Légende : ✅ Terminé · 🔄 Partiel · ⏳ À faire · 🔴 Priorité haute · 🟠 Moyenne · 🟡 Basse
-
-### Prêt à publier (bloquants levés)
-
-| US           | Titre                                                 | État |
-| ------------ | ----------------------------------------------------- | ---- |
-| US-001 → 007 | Infrastructure & Sécurité                             | ✅   |
-| US-008       | Navigation minimale                                   | ✅   |
-| US-009       | Kanban Séries                                         | ✅   |
-| US-010       | Kanban Albums                                         | ✅   |
-| US-011       | Formulaire album enrichi                              | ✅   |
-| US-015       | Liens d'achat                                         | ✅   |
-| US-016       | Données de démo                                       | ✅   |
-| US-017       | Infrastructure comic_datasource                       | ✅   |
-| US-018       | Source Google Books                                   | ✅   |
-| US-023       | Wizard recherche & import                             | ✅   |
-| US-025       | Génération liens d'achat auto                         | ✅   |
-| US-030       | Modèle fichier import                                 | ✅   |
-| US-031       | Wizard import CSV/Excel                               | ✅   |
-| US-033       | Documentation & README                                | ✅   |
-| US-034       | Suivi séries — tomes manquants → wishlist             | ✅   |
-| US-019       | Source Open Library API                               | ✅   |
-| US-020       | Source BnF SRU API                                    | ✅   |
-| US-022       | Aggregateur multi-sources                             | ✅   |
-| US-014       | Wishlist : vue dédiée + bouton "Marquer comme acquis" | ✅   |
-| US-024       | Config UI sources de données                          | ✅   |
-
-### À faire — Priorité haute 🔴
-
-| US      | Titre                           | Dépend de |
-| ------- | ------------------------------- | --------- |
-| US-008b | Menus et navigation complète ✅ |           |
-
-### À faire — Priorité moyenne 🟠
-
-| US     | Titre                                 | Dépend de |
-| ------ | ------------------------------------- | --------- |
-| US-012 | Filtres & recherche avancée (partiel) | —         |
-
-### À faire — Priorité basse 🟡
-
-| US     | Titre                                      | Dépend de       |
-| ------ | ------------------------------------------ | --------------- |
-| US-006 | Modèle `comic.pret` (prêts)                | —               |
-| US-021 | Source BDGest (fallback scraping, partiel) | —               |
-| US-026 | Config connecteurs IA                      | module comic_ai |
-| US-027 | Génération synopsis par IA                 | US-026          |
-| US-028 | Traduction synopsis par IA                 | US-026          |
-| US-029 | Découverte IA par profil de goûts          | US-026, US-027  |
-| US-013 | Dashboard statistiques                     | —               |
-| US-032 | Tests unitaires                            | —               |
+- Format : *En tant que… / Je veux… / Afin de…*, puis contexte technique et critères `- [ ]`.
+- Cocher `[x]` dès qu'un critère est réellement livré — jamais par anticipation. Une US dont
+  tous les critères sont cochés prend ✅, puis passe en une ligne dans l'[annexe](#4-annexe--livré).
+- Numérotation continue : **prochaine US = US-086**. Une piste 💡 garde son numéro quand elle est
+  priorisée.
+- Le détail technique de chaque livraison est dans `CHANGE.md` (entrées datées).
 
 ---
 
-## 🏗️ PHASE 1 — Infrastructure ✅ TERMINÉE
+## 1. Feuille de route
 
-### EPIC 1 : Modèles & Sécurité
-
----
-
-**US-001 — Scaffold du module principal** ✅
-
-```
-Critères d'acceptance :
-- [x] __manifest__.py correct (version 19.0.1.0.0, LGPL-3)
-- [x] Dépendances : base, mail, contacts
-- [x] Module installable sans erreur
-- [x] Icône présente dans static/description/
-- [x] Application = True (apparaît dans le menu Apps)
-```
+| Horizon        | Épic                                                                      | US                          | État |
+| -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
+| **Maintenant** | [E5 — Tableau de bord & suivi de séries](#e5--tableau-de-bord--suivi-de-séries) | US-065 → 068, US-071  | ⏳   |
+| **Maintenant** | [E6 — Séries sur le portail](#e6--séries-sur-le-portail) (gain rapide)    | US-073                      | ⏳   |
+| **Ensuite**    | [E6 — Séries sur le portail](#e6--séries-sur-le-portail)                  | US-069, US-070              | ⏳   |
+| **Ensuite**    | [E7 — IA (`comic_ai`)](#e7--ia-comic_ai)                                  | US-026 → 029                | ⏳   |
+| **Plus tard**  | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064                      | 🔄   |
+| **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
 
 ---
 
-**US-002 — Modèle `comic.genre`** ✅
+## 2. Épics — vue d'ensemble
 
-```
-Critères d'acceptance :
-- [x] Modèle comic.genre avec champs : name, description, color
-- [x] Vue list et form
-- [x] Données de base pré-chargées (10 genres)
-- [x] Droits d'accès configurés
-```
+Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prioritaire).
 
----
-
-**US-003 — Modèle `comic.editeur`** ✅
-
-```
-Critères d'acceptance :
-- [x] Modèle comic.editeur : name, pays_id, site_web, bdgest_editeur_id
-- [x] Lien optionnel vers res.partner
-- [x] Vue list et form
-- [x] Droits d'accès configurés
-```
+| Épic | Domaine                              | Module(s)                           | État | Livré  | Ouvert                    |
+| ---- | ------------------------------------ | ----------------------------------- | ---- | ------ | ------------------------- |
+| E1   | Catalogue & collection               | `comics_collections`                | ✅   | 30 US  | —                         |
+| E2   | Enrichissement multi-sources         | `comic_datasource`                  | ✅   | 11 US  | —                         |
+| E3   | Shop & caisse                        | `comic_shop`                        | ✅   | 12 US  | —                         |
+| E4   | Bibliothèque client (portail)        | `comic_shop`                        | ✅   | 6 US   | —                         |
+| E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ⏳   | —      | US-065 → 068, US-071      |
+| E6   | Séries sur le portail                | `comic_shop`                        | ⏳   | —      | US-069, US-070, US-073    |
+| E7   | IA                                   | `comic_ai` (nouveau)                | ⏳   | —      | US-026 → 029              |
+| E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064                    |
+| E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | US-046, 047, 049, 072     |
 
 ---
 
-**US-004 — Modèle `comic.serie`** ✅
+## 3. Épics ouverts — US à venir
 
-```
-Critères d'acceptance :
-- [x] Tous les champs du modèle définis (voir CLAUDE.md)
-- [x] Héritage mail.thread + mail.activity.mixin
-- [x] Champ computed nb_albums_total et nb_albums_possedes
-- [x] Vue list et form avec onglets
-- [x] Droits d'accès configurés
-```
+### E5 — Tableau de bord & suivi de séries
 
----
+> Priorité 1 : piloter sa collection et ses séries depuis le back-office.
+> Reprend les restes d'US-011, US-012 et US-013 (V1), plus les pistes retenues US-068 et US-071.
+> Point d'architecture à trancher au démarrage : la possession par utilisateur vit dans
+> `comic.customer.album` (`comic_shop`). Le tableau de bord doit donc soit vivre dans
+> `comic_shop`, soit faire remonter la possession dans `comics_collections`.
 
-**US-005 — Modèle `comic.album` et `comic.album.auteur.line`** ✅
-
-```
-Critères d'acceptance :
-- [x] Tous les champs du modèle définis (voir CLAUDE.md)
-- [x] Table comic.album.auteur.line avec rôles
-- [x] Utilisation de res.partner pour les auteurs
-- [x] Héritage mail.thread + mail.activity.mixin
-- [x] Validation ISBN (format EAN-13)
-- [x] Vue list et form avec onglets : Auteurs, Ma Collection, Liens, IA
-- [x] Droits d'accès configurés
-```
-
----
-
-**US-007 — Sécurité et droits d'accès** ✅
-
-```
-Critères d'acceptance :
-- [x] ir.model.access.csv complet pour tous les modèles
-- [x] Groupe comic_collection.group_comic_user (lecture/écriture)
-- [x] Groupe comic_collection.group_comic_manager (admin)
-- [x] Record rules : collection privée par utilisateur (user voit le sien, manager voit tout)
-```
-
----
-
-## 🗂️ PHASE 1b — Layout minimal
-
-> Objectif : rendre le module navigable avec des vues liste simples.
-> Suffisant pour valider BDGest et IA sans attendre le design final de l'interface.
-
-### EPIC 2 : Navigation de base
-
----
-
-**US-008 — Menus et navigation minimale** ✅
+**US-065 — Statistiques de ma collection** ⏳ *(ex-US-013)*
 
 ```
 En tant que collectionneur
-Je veux un menu principal pour accéder aux listes de base
-Afin de naviguer dans l'application et tester les connecteurs
+Je veux un tableau de bord de ma collection
+Afin de connaître l'état de ma bibliothèque d'un coup d'œil
 
 Critères d'acceptance :
-- [x] Menu principal "Bandes Dessinées" visible dans la barre de navigation Odoo
-- [x] Ma Collection > Séries (list)
-- [x] Ma Collection > Albums (list)
-- [x] Catalogues > Éditeurs (list)
-- [x] Catalogues > Genres (list)
-- [x] Configuration > Paramètres (placeholder, group_comic_manager)
+- [ ] Nb d'albums possédés, nb de séries (complètes / en cours)
+- [ ] Répartition par genre (camembert) et par état de lecture (barres)
+- [ ] Top 5 des séries les mieux notées
+- [ ] Prêts en retard (alerte, lien vers les prêts)
+- [ ] Albums récemment ajoutés
 ```
 
----
-
-**US-016 — Données de démonstration** ✅
-
-```
-En tant que développeur
-Je veux des données de démonstration réalistes
-Afin de pouvoir tester BDGest et IA sur un jeu de données existant
-
-Critères d'acceptance :
-- [x] 3 séries de démo : Astérix, Blacksad, Largo Winch
-- [x] 5 albums par série minimum
-- [x] Auteurs liés (res.partner) : Goscinny, Uderzo, Canales, Guarnido, Van Hamme, Francq
-- [x] Genres et éditeurs pré-remplis (Albert René, Dargaud, Dupuis)
-- [x] Quelques albums en wishlist (Blacksad T4-T5, Largo T5)
-```
-
----
-
-## 🔌 PHASE 3 — Connecteur Multi-Sources
-
-> Priorité haute : permet de peupler rapidement la collection via APIs ouvertes, sans scraping par défaut.
-
-### EPIC 3 : APIs ouvertes + BDGest fallback
-
----
-
-**US-017 — Infrastructure du module `comic_datasource`** ✅
-
-```
-En tant que développeur
-Je veux créer la structure de base du module comic_datasource
-Afin d'avoir un connecteur multi-sources propre et extensible
-
-Critères d'acceptance :
-- [x] Module comic_datasource avec __manifest__ correct
-- [x] Dépend de : comic_collection
-- [x] Structure sources/ avec un fichier par source
-- [x] Classe de base abstraite BaseComicSource avec interface commune
-- [x] Modèle normalisé de retour (dict) défini et documenté
-- [x] Classe ComicDataAggregator dans aggregator.py
-- [x] Tests unitaires avec mocks HTTP pour chaque source
-```
-
----
-
-**US-018 — Source Google Books API** ✅
+**US-066 — Filtres et regroupements restants** ⏳ *(reste d'US-012)*
 
 ```
 En tant que collectionneur
-Je veux que le système récupère les données depuis Google Books
-Afin d'obtenir synopsis, couvertures HD et métadonnées de qualité
+Je veux retrouver mes albums par prêt, genre, type ou note
+Afin de naviguer dans une grande collection
+
+Contexte technique :
+  Déjà livré : recherche titre / série / ISBN / auteur / éditeur, regroupement série / éditeur.
 
 Critères d'acceptance :
-- [x] Classe GoogleBooksSource opérationnelle
-- [x] Recherche par ISBN (prioritaire)
-- [x] Recherche par titre + auteur optionnel
-- [x] Extraction : titre, auteurs, éditeur, date, pages, synopsis, couvertures
-- [x] Couvertures disponibles en 4 tailles (small/medium/large/extraLarge)
-- [x] Clé API configurable dans Paramètres Odoo
-- [x] Gestion erreur quota dépassé (HTTP 429) avec message clair
-- [x] Fonctionne sans clé pour les requêtes de base (mode anonyme)
+- [ ] Filtre « Prêtés » (prêt en cours)
+- [ ] Regroupement par genre et par type de série
+- [ ] Filtre par note (≥ 3★, ≥ 4★)
 ```
 
----
-
-**US-019 — Source Open Library API ✅**
+**US-067 — Note en étoiles** ⏳ *(reste d'US-011)*
 
 ```
 En tant que collectionneur
-Je veux que le système récupère les couvertures depuis Open Library
-Afin d'avoir des images de couverture sans avoir besoin d'une clé API
+Je veux noter un album en étoiles directement dans les vues
+Afin de saisir et lire mes notes plus vite
 
 Critères d'acceptance :
-- [x] Classe OpenLibrarySource opérationnelle
-- [x] Recherche par ISBN → métadonnées complètes
-- [x] URL couverture générée directement : covers.openlibrary.org/b/isbn/{ISBN}-L.jpg
-- [x] Vérification existence couverture avant téléchargement (évite les 404)
-- [x] Extraction auteurs avec mapping rôles si disponible
-- [x] Aucune configuration requise (pas de clé API)
-- [x] Utilisée automatiquement comme source de couverture alternative
+- [ ] Widget étoiles (priority) sur la note, en formulaire et en liste
+- [ ] Même rendu sur le portail /my/library
 ```
 
----
-
-**US-020 — Source BnF SRU API ✅**
+**US-068 — Alerte nouveautés sur les séries suivies** ⏳
 
 ```
 En tant que collectionneur
-Je veux que le système interroge la BnF pour les BD francophones
-Afin d'avoir des données officielles de dépôt légal pour les BD FR/BE
+Je veux être prévenu quand un nouveau tome d'une série que je suis paraît
+Afin de ne rater aucune sortie
+
+Contexte technique :
+  S'appuie sur la détection des tomes manquants (cron hebdomadaire) et suivi_user_ids.
+  Attention : la détection trouve aussi de vieux tomes jamais saisis. « Nouveauté » =
+  date_parution récente (depuis le dernier passage ou < 3 mois), sinon avalanche
+  d'alertes au premier lancement.
 
 Critères d'acceptance :
-- [x] Classe BnfSource opérationnelle
-- [x] Recherche par ISBN via API SRU
-- [x] Parsing XML de la réponse (xmltodict)
-- [x] Extraction : titre, auteurs, éditeur, date dépôt légal, ISBN
-- [x] Priorité sur les autres sources pour les champs date_depot_legal
-- [x] Aucune configuration requise
-- [x] Gestion timeout (la BnF peut être lente)
-- [x] Recherche par série (bib.serie) pour la détection des tomes manquants (US-034)
+- [ ] Notification / activité pour chaque utilisateur qui suit la série
+- [ ] Ajout du tome en wishlist en un clic
+- [ ] Pas de doublon d'alerte pour un même tome
+- [ ] Seuls les tomes récemment parus déclenchent une alerte
 ```
 
----
-
-**US-021 — Source BDGest (fallback scraping)**
+**US-071 — Export et valeur de la collection** ⏳
 
 ```
 En tant que collectionneur
-Je veux pouvoir utiliser BDGest comme source de dernier recours
-Afin de récupérer des BD non trouvées dans les APIs ouvertes
+Je veux exporter l'inventaire de ma collection, avec sa valeur
+Afin de l'assurer, la partager ou la sauvegarder
 
 Critères d'acceptance :
-- [ ] Classe BdgestSource opérationnelle (scraping BeautifulSoup)
-- [ ] DISCLAIMER légal affiché à la première activation dans les paramètres
-- [ ] Case à cocher "J'accepte les CGU de BDGest" obligatoire pour activer
-- [ ] Désactivée par défaut (opt-in explicite)
-- [ ] Délai de 2 secondes entre chaque requête (rate limiting)
-- [ ] Credentials optionnels (login/mdp) pour accès authentifié
-- [ ] Recherche par ISBN, titre, auteur
-- [ ] Import série complète via bdgest_serie_id
-- [ ] Gestion blocage IP avec message d'erreur explicite
+- [ ] Export CSV et PDF de la collection (série, tome, titre, ISBN, état)
+- [ ] Prix d'achat facultatif par album, total de la collection
+- [ ] Valeur estimée facultative (saisie manuelle)
 ```
 
 ---
 
-**US-022 — Aggregateur multi-sources ✅**
+### E6 — Séries sur le portail
 
-```
-En tant que développeur
-Je veux un aggregateur qui fusionne intelligemment les données de toutes les sources
-Afin d'obtenir la fiche la plus complète possible automatiquement
+> Priorité 2 : la même gestion de séries et de collection, côté client sur `/my/library`.
+> US-073 est un gain rapide, faisable à tout moment.
 
-Critères d'acceptance :
-- [x] Classe ComicDataAggregator avec méthode search(isbn, title, author)
-- [x] Cascade dans l'ordre : Google → Open Library → BnF → BDGest
-- [x] Fusion des champs : prend le premier champ non-vide trouvé
-- [x] Exception : synopsis priorité Google > BnF > BDGest
-- [x] Exception : date_depot_legal priorité BnF > autres
-- [x] Exception : couverture priorité Google Large > OpenLib L > BDGest
-- [x] Résultat indique quelle source a fourni chaque champ
-- [x] Cache des résultats en session (évite les appels répétés)
-- [x] Log des sources interrogées pour debugging
-```
-
----
-
-**US-023 — Wizard de recherche et import unifié** ✅
+**US-073 — Wishlist partageable** ⏳
 
 ```
 En tant que collectionneur
-Je veux rechercher un album dans toutes les sources en un seul geste
-Afin d'importer facilement n'importe quelle BD dans ma collection
+Je veux partager ma wishlist par un lien
+Afin que mes proches sachent quoi m'offrir
 
 Critères d'acceptance :
-- [x] Wizard accessible depuis menu et depuis bouton sur comic.album
-- [x] Champ de recherche unique (ISBN ou titre)
-- [x] Détection automatique ISBN vs titre (format EAN-13)
-- [x] Affichage des résultats avec badge source (Google/OpenLib/BnF/BDGest)
-- [x] Couverture preview dans le wizard
-- [x] Sélection multiple pour import en lot
-- [x] Gestion des doublons (ISBN déjà en base → avertissement + mise à jour)
-- [x] Gestion conflit de titre (EN vs FR) : choix keep / use_new / skip par ligne
-- [x] Import crée automatiquement : série, auteurs (res.partner), éditeur
-- [x] Rapport post-import : X créés, Y mis à jour, Z ignorés
-- [x] Bouton "Mettre à jour les albums" sur la fiche Série (lot)
+- [ ] Lien public (jeton) activable / révocable depuis /my/library
+- [ ] Page en lecture seule : couverture, série, tome, titre, lien vers le shop si en vente
+- [ ] Aucune autre donnée personnelle exposée
 ```
 
----
-
-**US-024 — Configuration des sources de données ✅**
+**US-069 — Suivi de séries par les clients et notification des sorties** ⏳ *(absorbe US-048)*
 
 ```
-En tant qu'administrateur
-Je veux configurer les sources de données dans les paramètres Odoo
-Afin de contrôler quelles APIs sont utilisées et dans quel ordre
+En tant que client du shop
+Je veux suivre une série depuis mon portail
+Afin d'être prévenu quand un nouveau tome, ou un album de ma wishlist, est mis en vente
+
+Contexte technique :
+  Fusion d'US-069 (suivi côté client) et d'US-048 (notification à la mise en catalogue).
+  Déclencheur : publication du produit (action_create_product() / is_published sur
+  comic_shop/models/comic_edition.py). Destinataires : clients qui suivent la série, et
+  comic.customer.album de l'édition en wishlist. mail.template + message_post sur l'édition.
 
 Critères d'acceptance :
-- [x] Section "Sources de données BD" dans Paramètres > Configuration
-- [x] Champ clé API Google Books avec lien vers console.cloud.google.com
-- [x] Bouton "Tester Google Books" avec retour visuel
-- [x] Toggle activation Open Library (activé par défaut)
-- [x] Toggle activation BnF (activé par défaut)
-- [x] Toggle activation BDGest avec disclaimer légal (désactivé par défaut)
-- [x] Champs login/mdp BDGest (conditionnels si BDGest activé)
-- [x] Champ délai BDGest (défaut : 2 secondes)
-- [ ] Ordre de priorité des sources (drag & drop — non implémenté, ordre fixe dans l'aggregateur)
+- [ ] Bouton « Suivre la série » sur /my/library et sur la page série du shop
+- [ ] Liste des séries suivies et désabonnement sur le portail
+- [ ] À la mise en vente : email « Bonne nouvelle — [Titre] est disponible ! » avec lien
+      vers la page produit, aux abonnés de la série et aux clients qui l'ont en wishlist
+- [ ] Côté commerçant : « X clients seront prévenus » avec aperçu avant envoi
+- [ ] Trace dans le chatter de l'édition : date, nb destinataires
+- [ ] Un client n'est prévenu qu'une fois par album
 ```
 
----
-
-**US-025 — Enrichissement automatique des liens d'achat** ✅
+**US-070 — Ajout par scan d'ISBN à la caméra** ⏳
 
 ```
 En tant que collectionneur
-Je veux que les liens club.be et amazon.com.be soient générés automatiquement
-Afin de pouvoir acheter rapidement un album manquant
+Je veux scanner le code-barres d'un album avec mon téléphone
+Afin de l'ajouter à ma bibliothèque sans taper l'ISBN
+
+Contexte technique :
+  Le back-office Odoo 19 sait déjà scanner par caméra ; le portail demande du JS dédié.
+  La caméra exige HTTPS (à prévoir pour les tests locaux).
 
 Critères d'acceptance :
-- [x] À la création, construction URL librairieclub.be depuis l'ISBN
-- [x] À la création, construction URL amazon.com.be depuis l'ISBN
-- [x] À la création, construction URL fnac.be depuis l'ISBN (bonus)
-- [x] Bouton "Régénérer les liens" sur le formulaire album
-- [x] Les liens s'ouvrent dans un nouvel onglet (via action_open_*)
-- [x] Boutons grisés si URL vide
-- [x] Auto-remplissage à la saisie ISBN (onchange) si champs vides
+- [ ] Bouton « Scanner » sur l'ajout d'une BD du portail (et en back-office mobile)
+- [ ] Lecture EAN-13 via la caméra, puis recherche habituelle (catalogue + sources)
+- [ ] Repli sur la saisie manuelle si la caméra est indisponible
 ```
 
 ---
 
-## 🤖 PHASE 4a — Connecteur IA
+### E7 — IA (`comic_ai`)
 
-> Priorité haute : enrichissement des fiches BD via Claude / OpenAI.
+> Nouveau module, dépend de `comics_collections` (et de `comic_shop` pour US-029).
+> Fournisseurs : Anthropic (Claude) et OpenAI, au choix dans les paramètres.
+> Clés API en `ir.config_parameter` — jamais en dur. Dépendances Python : `anthropic`, `openai`.
+> Wizard `comic.ai.wizard` ouvert depuis la fiche album / édition.
 
-### EPIC 4 : Intelligence Artificielle
-
----
-
-**US-026 — Configuration des connecteurs IA**
+**US-026 — Configuration des connecteurs IA** ⏳
 
 ```
 En tant qu'administrateur
 Je veux configurer les API Claude et OpenAI dans les paramètres Odoo
-Afin de pouvoir utiliser l'IA pour enrichir mes fiches BD
+Afin de pouvoir utiliser l'IA pour enrichir les fiches BD
+
+Contexte technique :
+  res.config.settings hérité (comic_ai/models/res_config_settings.py), section dans l'app
+  « Bandes Dessinées » existante. Champs password, non exportés.
 
 Critères d'acceptance :
-- [ ] Section "IA - Bandes Dessinées" dans Paramètres > Configuration
-- [ ] Sélecteur de provider actif : Claude (Anthropic) / OpenAI
-- [ ] Champ clé API Claude (password, stocké en ir.config_parameter)
-- [ ] Champ modèle Claude (défaut: claude-sonnet-4-6)
-- [ ] Champ clé API OpenAI (password, stocké en ir.config_parameter)
-- [ ] Champ modèle OpenAI (défaut: gpt-4o)
-- [ ] Langue de génération par défaut : FR / NL / EN
-- [ ] Bouton "Tester la connexion IA"
+- [ ] Section « IA » dans Paramètres > Bandes Dessinées
+- [ ] Choix du fournisseur actif : Claude (Anthropic) / OpenAI
+- [ ] Clé API Claude → ir.config_parameter 'comic_ai.claude_api_key'
+- [ ] Modèle Claude (défaut : claude-sonnet-5-5 — à revalider au démarrage)
+- [ ] Clé API OpenAI → ir.config_parameter 'comic_ai.openai_api_key' + modèle
+- [ ] Langue de génération par défaut : fr / nl / en
+- [ ] Bouton « Tester la connexion IA » → message succès / erreur
 ```
 
----
-
-**US-027 — Génération de synopsis par IA**
+**US-027 — Génération de synopsis par IA** ⏳
 
 ```
-En tant que collectionneur
-Je veux générer automatiquement un synopsis pour un album via l'IA
-Afin d'enrichir ma fiche sans avoir à rédiger manuellement
+En tant que collectionneur / commerçant
+Je veux générer un synopsis pour un album via l'IA
+Afin d'enrichir la fiche sans rédiger manuellement
+
+Contexte technique :
+  Prompt : titre, série, tome, auteurs, éditeur, synopsis existant.
+  Prompts dans comic_ai/prompts/. Règle d'enrichissement du projet : ne jamais écraser
+  sans confirmation explicite.
 
 Critères d'acceptance :
-- [ ] Bouton "✨ Générer le synopsis" dans l'onglet IA du formulaire album
-- [ ] Le prompt inclut : titre, série, tome, auteurs, éditeur, genre, date
-- [ ] Wizard de prévisualisation avant d'appliquer
-- [ ] Bouton "Appliquer" → insère dans le champ synopsis
-- [ ] Bouton "Régénérer" → nouvelle génération
-- [ ] Bouton "Annuler" → ferme sans modifier
+- [ ] Bouton « Générer le synopsis » sur la fiche (gestionnaires)
+- [ ] Prévisualisation : Appliquer / Régénérer / Annuler
+- [ ] Appliquer → écrit le synopsis de l'édition
 - [ ] Indicateur de chargement pendant la génération
-- [ ] Gestion d'erreur si clé API invalide ou timeout
+- [ ] Erreurs claires : clé invalide, délai dépassé, quota
+- [ ] Trace dans le chatter : fournisseur, modèle, date
 ```
 
----
-
-**US-028 — Traduction du synopsis par IA**
+**US-028 — Traduction du synopsis par IA** ⏳
 
 ```
-En tant que collectionneur
+En tant que collectionneur / commerçant
 Je veux traduire le synopsis d'un album dans une autre langue
-Afin de gérer une collection multilingue (FR/NL/EN)
+Afin de gérer une collection multilingue (FR / NL / EN)
 
 Critères d'acceptance :
-- [ ] Action "Traduire le synopsis" dans le wizard IA
-- [ ] Sélection de la langue cible
+- [ ] Action « Traduire le synopsis » dans le wizard IA
+- [ ] Langue cible : fr / nl / en / de
 - [ ] Prévisualisation avant application
-- [ ] Le synopsis traduit remplace ou complète le champ existant
+- [ ] Appliquer → remplace le synopsis ou l'écrit sur l'édition de la langue cible
+- [ ] Gestion d'erreur identique à US-027
 ```
 
----
-
-**US-029 — Découverte IA par profil de goûts**
-
-```
-En tant que collectionneur
-Je veux que l'IA me suggère des séries inconnues basées sur mes séries préférées
-Afin de découvrir de nouvelles BD correspondant à mon profil de goût
-
-Contexte de conception :
-  Deux besoins distincts ont été séparés :
-  - US-029 (ce ticket) : DÉCOUVERTE de séries inconnues via IA
-  - US-034 : SUIVI de séries connues pour détecter les nouveaux tomes
-
-Critères d'acceptance :
-- [ ] Bouton "Découvrir de nouvelles BD" accessible depuis le menu ou dashboard
-- [ ] Wizard : affiche les séries notées 4-5★ comme profil de goût (modifiable)
-- [ ] L'IA reçoit le profil : genres, auteurs, titres des séries appréciées
-- [ ] Retourne 10-15 suggestions de séries inconnues (titre, auteur, genre, pourquoi)
-- [ ] Filtre automatique : exclut les séries déjà présentes dans la collection
-- [ ] Sélection manuelle des suggestions qui intéressent l'utilisateur
-- [ ] Ajout en wishlist des suggestions sélectionnées (comme comic.serie)
-- [ ] Bouton "Vérifier sur le datasource" par suggestion (évite les hallucinations)
-- [ ] Gestion d'erreur si clé API invalide ou timeout
-```
-
----
-
-**US-034 — Suivi des séries : détection des tomes manquants ✅**
+**US-029 — Découverte IA par profil de goûts** ⏳
 
 ```
 En tant que collectionneur
-Je veux marquer des séries "à suivre" et détecter automatiquement les tomes manquants
-Afin de compléter ma wishlist sans surveiller manuellement chaque série
+Je veux que l'IA me suggère des séries inconnues proches de mes séries préférées
+Afin de découvrir de nouvelles BD correspondant à mes goûts
 
-Contexte de conception :
-  Séparé de US-029 (découverte IA) : pas d'IA ici, uniquement datasource.
-  Idéal pour les séries en cours de publication dont on attend les nouveaux tomes.
-
-Critères d'acceptance :
-- [x] Champ booléen "À suivre" sur comic.serie (visible dans le form et le kanban)
-- [x] Vue ou filtre "Séries suivies" dans le menu Ma Collection
-- [x] Bouton "Vérifier les nouveaux tomes" sur une série suivie
-- [x] Comparaison entre les tomes en base et les tomes trouvés via datasource (par ISBN ou titre)
-- [x] Liste des tomes manquants affichée avec confirmation utilisateur avant ajout
-- [x] Tomes manquants confirmés → ajoutés en wishlist (dans_wishlist = True)
-- [x] (optionnel) Cron hebdomadaire pour toutes les séries suivies en lot
-```
-
----
-
-## 🎨 PHASE 4 — Interface complète
-
-> À démarrer une fois le design validé et les connecteurs BDGest/IA fonctionnels.
-
-### EPIC 5 : Vues avancées et navigation complète
-
----
-
-**US-008b — Menus et navigation complète**
-
-```
-En tant que collectionneur
-Je veux un menu principal complet avec toutes les fonctions
-Afin de naviguer dans toute l'application
+Contexte technique :
+  Profil = comic.customer.album notés ≥ 4. L'IA reçoit genres, auteurs, titres et renvoie
+  10 à 15 suggestions, ajoutables en wishlist. Distinct d'US-034 (séries déjà connues).
 
 Critères d'acceptance :
-- [x] Sous-menus : Ma Collection > Séries / Albums
-- [x] Sous-menu : Wishlist
-- [ ] Sous-menu : Prêts (US-006 non encore implémenté)
-- [x] Sous-menus : Catalogues > Auteurs (res.partner filtré)
-- [x] Catalogues > Éditeurs / Genres
-- [x] Menu Configuration avec accès paramètres sources de données (BDGest, Open Library, BnF)
+- [ ] Bouton « Découvrir de nouvelles BD » sur /my/library et en back-office
+- [ ] Profil affiché et modifiable (séries notées ≥ 4★)
+- [ ] Suggestions : titre, auteur, genre, raison
+- [ ] Exclusion des séries déjà en collection ou en wishlist
+- [ ] Sélection manuelle puis ajout en wishlist
+- [ ] « Vérifier sur les sources » par suggestion (contre les hallucinations)
+- [ ] Erreurs claires : clé invalide, délai dépassé
 ```
 
 ---
 
-**US-009 — Vue Kanban des séries** ✅
+### E8 — Qualité & publication OCA
+
+> Livré : pre-commit, CI (tests + pre-commit), README OCA, manifests, LICENSE, tests (310).
+> Reste la publication, à l'initiative du mainteneur (action visible de l'extérieur).
+
+**US-064 — Dépôt GitHub public + proposition OCA** 🔄
 
 ```
-En tant que collectionneur
-Je veux voir mes séries sous forme de grille avec les couvertures
-Afin d'avoir une vue visuelle de ma collection
+En tant que développeur OCA
+Je veux publier le dépôt et soumettre une proposition à l'OCA
+Afin que les modules soient intégrés à la communauté
+
+Contexte technique :
+  Prérequis livrés : US-059 → US-063. Dépôt OCA cible à identifier.
 
 Critères d'acceptance :
-- [x] Vue kanban comic.serie avec image de couverture
-- [x] Affichage : titre, nb tomes possédés / total
-- [x] Barre de progression (tomes possédés)
-- [x] Badge couleur selon statut (en cours / terminée / abandonnée)
-- [x] Clic sur la carte → ouvre le form
-- [x] Image placeholder (fond INK + titre) si pas de couverture
+- [ ] Vérifier l'historique git : aucun secret, aucun __pycache__
+- [ ] Dépôt GitHub public, branche principale 19.0
+- [x] .gitignore adapté Odoo
+- [ ] Issue sur OCA/maintainer-tools proposant les modules
+- [ ] PR sur le dépôt OCA cible (ou dépôt « incoming »)
 ```
 
 ---
 
-**US-010 — Vue Kanban des albums** ✅
+### E9 — Shop & commerçant
+
+> Priorité la plus basse : outils pour le vendeur.
+> Exploiter les bibliothèques clients (`comic.customer.album`) pour savoir quoi référencer.
+> « Hors catalogue » = `edition_id.product_tmpl_id = False`.
+> La notification des clients à la mise en vente (ex-US-048) est passée dans US-069 (E6).
+
+**US-046 — Rapport « BD non vendues les plus suivies »** ⏳
 
 ```
-En tant que collectionneur
-Je veux voir mes albums sous forme de grille de couvertures
-Afin d'avoir une vraie bibliothèque visuelle
+En tant que commerçant
+Je veux voir quelles BD présentes dans les bibliothèques clients ne sont pas dans mon catalogue
+Afin d'identifier les titres à référencer en priorité
+
+Contexte technique :
+  comic.customer.album → edition_id → work_id → serie_id ; groupement par série,
+  tri par nb de clients distincts. Vue SQL read-only (_auto = False) si l'agrégation l'exige.
 
 Critères d'acceptance :
-- [x] Vue kanban comic.album avec couverture en grand (200×270)
-- [x] Affichage : titre, tome, note en étoiles (5★)
-- [x] Badge état de lecture coloré (lu / en cours / non lu)
-- [x] Icône ♥ wishlist si dans_wishlist = True
-- [x] Filtres rapides : dans ma collection / wishlist / non lu / en cours
-- [x] Placeholder coloré éditorial (8 palettes) si pas de couverture
+- [ ] Menu back-office « Rapports > Bibliothèques clients »
+- [ ] Colonnes : série / nb clients distincts / nb éditions concernées / source principale
+- [ ] Filtre par période (date_ajout) et par source (achete_ailleurs ou toutes)
+- [ ] Export CSV (bouton standard Odoo)
+- [ ] Décoration : vert si > 5 clients, orange si 2–5, gris si 1
 ```
 
----
-
-**US-011 — Formulaire album enrichi** ✅
+**US-047 — Rapport « Séries et auteurs à référencer »** ⏳
 
 ```
-En tant que collectionneur
-Je veux un formulaire détaillé et ergonomique pour chaque album
-Afin de saisir et consulter toutes les informations
+En tant que commerçant
+Je veux voir les auteurs et séries les plus suivis par mes clients pour des BD hors catalogue
+Afin de prendre des décisions d'achat basées sur la demande réelle
+
+Contexte technique :
+  comic.customer.album → edition_id → work_id → auteur_line_ids → partner_id
 
 Critères d'acceptance :
-- [x] Onglet "Informations" : titre, série, tome, ISBN, dates, pages, éditeur, couverture
-- [x] Onglet "Auteurs" : liste des auteurs avec leur rôle (widget editable inline)
-- [x] Onglet "Ma Collection" : état lecture, note (/5)
-- [x] Onglet "Liens" : url_club_be, url_amazon_be, url_fnac_be avec widget url
-- [x] Onglet "Synopsis" (ex "IA") : champ synopsis Html
-- [x] Bouton "En collection" (fa-book) et "Wishlist" (fa-heart) en button_box
-- [ ] Widget note en étoiles (priority widget ou custom) — reporté
+- [ ] « Top auteurs hors catalogue » : auteur / rôle principal / nb clients / nb séries
+- [ ] « Top séries hors catalogue » (complément d'US-046, vue auteurs)
+- [ ] Vue pivot auteurs × genres
+- [ ] Graphique barres « Top 10 séries à référencer »
+- [ ] Graphique camembert « Répartition par genre des BD hors catalogue »
 ```
 
----
-
-**US-012 — Filtres et recherche avancée**
+**US-049 — Tableau de bord commerçant — vue marché** ⏳
 
 ```
-En tant que collectionneur
-Je veux filtrer et rechercher dans ma collection
-Afin de retrouver rapidement un album ou une série
+En tant que commerçant
+Je veux une vue synthétique de la demande de mes clients
+Afin d'avoir une vue d'ensemble pour mes décisions d'achat
+
+Contexte technique :
+  S'appuie sur les vues d'US-046 et US-047.
 
 Critères d'acceptance :
-- [x] Barre de recherche sur : titre, ISBN, série
-- [ ] Recherche auteur, éditeur
-- [x] Filtres prédéfinis : Dans ma collection / Wishlist / Non lus / En cours de lecture
-- [ ] Filtre Prêtés (US-006 requis)
-- [x] Group by : Série / État de lecture
-- [ ] Group by : Genre / Éditeur / Type
-- [ ] Filtre par note (> 3 étoiles, etc.)
+- [ ] Menu « Rapports > Vue marché »
+- [ ] KPI : clients avec une bibliothèque active / éditions hors catalogue / séries hors
+      catalogue / taux de couverture (% des éditions des bibliothèques vendues par le shop)
+- [ ] Graphiques : Top 10 séries et Top 10 auteurs hors catalogue
+- [ ] Courbe : ajouts en bibliothèque par semaine
+- [ ] Tableau : séries au plus fort ratio « clients intéressés / tomes vendus »
+- [ ] Filtres par période et par genre
 ```
 
----
-
-**US-013 — Dashboard statistiques**
+**US-072 — Réservation de tomes en magasin** ⏳
 
 ```
-En tant que collectionneur
-Je veux voir les statistiques de ma collection sur un tableau de bord
-Afin de connaître l'état de ma bibliothèque
+En tant que client
+Je veux réserver un tome à paraître ou en rupture
+Afin d'être sûr de l'avoir dès son arrivée
+
+Contexte technique :
+  Vérifier d'abord le natif : website_sale_stock propose « Me prévenir » pour les produits
+  en rupture. Il ne resterait que la pré-commande des tomes à paraître.
 
 Critères d'acceptance :
-- [ ] Nb total d'albums possédés
-- [ ] Nb de séries (complètes / en cours)
-- [ ] Répartition par genre (graphique camembert)
-- [ ] Répartition par état de lecture (graphique barre)
-- [ ] Top 5 séries les mieux notées
-- [ ] Albums prêtés en retard (alerte)
-- [ ] Albums récemment ajoutés
+- [ ] Bouton « Réserver » sur la page produit / série du shop
+- [ ] Liste des réservations côté commerçant, par album
+- [ ] Notification au client quand l'album est disponible
 ```
 
 ---
 
-**US-014 — Gestion de la Wishlist ✅**
+## 4. Annexe — Livré
 
-```
-En tant que collectionneur
-Je veux gérer une liste de souhaits d'albums à acquérir
-Afin de savoir quoi acheter lors de mes prochains passages en librairie
+Une ligne par US. Détail technique : `CHANGE.md` ; texte d'origine : historique git des
+anciens fichiers V1 / V2 / V3.
 
-Critères d'acceptance :
-- [x] Vue dédiée Wishlist (kanban ou list)
-- [x] Bouton "Marquer comme acquis" → passe dans_collection=True, wishlist=False
-- [x] Liens rapides vers club.be et amazon.com.be
-- [x] Tri par série pour grouper les tomes manquants
-```
+### E1 — Catalogue & collection ✅
 
----
+| US      | Titre                                                                   |
+| ------- | ----------------------------------------------------------------------- |
+| US-001  | Scaffold du module principal                                            |
+| US-002  | Modèle `comic.genre`                                                    |
+| US-003  | Modèle `comic.editeur`                                                  |
+| US-004  | Modèle `comic.serie`                                                    |
+| US-005  | Modèle album + lignes auteur (devenu `comic.work`, cf. US-051)          |
+| US-006  | Prêts (`comic.pret`) — complété par US-076                              |
+| US-007  | Sécurité et droits d'accès                                              |
+| US-008  | Menus et navigation minimale                                            |
+| US-008b | Menus et navigation complète                                            |
+| US-009  | Vue kanban des séries                                                   |
+| US-010  | Vue kanban des albums                                                   |
+| US-011  | Formulaire album enrichi (widget étoiles → US-067)                      |
+| US-012  | Filtres et recherche avancée — partiel, reste → US-066                  |
+| US-014  | Wishlist                                                                |
+| US-015  | Liens d'achat Club.be / Amazon.be / FNAC.be                             |
+| US-016  | Données de démonstration                                                |
+| US-030  | Modèle de fichier d'import                                              |
+| US-031  | Wizard d'import CSV / Excel                                             |
+| US-050  | Refactor canonique : analyse, décisions, stratégie de déduplication     |
+| US-051  | Refactor canonique : ORM Œuvre / Édition / ISBN, fin de `comic.album`   |
+| US-053  | Refactor canonique : vues back-office                                   |
+| US-056  | Moteur de déduplication des œuvres                                      |
+| US-057  | Façade UX album / tome                                                  |
+| US-058  | Nettoyage UI : onglets, menus, synchro des couvertures                  |
+| US-075  | Catalogue partagé (droits par créateur pour la suppression) et séries suivies par utilisateur — 2026-11-05 |
+| US-076  | Prêts complets : dates par défaut, retour, retards, double prêt, rappel quotidien, prêts privés — 2026-11-05 |
+| US-077  | Import fiabilisé : colonnes fixes, politique mise à jour / ignorer, TSV, couverture par URL, vrais n° de ligne — 2026-11-05 |
+| US-078  | Albums : tome saisissable, tome 0 = hors-série, création tout-en-un, suppression, liste groupée par série — 2026-11-05 |
+| US-083  | Doublons : analyse par blocs, fusion dans les deux sens, nettoyage des paires — 2026-11-05 |
+| US-084  | Fiches auteur et éditeur : séries et albums associés — 2026-11-06       |
 
-**US-015 — Liens d'achat club.be et amazon.com.be** ✅
+### E2 — Enrichissement multi-sources ✅
 
-```
-En tant que collectionneur
-Je veux avoir des liens directs vers club.be et amazon.com.be pour chaque album
-Afin d'acheter facilement un album manquant
+| US     | Titre                                                                    |
+| ------ | ------------------------------------------------------------------------ |
+| US-017 | Infrastructure du module `comic_datasource`                              |
+| US-018 | Source Google Books                                                      |
+| US-019 | Source Open Library                                                      |
+| US-020 | Source BnF SRU                                                           |
+| US-022 | Agrégateur multi-sources                                                 |
+| US-023 | Wizard de recherche et import unifié                                     |
+| US-024 | Configuration des sources de données                                     |
+| US-025 | Enrichissement automatique des liens d'achat                             |
+| US-034 | Suivi des séries : détection des tomes manquants                         |
+| US-052 | Refactor canonique : adaptation des sources et de l'import               |
+| US-079 | Fiabilité : champs vides seulement, réglages effectifs, cron qui avance, coupe-circuit quota Google, dates complètes seulement — 2026-11-05 / 06 |
 
-Critères d'acceptance :
-- [x] Boutons "Acheter sur Club.be" et "Acheter sur Amazon.be" dans le form
-- [x] Si URL vide, bouton désactivé (grisé)
-- [x] Ouverture dans un nouvel onglet (target="_blank")
-```
+### E3 — Shop & caisse ✅
 
----
+| US      | Titre                                                                   |
+| ------- | ----------------------------------------------------------------------- |
+| US-035  | Scaffold du module `comic_shop`                                         |
+| US-036  | Lien album → `product.template`                                         |
+| US-037  | Synchronisation album ↔ produit                                         |
+| US-037b | Smart button BD et synchro sur la fiche produit                         |
+| US-037c | Création de produits en masse depuis la série                           |
+| US-040  | Fiche produit webshop enrichie BD                                       |
+| US-041  | Navigation webshop par série / auteur / genre                           |
+| US-041b | Pages website auteurs et éditeurs                                       |
+| US-042  | Intégration POS (caisse)                                                |
+| US-054  | Refactor canonique : adaptation de `comic_shop`                         |
+| US-074  | Sécurité du shop : pages auteurs limitées aux auteurs, téléchargement de couverture restreint (anti-SSRF), paramètres validés — 2026-11-05 |
+| US-080  | Cohérence caisse / ventes : remboursements POS et annulations retirent de la bibliothèque, synchro produit non destructive — 2026-11-05 |
 
-## 📚 PHASE 5 — Gestion des Prêts
+### E4 — Bibliothèque client (portail) ✅
 
-> Fonctionnalité utile mais indépendante des connecteurs. À faire après validation de l'interface.
+| US     | Titre                                                                    |
+| ------ | ------------------------------------------------------------------------ |
+| US-039 | Modèle `comic.customer.album`                                            |
+| US-043 | Espace bibliothèque client sur le portail                                |
+| US-044 | Ajout d'une BD hors catalogue à la bibliothèque                          |
+| US-045 | Ajout automatique depuis les commandes client                            |
+| US-081 | Modération des fiches créées depuis le portail : valider / refuser (doublon ou incorrect), client notifié — 2026-11-05 |
+| US-082 | Bibliothèque portail : pagination, messages, ISBN-10, wishlist sur un album possédé — 2026-11-05 / 06 |
 
-### EPIC 6 : Suivi des prêts
+### E8 — Qualité & publication OCA (livré)
 
----
+| US      | Titre                                                                  |
+| ------- | ---------------------------------------------------------------------- |
+| US-030b | Pre-commit OCA *(numéroté US-030 dans V3, doublon levé)*               |
+| US-032  | Tests unitaires                                                        |
+| US-033  | Documentation et README                                                |
+| US-055  | Refactor canonique : tests et validation                               |
+| US-059  | Fichier LICENSE LGPL-3                                                 |
+| US-060  | README format OCA par module                                           |
+| US-061  | `__manifest__.py` au format OCA strict                                 |
+| US-062  | Tests unitaires CI-compatibles (310 tests, local et CI)                |
+| US-063  | GitHub Actions : tests + pre-commit                                    |
+| US-085  | CI limitée à nos modules (~3 min), README / documentation à jour — 2026-11-05 / 06 |
 
-**US-006 — Modèle `comic.pret`**
+### Abandonné ou non attribué
 
-```
-En tant que collectionneur
-Je veux enregistrer les prêts d'albums à mes amis
-Afin de ne pas perdre mes BD et savoir qui a quoi
-
-Critères d'acceptance :
-- [ ] Modèle comic.pret avec tous les champs (voir CLAUDE.md)
-- [ ] Alerte visuelle si date_retour_prevue dépassée
-- [ ] Vue list avec filtre "en cours" par défaut
-- [ ] Vue form
-- [ ] Bouton "Marquer comme retourné"
-- [ ] Droits d'accès configurés
-```
-
----
-
-## 📥 PHASE 6 — Import CSV/Excel
-
-### EPIC 7 : Import de données
-
----
-
-**US-030 — Modèle de fichier d'import** ✅
-
-```
-En tant que collectionneur
-Je veux un modèle CSV/XLSX à télécharger pour importer ma collection existante
-Afin de migrer facilement depuis une autre gestion (Excel, autre logiciel)
-
-Critères d'acceptance :
-- [x] Fichier modèle téléchargeable depuis le wizard d'import
-- [x] Format CSV (UTF-8, séparateur ;) et XLSX disponibles
-- [x] Colonnes : serie_name, tome, titre_album, isbn, date_parution, nb_pages,
-        editeur, scenariste, dessinateur, coloriste, genre, etat_lecture,
-        note, url_couverture, url_club_be, url_amazon_be
-- [x] Ligne d'exemple incluse dans le modèle
-- [x] README inclus dans le XLSX (onglet "Instructions")
-```
-
----
-
-**US-031 — Wizard d'import CSV/Excel** ✅
-
-```
-En tant que collectionneur
-Je veux importer ma collection depuis un fichier CSV, XLS ou XLSX
-Afin de ne pas tout saisir manuellement
-
-Critères d'acceptance :
-- [x] Wizard en 4 étapes : Upload → Mapping → Prévisualisation → Import
-- [x] Détection automatique CSV/XLS/XLSX selon l'extension
-- [x] Détection automatique du séparateur CSV (; ou ,)
-- [x] Étape Mapping : associer chaque colonne du fichier au champ Odoo
-- [x] Prévisualisation des 10 premières lignes avant import
-- [x] Import avec rapport : X créés, Y mis à jour, Z erreurs (avec détail)
-- [x] Option : "Mettre à jour si ISBN existant" ou "Toujours créer"
-- [x] Téléchargement du rapport d'erreurs en CSV
-```
-
----
-
-## 🔧 TRANSVERSE — Qualité & Packaging
-
----
-
-**US-032 — Tests unitaires**
-
-```
-En tant que développeur
-Je veux des tests unitaires pour les fonctions critiques
-Afin de garantir la stabilité du module
-
-Critères d'acceptance :
-- [x] Tests pour la validation ISBN
-- [x] Tests pour les champs computed (nb_albums_possedes, etc.)
-- [x] Tests pour l'import CSV
-- [x] Lancement via : python -m pytest ou ./odoo-bin test
-```
-
----
-
-**US-033 — Documentation et README** ✅
-
-```
-En tant qu'utilisateur externe
-Je veux une documentation claire pour installer et utiliser les modules
-Afin de pouvoir les déployer sur mon Odoo
-
-Critères d'acceptance :
-- [x] README.rst pour chaque module (format OCA)
-- [x] Section : Description, Installation, Configuration, Usage
-- [x] static/description/index.html (requis Odoo Apps store)
-
-
----
-
-## 📊 Récapitulatif
-
-| Phase      | Epic           | US              | Priorité        |
-| ---------- | -------------- | --------------- | --------------- |
-| Phase 1    | Infrastructure | US-001 à US-007 | 🔴 Must Have    |
-| Phase 2    | Interface      | US-008 à US-016 | 🔴 Must Have    |
-| Phase 3    | Multi-sources  | US-017 à US-025 | 🟠 Should Have  |
-| Phase 4a   | IA             | US-026 à US-029 | 🟡 Nice to Have |
-| Phase 4b   | Import         | US-030 à US-031 | 🟠 Should Have  |
-| Transverse | Qualité        | US-032 à US-033 | 🟡 Nice to Have |
-
----
-
-## 🚀 Pour travailler avec Claude dans VS Code
-
-```
-
-Je travaille sur le projet Odoo 19 Comic Collection.
-Contexte complet dans CLAUDE.md à la racine du projet.
-US en cours : [numéro et titre de l'US]
-
-```
-
-```
+| US     | Statut                                                                    |
+| ------ | ------------------------------------------------------------------------- |
+| US-013 | Repris en US-065                                                          |
+| US-048 | Fusionné dans US-069 (notification des clients à la mise en vente)        |
+| US-021 | ❌ Source BDGest (scraping) — module `comic_bdgest` supprimé le 2026-06-02 |
+| US-038 | Numéro jamais attribué                                                    |
