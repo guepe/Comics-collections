@@ -1,6 +1,10 @@
 Sell comic books online and at the counter, and give customers their own
 library on the portal. Extends ``comics_collections`` and ``comic_datasource``.
 
+It also adds the *all comics* layer: **Catalogues → Tous les albums / Toutes les
+séries** open the full shared catalogue to every comic user (without the shop,
+``comics_collections`` is a private collection and keeps it for managers).
+
 **Product synchronisation**
 
 A ``comic.edition`` can be linked to a ``product.template`` (*Créer produit*).

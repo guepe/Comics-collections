@@ -210,9 +210,13 @@ Quota Google : `GoogleBooksQuotaError` remonte volontairement → coupe-circuit 
 4. Toujours mettre les droits dans `ir.model.access.csv`
 5. `fields.Image` (pas `Binary`) pour les couvertures
 6. Clés API en `ir.config_parameter` — jamais en dur
-7. **Catalogue partagé** : séries / albums / éditions / ISBN visibles et modifiables par tous
-   les utilisateurs BD (suppression : créateur ou gestionnaire). La possession est propre à
-   chacun via `comic.customer.album`. Les prêts (`comic.pret`) sont privés.
+7. **Catalogue partagé, collection privée** : séries / albums / éditions / ISBN forment un
+   référentiel commun (suppression : créateur ou gestionnaire), mais l'utilisateur ne voit que
+   **ses** BD (« Mes albums » / « Mes séries » : possédés ou suivis) ; la possession est propre à
+   chacun via `comic.customer.album`. Le catalogue complet est réservé au gestionnaire dans le
+   cœur ; `comic_shop` l'ouvre à tous (couche « toutes les BD »). Une série commencée est suivie
+   automatiquement (désabonnement mémorisé) ; « Ma wishlist » = manques des séries suivies +
+   souhaits (`comic.wishlist.item`, vue SQL). Les prêts (`comic.pret`) sont privés.
 8. Odoo 19 uniquement — pas d'API dépréciées
 9. **Vocabulaire UX** : "album" / "tome" / "série" pour les utilisateurs. "Œuvre" / "Édition" réservés au référentiel avancé (managers).
 10. Contraintes DB : `models.Constraint(...)` — pas `_sql_constraints` (déprécié Odoo 19)

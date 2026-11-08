@@ -11,7 +11,7 @@
 - Format : *En tant que… / Je veux… / Afin de…*, puis contexte technique et critères `- [ ]`.
 - Cocher `[x]` dès qu'un critère est réellement livré — jamais par anticipation. Une US dont
   tous les critères sont cochés prend ✅, puis passe en une ligne dans l'[annexe](#4-annexe--livré).
-- Numérotation continue : **prochaine US = US-087**. Une piste 💡 garde son numéro quand elle est
+- Numérotation continue : **prochaine US = US-090**. Une piste 💡 garde son numéro quand elle est
   priorisée.
 - Le détail technique de chaque livraison est dans `CHANGE.md` (entrées datées).
 
@@ -38,7 +38,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E2   | Enrichissement multi-sources         | `comic_datasource`                  | ✅   | 11 US  | —                         |
 | E3   | Shop & caisse                        | `comic_shop`                        | ✅   | 12 US  | —                         |
 | E4   | Bibliothèque client (portail)        | `comic_shop`                        | ✅   | 6 US   | —                         |
-| E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ✅   | 6 US   | —                         |
+| E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ✅   | 9 US   | —                         |
 | E6   | Séries sur le portail                | `comic_shop`                        | 🔄   | 1 US   | US-069, US-070            |
 | E7   | IA                                   | `comic_ai` (nouveau)                | ⏳   | —      | US-026 → 029              |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064                    |
@@ -49,7 +49,9 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 ## 3. Épics ouverts — US à venir
 
 > E5 (tableau de bord & suivi de séries) est entièrement livré — voir
-> l'[annexe](#e5--tableau-de-bord--suivi-de-séries-livré).
+> l'[annexe](#e5--tableau-de-bord--suivi-de-séries-livré). Rouvert puis refermé le 2026-11-08
+> pour la collection privée (US-087 → 089) : sans `comic_shop`, le module ne montre que *mes*
+> BD ; le shop ajoute la couche « toutes les BD ».
 
 ### E6 — Séries sur le portail
 
@@ -387,6 +389,9 @@ anciens fichiers V1 / V2 / V3.
 | US-067 | Note en étoiles : widget en back-office, saisie par étoiles sur le portail — 2026-11-08 |
 | US-068 | Alerte nouveautés : notification Odoo aux abonnés d'une série quand un tome paru < 90 j (ou à paraître) est ajouté ; bouton « Ajouter à ma wishlist » — 2026-11-08 |
 | US-071 | Prix d'achat / valeur estimée, totaux au tableau de bord, export CSV, inventaire PDF — 2026-11-08 |
+| US-087 | Collection privée par défaut : « Mes albums » / « Mes séries » (domaine fixe), création = possession, catalogue complet réservé au gestionnaire (ouvert à tous par `comic_shop`) — 2026-11-08 |
+| US-088 | Suivi automatique des séries commencées (création, premier album possédé), désabonnement mémorisé (`suivi_exclu_user_ids`), migration des propriétaires — 2026-11-08 |
+| US-089 | Ma wishlist façon BDGest' Online : manques des séries suivies + souhaits manuels, groupés par série ; Je l'ai / Ignorer / Retirer ; tuile « manques · souhaits » — 2026-11-08 |
 
 ### E6 — Séries sur le portail (livré)
 

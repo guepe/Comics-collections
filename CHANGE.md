@@ -2245,3 +2245,44 @@ fusionnées dans `e5/lot2`. Versions : `comics_collections` 19.0.3.1.0, `comic_d
 
 **Tests** : `test_new_release`, `test_collection_export`, `test_wishlist_share`, cron mocké dans
 `test_missing_tomes`. Suite complète : 370 tests verts. wkhtmltopdf présent (PDF réel généré).
+
+## 2026-11-08 — E5 lot 3 : collection privée, suivi automatique, wishlist façon BDGest' Online
+
+Livré : US-087, US-088, US-089. Constat de l'utilisateur : installé seul, le module donnait
+l'impression de gérer « toutes les BD du monde ». Principe : catalogue commun conservé, mais le
+cœur ne montre que *mes* BD ; `comic_shop` ajoute la couche « toutes les BD ». Multi-agents (deux
+branches parallèles). Versions : `comics_collections` et `comic_shop` 19.0.4.0.0.
+
+**US-087 — Collection privée**
+- `action_comic_work` → « Mes albums » (domaine fixe : albums de ma collection),
+  `action_comic_serie` → « Mes séries » (possédées ou suivies), contexte `comic_auto_own`.
+- `comic.work.create` : avec `comic_auto_own`, l'édition principale entre dans la collection de
+  l'utilisateur (`_upsert`) ; `comic.serie.action_view_works` propage le contexte.
+- Catalogue complet (`action_comic_work_catalogue`, nouvelle `action_comic_serie_catalogue`) sous
+  *Configuration → Référentiel avancé* (gestionnaire) ; menu *Catalogues → Tous les albums*
+  retiré du cœur. `comic_shop` réajoute *Catalogues → Tous les albums / Toutes les séries* pour
+  tous les utilisateurs BD (`comic_shop/views/comic_work_views.xml`).
+- Tableau de bord : état vide → « Ajouter un album ».
+
+**US-088 — Suivi automatique**
+- `comic.serie.suivi_exclu_user_ids` (table `comic_serie_suivi_exclu_user_rel`) ; `_inverse_a_suivre`
+  mémorise le désabonnement ; `_auto_follow(users)` (ignore exclus, inactifs, portail).
+- Suivi à la création d'une série (utilisateur réel) et quand une entrée de bibliothèque passe
+  `dans_collection` (`comic.customer.album.create/write`).
+- Migration `comics_collections/migrations/19.0.4.0.0/post-migrate.py` (ORM) : base locale,
+  186 suivis ajoutés.
+
+**US-089 — Ma wishlist**
+- `models/comic_wishlist_item.py` : vue SQL `comic.wishlist.item` (exception justifiée,
+  reporting) — `souhait` (en wishlist, hors collection) + `manque` (tome > 0 actif d'une série
+  suivie, ni possédé, ni souhaité, ni ignoré) ; id stable `user_id * 10^9 + work_id` ; règle
+  par utilisateur ; actions Je l'ai / Ignorer / Retirer.
+- `comic.customer.album.ignore_wishlist` ; `_get_collection_stats` : `nb_souhaits`, `nb_manques`,
+  `nb_wishlist` (compteur de souhaits aligné sur la règle de la vue).
+- `views/comic_wishlist_views.xml` (liste groupée par série, kanban, filtres) et
+  `views/comic_wishlist_menu.xml` (*Ma Collection → Ma wishlist*) ; tuile du tableau de bord.
+
+**Tests** : `test_private_collection` (12), `test_wishlist` (13), test des menus catalogue du shop ;
+`test_collection_stats.test_counts` adapté (le suivi automatique crée un manque). Suite complète
+sur base neuve avec les trois modules : 395 tests verts. Base locale : `comic_shop` désinstallé
+volontairement par l'utilisateur pour tester le module seul (343 tests verts sans le shop).

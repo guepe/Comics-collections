@@ -33,6 +33,10 @@ Les modules se déposent dans le répertoire `addons` de votre instance Odoo.
   les utilisateurs BD (suppression : créateur ou gestionnaire)
 - Séries et albums avec couvertures, synopsis, auteurs, éditeurs ; liste des albums groupée
   par série, tome `0` = hors-série / sans numéro
+- **Collection privée** : chacun ne voit que ses BD (« Mes albums », « Mes séries ») ;
+  le catalogue complet est réservé au gestionnaire (ouvert à tous avec `comic_shop`)
+- **Ma wishlist** façon BDGest' Online : manques des séries suivies (suivi automatique
+  des séries commencées) + souhaits manuels
 - **Bibliothèque personnelle** : collection, wishlist, état de lecture, note en étoiles,
   par utilisateur ; **tableau de bord** (albums, séries complètes / en cours, genres,
   lecture, meilleures séries, prêts en retard) — le module suffit seul pour une

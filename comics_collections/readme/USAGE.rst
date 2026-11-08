@@ -2,27 +2,29 @@ Menus are under **Bandes Dessinées**:
 
 1. **Ma Collection → Tableau de bord** — statistics of your own collection,
    collection value, *Exporter (CSV)* and *Inventaire (PDF)* buttons.
-2. **Ma Collection → Séries** — create series; the *Albums* smart button lists their tomes.
-3. **Ma Collection → Albums / Tomes** — your albums (*Ma collection* filter on by
-   default; remove it, or use *Catalogues → Tous les albums*, to see the whole
-   shared catalogue), grouped by series; filters *Prêtés*, *Note ≥ 3★ / 4★*, group by
+2. **Ma Collection → Mes séries** — the series you own albums of, or follow; creating
+   a series follows it. The *Albums* smart button lists their tomes.
+3. **Ma Collection → Mes albums** — only your albums (creating one here adds it to
+   your collection), grouped by series; filters *Prêtés*, *Note ≥ 3★ / 4★*, group by
    genre or series type; *Marquer comme lu / en cours* and *Ajouter à ma wishlist*
-   from the action menu.
-   Create an album with its series, tome number, title, publisher, authors and
-   ISBN in a single form.
-4. **Ma Collection → Ma bibliothèque** — your library entries: collection,
+   from the action menu. Create an album with its series, tome number, title,
+   publisher, authors and ISBN in a single form.
+4. **Ma Collection → Ma wishlist** — missing tomes of followed series and manual
+   wishes, grouped by series: *Je l'ai*, *Ignorer ce tome*, *Retirer* (for a missing
+   tome: stop following the series).
+5. **Ma Collection → Ma bibliothèque** — your library entries: collection,
    wishlist, reading status, star rating, comments, purchase price and estimated
    value (the *Print* menu offers the PDF inventory).
-5. **Ma Collection → Prêts** — record a loan, then click *Retourner* when the
+6. **Ma Collection → Prêts** — record a loan, then click *Retourner* when the
    album comes back. Use the *En retard* filter to find overdue loans.
-6. **Ma Collection → Import CSV/Excel** — upload a file, check the column mapping,
+7. **Ma Collection → Import CSV/Excel** — upload a file, check the column mapping,
    choose the policy for existing albums and run the import.
-7. **Catalogues → Auteurs / Éditeurs / Genres** — reference data. Open an author or
+8. **Catalogues → Auteurs / Éditeurs / Genres** — reference data. Open an author or
    a publisher to see all the series and albums linked to them.
-8. **Configuration → Doublons potentiels** (managers) — review detected duplicate
+9. **Configuration → Doublons potentiels** (managers) — review detected duplicate
    pairs, merge or ignore them.
-9. **Configuration → Référentiel avancé → Éditions** (managers) — edition-level
-   records, for albums published in several versions.
+10. **Configuration → Référentiel avancé** (managers) — *Tous les albums*, *Toutes
+    les séries* (the full shared catalogue) and *Éditions*.
 
 **Data model overview**::
 

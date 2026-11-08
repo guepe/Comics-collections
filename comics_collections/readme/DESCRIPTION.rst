@@ -1,8 +1,10 @@
 Manage a comic book (*bande dessinée*) collection in Odoo 19.
 Series, albums, authors, publishers, loans and duplicates — in one place.
 
-The catalogue (series, albums, editions, ISBN) is **shared** by all comic users;
-what each user owns is tracked in a **personal library** (``comic.customer.album``),
+The catalogue (series, albums, editions, ISBN) is a **shared reference**, but each
+user only sees **their own** comics (*Mes albums* / *Mes séries*); the full catalogue
+is a manager tool (``comic_shop`` opens it to everyone). What each user owns is
+tracked in a **personal library** (``comic.customer.album``),
 and loans are private to the lender. The module works on its own, at home;
 ``comic_shop`` offers the same library to shop customers on the portal.
 
@@ -27,8 +29,11 @@ and loans are private to the lender. The module works on its own, at home;
   per user preference). *Ajouter à ma wishlist* on the album adds it in one click.
   The window is the ``comic.new_release_days`` system parameter.
 
-- **Followed series** — Each user can follow series independently
-  (*Suivie* toggle), which drives the missing-tome detection of ``comic_datasource``.
+- **Followed series & wishlist** — A series is followed automatically once you
+  create it or own one of its albums (unfollowing is remembered). *Ma wishlist*
+  lists, series by series, the missing tomes of followed series plus your manual
+  wishes, with *Je l'ai* / *Ignorer* / *Retirer* buttons. Following also drives the
+  missing-tome detection of ``comic_datasource``.
 
 - **Authors** — Authors are standard ``res.partner`` records linked to albums with a
   role (scénariste, dessinateur, coloriste, encreur, traducteur, autre). The contact
