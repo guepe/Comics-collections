@@ -17,7 +17,15 @@ and loans are private to the lender. The module works on its own, at home;
 - **Personal library & dashboard** — Collection, wishlist, reading status and a
   star rating per album and per user. *Ma Collection → Tableau de bord* shows owned
   albums, wishlist, complete / ongoing series, breakdowns by genre and reading status,
-  best-rated series, recent additions and overdue loans.
+  best-rated series, recent additions and overdue loans. Optional purchase price
+  and estimated value per album give the collection's total value; the collection
+  exports to CSV and to a PDF inventory (e.g. for insurance).
+
+- **New-release alerts** — When a tome released less than 90 days ago (or not yet
+  released) is added to a followed series — by the missing-tome detection of
+  ``comic_datasource`` — its followers get an Odoo notification (inbox or e-mail,
+  per user preference). *Ajouter à ma wishlist* on the album adds it in one click.
+  The window is the ``comic.new_release_days`` system parameter.
 
 - **Followed series** — Each user can follow series independently
   (*Suivie* toggle), which drives the missing-tome detection of ``comic_datasource``.

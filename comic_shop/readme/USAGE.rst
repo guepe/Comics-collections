@@ -14,7 +14,8 @@ album is added to their library at payment.
 
 Customers open *Ma Bibliothèque BD* (``/my/library``) from their portal, filter
 collection / wishlist, update reading status and star rating, open their
-*Tableau de bord BD* (``/my/library/dashboard``), and add albums with
+*Tableau de bord BD* (``/my/library/dashboard``), share their wishlist
+(*Partager ma wishlist* → link to copy, revocable), and add albums with
 *Ajouter une BD*. The *Ajouter automatiquement mes achats à ma bibliothèque*
 switch disables the automatic addition of their purchases.
 

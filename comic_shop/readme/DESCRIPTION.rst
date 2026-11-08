@@ -24,7 +24,9 @@ status, star rating and comments, a dashboard (``/my/library/dashboard``), with 
 sorting. Albums bought outside the shop are added by ISBN or title search
 (local catalogue + online sources); cover downloads are restricted to the known
 source hosts. Putting an owned album in the wishlist keeps it in the collection;
-adding it to the collection removes it from the wishlist.
+adding it to the collection removes it from the wishlist. A customer can share
+their wishlist through a secret, revocable link (``/wishlist/<token>``): a
+read-only page with covers and links to the albums on sale, nothing else.
 
 **Purchases**
 

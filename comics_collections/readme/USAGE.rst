@@ -1,15 +1,18 @@
 Menus are under **Bandes Dessinées**:
 
-1. **Ma Collection → Tableau de bord** — statistics of your own collection.
+1. **Ma Collection → Tableau de bord** — statistics of your own collection,
+   collection value, *Exporter (CSV)* and *Inventaire (PDF)* buttons.
 2. **Ma Collection → Séries** — create series; the *Albums* smart button lists their tomes.
 3. **Ma Collection → Albums / Tomes** — your albums (*Ma collection* filter on by
    default; remove it, or use *Catalogues → Tous les albums*, to see the whole
    shared catalogue), grouped by series; filters *Prêtés*, *Note ≥ 3★ / 4★*, group by
-   genre or series type; *Marquer comme lu / en cours* from the action menu.
+   genre or series type; *Marquer comme lu / en cours* and *Ajouter à ma wishlist*
+   from the action menu.
    Create an album with its series, tome number, title, publisher, authors and
    ISBN in a single form.
 4. **Ma Collection → Ma bibliothèque** — your library entries: collection,
-   wishlist, reading status, star rating, comments.
+   wishlist, reading status, star rating, comments, purchase price and estimated
+   value (the *Print* menu offers the PDF inventory).
 5. **Ma Collection → Prêts** — record a loan, then click *Retourner* when the
    album comes back. Use the *En retard* filter to find overdue loans.
 6. **Ma Collection → Import CSV/Excel** — upload a file, check the column mapping,

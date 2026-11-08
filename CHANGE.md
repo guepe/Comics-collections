@@ -2204,3 +2204,44 @@ widget `priority` en liste / formulaire ; saisie par étoiles (radios CSS) sur l
 **Tests** : `test_comic_customer_album` déplacé dans le cœur ; nouveaux `test_collection_stats`,
 `test_collection_dashboard` (2 HttpCase navigateur ignorés : pas de Chrome dans le conteneur),
 `test_filters_stars`, `test_portal_dashboard`, `test_portal_stars`. Suite complète : 339 + 1 verts.
+
+## 2026-11-08 — E5 lot 2 + US-073 : alertes nouveautés, valeur et export, wishlist partageable
+
+Livré : US-068, US-071 (E5 terminé), US-073 (E6). Multi-agents : trois branches parallèles
+fusionnées dans `e5/lot2`. Versions : `comics_collections` 19.0.3.1.0, `comic_datasource`
+19.0.1.4.0, `comic_shop` 19.0.3.1.0 (nouveaux champs seulement, pas de migration).
+
+**US-068 — Alerte nouveautés**
+- `comics_collections/models/comic_work.py` : `release_notified`, `_get_new_release_days()`
+  (paramètre `comic.new_release_days`, 90 par défaut, `data/comic_config_data.xml` noupdate),
+  `_is_new_release()` (paru depuis ≤ N jours ou à paraître ; sans date → non),
+  `_notify_new_release()` (`message_post` aux partenaires des `suivi_user_ids`,
+  `notify_skip_followers`, utilisateur courant exclu hors cron, marqué une seule fois),
+  `action_add_to_my_wishlist()` (ne déclasse jamais un album possédé).
+- Bouton « Ajouter à ma wishlist » (button box du formulaire album — comic_shop occupe déjà le
+  header) + action serveur en masse.
+- `comic_datasource/wizards/comic_serie_missing_wizard.py` : `_add_selected_lines` repère les
+  albums réellement créés et les notifie (cron et assistant manuel).
+
+**US-071 — Valeur et export**
+- `comic.customer.album` : `currency_id` (devise société, calculée), `prix_achat`,
+  `valeur_estimee` (Monetary, facultatifs) ; formulaire (groupe Valeur), liste avec sommes.
+- `_get_collection_stats` : `total_prix_achat`, `total_valeur`, `nb_values` ;
+  `get_dashboard_data` : montants formatés, `has_values`.
+- Tableau de bord : carte « Valeur de la collection », boutons Exporter (CSV) / Inventaire (PDF)
+  dans le panneau de contrôle.
+- `report/report_comic_collection_inventory.xml` : inventaire PDF groupé par série, sous-totaux,
+  totaux (`external_layout`) ; `action_print_my_inventory()`.
+- `controllers/main.py` (nouveau) : `/comics/collection/export.csv` (`;`, UTF-8 BOM, entrées de
+  l'utilisateur uniquement).
+
+**US-073 — Wishlist partageable** (`comic_shop`)
+- `res.partner` : `comic_wishlist_shared`, `comic_wishlist_token` (system),
+  `_comic_wishlist_enable()` / `_comic_wishlist_revoke()` (nouveau jeton à chaque réactivation).
+- Portail : bloc « Partager ma wishlist » sur `/my/library` (copier / révoquer), routes POST
+  `/my/library/wishlist/share|revoke`.
+- Page publique `/wishlist/<token>` (lecture seule, noindex, prénom seulement, liens boutique) et
+  `/wishlist/<token>/cover/<id>` (couverture contrôlée) ; jeton inconnu / révoqué → 404.
+
+**Tests** : `test_new_release`, `test_collection_export`, `test_wishlist_share`, cron mocké dans
+`test_missing_tomes`. Suite complète : 370 tests verts. wkhtmltopdf présent (PDF réel généré).

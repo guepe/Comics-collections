@@ -21,9 +21,7 @@
 
 | Horizon        | Épic                                                                      | US                          | État |
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
-| **Maintenant** | [E5 — Tableau de bord & suivi de séries](#e5--tableau-de-bord--suivi-de-séries) | US-068, US-071        | 🔄   |
-| **Maintenant** | [E6 — Séries sur le portail](#e6--séries-sur-le-portail) (gain rapide)    | US-073                      | ⏳   |
-| **Ensuite**    | [E6 — Séries sur le portail](#e6--séries-sur-le-portail)                  | US-069, US-070              | ⏳   |
+| **Maintenant** | [E6 — Séries sur le portail](#e6--séries-sur-le-portail)                  | US-069, US-070              | 🔄   |
 | **Ensuite**    | [E7 — IA (`comic_ai`)](#e7--ia-comic_ai)                                  | US-026 → 029                | ⏳   |
 | **Plus tard**  | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064                      | 🔄   |
 | **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
@@ -40,8 +38,8 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E2   | Enrichissement multi-sources         | `comic_datasource`                  | ✅   | 11 US  | —                         |
 | E3   | Shop & caisse                        | `comic_shop`                        | ✅   | 12 US  | —                         |
 | E4   | Bibliothèque client (portail)        | `comic_shop`                        | ✅   | 6 US   | —                         |
-| E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | 🔄   | 4 US   | US-068, US-071            |
-| E6   | Séries sur le portail                | `comic_shop`                        | ⏳   | —      | US-069, US-070, US-073    |
+| E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ✅   | 6 US   | —                         |
+| E6   | Séries sur le portail                | `comic_shop`                        | 🔄   | 1 US   | US-069, US-070            |
 | E7   | IA                                   | `comic_ai` (nouveau)                | ⏳   | —      | US-026 → 029              |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064                    |
 | E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | US-046, 047, 049, 072     |
@@ -50,66 +48,13 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 
 ## 3. Épics ouverts — US à venir
 
-### E5 — Tableau de bord & suivi de séries
-
-> Priorité 1 : piloter sa collection et ses séries, en back-office comme sur le portail.
-> Livré le 2026-11-08 : US-086 (bibliothèque personnelle dans `comics_collections`), US-065,
-> US-066, US-067 — voir l'[annexe](#e5--tableau-de-bord--suivi-de-séries-livré).
-> `comics_collections` seul offre la bibliothèque et le tableau de bord ; `comic_shop` ajoute
-> les achats et la même chose pour les clients sur le portail.
-
-**US-068 — Alerte nouveautés sur les séries suivies** ⏳
-
-```
-En tant que collectionneur
-Je veux être prévenu quand un nouveau tome d'une série que je suis paraît
-Afin de ne rater aucune sortie
-
-Contexte technique :
-  S'appuie sur la détection des tomes manquants (cron hebdomadaire) et suivi_user_ids.
-  Attention : la détection trouve aussi de vieux tomes jamais saisis. « Nouveauté » =
-  date_parution récente (depuis le dernier passage ou < 3 mois), sinon avalanche
-  d'alertes au premier lancement.
-
-Critères d'acceptance :
-- [ ] Notification / activité pour chaque utilisateur qui suit la série
-- [ ] Ajout du tome en wishlist en un clic
-- [ ] Pas de doublon d'alerte pour un même tome
-- [ ] Seuls les tomes récemment parus déclenchent une alerte
-```
-
-**US-071 — Export et valeur de la collection** ⏳
-
-```
-En tant que collectionneur
-Je veux exporter l'inventaire de ma collection, avec sa valeur
-Afin de l'assurer, la partager ou la sauvegarder
-
-Critères d'acceptance :
-- [ ] Export CSV et PDF de la collection (série, tome, titre, ISBN, état)
-- [ ] Prix d'achat facultatif par album, total de la collection
-- [ ] Valeur estimée facultative (saisie manuelle)
-```
-
----
+> E5 (tableau de bord & suivi de séries) est entièrement livré — voir
+> l'[annexe](#e5--tableau-de-bord--suivi-de-séries-livré).
 
 ### E6 — Séries sur le portail
 
 > Priorité 2 : la même gestion de séries et de collection, côté client sur `/my/library`.
-> US-073 est un gain rapide, faisable à tout moment.
-
-**US-073 — Wishlist partageable** ⏳
-
-```
-En tant que collectionneur
-Je veux partager ma wishlist par un lien
-Afin que mes proches sachent quoi m'offrir
-
-Critères d'acceptance :
-- [ ] Lien public (jeton) activable / révocable depuis /my/library
-- [ ] Page en lecture seule : couverture, série, tome, titre, lien vers le shop si en vente
-- [ ] Aucune autre donnée personnelle exposée
-```
+> Livré : US-073 (wishlist partageable) — voir l'[annexe](#e6--séries-sur-le-portail-livré).
 
 **US-069 — Suivi de séries par les clients et notification des sorties** ⏳ *(absorbe US-048)*
 
@@ -440,6 +385,14 @@ anciens fichiers V1 / V2 / V3.
 | US-065 | Tableau de bord collectionneur : back-office (action OWL, prêts en retard) et portail `/my/library/dashboard` — 2026-11-08 |
 | US-066 | Filtres Prêtés, Note ≥ 3★ / ≥ 4★, regroupements par genre et type de série — 2026-11-08 |
 | US-067 | Note en étoiles : widget en back-office, saisie par étoiles sur le portail — 2026-11-08 |
+| US-068 | Alerte nouveautés : notification Odoo aux abonnés d'une série quand un tome paru < 90 j (ou à paraître) est ajouté ; bouton « Ajouter à ma wishlist » — 2026-11-08 |
+| US-071 | Prix d'achat / valeur estimée, totaux au tableau de bord, export CSV, inventaire PDF — 2026-11-08 |
+
+### E6 — Séries sur le portail (livré)
+
+| US     | Titre                                                                    |
+| ------ | ------------------------------------------------------------------------ |
+| US-073 | Wishlist partageable par lien secret révocable (`/wishlist/<jeton>`, lecture seule) — 2026-11-08 |
 
 ### E8 — Qualité & publication OCA (livré)
 

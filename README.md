@@ -37,6 +37,8 @@ Les modules se déposent dans le répertoire `addons` de votre instance Odoo.
   par utilisateur ; **tableau de bord** (albums, séries complètes / en cours, genres,
   lecture, meilleures séries, prêts en retard) — le module suffit seul pour une
   collection privée
+- Valeur de la collection (prix d'achat, valeur estimée), export CSV et inventaire PDF
+- Alertes nouveautés : notification Odoo quand un tome récent d'une série suivie arrive
 - Séries suivies par utilisateur (alimente la détection des tomes manquants)
 - Auteurs = contacts Odoo (`res.partner`) avec rôle ; fiches auteur et éditeur listant
   leurs séries et albums
@@ -131,7 +133,8 @@ Aller dans **Bandes Dessinées → Configuration → Sources de données** :
 - Pages webshop `/shop/series`, `/shop/auteurs`, `/shop/editeurs` (produits publiés uniquement)
 - Bibliothèque client sur `/my/library` (la bibliothèque personnelle du cœur, ouverte
   aux clients) : collection, wishlist, état de lecture, notes en étoiles, tableau de
-  bord `/my/library/dashboard`, ajout de BD achetées ailleurs (recherche ISBN / titre)
+  bord `/my/library/dashboard`, ajout de BD achetées ailleurs (recherche ISBN / titre),
+  wishlist partageable par lien secret
 - Achats (commande confirmée, POS payé) ajoutés à la bibliothèque ; annulations et
   remboursements POS les retirent
 - Modération des fiches créées depuis le portail : *Valider* ou *Refuser* (doublon / incorrect)
