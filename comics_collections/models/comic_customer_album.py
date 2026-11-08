@@ -183,3 +183,30 @@ class ComicCustomerAlbum(models.Model):
                 [("create_uid", "=", self.env.uid), ("en_retard", "=", True)]
             )
         return stats
+
+    @api.model
+    def get_dashboard_data(self):
+        """Return the current user's statistics, JSON-serializable, for the OWL dashboard.
+
+        Simple mise en forme de ``_get_collection_stats`` : dates ISO, répartitions en
+        dicts avec un pourcentage déjà calculé (le JS ne fait qu'afficher).
+        """
+        stats = self._get_collection_stats(self.env.user.partner_id, include_loans=True)
+        total = stats["nb_albums"]
+
+        def percent(count):
+            return round(100.0 * count / total, 1) if total else 0.0
+
+        return {
+            **stats,
+            "by_genre": [
+                {"label": label, "count": count, "percent": percent(count)} for label, count in stats["by_genre"]
+            ],
+            "by_reading": [
+                {"key": key, "label": label, "count": count, "percent": percent(count)}
+                for key, label, count in stats["by_reading"]
+            ],
+            "recent": [
+                {**row, "date": fields.Date.to_string(row["date"]) if row["date"] else False} for row in stats["recent"]
+            ],
+        }

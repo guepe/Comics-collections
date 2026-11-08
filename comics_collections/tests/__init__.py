@@ -14,3 +14,4 @@ from . import test_minor_fixes
 from . import test_bibliography
 from . import test_comic_customer_album
 from . import test_collection_stats
+from . import test_collection_dashboard
