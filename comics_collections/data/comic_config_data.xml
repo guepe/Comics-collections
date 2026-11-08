@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Fenêtre « nouveauté » (jours) des alertes sur les séries suivies (US-068) -->
+    <record id="param_new_release_days" model="ir.config_parameter">
+        <field name="key">comic.new_release_days</field>
+        <field name="value">90</field>
+    </record>
+
+</odoo>

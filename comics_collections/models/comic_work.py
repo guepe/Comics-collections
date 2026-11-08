@@ -1,11 +1,20 @@
 import difflib
+import logging
 import re
 import unicodedata
+from datetime import timedelta
 
-from odoo import _, api, fields, models
+from markupsafe import Markup
+
+from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 from ..utils.normalize import normalize_title
+
+_logger = logging.getLogger(__name__)
+
+# Fenêtre « nouveauté » par défaut (jours), surchargée par ``comic.new_release_days``
+DEFAULT_NEW_RELEASE_DAYS = 90
 
 
 def _score_pair(same_serie, tome_a, titre_norm_a, serie_norm_a, tome_b, titre_norm_b, serie_norm_b):
@@ -64,6 +73,12 @@ class ComicWork(models.Model):
     auteur_line_ids = fields.One2many("comic.work.auteur.line", "work_id", string="Auteurs")
     edition_ids = fields.One2many("comic.edition", "work_id", string="Éditions")
     active = fields.Boolean(default=True)
+    release_notified = fields.Boolean(
+        string="Nouveauté notifiée",
+        copy=False,
+        help="Vrai une fois l'alerte « nouveau tome » envoyée aux abonnés de la série "
+        "(ou écartée faute d'abonnés) : l'album n'est jamais retraité.",
+    )
 
     # Regroupements de la recherche (genre / type portés par la série)
     genre_id = fields.Many2one(related="serie_id.genre_id", store=True, string="Genre", index=True)
@@ -298,6 +313,110 @@ class ComicWork(models.Model):
 
     def action_mark_non_lu(self):
         self._set_etat_lecture("non_lu")
+
+    # ── Alerte nouveautés sur les séries suivies (US-068) ────────────────────
+
+    @api.model
+    def _get_new_release_days(self):
+        """Fenêtre « nouveauté » en jours (paramètre ``comic.new_release_days``, 90 par défaut)."""
+        raw = self.env["ir.config_parameter"].sudo().get_param("comic.new_release_days")
+        try:
+            days = int(raw)
+        except (TypeError, ValueError):
+            return DEFAULT_NEW_RELEASE_DAYS
+        return days if days >= 0 else DEFAULT_NEW_RELEASE_DAYS
+
+    def _is_new_release(self, days=None):
+        """Vrai si l'album paraît dans le futur ou a paru dans les N derniers jours.
+
+        Sans date de parution connue, l'album n'est jamais considéré comme une nouveauté.
+        """
+        self.ensure_one()
+        if not self.date_parution:
+            return False
+        if days is None:
+            days = self._get_new_release_days()
+        today = fields.Date.context_today(self)
+        # Couvre aussi les dates futures (>= aujourd'hui - N)
+        return self.date_parution >= today - timedelta(days=days)
+
+    def _is_automated_user(self):
+        """Contexte cron : superutilisateur ou OdooBot (``base.user_root``)."""
+        user = self.env.user
+        root = self.env.ref("base.user_root", raise_if_not_found=False)
+        return user.id == SUPERUSER_ID or (root and user == root)
+
+    def _new_release_message_body(self):
+        self.ensure_one()
+        tome = f" T{self.tome}" if self.tome else ""
+        return Markup("Nouveau tome dans une série que vous suivez : <strong>%s%s</strong> — %s (parution le %s).") % (
+            self.serie_id.name,
+            tome,
+            self.titre_canonique,
+            self.date_parution.strftime("%d/%m/%Y"),
+        )
+
+    def _notify_new_release(self):
+        """Prévient les abonnés de la série de chaque nouveau tome (une seule fois par album).
+
+        Destinataires : partenaires des utilisateurs actifs qui suivent la série, sauf
+        l'utilisateur courant (il vient d'ajouter le tome) hors contexte cron.
+        """
+        days = self._get_new_release_days()
+        exclude_current = not self._is_automated_user()
+        to_flag = self.browse()
+        for work in self:
+            if work.release_notified or not work.serie_id or not work._is_new_release(days):
+                continue
+            users = work.serie_id.sudo().suivi_user_ids.filtered("active")
+            if exclude_current:
+                users -= self.env.user
+            partners = users.partner_id
+            if partners:
+                work.message_post(
+                    body=work._new_release_message_body(),
+                    message_type="notification",
+                    subtype_xmlid="mail.mt_comment",
+                    partner_ids=partners.ids,
+                    # Seuls les abonnés de la série sont prévenus, pas les abonnés de l'album
+                    notify_skip_followers=True,
+                )
+                _logger.info("Nouveauté « %s » notifiée à %d abonné(s).", work.display_name, len(partners))
+            to_flag |= work
+        if to_flag:
+            to_flag.write({"release_notified": True})
+        return to_flag
+
+    def action_add_to_my_wishlist(self):
+        """Place l'édition principale de chaque album dans la wishlist de l'utilisateur.
+
+        Un album déjà possédé (``dans_collection``) n'est jamais déclassé en wishlist.
+        """
+        partner = self.env.user.partner_id
+        CustomerAlbum = self.env["comic.customer.album"]
+        added = 0
+        for work in self:
+            edition = work.primary_edition_id
+            if not edition:
+                continue
+            existing = CustomerAlbum.search(
+                [("partner_id", "=", partner.id), ("edition_id", "=", edition.id)],
+                limit=1,
+            )
+            if existing and existing.dans_collection:
+                continue
+            CustomerAlbum._upsert(partner, edition, {"dans_wishlist": True, "dans_collection": False})
+            added += 1
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Wishlist"),
+                "message": _("%(count)s album(s) ajouté(s) à votre wishlist.", count=added),
+                "type": "success" if added else "info",
+                "sticky": False,
+            },
+        }
 
     # ── Actions ───────────────────────────────────────────────────────────────
 

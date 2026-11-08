@@ -360,12 +360,23 @@ class ComicSerieMissingWizard(models.TransientModel):
         self.ensure_one()
         CustomerAlbum = self.env.get("comic.customer.album") if to_wishlist else None
         partner = self.env.user.partner_id
+        Work = self.env["comic.work"]
+        # Albums réellement créés par _get_or_create_edition : tout album d'id supérieur
+        # au plus grand id existant avant l'ajout (les albums réutilisés sont plus anciens).
+        last_work_id = Work.with_context(active_test=False).search([], order="id desc", limit=1).id or 0
         added = []
+        created_works = Work.browse()
         for line in self.line_ids.filtered("selected"):
             edition = self._get_or_create_edition(line)
+            if edition and edition.work_id.id > last_work_id:
+                created_works |= edition.work_id
             if CustomerAlbum is not None and edition and partner:
                 self._upsert_wishlist(CustomerAlbum, partner, edition)
             added.append(line)
+
+        # US-068 : alerte aux abonnés de la série pour les nouveaux tomes récents/à paraître
+        if created_works:
+            created_works._notify_new_release()
 
         if added:
             target = _("à votre wishlist") if CustomerAlbum is not None else _("au catalogue")
