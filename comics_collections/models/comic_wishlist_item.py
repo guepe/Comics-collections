@@ -24,6 +24,9 @@ class ComicWishlistItem(models.Model):
     _name = "comic.wishlist.item"
     _description = "Wishlist — manque ou souhait"
     _auto = False
+    # Champs techniques (create/write uid/date) repris de l'album : le widget image du
+    # client web lit write_date (clé de cache), absent par défaut d'une vue _auto=False.
+    _log_access = True
     _order = "serie_id, tome, work_id"
     _rec_name = "work_id"
 
@@ -52,8 +55,7 @@ class ComicWishlistItem(models.Model):
     edition_id = fields.Many2one("comic.edition", string="Édition", readonly=True)
     date_parution = fields.Date(string="Parution", readonly=True)
     type = fields.Selection([("manque", "Manque"), ("souhait", "Souhait")], readonly=True)
-    # Affichage seul de la couverture de l'album. Binary et non Image : un champ Image
-    # exige _log_access (write_date) que cette vue SQL n'a pas.
+    # Affichage seul de la couverture de l'album.
     image_couverture = fields.Binary(related="work_id.image_couverture", string="Couverture")
 
     def init(self):
@@ -74,7 +76,11 @@ class ComicWishlistItem(models.Model):
                     w.tome AS tome,
                     a.edition_id AS edition_id,
                     e.date_parution AS date_parution,
-                    'souhait'::varchar AS type
+                    'souhait'::varchar AS type,
+                    w.create_uid AS create_uid,
+                    w.create_date AS create_date,
+                    w.write_uid AS write_uid,
+                    w.write_date AS write_date
                 FROM comic_customer_album a
                 JOIN res_users u ON u.partner_id = a.partner_id
                     AND u.active AND u.share IS NOT TRUE
@@ -94,7 +100,11 @@ class ComicWishlistItem(models.Model):
                     w.tome AS tome,
                     w.primary_edition_id AS edition_id,
                     pe.date_parution AS date_parution,
-                    'manque'::varchar AS type
+                    'manque'::varchar AS type,
+                    w.create_uid AS create_uid,
+                    w.create_date AS create_date,
+                    w.write_uid AS write_uid,
+                    w.write_date AS write_date
                 FROM comic_serie_suivi_user_rel rel
                 JOIN res_users u ON u.id = rel.user_id
                     AND u.active AND u.share IS NOT TRUE

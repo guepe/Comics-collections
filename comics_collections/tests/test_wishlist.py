@@ -89,6 +89,21 @@ class TestWishlist(TransactionCase):
         self.assertEqual(item.user_id, self.user_a)
         self.assertEqual(item.partner_id, self.user_a.partner_id)
 
+    def test_list_and_kanban_views_can_be_read(self):
+        """Ce que lit le client web : chaque champ des vues liste / kanban, plus write_date
+        (clé de cache du widget image) — régression « Invalid field 'write_date' »."""
+        Item = self.env["comic.wishlist.item"].with_user(self.user_a)
+        views = Item.get_views([(False, "list"), (False, "kanban")])
+        fields_in_views = set()
+        for view in views["views"].values():
+            fields_in_views |= set(view.get("fields", {}) or {})
+        fields_in_views |= set(views["models"]["comic.wishlist.item"]["fields"])
+        spec = {name: {} for name in fields_in_views if name in Item._fields}
+        spec["write_date"] = {}
+        result = Item.web_search_read([], spec)
+        self.assertEqual(result["length"], 2)
+        self.assertIn("write_date", result["records"][0])
+
     def test_stable_ids(self):
         first = self._items(self.user_a).ids
         self.assertEqual(self._items(self.user_a).ids, first)

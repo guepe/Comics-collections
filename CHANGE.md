@@ -2286,3 +2286,14 @@ branches parallèles). Versions : `comics_collections` et `comic_shop` 19.0.4.0.
 `test_collection_stats.test_counts` adapté (le suivi automatique crée un manque). Suite complète
 sur base neuve avec les trois modules : 395 tests verts. Base locale : `comic_shop` désinstallé
 volontairement par l'utilisateur pour tester le module seul (343 tests verts sans le shop).
+
+## 2026-11-08 — Correctif : Ma wishlist plantait à l'affichage (`write_date`)
+
+- Symptôme (staging) : `ValueError: Invalid field 'write_date' on 'comic.wishlist.item'` à
+  l'ouverture de *Ma wishlist* — le widget image du client web lit `write_date` (clé de cache),
+  absent d'un modèle `_auto = False`.
+- `comics_collections/models/comic_wishlist_item.py` : `_log_access = True` ; la vue SQL fournit
+  `create_uid / create_date / write_uid / write_date` repris de l'album.
+- `tests/test_wishlist.py` : `test_list_and_kanban_views_can_be_read` (lit tous les champs des vues
+  liste / kanban + `write_date` via `web_search_read`, comme le client web).
+- `comics_collections` 19.0.4.0.1.
