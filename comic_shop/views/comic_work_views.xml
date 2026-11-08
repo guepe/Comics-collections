@@ -83,4 +83,20 @@
         </field>
     </record>
 
+    <!-- Couche « toutes les BD » apportée par le shop : le catalogue complet, ouvert à tous les
+         utilisateurs BD (le cœur, en collection privée, le réserve au gestionnaire). -->
+    <menuitem id="menu_comic_shop_catalogue_albums"
+              name="Tous les albums"
+              parent="comics_collections.menu_comic_catalogues"
+              action="comics_collections.action_comic_work_catalogue"
+              groups="comics_collections.group_comic_user"
+              sequence="5"/>
+
+    <menuitem id="menu_comic_shop_catalogue_series"
+              name="Toutes les séries"
+              parent="comics_collections.menu_comic_catalogues"
+              action="comics_collections.action_comic_serie_catalogue"
+              groups="comics_collections.group_comic_user"
+              sequence="6"/>
+
 </odoo>

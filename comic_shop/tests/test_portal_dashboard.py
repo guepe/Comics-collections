@@ -6,7 +6,7 @@ Lancement :
 
 import re
 
-from odoo.tests import HttpCase, new_test_user, tagged
+from odoo.tests import HttpCase, TransactionCase, new_test_user, tagged
 
 
 @tagged("post_install", "-at_install", "comic_shop", "portal_dashboard")
@@ -136,3 +136,14 @@ class TestPortalDashboard(HttpCase):
         self.assertIn("Ma bibliothèque BD", html)
         self.authenticate(None, None)
         self.assertNotIn('href="/my/library/dashboard"', self.url_open("/shop").text)
+
+
+@tagged("post_install", "-at_install", "comic_shop")
+class TestShopCatalogueMenus(TransactionCase):
+    def test_full_catalogue_menus_for_comic_users(self):
+        """Avec le shop, le catalogue complet est ouvert aux utilisateurs BD (pas seulement au gestionnaire)."""
+        user = new_test_user(self.env, login="shop_cat_user", groups="comics_collections.group_comic_user")
+        menus = self.env["ir.ui.menu"].with_user(user)._visible_menu_ids()
+        for xmlid in ("comic_shop.menu_comic_shop_catalogue_albums", "comic_shop.menu_comic_shop_catalogue_series"):
+            self.assertIn(self.env.ref(xmlid).id, menus)
+        self.assertNotIn(self.env.ref("comics_collections.menu_comic_referentiel_albums").id, menus)
