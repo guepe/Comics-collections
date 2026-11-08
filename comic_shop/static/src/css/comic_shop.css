@@ -4,3 +4,58 @@
     object-fit: contain !important;
     background: #f5f5f5;
 }
+
+/* ── Tableau de bord collectionneur du portail (US-065) ─────────────────── */
+.o_comic_dashboard .o_comic_kpi_value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--bs-primary, #714b67);
+}
+.o_comic_dashboard .o_comic_kpi_label {
+    font-size: 0.85rem;
+    color: var(--bs-secondary-color, #6c757d);
+}
+.o_comic_dashboard .o_comic_bar_row {
+    margin-bottom: 0.75rem;
+}
+.o_comic_dashboard .o_comic_bar_head {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+.o_comic_dashboard .o_comic_bar_label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.o_comic_dashboard .o_comic_bar_count {
+    color: var(--bs-secondary-color, #6c757d);
+    white-space: nowrap;
+}
+.o_comic_dashboard .o_comic_bar_track {
+    height: 0.6rem;
+    border-radius: 0.3rem;
+    background: var(--bs-tertiary-bg, #eef0f2);
+    overflow: hidden;
+}
+.o_comic_dashboard .o_comic_bar_fill {
+    height: 100%;
+    border-radius: 0.3rem;
+    background: var(--bs-primary, #714b67);
+}
+.o_comic_dashboard .o_comic_bar_non_lu {
+    background: var(--bs-secondary, #6c757d);
+}
+.o_comic_dashboard .o_comic_bar_en_cours {
+    background: var(--bs-warning, #ffc107);
+}
+.o_comic_dashboard .o_comic_bar_lu {
+    background: var(--bs-success, #198754);
+}
+.o_comic_dashboard .o_comic_top_series li:last-child,
+.o_comic_dashboard .o_comic_recent li:last-child {
+    border-bottom: 0 !important;
+}

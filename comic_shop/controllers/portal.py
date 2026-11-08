@@ -168,6 +168,43 @@ class ComicLibraryPortal(CustomerPortal):
             },
         )
 
+    # ── /my/library/dashboard — tableau de bord collectionneur (US-065) ──────
+
+    @staticmethod
+    def _dashboard_bars(rows, total):
+        """Turn ``(label, count)`` rows into bar dicts with a width percentage.
+
+        Les largeurs sont calculées ici (part du total des albums possédés) pour que
+        le template n'ait qu'à afficher.
+        """
+        bars = []
+        for label, count in rows:
+            pct = round(count * 100.0 / total) if total else 0
+            bars.append({"label": label, "count": count, "pct": pct})
+        return bars
+
+    @http.route("/my/library/dashboard", type="http", auth="user", website=True)
+    def my_library_dashboard(self, **kw):
+        # Prêts exclus : ils sont privés au back-office
+        stats = request.env["comic.customer.album"]._get_collection_stats(request.env.user.partner_id)
+        total = stats["nb_albums"]
+        return request.render(
+            "comic_shop.portal_library_dashboard",
+            {
+                "stats": stats,
+                "genre_bars": self._dashboard_bars(stats["by_genre"], total),
+                "reading_bars": [
+                    dict(row, key=key)
+                    for (key, _label, _count), row in zip(
+                        stats["by_reading"],
+                        self._dashboard_bars([(label, count) for _key, label, count in stats["by_reading"]], total),
+                    )
+                ],
+                "dashboard_empty": not stats["nb_albums"] and not stats["nb_wishlist"],
+                "page_name": "library_dashboard",
+            },
+        )
+
     # ── /my/library/<id> — détail ───────────────────────────────────────────
 
     @http.route("/my/library/<int:cust_album_id>", type="http", auth="user", website=True)

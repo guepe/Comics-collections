@@ -1,0 +1,122 @@
+"""Portail /my/library/dashboard : tableau de bord collectionneur (US-065).
+
+Lancement :
+    docker exec odoo-web odoo -d odoo -u comic_shop --test-tags /comic_shop:TestPortalDashboard
+"""
+
+import re
+
+from odoo.tests import HttpCase, new_test_user, tagged
+
+
+@tagged("post_install", "-at_install", "comic_shop", "portal_dashboard")
+class TestPortalDashboard(HttpCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.login = "comic_portal_dash"
+        cls.user = new_test_user(cls.env, login=cls.login, groups="base.group_portal")
+        cls.partner = cls.user.partner_id
+        cls.other_login = "comic_portal_dash_other"
+        cls.other_user = new_test_user(cls.env, login=cls.other_login, groups="base.group_portal")
+
+        genre = cls.env["comic.genre"].create({"name": "Genre Tableau Bord"})
+        Serie = cls.env["comic.serie"]
+        Work = cls.env["comic.work"]
+        cls.serie_full = Serie.create({"name": "Série Dash Complète", "genre_id": genre.id})
+        cls.serie_partial = Serie.create({"name": "Série Dash Partielle"})
+        cls.serie_other = Serie.create({"name": "Série Dash Voisin"})
+        full = Work.create(
+            [{"serie_id": cls.serie_full.id, "titre_canonique": "Dash Complet %d" % i, "tome": i} for i in (1, 2)]
+        )
+        partial = Work.create(
+            [{"serie_id": cls.serie_partial.id, "titre_canonique": "Dash Partiel %d" % i, "tome": i} for i in (1, 2, 3)]
+        )
+        other = Work.create({"serie_id": cls.serie_other.id, "titre_canonique": "Dash Voisin Secret", "tome": 1})
+
+        Album = cls.env["comic.customer.album"]
+        # Utilisateur testé : 3 albums possédés (série complète + 1 tome), 1 en wishlist
+        cls.owned = Album.create(
+            [
+                {"partner_id": cls.partner.id, "edition_id": full[0].primary_edition_id.id, "note": 4.0},
+                {
+                    "partner_id": cls.partner.id,
+                    "edition_id": full[1].primary_edition_id.id,
+                    "note": 5.0,
+                    "etat_lecture": "lu",
+                },
+                {"partner_id": cls.partner.id, "edition_id": partial[0].primary_edition_id.id},
+            ]
+        )
+        Album.create(
+            {
+                "partner_id": cls.partner.id,
+                "edition_id": partial[1].primary_edition_id.id,
+                "dans_collection": False,
+                "dans_wishlist": True,
+            }
+        )
+        # Autre utilisateur : ses données ne doivent jamais apparaître
+        Album.create(
+            {"partner_id": cls.other_user.partner_id.id, "edition_id": other.primary_edition_id.id, "note": 3.0}
+        )
+
+    def _kpi(self, html, key):
+        match = re.search(r'data-kpi="%s"[^>]*>\s*(\d+)\s*<' % key, html)
+        self.assertTrue(match, "Tuile KPI %s absente" % key)
+        return int(match.group(1))
+
+    def test_dashboard_shows_user_figures(self):
+        self.authenticate(self.login, self.login)
+        resp = self.url_open("/my/library/dashboard")
+        self.assertEqual(resp.status_code, 200)
+        html = resp.text
+        self.assertEqual(self._kpi(html, "nb_albums"), 3)
+        self.assertEqual(self._kpi(html, "nb_wishlist"), 1)
+        self.assertEqual(self._kpi(html, "series_completes"), 1)
+        self.assertEqual(self._kpi(html, "series_en_cours"), 1)
+        # Barres : genre (2 albums sur 3 → 67 %) et « Sans genre »
+        self.assertIn("Genre Tableau Bord", html)
+        self.assertIn("width: 67%", html)
+        self.assertIn("Sans genre", html)
+        self.assertIn("o_comic_bar_lu", html)
+        # Top séries (moyenne 4,5) et derniers ajouts avec lien vers l'entrée
+        self.assertIn("Série Dash Complète", html)
+        self.assertIn("4.5", html)
+        self.assertIn('href="/my/library/%d"' % self.owned[0].id, html)
+        self.assertNotIn("o_comic_dashboard_empty", html)
+
+    def test_dashboard_isolated_from_other_users(self):
+        self.authenticate(self.login, self.login)
+        html = self.url_open("/my/library/dashboard").text
+        self.assertNotIn("Dash Voisin Secret", html)
+        self.assertNotIn("Série Dash Voisin", html)
+
+        self.authenticate(self.other_login, self.other_login)
+        resp = self.url_open("/my/library/dashboard")
+        self.assertEqual(resp.status_code, 200)
+        html = resp.text
+        self.assertEqual(self._kpi(html, "nb_albums"), 1)
+        self.assertEqual(self._kpi(html, "nb_wishlist"), 0)
+        self.assertIn("Série Dash Voisin", html)
+        self.assertNotIn("Série Dash Complète", html)
+
+    def test_dashboard_requires_login(self):
+        resp = self.url_open("/my/library/dashboard", allow_redirects=False)
+        self.assertIn(resp.status_code, (302, 303))
+        self.assertIn("/web/login", resp.headers.get("Location", ""))
+
+    def test_dashboard_empty_state(self):
+        new_test_user(self.env, login="comic_portal_dash_empty", groups="base.group_portal")
+        self.authenticate("comic_portal_dash_empty", "comic_portal_dash_empty")
+        resp = self.url_open("/my/library/dashboard")
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("o_comic_dashboard_empty", resp.text)
+        self.assertIn('href="/my/library/add"', resp.text)
+        self.assertNotIn('data-kpi="nb_albums"', resp.text)
+
+    def test_dashboard_links(self):
+        self.authenticate(self.login, self.login)
+        self.assertIn('href="/my/library/dashboard"', self.url_open("/my/library").text)
+        self.assertIn('href="/my/library/dashboard"', self.url_open("/my").text)
