@@ -1,4 +1,4 @@
-from odoo import Command, _, api, fields, models
+from odoo import SUPERUSER_ID, Command, _, api, fields, models
 
 from ..utils.normalize import normalize_title
 
@@ -50,6 +50,15 @@ class ComicSerie(models.Model):
         "user_id",
         string="Suivie par",
     )
+    # Utilisateurs qui se sont désabonnés explicitement : le suivi automatique
+    # (création de la série, album possédé) ne les réabonne plus (US-088).
+    suivi_exclu_user_ids = fields.Many2many(
+        "res.users",
+        "comic_serie_suivi_exclu_user_rel",
+        "serie_id",
+        "user_id",
+        string="Ne suit plus",
+    )
     # Catalogue partagé : le suivi est propre à chaque utilisateur. Ce booléen
     # non stocké reflète l'utilisateur courant (présence dans suivi_user_ids).
     a_suivre = fields.Boolean(
@@ -80,12 +89,45 @@ class ComicSerie(models.Model):
 
     def _inverse_a_suivre(self):
         user = self.env.user
-        to_follow = self.filtered(lambda s: s.a_suivre and user not in s.suivi_user_ids)
+        # Réabonnement : on suit et on lève l'exclusion. Désabonnement : on ne suit plus
+        # et on mémorise l'exclusion, pour que le suivi automatique ne réabonne pas.
+        to_follow = self.filtered(
+            lambda s: s.a_suivre and (user not in s.suivi_user_ids or user in s.suivi_exclu_user_ids)
+        )
+        # Seul un utilisateur qui suivait est exclu : un formulaire de création envoie
+        # a_suivre=False sans que ce soit un désabonnement.
         to_unfollow = self.filtered(lambda s: not s.a_suivre and user in s.suivi_user_ids)
         if to_follow:
-            to_follow.write({"suivi_user_ids": [Command.link(user.id)]})
+            to_follow.write(
+                {"suivi_user_ids": [Command.link(user.id)], "suivi_exclu_user_ids": [Command.unlink(user.id)]}
+            )
         if to_unfollow:
-            to_unfollow.write({"suivi_user_ids": [Command.unlink(user.id)]})
+            to_unfollow.write(
+                {"suivi_user_ids": [Command.unlink(user.id)], "suivi_exclu_user_ids": [Command.link(user.id)]}
+            )
+
+    def _auto_follow(self, users):
+        """Make ``users`` follow the series of ``self`` (automatic follow, US-088).
+
+        Ignore les utilisateurs inactifs, partagés (portail) et ceux qui se sont
+        désabonnés de la série (suivi_exclu_user_ids). Écriture en sudo : le suivi
+        automatique découle d'une autre action (création, possession).
+        """
+        users = users.filtered(lambda u: u.active and not u.share)
+        if not users:
+            return
+        for serie in self.sudo():
+            to_add = users - serie.suivi_user_ids - serie.suivi_exclu_user_ids
+            if to_add:
+                serie.write({"suivi_user_ids": [Command.link(uid) for uid in to_add.ids]})
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        # Le créateur réel suit sa série ; pas le superutilisateur ni le chargement de données.
+        if not self.env.su and self.env.uid != SUPERUSER_ID and not self.env.context.get("install_mode"):
+            records._auto_follow(self.env.user)
+        return records
 
     def _search_a_suivre(self, operator, value):
         # Odoo 19 normalise '=' / '!=' en 'in' / 'not in' avant l'appel ;
@@ -154,5 +196,9 @@ class ComicSerie(models.Model):
                 (False, "form"),
             ],
             "domain": [("serie_id", "=", self.id)],
-            "context": {"default_serie_id": self.id},
+            # Ouvert depuis « Mes séries » : un album créé ici entre dans la collection.
+            "context": {
+                "default_serie_id": self.id,
+                **({"comic_auto_own": True} if self.env.context.get("comic_auto_own") else {}),
+            },
         }

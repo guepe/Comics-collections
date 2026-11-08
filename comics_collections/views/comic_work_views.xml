@@ -253,17 +253,21 @@
     </record>
 
     <!-- ── Action ────────────────────────────────────────────────────────────── -->
+    <!-- « Mes albums » (US-087) : collection privée. Domaine fixe = albums dont
+         l'utilisateur courant possède une édition ; comic_auto_own fait entrer
+         dans sa collection tout album créé depuis cette vue. -->
     <record id="action_comic_work" model="ir.actions.act_window">
-        <field name="name">Albums / Tomes</field>
+        <field name="name">Mes albums</field>
         <field name="res_model">comic.work</field>
         <field name="view_mode">list,kanban,form</field>
         <field name="search_view_id" ref="view_comic_work_search"/>
         <!-- Groupement par série porté par la vue liste (default_group_by) :
              la galerie kanban reste une grille, sans une colonne par série. -->
-        <field name="context">{'search_default_ma_collection': 1}</field>
+        <field name="domain">[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True)])]</field>
+        <field name="context">{'comic_auto_own': True}</field>
     </record>
 
-    <!-- Catalogue partagé complet (sans filtre « Ma collection ») -->
+    <!-- Catalogue partagé complet (sans filtre « Ma collection ») : gestionnaire, Référentiel avancé -->
     <record id="action_comic_work_catalogue" model="ir.actions.act_window">
         <field name="name">Tous les albums</field>
         <field name="res_model">comic.work</field>

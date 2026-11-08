@@ -249,6 +249,12 @@ class ComicWork(models.Model):
                 self.env["comic.edition"].create(
                     {"work_id": record.id, "langue": "fr", "format": "cartonne", **edition_vals}
                 )
+        if self.env.context.get("comic_auto_own"):
+            # Créé depuis « Mes albums » / « Mes séries » (US-087) : création = possession.
+            Album = self.env["comic.customer.album"]
+            partner = self.env.user.partner_id
+            for record in records.filtered("primary_edition_id"):
+                Album._upsert(partner, record.primary_edition_id, {"dans_collection": True})
         return records
 
     def write(self, vals):

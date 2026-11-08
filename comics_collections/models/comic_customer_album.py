@@ -123,6 +123,35 @@ class ComicCustomerAlbum(models.Model):
         for rec in self:
             rec.note = float(rec.note_etoiles or 0)
 
+    # ── Suivi automatique des séries commencées (US-088) ────────────────────
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records.filtered("dans_collection")._auto_follow_series()
+        return records
+
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("dans_collection"):
+            self._auto_follow_series()
+        return res
+
+    def _auto_follow_series(self):
+        """Internal users of the owner follow the series of the owned albums.
+
+        Les clients portail ne sont pas concernés (suivi_user_ids = utilisateurs BD
+        internes) ; _auto_follow écarte aussi inactifs et désabonnés.
+        """
+        users_by_serie = defaultdict(lambda: self.env["res.users"])
+        for rec in self.sudo():
+            serie = rec.work_id.serie_id
+            users = rec.partner_id.user_ids.filtered(lambda u: not u.share)
+            if serie and users:
+                users_by_serie[serie] |= users
+        for serie, users in users_by_serie.items():
+            serie._auto_follow(users)
+
     # ── Création / mise à jour idempotente ──────────────────────────────────
 
     @api.model

@@ -77,7 +77,9 @@ export class CollectionDashboard extends Component {
     }
 
     openCatalogue() {
-        this.action.doAction("comics_collections.action_comic_work_catalogue");
+        // Collection privée (US-087) : le catalogue complet est réservé au gestionnaire
+        // dans le cœur ; on ouvre « Mes albums » directement en création.
+        this.action.doAction("comics_collections.action_comic_work", {viewType: "form"});
     }
 
     openAlbums() {

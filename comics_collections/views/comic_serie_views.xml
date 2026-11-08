@@ -51,6 +51,8 @@
                             <field name="a_suivre"/>
                             <field name="suivi_user_ids" widget="many2many_tags"
                                    groups="comics_collections.group_comic_manager"/>
+                            <field name="suivi_exclu_user_ids" widget="many2many_tags"
+                                   groups="comics_collections.group_comic_manager"/>
                         </group>
                     </group>
                     <notebook>
@@ -162,10 +164,22 @@
         </field>
     </record>
 
+    <!-- « Mes séries » (US-087) : séries dont l'utilisateur possède au moins un album
+         ou qu'il suit. -->
     <record id="action_comic_serie" model="ir.actions.act_window">
-        <field name="name">Séries</field>
+        <field name="name">Mes séries</field>
         <field name="res_model">comic.serie</field>
         <field name="view_mode">kanban,list,form</field>
+        <field name="domain">['|', ('work_ids.edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True)]), ('suivi_user_ids', 'in', [uid])]</field>
+        <field name="context">{'comic_auto_own': True}</field>
+    </record>
+
+    <!-- Catalogue partagé complet des séries : gestionnaire, Référentiel avancé -->
+    <record id="action_comic_serie_catalogue" model="ir.actions.act_window">
+        <field name="name">Toutes les séries</field>
+        <field name="res_model">comic.serie</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{}</field>
     </record>
 
 </odoo>

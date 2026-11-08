@@ -22,11 +22,11 @@
                     <div class="o_nocontent_help">
                         <p class="o_view_nocontent_smiling_face">Votre bibliothèque est encore vide</p>
                         <p>
-                            Ajoutez vos albums depuis la liste des albums, ou importez votre collection
+                            Ajoutez vos albums un par un, ou importez votre collection
                             depuis un fichier CSV ou Excel.
                         </p>
                         <p>
-                            <button type="button" class="btn btn-primary me-2" t-on-click="openCatalogue">Parcourir les albums</button>
+                            <button type="button" class="btn btn-primary me-2" t-on-click="openCatalogue">Ajouter un album</button>
                             <button type="button" class="btn btn-secondary" t-on-click="openImport">Importer un fichier</button>
                         </p>
                     </div>
