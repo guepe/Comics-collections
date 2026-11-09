@@ -10,7 +10,10 @@
     "development_status": "Beta",
     "depends": ["comics_collections", "comic_datasource"],
     "data": [
+        "security/ir.model.access.csv",
         "views/res_config_settings_views.xml",
+        "wizards/comic_ai_wizard_views.xml",
+        "views/comic_ai_buttons_views.xml",
     ],
     # Bibliothèques importées à la demande (message clair si absentes) : le module
     # s'installe sans elles. Voir comic.ai.service._import_sdk().

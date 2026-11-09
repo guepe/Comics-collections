@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_comic_ai_wizard_manager,comic.ai.wizard manager,model_comic_ai_wizard,comics_collections.group_comic_manager,1,1,1,1

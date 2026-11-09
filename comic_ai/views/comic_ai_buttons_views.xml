@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- US-027 / US-028 : boutons IA en tête de l'onglet Synopsis (gestionnaires) -->
+    <record id="view_comic_edition_form_comic_ai" model="ir.ui.view">
+        <field name="name">comic.edition.form.comic_ai</field>
+        <field name="model">comic.edition</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_edition_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/field[@name='synopsis']" position="before">
+                <div class="d-flex gap-2 mb-3" name="comic_ai_buttons"
+                     groups="comics_collections.group_comic_manager" invisible="not id">
+                    <button name="action_open_ai_wizard" type="object"
+                            string="Générer le synopsis" icon="fa-magic"
+                            class="btn-secondary"/>
+                    <button name="action_open_ai_wizard" type="object"
+                            string="Traduire le synopsis" icon="fa-language"
+                            class="btn-secondary"
+                            context="{'comic_ai_mode': 'translate'}"
+                            invisible="not synopsis"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Fiche album : l'assistant agit sur l'édition principale -->
+    <record id="view_comic_work_form_comic_ai" model="ir.ui.view">
+        <field name="name">comic.work.form.comic_ai</field>
+        <field name="model">comic.work</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_work_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page/field[@name='synopsis']" position="before">
+                <div class="d-flex gap-2 mb-3" name="comic_ai_buttons"
+                     groups="comics_collections.group_comic_manager" invisible="not primary_edition_id">
+                    <button name="action_open_ai_wizard" type="object"
+                            string="Générer le synopsis" icon="fa-magic"
+                            class="btn-secondary"/>
+                    <button name="action_open_ai_wizard" type="object"
+                            string="Traduire le synopsis" icon="fa-language"
+                            class="btn-secondary"
+                            context="{'comic_ai_mode': 'translate'}"
+                            invisible="not synopsis"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
