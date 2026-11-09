@@ -19,7 +19,7 @@ def _error(cls, status_code=None):
     return exc
 
 
-def make_fake_sdk(reply="Réponse IA", raise_exc=None, stop_reason="end_turn"):
+def make_fake_sdk(reply="Réponse IA", raise_exc=None, stop_reason="end_turn", finish_reason="stop"):
     """Module factice exposant Anthropic / OpenAI et la hiérarchie d'erreurs des SDK.
 
     ``calls`` reçoit les kwargs de chaque appel (assertions sur la requête).
@@ -72,7 +72,8 @@ def make_fake_sdk(reply="Réponse IA", raise_exc=None, stop_reason="end_turn"):
             sdk.calls.append(kwargs)
             _maybe_raise()
             message = types.SimpleNamespace(content=reply)
-            return types.SimpleNamespace(choices=[types.SimpleNamespace(message=message)])
+            choice = types.SimpleNamespace(message=message, finish_reason=finish_reason)
+            return types.SimpleNamespace(choices=[choice])
 
     class Anthropic:
         def __init__(self, **kwargs):

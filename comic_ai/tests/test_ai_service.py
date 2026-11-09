@@ -54,7 +54,8 @@ class TestAiService(TransactionCase):
             result = self.service._generate("Prompt", system="Sys", max_tokens=50)
         self.assertEqual((result["provider"], result["model"], result["text"]), ("openai", "gpt-5-mini", "Hello"))
         self.assertEqual(sdk.calls[0]["messages"][0], {"role": "system", "content": "Sys"})
-        self.assertEqual(sdk.calls[0]["max_completion_tokens"], 50)
+        # Réserve pour la réflexion des modèles à raisonnement
+        self.assertEqual(sdk.calls[0]["max_completion_tokens"], 50 + 4096)
 
     def test_errors_are_clear(self):
         cases = {
@@ -83,6 +84,24 @@ class TestAiService(TransactionCase):
         with patch_sdk(self.env, make_fake_sdk(reply="  ")):
             with self.assertRaisesRegex(ComicAiError, "aucun texte"):
                 self.service._generate("Prompt")
+
+    def test_truncated_reply_is_explicit(self):
+        """Modèle à raisonnement qui épuise la limite : message clair, pas « aucun texte »."""
+        configure_ai(self.env, provider="openai")
+        with patch_sdk(self.env, make_fake_sdk(reply=None, finish_reason="length")):
+            with self.assertRaisesRegex(ComicAiError, "tronquée"):
+                self.service._generate("Prompt")
+        configure_ai(self.env)
+        with patch_sdk(self.env, make_fake_sdk(reply="", stop_reason="max_tokens")):
+            with self.assertRaisesRegex(ComicAiError, "tronquée"):
+                self.service._generate("Prompt")
+
+    def test_connection_test_leaves_room(self):
+        configure_ai(self.env)
+        sdk = make_fake_sdk("OK")
+        with patch_sdk(self.env, sdk):
+            self.service._test_connection()
+        self.assertGreaterEqual(sdk.calls[0]["max_tokens"], 1024)
 
     def test_missing_library(self):
         configure_ai(self.env)

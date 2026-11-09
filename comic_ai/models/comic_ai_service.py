@@ -27,6 +27,9 @@ DEFAULT_CLAUDE_MODEL = "claude-sonnet-5-5"
 DEFAULT_OPENAI_MODEL = "gpt-5-mini"
 DEFAULT_LANG = "fr"
 DEFAULT_TIMEOUT = 60  # secondes
+# Les modèles « à raisonnement » (OpenAI gpt-5 / o-series) décomptent leur réflexion
+# de max_completion_tokens : sans réserve, ils l'épuisent et ne renvoient aucun texte.
+OPENAI_REASONING_HEADROOM = 4096
 
 # Langues de génération / traduction (code → libellé utilisé dans les prompts)
 LANGS = [("fr", "Français"), ("nl", "Néerlandais"), ("en", "Anglais"), ("de", "Allemand")]
@@ -174,9 +177,13 @@ class ComicAiService(models.AbstractModel):
             if exc.status_code >= 500:
                 raise ComicAiError(_("Claude est momentanément indisponible : réessayez.")) from exc
             raise ComicAiError(_("Requête refusée par Claude : %s", getattr(exc, "message", exc))) from exc
-        if getattr(response, "stop_reason", None) == "refusal":
+        stop_reason = getattr(response, "stop_reason", None)
+        if stop_reason == "refusal":
             raise ComicAiError(_("Claude a refusé de traiter cette demande."))
-        return "".join(block.text for block in (response.content or []) if getattr(block, "type", None) == "text")
+        text = "".join(block.text for block in (response.content or []) if getattr(block, "type", None) == "text")
+        if not text.strip() and stop_reason == "max_tokens":
+            raise ComicAiError(_("Réponse de Claude tronquée : la limite de longueur a été atteinte avant le texte."))
+        return text
 
     @api.model
     def _call_openai(self, cfg, system, prompt, max_tokens, effort):
@@ -188,7 +195,9 @@ class ComicAiService(models.AbstractModel):
         messages.append({"role": "user", "content": prompt})
         try:
             response = client.chat.completions.create(
-                model=cfg["model"], messages=messages, max_completion_tokens=max_tokens
+                model=cfg["model"],
+                messages=messages,
+                max_completion_tokens=max_tokens + OPENAI_REASONING_HEADROOM,
             )
         except openai.AuthenticationError as exc:
             raise ComicAiError(_("Clé API OpenAI invalide ou révoquée.")) from exc
@@ -208,14 +217,24 @@ class ComicAiService(models.AbstractModel):
                 raise ComicAiError(_("OpenAI est momentanément indisponible : réessayez.")) from exc
             raise ComicAiError(_("Requête refusée par OpenAI : %s", getattr(exc, "message", exc))) from exc
         choices = response.choices or []
-        return choices[0].message.content if choices else ""
+        if not choices:
+            return ""
+        text = choices[0].message.content or ""
+        if not text.strip() and getattr(choices[0], "finish_reason", None) == "length":
+            raise ComicAiError(
+                _(
+                    "Réponse d'OpenAI tronquée : la limite de longueur a été atteinte avant le texte "
+                    "(modèle à raisonnement)."
+                )
+            )
+        return text
 
     # ── Utilitaires partagés ─────────────────────────────────────────────────
 
     @api.model
     def _test_connection(self):
         """Petit appel de contrôle ; retourne le résultat de ``_generate``."""
-        return self._generate("Réponds uniquement par : OK", max_tokens=32, effort="low")
+        return self._generate("Réponds uniquement par : OK", max_tokens=1024, effort="low")
 
     @api.model
     def _post_trace(self, record, action_label, result):

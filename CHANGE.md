@@ -2421,3 +2421,15 @@ et `comic_datasource`)
 **Tests** : `comic_ai` 52 (socle 10, wizard 17, découverte 19 + réglages), `comic_ai_shop` 10 ;
 aucun appel réseau (faux SDK `tests/common.py`, agrégateur patché). Suite complète sur base neuve,
 cinq modules : 472 tests verts.
+
+## 2026-11-09 — E7 : correctifs après essai réel (OpenAI)
+
+- `comic_ai` : la bibliothèque `openai` manquait dans le conteneur local → ajout de `anthropic` et
+  `openai` à `requirements.txt` ; `Dockerfile` : `--ignore-installed typing_extensions` (paquet
+  Debian que pip ne peut pas désinstaller).
+- « Le fournisseur IA n'a renvoyé aucun texte » au test de connexion : les modèles à raisonnement
+  (gpt-5…, et la réflexion de Claude) décomptent leur réflexion de la limite de tokens (32 au test).
+  Test de connexion à 1024 tokens, réserve `OPENAI_REASONING_HEADROOM` (4096) sur
+  `max_completion_tokens`, message « réponse tronquée » si la limite est atteinte avant le texte
+  (`finish_reason == "length"` / `stop_reason == "max_tokens"`). Tests ajoutés.
+- Vérifié en réel : *Tester la connexion IA* → « OpenAI répond (modèle gpt-5-mini) ».
