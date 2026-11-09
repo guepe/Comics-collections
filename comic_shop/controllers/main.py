@@ -237,6 +237,8 @@ class ComicShopController(WebsiteSale):
             {
                 "serie": serie,
                 "editions": editions,
+                # Message après « Suivre la série » (US-069)
+                "flash": request.session.pop("comic_library_flash", None),
             },
         )
 

@@ -55,6 +55,19 @@ class ComicSerie(models.Model):
         self.write({"a_valider": False})
         return True
 
+    def _editions_on_sale(self):
+        return self.work_ids.edition_ids.filtered(lambda e: e._is_on_sale())
+
+    def action_release_notify(self):
+        """Prévenir les clients des albums en vente de ces séries (US-069)."""
+        return self._editions_on_sale()._action_release_notify()
+
+    def action_publish_products(self):
+        """Publie les produits des séries, puis propose de prévenir les clients."""
+        products = self.work_ids.edition_ids.product_tmpl_id
+        products.write({"is_published": True})
+        return self._editions_on_sale()._action_release_notify(raise_if_empty=False)
+
     def action_create_products_bulk(self):
         """Crée un produit pour chaque édition sans produit, sur plusieurs séries."""
         # Les albums proposés depuis le portail et non validés ne sont pas mis en vente

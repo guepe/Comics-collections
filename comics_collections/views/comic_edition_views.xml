@@ -46,7 +46,7 @@
                         <page string="ISBNs">
                             <field name="isbn_ids">
                                 <list editable="bottom">
-                                    <field name="isbn_13"/>
+                                    <field name="isbn_13" widget="isbn_scan"/>
                                     <field name="isbn_10"/>
                                 </list>
                             </field>

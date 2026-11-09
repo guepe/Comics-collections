@@ -23,6 +23,17 @@ class ComicWork(models.Model):
         copy=False,
         ondelete="set null",
     )
+    # Clients déjà prévenus par email de la mise en vente de cet album (US-069) :
+    # un client n'est prévenu qu'une fois par album, quelle que soit l'édition.
+    release_customer_ids = fields.Many2many(
+        "res.partner",
+        "comic_work_release_customer_rel",
+        "work_id",
+        "partner_id",
+        string="Clients prévenus de la mise en vente",
+        copy=False,
+        groups="comics_collections.group_comic_manager,comic_shop.group_shop_manager",
+    )
 
     def action_valider_portail(self):
         """Validate albums proposed from the portal."""

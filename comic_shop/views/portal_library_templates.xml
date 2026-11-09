@@ -817,14 +817,22 @@
                             <i class="fa fa-search me-1"/>Rechercher une BD
                         </div>
                         <div class="card-body">
-                            <form action="/my/library/add/search" method="post">
+                            <form action="/my/library/add/search" method="post" class="o_comic_isbn_scan">
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 <div class="row g-2 align-items-end">
                                     <div class="col-sm-5">
-                                        <label class="form-label fw-semibold small">ISBN (EAN-13)</label>
-                                        <input type="text" name="isbn" class="form-control"
-                                               placeholder="ex. 9782505015…"
-                                               t-att-value="search_isbn or ''"/>
+                                        <label class="form-label fw-semibold small" for="comic_add_isbn">ISBN (EAN-13)</label>
+                                        <div class="input-group">
+                                            <input type="text" name="isbn" id="comic_add_isbn" class="form-control"
+                                                   inputmode="numeric" autocomplete="off"
+                                                   placeholder="ex. 9782505015…"
+                                                   t-att-value="search_isbn or ''"/>
+                                            <!-- US-070 : affiché par le JS si la caméra est accessible -->
+                                            <button type="button" class="btn btn-outline-secondary o_comic_isbn_scan_btn d-none"
+                                                    title="Scanner le code-barres avec la caméra">
+                                                <i class="fa fa-barcode me-1"/>Scanner
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="col-sm-1 text-center text-muted fw-bold pt-4">ou</div>
                                     <div class="col-sm-4">
@@ -838,6 +846,10 @@
                                             <i class="fa fa-search me-1"/>Rechercher
                                         </button>
                                     </div>
+                                </div>
+                                <div class="form-text o_comic_isbn_scan_unavailable d-none">
+                                    <i class="fa fa-info-circle me-1"/>Scan par caméra indisponible sur ce navigateur
+                                    (caméra absente ou connexion non sécurisée) : saisissez l'ISBN.
                                 </div>
                             </form>
                         </div>

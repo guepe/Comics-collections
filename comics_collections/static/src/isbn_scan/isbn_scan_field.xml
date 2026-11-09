@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="comics_collections.IsbnScanField" t-inherit="web.CharField" t-inherit-mode="primary">
+        <xpath expr="//div[hasclass('o_field_input_buttons')]" position="inside">
+            <button t-if="hasScanButton" type="button"
+                    class="btn btn-link m-0 py-0 px-2 o_comic_isbn_scan_button"
+                    title="Scanner l'ISBN" aria-label="Scanner l'ISBN"
+                    t-on-click="onScanClick">
+                <i class="fa fa-barcode"/>
+            </button>
+        </xpath>
+    </t>
+
+</templates>

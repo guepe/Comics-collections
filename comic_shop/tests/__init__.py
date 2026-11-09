@@ -6,3 +6,6 @@ from . import test_portal_minor
 from . import test_portal_stars
 from . import test_portal_dashboard
 from . import test_wishlist_share
+from . import test_release_notify
+from . import test_portal_series
+from . import test_portal_isbn_scan

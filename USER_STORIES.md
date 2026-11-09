@@ -21,8 +21,7 @@
 
 | Horizon        | Épic                                                                      | US                          | État |
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
-| **Maintenant** | [E6 — Séries sur le portail](#e6--séries-sur-le-portail)                  | US-069, US-070              | 🔄   |
-| **Ensuite**    | [E7 — IA (`comic_ai`)](#e7--ia-comic_ai)                                  | US-026 → 029                | ⏳   |
+| **Maintenant** | [E7 — IA (`comic_ai`)](#e7--ia-comic_ai)                                  | US-026 → 029                | ⏳   |
 | **Plus tard**  | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064                      | 🔄   |
 | **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
 
@@ -39,7 +38,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E3   | Shop & caisse                        | `comic_shop`                        | ✅   | 12 US  | —                         |
 | E4   | Bibliothèque client (portail)        | `comic_shop`                        | ✅   | 6 US   | —                         |
 | E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ✅   | 9 US   | —                         |
-| E6   | Séries sur le portail                | `comic_shop`                        | 🔄   | 1 US   | US-069, US-070            |
+| E6   | Séries sur le portail                | `comic_shop`                        | ✅   | 3 US   | —                         |
 | E7   | IA                                   | `comic_ai` (nouveau)                | ⏳   | —      | US-026 → 029              |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064                    |
 | E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | US-046, 047, 049, 072     |
@@ -55,48 +54,8 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 
 ### E6 — Séries sur le portail
 
-> Priorité 2 : la même gestion de séries et de collection, côté client sur `/my/library`.
-> Livré : US-073 (wishlist partageable) — voir l'[annexe](#e6--séries-sur-le-portail-livré).
-
-**US-069 — Suivi de séries par les clients et notification des sorties** ⏳ *(absorbe US-048)*
-
-```
-En tant que client du shop
-Je veux suivre une série depuis mon portail
-Afin d'être prévenu quand un nouveau tome, ou un album de ma wishlist, est mis en vente
-
-Contexte technique :
-  Fusion d'US-069 (suivi côté client) et d'US-048 (notification à la mise en catalogue).
-  Déclencheur : publication du produit (action_create_product() / is_published sur
-  comic_shop/models/comic_edition.py). Destinataires : clients qui suivent la série, et
-  comic.customer.album de l'édition en wishlist. mail.template + message_post sur l'édition.
-
-Critères d'acceptance :
-- [ ] Bouton « Suivre la série » sur /my/library et sur la page série du shop
-- [ ] Liste des séries suivies et désabonnement sur le portail
-- [ ] À la mise en vente : email « Bonne nouvelle — [Titre] est disponible ! » avec lien
-      vers la page produit, aux abonnés de la série et aux clients qui l'ont en wishlist
-- [ ] Côté commerçant : « X clients seront prévenus » avec aperçu avant envoi
-- [ ] Trace dans le chatter de l'édition : date, nb destinataires
-- [ ] Un client n'est prévenu qu'une fois par album
-```
-
-**US-070 — Ajout par scan d'ISBN à la caméra** ⏳
-
-```
-En tant que collectionneur
-Je veux scanner le code-barres d'un album avec mon téléphone
-Afin de l'ajouter à ma bibliothèque sans taper l'ISBN
-
-Contexte technique :
-  Le back-office Odoo 19 sait déjà scanner par caméra ; le portail demande du JS dédié.
-  La caméra exige HTTPS (à prévoir pour les tests locaux).
-
-Critères d'acceptance :
-- [ ] Bouton « Scanner » sur l'ajout d'une BD du portail (et en back-office mobile)
-- [ ] Lecture EAN-13 via la caméra, puis recherche habituelle (catalogue + sources)
-- [ ] Repli sur la saisie manuelle si la caméra est indisponible
-```
+> E6 est entièrement livré le 2026-11-08 (US-073, US-069, US-070) — voir
+> l'[annexe](#e6--séries-sur-le-portail-livré).
 
 ---
 
@@ -398,6 +357,8 @@ anciens fichiers V1 / V2 / V3.
 | US     | Titre                                                                    |
 | ------ | ------------------------------------------------------------------------ |
 | US-073 | Wishlist partageable par lien secret révocable (`/wishlist/<jeton>`, lecture seule) — 2026-11-08 |
+| US-069 | Suivi de séries par les clients (*Mes séries* `/my/library/series`, boutons sur la page série du shop et la fiche album) ; à la mise en vente, assistant « X clients seront prévenus » avec aperçu, email « Bonne nouvelle — … est disponible ! » aux abonnés et aux wishlists, une fois par album, trace dans le chatter *(absorbe US-048)* — 2026-11-08 |
+| US-070 | Scan d'ISBN à la caméra : bouton *Scanner* sur l'ajout d'une BD du portail, widget `isbn_scan` en back-office mobile (ISBN album / édition, recherche multi-sources) ; EAN-13 978/979 uniquement, repli sur la saisie manuelle — 2026-11-08 |
 
 ### E8 — Qualité & publication OCA (livré)
 

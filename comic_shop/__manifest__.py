@@ -1,6 +1,6 @@
 {
     "name": "Comic Shop",
-    "version": "19.0.4.0.0",
+    "version": "19.0.5.0.0",
     "category": "Leisure",
     "summary": "Sell your comics online and manage customer libraries",
     "description": """
@@ -29,7 +29,9 @@
         "security/ir.model.access.csv",
         "data/comic_shop_data.xml",
         "data/comic_shop_server_actions.xml",
+        "data/comic_release_mail_template.xml",
         "views/comic_portal_refuse_wizard_views.xml",
+        "views/comic_release_notify_wizard_views.xml",
         "views/comic_serie_views.xml",
         "views/comic_edition_views.xml",
         "views/comic_work_views.xml",
@@ -38,10 +40,14 @@
         "views/website_sale_templates.xml",
         "views/website_sale_shop_templates.xml",
         "views/portal_library_templates.xml",
+        "views/portal_series_templates.xml",
     ],
     "assets": {
         "web.assets_frontend": [
             "comic_shop/static/src/css/comic_shop.css",
+            "comics_collections/static/src/isbn_scan/isbn_scan_dialog.js",
+            "comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml",
+            "comic_shop/static/src/js/portal_isbn_scan.js",
         ],
     },
     "installable": True,

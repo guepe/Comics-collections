@@ -1,6 +1,6 @@
 {
     "name": "Comic Collection",
-    "version": "19.0.4.0.1",
+    "version": "19.0.4.1.0",
     "category": "Leisure",
     "summary": "Manage your comic book collection",
     "description": """
@@ -47,6 +47,10 @@
             "comics_collections/static/src/dashboard/collection_dashboard.js",
             "comics_collections/static/src/dashboard/collection_dashboard.xml",
             "comics_collections/static/src/dashboard/collection_dashboard.scss",
+            "comics_collections/static/src/isbn_scan/isbn_scan_dialog.js",
+            "comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml",
+            "comics_collections/static/src/isbn_scan/isbn_scan_field.js",
+            "comics_collections/static/src/isbn_scan/isbn_scan_field.xml",
         ],
     },
     "installable": True,

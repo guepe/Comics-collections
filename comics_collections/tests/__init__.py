@@ -20,3 +20,4 @@ from . import test_new_release
 from . import test_collection_export
 from . import test_private_collection
 from . import test_wishlist
+from . import test_isbn_scan

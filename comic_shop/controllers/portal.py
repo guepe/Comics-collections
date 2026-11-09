@@ -232,6 +232,60 @@ class ComicLibraryPortal(CustomerPortal):
             },
         )
 
+    # ── /my/library/series — séries suivies (US-069) ────────────────────────
+
+    @staticmethod
+    def _safe_redirect(url, default="/my/library/series"):
+        """Chemin local uniquement (pas de redirection ouverte)."""
+        if url and url.startswith("/") and not url.startswith("//") and "\\" not in url:
+            return url
+        return default
+
+    @http.route("/my/library/series", type="http", auth="user", website=True)
+    def my_library_series(self, **kw):
+        user = request.env.user
+        Serie = request.env["comic.serie"].sudo()
+        entries = request.env["comic.customer.album"].sudo().search([("partner_id", "=", user.partner_id.id)])
+        library_series = entries.work_id.serie_id
+        series = (Serie.search([("suivi_user_ids", "in", user.id)]) | library_series).filtered("active")
+        series = series.sorted(key=lambda s: (user not in s.suivi_user_ids, (s.name or "").lower()))
+        owned = {}
+        for entry in entries.filtered("dans_collection"):
+            serie = entry.work_id.serie_id
+            if serie:
+                owned.setdefault(serie.id, set()).add(entry.work_id.id)
+        return request.render(
+            "comic_shop.portal_library_series",
+            {
+                "series": series,
+                "followed_ids": set(series.filtered(lambda s: user in s.suivi_user_ids).ids),
+                "owned_counts": {sid: len(works) for sid, works in owned.items()},
+                "page_name": "library",
+                "flash": request.session.pop("comic_library_flash", None),
+            },
+        )
+
+    @http.route(
+        "/my/library/series/<int:serie_id>/follow",
+        type="http",
+        auth="user",
+        methods=["POST"],
+        website=True,
+    )
+    def my_library_series_follow(self, serie_id, follow="1", redirect=None, **post):
+        """Suivre (follow=1) ou ne plus suivre (follow=0) une série, pour soi seulement."""
+        serie = request.env["comic.serie"].sudo().browse(serie_id)
+        if not serie.exists() or not serie.active:
+            return request.not_found()
+        # sudo garde l'utilisateur courant : l'inverse de a_suivre n'agit que sur lui
+        serie.a_suivre = follow == "1"
+        if follow == "1":
+            message = _("Vous suivez « %s » : vous serez prévenu de la mise en vente des nouveaux tomes.", serie.name)
+        else:
+            message = _("Vous ne suivez plus « %s ».", serie.name)
+        request.session["comic_library_flash"] = {"type": "success", "message": message}
+        return request.redirect(self._safe_redirect(redirect))
+
     # ── /my/library/<id>/update — POST ─────────────────────────────────────
 
     @http.route(

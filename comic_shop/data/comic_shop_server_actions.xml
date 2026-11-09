@@ -18,10 +18,28 @@
         <field name="binding_model_id" ref="comics_collections.model_comic_serie"/>
         <field name="binding_type">action</field>
         <field name="state">code</field>
-        <field name="code">
-products = records.mapped('work_ids.edition_ids.product_tmpl_id').filtered(lambda p: p.id)
-products.write({'is_published': True})
-        </field>
+        <field name="code">action = records.action_publish_products()</field>
+    </record>
+
+    <!-- US-069 : prévenir les clients des albums en vente (aperçu avant envoi) -->
+    <record id="action_serie_release_notify" model="ir.actions.server">
+        <field name="name">Prévenir les clients (mise en vente)</field>
+        <field name="model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_serie"/>
+        <field name="binding_type">action</field>
+        <field name="group_ids" eval="[Command.link(ref('comics_collections.group_comic_manager'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_release_notify()</field>
+    </record>
+
+    <record id="action_edition_release_notify" model="ir.actions.server">
+        <field name="name">Prévenir les clients (mise en vente)</field>
+        <field name="model_id" ref="comics_collections.model_comic_edition"/>
+        <field name="binding_model_id" ref="comics_collections.model_comic_edition"/>
+        <field name="binding_type">action</field>
+        <field name="group_ids" eval="[Command.link(ref('comics_collections.group_comic_manager'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_release_notify()</field>
     </record>
 
     <record id="action_serie_unpublish_products" model="ir.actions.server">

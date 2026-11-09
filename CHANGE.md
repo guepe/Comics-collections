@@ -2297,3 +2297,45 @@ volontairement par l'utilisateur pour tester le module seul (343 tests verts san
 - `tests/test_wishlist.py` : `test_list_and_kanban_views_can_be_read` (lit tous les champs des vues
   liste / kanban + `write_date` via `web_search_read`, comme le client web).
 - `comics_collections` 19.0.4.0.1.
+
+## 2026-11-08 — E6 terminé : US-069 (suivi de séries client, email de mise en vente) et US-070 (scan d'ISBN)
+
+**US-069 — Suivi de séries par les clients et notification des sorties** (`comic_shop`, absorbe US-048)
+- `controllers/portal.py` : `/my/library/series` (séries suivies + séries de la bibliothèque) et
+  `POST /my/library/series/<id>/follow` (follow=1/0, passe par l'inverse de `a_suivre` : seul
+  l'utilisateur courant est (dés)abonné ; redirection locale uniquement, `_safe_redirect`).
+- `views/portal_series_templates.xml` : page *Mes séries*, bouton réutilisable
+  `serie_follow_button`, lien *Mes séries* sur `/my/library`, bouton sur la fiche album du portail
+  et sur `/shop/series/<id>` (visiteur : lien de connexion) ; `controllers/main.py` affiche le
+  message de confirmation sur la page série.
+- `models/comic_work.py` : `release_customer_ids` (clients déjà prévenus — une fois par album).
+- `models/comic_edition.py` : `_is_on_sale`, `_get_release_recipients` (clients portail abonnés
+  + wishlists, moins possesseurs, déjà prévenus, utilisateurs internes, sans email),
+  `release_recipient_count`, `_send_release_notification` (un email par client, trace chatter),
+  `action_release_notify`.
+- `models/comic_serie.py` : `action_release_notify`, `action_publish_products` (publie puis ouvre
+  l'assistant s'il y a des clients à prévenir) ; server actions mises à jour / ajoutées.
+- `wizards/comic_release_notify_wizard.py` + vue : « X client(s) seront prévenus », résumé par
+  album, destinataires, aperçu objet/corps rendu.
+- `data/comic_release_mail_template.xml` : « Bonne nouvelle — [Titre] est disponible ! » avec lien
+  vers la page produit et vers *Mes séries*.
+- Bannière sur la fiche édition (gestionnaires) : « N client(s) attendent cet album ».
+- `comics_collections/models/comic_work.py` : l'alerte nouveauté (US-068) ne vise plus que les
+  utilisateurs internes (les clients portail sont prévenus à la mise en vente).
+- Décision : pas d'envoi automatique à la publication depuis le site — l'aperçu avant envoi est
+  exigé ; la publication par série ouvre directement l'assistant.
+
+**US-070 — Scan d'ISBN à la caméra**
+- `comics_collections/static/src/isbn_scan/` : `IsbnScanDialog` / `scanIsbn` (réutilise le
+  `BarcodeVideoScanner` d'Odoo : BarcodeDetector natif, sinon ZXing chargé à la demande ;
+  EAN-13 978/979 à clé valide uniquement) et widget `isbn_scan` (bouton caméra sur mobile).
+- Widget posé sur `isbn_13` (album, édition) et `search_term` du wizard multi-sources.
+- `comic_shop/static/src/js/portal_isbn_scan.js` : Interaction sur `/my/library/add` — bouton
+  *Scanner* affiché seulement si la caméra est exposée (HTTPS), ISBN lu → recherche habituelle ;
+  sinon message et saisie manuelle.
+
+**Tests** : `test_release_notify` (7), `test_portal_series` (3), `test_portal_isbn_scan` (5),
+`comics_collections/tests/test_isbn_scan` (3). Suite complète sur base neuve, trois modules :
+414 tests verts. Lecture caméra réelle non testable en CI (HTTPS + navigateur).
+
+Versions : `comics_collections` 19.0.4.1.0, `comic_datasource` 19.0.1.4.1, `comic_shop` 19.0.5.0.0.

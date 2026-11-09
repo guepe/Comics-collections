@@ -16,3 +16,5 @@ access_comic_editeur_public,comic.editeur public,comics_collections.model_comic_
 access_comic_genre_portal,comic.genre portal,comics_collections.model_comic_genre,base.group_portal,1,0,0,0
 access_comic_genre_public,comic.genre public,comics_collections.model_comic_genre,base.group_public,1,0,0,0
 access_comic_portal_refuse_wizard_manager,comic.portal.refuse.wizard manager,model_comic_portal_refuse_wizard,comic_shop.group_shop_manager,1,1,1,1
+access_comic_release_notify_wizard_manager,comic.release.notify.wizard manager,model_comic_release_notify_wizard,comics_collections.group_comic_manager,1,1,1,1
+access_comic_release_notify_wizard_shop,comic.release.notify.wizard shop manager,model_comic_release_notify_wizard,comic_shop.group_shop_manager,1,1,1,1

@@ -8,7 +8,8 @@ Menus are under **Bandes Dessinées**:
    your collection), grouped by series; filters *Prêtés*, *Note ≥ 3★ / 4★*, group by
    genre or series type; *Marquer comme lu / en cours* and *Ajouter à ma wishlist*
    from the action menu. Create an album with its series, tome number, title,
-   publisher, authors and ISBN in a single form.
+   publisher, authors and ISBN in a single form. On a phone, the ISBN fields show a
+   camera button to scan the barcode.
 4. **Ma Collection → Ma wishlist** — missing tomes of followed series and manual
    wishes, grouped by series: *Je l'ai*, *Ignorer ce tome*, *Retirer* (for a missing
    tome: stop following the series).

@@ -38,7 +38,7 @@
                 <!-- État : recherche -->
                 <group invisible="state != 'search'">
                     <group string="Rechercher un album">
-                        <field name="search_term"
+                        <field name="search_term" widget="isbn_scan"
                                placeholder="ISBN (9782...) ou titre de l'album"
                                autofocus="1"/>
                         <field name="search_type" readonly="1"/>

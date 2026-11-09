@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- US-069 : bouton « Suivre la série » réutilisable.
+         Paramètres : serie, followed (bool), redirect (chemin de retour). -->
+    <template id="serie_follow_button" name="BD — Bouton suivre la série">
+        <form t-attf-action="/my/library/series/{{ serie.id }}/follow" method="post"
+              class="d-inline o_comic_serie_follow">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <input type="hidden" name="redirect" t-att-value="redirect"/>
+            <t t-if="followed">
+                <input type="hidden" name="follow" value="0"/>
+                <button type="submit" t-attf-class="btn btn-sm btn-outline-secondary {{ btn_class or '' }}"
+                        title="Ne plus être prévenu des nouveaux tomes">
+                    <i class="fa fa-check me-1"/>Série suivie
+                </button>
+            </t>
+            <t t-else="">
+                <input type="hidden" name="follow" value="1"/>
+                <button type="submit" t-attf-class="btn btn-sm btn-primary {{ btn_class or '' }}"
+                        title="Être prévenu par email quand un nouveau tome est en vente">
+                    <i class="fa fa-bell me-1"/>Suivre la série
+                </button>
+            </t>
+        </form>
+    </template>
+
+    <!-- /my/library/series : séries suivies et séries de ma bibliothèque -->
+    <template id="portal_library_series" name="Mes séries — Ma Bibliothèque">
+        <t t-call="portal.portal_layout">
+            <t t-set="o_portal_fullwidth_alert" t-value="False"/>
+
+            <div class="o_portal_wrap">
+                <div class="container mt-4 mb-5">
+
+                    <nav aria-label="breadcrumb" class="mb-4">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/my/home">Mon compte</a></li>
+                            <li class="breadcrumb-item"><a href="/my/library">Ma Bibliothèque</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Mes séries</li>
+                        </ol>
+                    </nav>
+
+                    <t t-if="flash">
+                        <div t-attf-class="alert alert-{{ flash.get('type', 'info') }} alert-dismissible fade show" role="alert">
+                            <t t-esc="flash.get('message', '')"/>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"/>
+                        </div>
+                    </t>
+
+                    <h2 class="mb-1">Mes séries</h2>
+                    <p class="text-muted mb-4">
+                        Suivez une série pour recevoir un email dès qu'un nouveau tome est en vente
+                        dans la boutique. <t t-esc="len(followed_ids)"/> série(s) suivie(s).
+                    </p>
+
+                    <t t-if="not series">
+                        <div class="alert alert-light border text-center py-5 o_comic_series_empty">
+                            <i class="fa fa-book fa-3x text-muted mb-3 d-block"/>
+                            Aucune série pour l'instant. Ajoutez des BD à votre bibliothèque ou
+                            suivez une série depuis la <a href="/shop/series">boutique</a>.
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <ul class="list-group o_comic_series_list">
+                            <t t-foreach="series" t-as="serie">
+                                <t t-set="followed" t-value="serie.id in followed_ids"/>
+                                <li class="list-group-item d-flex align-items-center gap-3 py-2">
+                                    <div class="flex-grow-1">
+                                        <a t-attf-href="/shop/series/{{ serie.id }}" class="fw-semibold text-decoration-none">
+                                            <t t-esc="serie.name"/>
+                                        </a>
+                                        <div class="small text-muted">
+                                            <t t-esc="owned_counts.get(serie.id, 0)"/> album(s) possédé(s)
+                                            <t t-if="serie.nb_works_total"> sur <t t-esc="serie.nb_works_total"/> au catalogue</t>
+                                            <t t-if="followed"> · <span class="text-success"><i class="fa fa-bell me-1"/>prévenu des sorties</span></t>
+                                        </div>
+                                    </div>
+                                    <t t-call="comic_shop.serie_follow_button">
+                                        <t t-set="redirect" t-value="'/my/library/series'"/>
+                                    </t>
+                                </li>
+                            </t>
+                        </ul>
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Lien « Mes séries » sur /my/library -->
+    <template id="portal_library_index_series_link" inherit_id="comic_shop.portal_library_index"
+              name="Ma Bibliothèque — lien Mes séries">
+        <xpath expr="//a[hasclass('o_comic_dashboard_link')]" position="before">
+            <a href="/my/library/series" class="btn btn-outline-primary btn-sm me-2 o_comic_series_link">
+                <i class="fa fa-bell me-1"/>Mes séries
+            </a>
+        </xpath>
+    </template>
+
+    <!-- Bouton « Suivre la série » sur le détail d'un album du portail -->
+    <template id="portal_library_detail_follow" inherit_id="comic_shop.portal_library_detail"
+              name="Détail album — suivre la série">
+        <xpath expr="//a[@t-attf-href='/shop/series/{{ record.edition_id.work_id.serie_id.id }}']" position="after">
+            <div class="mt-2">
+                <t t-call="comic_shop.serie_follow_button">
+                    <t t-set="serie" t-value="record.edition_id.work_id.serie_id"/>
+                    <t t-set="followed" t-value="request.env.user in serie.suivi_user_ids"/>
+                    <t t-set="redirect" t-value="'/my/library/%s' % record.id"/>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Bouton « Suivre la série » sur la page série du shop -->
+    <template id="shop_serie_detail_follow" inherit_id="comic_shop.shop_serie_detail_page"
+              name="BD — Détail série : suivre">
+        <xpath expr="//h1" position="after">
+            <t t-if="flash">
+                <div t-attf-class="alert alert-{{ flash.get('type', 'info') }} py-2 small" role="alert">
+                    <t t-esc="flash.get('message', '')"/>
+                </div>
+            </t>
+            <div class="mb-3">
+                <t t-if="request.env.user._is_public()">
+                    <a t-attf-href="/web/login?redirect=/shop/series/{{ serie.id }}"
+                       class="btn btn-sm btn-primary o_comic_serie_follow_login">
+                        <i class="fa fa-bell me-1"/>Suivre la série
+                    </a>
+                    <span class="small text-muted ms-2">Connectez-vous pour être prévenu des nouveaux tomes.</span>
+                </t>
+                <t t-else="">
+                    <t t-call="comic_shop.serie_follow_button">
+                        <t t-set="followed" t-value="request.env.user in serie.suivi_user_ids"/>
+                        <t t-set="redirect" t-value="'/shop/series/%s' % serie.id"/>
+                    </t>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

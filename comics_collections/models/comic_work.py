@@ -365,7 +365,7 @@ class ComicWork(models.Model):
     def _notify_new_release(self):
         """Prévient les abonnés de la série de chaque nouveau tome (une seule fois par album).
 
-        Destinataires : partenaires des utilisateurs actifs qui suivent la série, sauf
+        Destinataires : partenaires des utilisateurs internes actifs qui suivent la série, sauf
         l'utilisateur courant (il vient d'ajouter le tome) hors contexte cron.
         """
         days = self._get_new_release_days()
@@ -374,7 +374,9 @@ class ComicWork(models.Model):
         for work in self:
             if work.release_notified or not work.serie_id or not work._is_new_release(days):
                 continue
-            users = work.serie_id.sudo().suivi_user_ids.filtered("active")
+            # Utilisateurs internes seulement : les clients du portail (comic_shop) sont
+            # prévenus par email à la mise en vente, pas à la mise en catalogue.
+            users = work.serie_id.sudo().suivi_user_ids.filtered(lambda u: u.active and not u.share)
             if exclude_current:
                 users -= self.env.user
             partners = users.partner_id

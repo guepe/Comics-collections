@@ -1,4 +1,4 @@
-from odoo import Command, models, fields, _
+from odoo import Command, _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import html2plaintext
 
@@ -19,6 +19,110 @@ class ComicEdition(models.Model):
         help="Si activé, les modifications de l'édition (couverture, synopsis, ...) se répercutent "
         "automatiquement sur le produit lié.",
     )
+
+    release_recipient_count = fields.Integer(
+        string="Clients à prévenir",
+        compute="_compute_release_recipient_count",
+        help="Clients qui suivent la série ou ont l'album en wishlist et n'ont pas encore "
+        "été prévenus de sa mise en vente.",
+    )
+
+    @api.depends_context("uid")
+    def _compute_release_recipient_count(self):
+        for edition in self:
+            edition.release_recipient_count = len(edition._get_release_recipients())
+
+    # --- Mise en vente : prévenir les clients (US-069) ------------------------
+
+    def _is_on_sale(self):
+        """Vrai si l'édition est en vente sur le site (produit actif et publié)."""
+        self.ensure_one()
+        product = self.sudo().product_tmpl_id
+        return bool(product and product.active and product.is_published)
+
+    def _get_release_recipients(self):
+        """Clients à prévenir de la mise en vente de l'édition.
+
+        Clients du portail qui suivent la série, et partenaires qui ont l'album en
+        wishlist ; sauf ceux qui le possèdent déjà, ceux déjà prévenus pour cet album,
+        les utilisateurs internes (le commerçant et sa collection privée) et les
+        partenaires sans email. Vide si l'édition n'est pas en vente.
+        """
+        self.ensure_one()
+        Partner = self.env["res.partner"]
+        edition = self.sudo()
+        work = edition.work_id
+        if not work or not edition._is_on_sale():
+            return Partner
+        followers = work.serie_id.suivi_user_ids.filtered(lambda u: u.active and u.share).partner_id
+        Album = self.env["comic.customer.album"].sudo()
+        albums = Album.search([("work_id", "=", work.id)])
+        wishers = albums.filtered(lambda a: a.dans_wishlist and not a.dans_collection).partner_id
+        owners = albums.filtered("dans_collection").partner_id
+        candidates = (followers | wishers) - owners - work.release_customer_ids
+        return candidates.filtered(lambda p: p.active and p.email and not p.user_ids.filtered(lambda u: not u.share))
+
+    def _get_release_product_url(self):
+        """URL absolue de la page produit (lien de l'email de mise en vente)."""
+        self.ensure_one()
+        product = self.sudo().product_tmpl_id
+        if not product:
+            return ""
+        return product.get_base_url().rstrip("/") + (product.website_url or "/shop")
+
+    def _send_release_notification(self):
+        """Envoie l'email « disponible » à chaque destinataire, une fois par album.
+
+        Un email par client (aucune adresse n'est exposée aux autres), trace dans le
+        chatter de l'édition. Retourne le nombre d'emails mis en file d'envoi.
+        """
+        template = self.env.ref("comic_shop.mail_template_comic_release_available")
+        total = 0
+        for edition in self:
+            recipients = edition._get_release_recipients()
+            if not recipients:
+                continue
+            for partner in recipients:
+                template.send_mail(
+                    edition.id,
+                    email_values={"recipient_ids": [Command.link(partner.id)]},
+                    email_layout_xmlid="mail.mail_notification_light",
+                )
+            edition.work_id.sudo().release_customer_ids = [Command.link(pid) for pid in recipients.ids]
+            edition.message_post(
+                body=_("Mise en vente annoncée par email à %(count)s client(s).", count=len(recipients)),
+                message_type="notification",
+                subtype_xmlid="mail.mt_note",
+            )
+            total += len(recipients)
+        return total
+
+    def _action_release_notify(self, raise_if_empty=True):
+        """Ouvre l'assistant d'envoi pour les éditions qui ont des clients à prévenir."""
+        editions = self.filtered(lambda e: e._get_release_recipients())
+        if not editions:
+            if not raise_if_empty:
+                return False
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "message": _("Aucun client à prévenir pour ces albums."),
+                    "type": "info",
+                    "sticky": False,
+                },
+            }
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Prévenir les clients"),
+            "res_model": "comic.release.notify.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_edition_ids": [Command.set(editions.ids)]},
+        }
+
+    def action_release_notify(self):
+        return self._action_release_notify()
 
     # --- Actions boutons ----------------------------------------------------
 
