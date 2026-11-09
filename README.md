@@ -16,7 +16,9 @@ Auteur : Belspace — Licence : LGPL-3
 Comics-collections/
 ├── comics_collections/    # Module principal (requis)
 ├── comic_datasource/      # Enrichissement multi-sources (optionnel, recommandé)
-└── comic_shop/            # Shop, caisse, bibliothèque client (optionnel)
+├── comic_shop/            # Shop, caisse, bibliothèque client (optionnel)
+├── comic_ai/              # Assistance IA : synopsis, traduction, découverte (optionnel)
+└── comic_ai_shop/         # Découverte IA sur le portail (auto-installé avec comic_shop + comic_ai)
 ```
 
 Les modules se déposent dans le répertoire `addons` de votre instance Odoo.
@@ -152,11 +154,28 @@ depends = ['comics_collections', 'comic_datasource', 'sale',
 
 ---
 
-## Modules à venir (roadmap)
+## Module 4 — `comic_ai` *(optionnel)*
 
-| Module | Description | Statut |
-|---|---|---|
-| `comic_ai` | Génération de synopsis et traduction via Claude / OpenAI | Planifié |
+**Assistance IA avec Claude (Anthropic) ou OpenAI.**
+
+- Paramètres *Bandes Dessinées → Intelligence artificielle* : fournisseur, clés API
+  (paramètres système), modèles (défaut `claude-sonnet-5-5`), langue, test de connexion
+- *Générer le synopsis* / *Traduire le synopsis* (fr, nl, en, de) sur la fiche album ou
+  édition (gestionnaires) : prévisualisation, Appliquer / Régénérer / Annuler, jamais
+  d'écrasement sans confirmation, trace dans le chatter
+- *Ma Collection → Découvrir de nouvelles BD* : suggestions de séries à partir des BD
+  notées 4★, hors séries déjà possédées / souhaitées / suivies, vérification sur les
+  sources, ajout en wishlist
+- `comic_ai_shop` (auto-installé avec `comic_shop`) : la même découverte sur
+  `/my/library/discover`, limitée à `comic_ai.discovery_daily_limit` recherches par
+  client et par jour (défaut 5)
+
+Bibliothèques Python `anthropic` / `openai` importées à la demande : installer celle du
+fournisseur choisi (`pip install anthropic`).
+
+```python
+depends = ['comics_collections', 'comic_datasource']
+```
 
 ---
 
@@ -174,6 +193,7 @@ depends = ['comics_collections', 'comic_datasource', 'sale',
 1. comics_collections       ← toujours en premier
 2. comic_datasource          ← si enrichissement souhaité
 3. comic_shop                ← si vente / bibliothèque client (requiert les deux autres)
+4. comic_ai                  ← si assistance IA (comic_ai_shop suit automatiquement avec le shop)
 ```
 
 ---
@@ -184,7 +204,9 @@ depends = ['comics_collections', 'comic_datasource', 'sale',
 odoo/addons/
 ├── comics_collections/
 ├── comic_datasource/
-└── comic_shop/
+├── comic_shop/
+├── comic_ai/
+└── comic_ai_shop/
 ```
 
 Ajouter le chemin dans `odoo.conf` :
@@ -193,7 +215,7 @@ Ajouter le chemin dans `odoo.conf` :
 addons_path = /chemin/vers/odoo/addons,/chemin/vers/Comics-collections
 ```
 
-> Après chaque mise à jour du code : `odoo -d <base> -u comics_collections,comic_datasource,comic_shop
+> Après chaque mise à jour du code : `odoo -d <base> -u comics_collections,comic_datasource,comic_shop,comic_ai
 > --stop-after-init`, puis redémarrer Odoo (sinon : colonnes manquantes / champs inconnus).
 
 ---

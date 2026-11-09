@@ -14,7 +14,7 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 | `comics_collections` | Collection, catalogue, import CSV/XLSX, déduplication                           | ✅ livré                 |
 | `comic_datasource`   | Enrichissement multi-sources (Google Books, Open Library, BnF)                  | ✅ livré                 |
 | `comic_shop`         | Shop en ligne, caisse (POS partiel), bibliothèque client portail                | ✅ majeure partie livrée |
-| `comic_ai`           | Génération IA (synopsis, traduction) — Claude + OpenAI                          | ⏳ non commencé          |
+| `comic_ai`           | IA (synopsis, traduction, découverte) — Claude + OpenAI ; `comic_ai_shop` = portail | ✅ livré                 |
 
 ---
 
@@ -30,7 +30,7 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 | Branche Git | `19.0`                     |
 | Style OCA   | (maintainer-quality-tools) |
 
-**Dépendances Python :** `requests`, `lxml`, `openpyxl`, `xlrd`, `xmltodict` (+ `openai`, `anthropic` pour le futur `comic_ai`)
+**Dépendances Python :** `requests`, `lxml`, `openpyxl`, `xlrd`, `xmltodict` (+ `anthropic` / `openai` pour `comic_ai`, importés à la demande)
 
 **APIs externes :**
 

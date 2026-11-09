@@ -2373,3 +2373,51 @@ Versions : `comics_collections` 19.0.4.1.0, `comic_datasource` 19.0.1.4.1, `comi
   ou s'il est demandé, jamais renvoyé sans être demandé.
 - `tests/test_portal_dashboard.py` : `test_my_counters_returns_only_requested_keys`.
 - `comic_shop` 19.0.5.0.1 (même lot que le bouton « Copier »).
+
+## 2026-11-09 — E7 terminé : IA (`comic_ai`, `comic_ai_shop`) — US-026 → 029
+
+Développé en multi-agents : socle (US-026) puis deux agents en parallèle (US-027/028, US-029),
+fusion sur la branche `e7`.
+
+**US-026 — Paramètres et service IA** (`comic_ai`, nouveau module, dépend de `comics_collections`
+et `comic_datasource`)
+- `models/comic_ai_service.py` : `comic.ai.service._generate(prompt, system, max_tokens, effort)`,
+  Claude (SDK `anthropic`, `messages.create`, effort via `output_config`, repli serveur
+  `fallbacks: "default"` sur les modèles qui l'acceptent) ou OpenAI (SDK `openai`,
+  `chat.completions`) ; SDK importés à la demande (`_import_sdk`, message « pip install »).
+  Erreurs → `ComicAiError` (clé invalide, accès, modèle inconnu, quota, délai, réseau, 5xx, refus,
+  réponse vide). `_render_prompt` (fichiers `prompts/*.txt`, `string.Template`), `_post_trace`.
+- `models/res_config_settings.py` + vue : bloc « Intelligence artificielle » dans l'app
+  Bandes Dessinées (fournisseur, clés `comic_ai.claude_api_key` / `comic_ai.openai_api_key` en
+  champs mot de passe, modèles, langue, *Tester la connexion IA*).
+- Décision : SDK officiels mais non déclarés en `external_dependencies` (le module s'installe sans
+  eux ; seul le SDK du fournisseur choisi est nécessaire). Défauts : `claude-sonnet-5-5`,
+  `gpt-5-mini` (modifiable).
+
+**US-027 / US-028 — Synopsis et traduction**
+- `wizards/comic_ai_wizard.py` + vues : `comic.ai.wizard` (modes synopsis / traduction fr-nl-en-de),
+  prévisualisation modifiable, Appliquer / Régénérer / Annuler, case « Remplacer le synopsis
+  existant » obligatoire si un synopsis existe, écriture HTML (`plaintext2html`), destination
+  « édition de la langue cible » quand elle existe, trace chatter ; réservé aux gestionnaires.
+- `models/comic_edition.py`, `models/comic_work.py` : `action_open_ai_wizard` ; boutons dans
+  l'onglet Synopsis (`views/comic_ai_buttons_views.xml`) ; prompts `synopsis.txt`, `translate.txt`.
+
+**US-029 — Découverte par profil de goûts**
+- `wizards/comic_ai_discovery_wizard.py` + vues : `comic.ai.discovery.wizard` / `.line` (menu
+  *Ma Collection → Découvrir de nouvelles BD*) : profil = séries notées ≥ 4★ (modifiable),
+  prompt `discovery.txt` (JSON 10–15 suggestions), parse robuste, exclusions (collection, wishlist,
+  séries suivies, profil ; titre normalisé), *Vérifier* (agrégateur `comic_datasource`, quota /
+  panne → état « Erreur »), *Ajouter à ma wishlist* (édition par ISBN vérifié, sinon premier tome
+  de la série existante, sinon création série + T1 ; album possédé jamais déclassé).
+- `comic_ai_shop` (nouveau, `auto_install`, dépend de `comic_ai` + `comic_shop`) : `/my/library/discover`
+  et bouton sur `/my/library` ; même assistant en sudo contrôlé (partenaire forcé, id en session
+  revérifié, séries limitées à la bibliothèque) ; création modérée via `_create_from_portal_data` ;
+  limite `comic_ai.discovery_daily_limit` (défaut 5, 0 = désactivé, compteur sur `res.partner`
+  réservé aux administrateurs, un appel compte dès qu'il part).
+
+**Divers** : CI installe et teste `comic_ai`, `comic_ai_shop` ; README, CLAUDE.md / AGENTS.md
+(tableau des modules, dépendances Python) ; readme OCA des deux modules.
+
+**Tests** : `comic_ai` 52 (socle 10, wizard 17, découverte 19 + réglages), `comic_ai_shop` 10 ;
+aucun appel réseau (faux SDK `tests/common.py`, agrégateur patché). Suite complète sur base neuve,
+cinq modules : 472 tests verts.

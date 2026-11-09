@@ -21,8 +21,7 @@
 
 | Horizon        | Épic                                                                      | US                          | État |
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
-| **Maintenant** | [E7 — IA (`comic_ai`)](#e7--ia-comic_ai)                                  | US-026 → 029                | ⏳   |
-| **Plus tard**  | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064                      | 🔄   |
+| **Maintenant** | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064                      | 🔄   |
 | **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
 
 ---
@@ -39,7 +38,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E4   | Bibliothèque client (portail)        | `comic_shop`                        | ✅   | 6 US   | —                         |
 | E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ✅   | 9 US   | —                         |
 | E6   | Séries sur le portail                | `comic_shop`                        | ✅   | 3 US   | —                         |
-| E7   | IA                                   | `comic_ai` (nouveau)                | ⏳   | —      | US-026 → 029              |
+| E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 4 US   | —                         |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064                    |
 | E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | US-046, 047, 049, 072     |
 
@@ -61,88 +60,9 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 
 ### E7 — IA (`comic_ai`)
 
-> Nouveau module, dépend de `comics_collections` (et de `comic_shop` pour US-029).
-> Fournisseurs : Anthropic (Claude) et OpenAI, au choix dans les paramètres.
-> Clés API en `ir.config_parameter` — jamais en dur. Dépendances Python : `anthropic`, `openai`.
-> Wizard `comic.ai.wizard` ouvert depuis la fiche album / édition.
-
-**US-026 — Configuration des connecteurs IA** ⏳
-
-```
-En tant qu'administrateur
-Je veux configurer les API Claude et OpenAI dans les paramètres Odoo
-Afin de pouvoir utiliser l'IA pour enrichir les fiches BD
-
-Contexte technique :
-  res.config.settings hérité (comic_ai/models/res_config_settings.py), section dans l'app
-  « Bandes Dessinées » existante. Champs password, non exportés.
-
-Critères d'acceptance :
-- [ ] Section « IA » dans Paramètres > Bandes Dessinées
-- [ ] Choix du fournisseur actif : Claude (Anthropic) / OpenAI
-- [ ] Clé API Claude → ir.config_parameter 'comic_ai.claude_api_key'
-- [ ] Modèle Claude (défaut : claude-sonnet-5-5 — à revalider au démarrage)
-- [ ] Clé API OpenAI → ir.config_parameter 'comic_ai.openai_api_key' + modèle
-- [ ] Langue de génération par défaut : fr / nl / en
-- [ ] Bouton « Tester la connexion IA » → message succès / erreur
-```
-
-**US-027 — Génération de synopsis par IA** ⏳
-
-```
-En tant que collectionneur / commerçant
-Je veux générer un synopsis pour un album via l'IA
-Afin d'enrichir la fiche sans rédiger manuellement
-
-Contexte technique :
-  Prompt : titre, série, tome, auteurs, éditeur, synopsis existant.
-  Prompts dans comic_ai/prompts/. Règle d'enrichissement du projet : ne jamais écraser
-  sans confirmation explicite.
-
-Critères d'acceptance :
-- [ ] Bouton « Générer le synopsis » sur la fiche (gestionnaires)
-- [ ] Prévisualisation : Appliquer / Régénérer / Annuler
-- [ ] Appliquer → écrit le synopsis de l'édition
-- [ ] Indicateur de chargement pendant la génération
-- [ ] Erreurs claires : clé invalide, délai dépassé, quota
-- [ ] Trace dans le chatter : fournisseur, modèle, date
-```
-
-**US-028 — Traduction du synopsis par IA** ⏳
-
-```
-En tant que collectionneur / commerçant
-Je veux traduire le synopsis d'un album dans une autre langue
-Afin de gérer une collection multilingue (FR / NL / EN)
-
-Critères d'acceptance :
-- [ ] Action « Traduire le synopsis » dans le wizard IA
-- [ ] Langue cible : fr / nl / en / de
-- [ ] Prévisualisation avant application
-- [ ] Appliquer → remplace le synopsis ou l'écrit sur l'édition de la langue cible
-- [ ] Gestion d'erreur identique à US-027
-```
-
-**US-029 — Découverte IA par profil de goûts** ⏳
-
-```
-En tant que collectionneur
-Je veux que l'IA me suggère des séries inconnues proches de mes séries préférées
-Afin de découvrir de nouvelles BD correspondant à mes goûts
-
-Contexte technique :
-  Profil = comic.customer.album notés ≥ 4. L'IA reçoit genres, auteurs, titres et renvoie
-  10 à 15 suggestions, ajoutables en wishlist. Distinct d'US-034 (séries déjà connues).
-
-Critères d'acceptance :
-- [ ] Bouton « Découvrir de nouvelles BD » sur /my/library et en back-office
-- [ ] Profil affiché et modifiable (séries notées ≥ 4★)
-- [ ] Suggestions : titre, auteur, genre, raison
-- [ ] Exclusion des séries déjà en collection ou en wishlist
-- [ ] Sélection manuelle puis ajout en wishlist
-- [ ] « Vérifier sur les sources » par suggestion (contre les hallucinations)
-- [ ] Erreurs claires : clé invalide, délai dépassé
-```
+> E7 est entièrement livré le 2026-11-09 (US-026 → 029) — voir
+> l'[annexe](#e7--ia-livré). Modules `comic_ai` (back-office) et `comic_ai_shop`
+> (portail, auto-installé avec `comic_shop`).
 
 ---
 
@@ -359,6 +279,15 @@ anciens fichiers V1 / V2 / V3.
 | US-073 | Wishlist partageable par lien secret révocable (`/wishlist/<jeton>`, lecture seule) — 2026-11-08 |
 | US-069 | Suivi de séries par les clients (*Mes séries* `/my/library/series`, boutons sur la page série du shop et la fiche album) ; à la mise en vente, assistant « X clients seront prévenus » avec aperçu, email « Bonne nouvelle — … est disponible ! » aux abonnés et aux wishlists, une fois par album, trace dans le chatter *(absorbe US-048)* — 2026-11-08 |
 | US-070 | Scan d'ISBN à la caméra : bouton *Scanner* sur l'ajout d'une BD du portail, widget `isbn_scan` en back-office mobile (ISBN album / édition, recherche multi-sources) ; EAN-13 978/979 uniquement, repli sur la saisie manuelle — 2026-11-08 |
+
+### E7 — IA (livré)
+
+| US     | Titre                                                                    |
+| ------ | ------------------------------------------------------------------------ |
+| US-026 | Paramètres IA (*Bandes Dessinées → Intelligence artificielle*) : fournisseur Claude / OpenAI, clés en `ir.config_parameter`, modèles (défaut `claude-sonnet-5-5`), langue, *Tester la connexion IA* ; service `comic.ai.service` (SDK importés à la demande, erreurs claires, repli serveur en cas de refus) — 2026-11-09 |
+| US-027 | *Générer le synopsis* (album / édition, gestionnaires) : prévisualisation modifiable, Appliquer / Régénérer / Annuler, confirmation avant remplacement, trace chatter — 2026-11-09 |
+| US-028 | *Traduire le synopsis* (fr / nl / en / de) : remplace le synopsis ou l'écrit sur l'édition de la langue cible — 2026-11-09 |
+| US-029 | *Découvrir de nouvelles BD* : profil 4★ modifiable, 10–15 suggestions hors séries connues, vérification sur les sources, ajout en wishlist ; portail `/my/library/discover` (`comic_ai_shop`, limite quotidienne, création modérée) — 2026-11-09 |
 
 ### E8 — Qualité & publication OCA (livré)
 
