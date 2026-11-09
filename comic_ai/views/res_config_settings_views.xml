@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- US-026 : section « Intelligence artificielle » dans Paramètres > Bandes Dessinées -->
+    <record id="res_config_settings_view_form_comic_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.comic_ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="comic_datasource.res_config_settings_view_form_comic_datasource"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='comic_datasource']" position="inside">
+                <block title="Intelligence artificielle" id="comic_ai_settings">
+
+                    <setting id="comic_ai_provider_setting" string="Fournisseur IA"
+                             help="Utilisé pour générer et traduire les synopsis, et suggérer des BD.">
+                        <field name="comic_ai_provider" widget="radio" options="{'horizontal': true}"/>
+                        <div class="mt-2">
+                            <label for="comic_ai_lang" class="o_light_label me-2"/>
+                            <field name="comic_ai_lang" class="w-auto"/>
+                        </div>
+                        <div class="mt-2">
+                            <button name="action_test_ai_connection" type="object"
+                                    string="Tester la connexion IA" class="btn btn-secondary btn-sm"
+                                    icon="fa-plug"/>
+                        </div>
+                    </setting>
+
+                    <setting id="comic_ai_claude_setting" string="Claude (Anthropic)"
+                             help="Clé sur platform.claude.com.">
+                        <div class="row mt-1">
+                            <label for="comic_ai_claude_api_key" class="col-lg-4 o_light_label"/>
+                            <field name="comic_ai_claude_api_key" password="True" class="col-lg-8"
+                                   placeholder="sk-ant-..."/>
+                        </div>
+                        <div class="row mt-1">
+                            <label for="comic_ai_claude_model" class="col-lg-4 o_light_label"/>
+                            <field name="comic_ai_claude_model" class="col-lg-8"/>
+                        </div>
+                    </setting>
+
+                    <setting id="comic_ai_openai_setting" string="OpenAI"
+                             help="Clé sur platform.openai.com.">
+                        <div class="row mt-1">
+                            <label for="comic_ai_openai_api_key" class="col-lg-4 o_light_label"/>
+                            <field name="comic_ai_openai_api_key" password="True" class="col-lg-8"
+                                   placeholder="sk-..."/>
+                        </div>
+                        <div class="row mt-1">
+                            <label for="comic_ai_openai_model" class="col-lg-4 o_light_label"/>
+                            <field name="comic_ai_openai_model" class="col-lg-8"/>
+                        </div>
+                    </setting>
+
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
