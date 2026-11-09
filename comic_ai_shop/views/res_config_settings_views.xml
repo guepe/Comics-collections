@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- US-029 : limite quotidienne de la découverte IA sur le portail -->
+    <record id="res_config_settings_view_form_comic_ai_shop" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.comic_ai_shop</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="comic_ai.res_config_settings_view_form_comic_ai"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='comic_ai_settings']" position="inside">
+                <setting id="comic_ai_discovery_limit_setting" string="Découverte IA sur le portail"
+                         help="Recherches « Découvrir de nouvelles BD » autorisées par client et par jour (0 : désactivé).">
+                    <field name="comic_ai_discovery_daily_limit" class="w-auto"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
