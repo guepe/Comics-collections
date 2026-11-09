@@ -97,6 +97,9 @@ class TestWishlistShare(HttpCase):
         resp = self.url_open("/my/library")
         self.assertIn("/wishlist/%s" % token, resp.text)
         self.assertIn("Révoquer le lien", resp.text)
+        # Bouton « Copier » piloté par portal_wishlist_copy.js (plus de JS inline)
+        self.assertIn("o_comic_wishlist_copy_btn", resp.text)
+        self.assertNotIn("navigator.clipboard", resp.text)
 
         resp = self._open_anonymous("/wishlist/%s" % token)
         self.assertEqual(resp.status_code, 200)
@@ -147,6 +150,12 @@ class TestWishlistShare(HttpCase):
     def test_unknown_token_404(self):
         self.assertEqual(self._open_anonymous("/wishlist/jeton-invente-123").status_code, 404)
         self.assertEqual(self._open_anonymous("/wishlist/jeton-invente-123/cover/1").status_code, 404)
+
+    def test_copy_script_in_frontend_bundle(self):
+        paths = [p[0] for p in self.env["ir.asset"]._get_asset_paths("web.assets_frontend", {})]
+        self.assertIn("/comic_shop/static/src/js/portal_wishlist_copy.js", paths)
+        bundle = self.env["ir.qweb"]._get_asset_bundle("web.assets_frontend", css=False, js=True, debug_assets=True)
+        self.assertIn("@comic_shop/js/portal_wishlist_copy", bundle.js().raw.decode())
 
     def test_shared_flag_without_token_404(self):
         self.partner.write({"comic_wishlist_shared": True, "comic_wishlist_token": False})

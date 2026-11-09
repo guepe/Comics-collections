@@ -127,6 +127,16 @@ class TestPortalDashboard(HttpCase):
         html = self.url_open("/my").text
         self.assertRegex(html, r"\b3\s*</t>\s*album|\b3 album")
 
+    def test_my_counters_returns_only_requested_keys(self):
+        """/my/counters ne renvoie que les compteurs demandés : un compteur en trop fait
+        planter portal_home_counters (« Cannot set properties of null (textContent) »)."""
+        self.authenticate(self.login, self.login)
+        result = self.make_jsonrpc_request("/my/counters", {"counters": ["quotation_count"]})
+        self.assertNotIn("library_count", result)
+        self.assertLessEqual(set(result), {"quotation_count"})
+        result = self.make_jsonrpc_request("/my/counters", {"counters": ["library_count"]})
+        self.assertEqual(result.get("library_count"), 3)
+
     def test_site_menu_ma_collection(self):
         """Menu « Ma collection » du site et liens du menu du compte : connectés uniquement."""
         self.authenticate(self.login, self.login)

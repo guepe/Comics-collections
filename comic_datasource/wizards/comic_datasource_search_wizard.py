@@ -421,7 +421,7 @@ class ComicDatasourceResultLine(models.TransientModel):
     selected = fields.Boolean(string="Sélectionner", default=False)
     title = fields.Char(string="Titre")
     serie_name = fields.Char(string="Série")
-    tome = fields.Integer(string="T.")
+    tome = fields.Integer(string="T.", aggregator=False)
     isbn = fields.Char(string="ISBN")
     editeur = fields.Char(string="Éditeur")
     auteurs_display = fields.Char(string="Auteurs")

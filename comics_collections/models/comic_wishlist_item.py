@@ -51,7 +51,7 @@ class ComicWishlistItem(models.Model):
     partner_id = fields.Many2one("res.partner", string="Partenaire", readonly=True)
     work_id = fields.Many2one("comic.work", string="Titre", readonly=True)
     serie_id = fields.Many2one("comic.serie", string="Série", readonly=True)
-    tome = fields.Integer(string="T°", readonly=True)
+    tome = fields.Integer(string="T°", readonly=True, aggregator=False)
     edition_id = fields.Many2one("comic.edition", string="Édition", readonly=True)
     date_parution = fields.Date(string="Parution", readonly=True)
     type = fields.Selection([("manque", "Manque"), ("souhait", "Souhait")], readonly=True)
@@ -138,6 +138,18 @@ class ComicWishlistItem(models.Model):
     def _line_edition(self):
         self.ensure_one()
         return self.edition_id or self.work_id.primary_edition_id
+
+    def action_open_work(self):
+        """Clic sur une ligne : fiche de l'album (la wishlist n'a pas de formulaire)."""
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "comic.work",
+            "res_id": self.work_id.id,
+            "view_mode": "form",
+            "views": [(False, "form")],
+            "target": "current",
+        }
 
     def action_mark_owned(self):
         """« Je l'ai » : l'album passe dans la collection et sort de la wishlist."""

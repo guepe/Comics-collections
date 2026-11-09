@@ -1,6 +1,6 @@
 {
     "name": "Comic Shop",
-    "version": "19.0.5.0.0",
+    "version": "19.0.5.0.1",
     "category": "Leisure",
     "summary": "Sell your comics online and manage customer libraries",
     "description": """
@@ -48,6 +48,7 @@
             "comics_collections/static/src/isbn_scan/isbn_scan_dialog.js",
             "comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml",
             "comic_shop/static/src/js/portal_isbn_scan.js",
+            "comic_shop/static/src/js/portal_wishlist_copy.js",
         ],
     },
     "installable": True,

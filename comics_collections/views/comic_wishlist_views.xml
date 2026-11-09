@@ -9,8 +9,10 @@
         <field name="name">comic.wishlist.item.list</field>
         <field name="model">comic.wishlist.item</field>
         <field name="arch" type="xml">
+            <!-- Clic sur une ligne : ouvre la fiche de l'album -->
             <list string="Ma wishlist" create="false" edit="false" delete="false"
-                  default_group_by="serie_id" default_order="serie_id,tome">
+                  default_group_by="serie_id" default_order="serie_id,tome"
+                  action="action_open_work" type="object">
                 <field name="image_couverture" widget="image" options="{'size': [0, 48]}"
                        string="Couverture" optional="show"/>
                 <field name="serie_id"/>
@@ -40,7 +42,8 @@
         <field name="name">comic.wishlist.item.kanban</field>
         <field name="model">comic.wishlist.item</field>
         <field name="arch" type="xml">
-            <kanban class="o_comic_kanban_series" create="false" default_order="serie_id,tome">
+            <kanban class="o_comic_kanban_series" create="false" default_order="serie_id,tome"
+                    action="action_open_work" type="object">
                 <field name="type"/>
                 <field name="tome"/>
                 <templates>

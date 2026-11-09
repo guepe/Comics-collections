@@ -87,8 +87,12 @@ class ComicLibraryPortal(CustomerPortal):
 
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
-        # Calculé à chaque rendu : la carte « Ma Bibliothèque BD » affiche le nombre
-        # directement (pas de data-placeholder_count), et /my est rendu avec counters=[].
+        # La carte « Ma Bibliothèque BD » affiche le nombre directement (pas de
+        # data-placeholder_count) : calculé au rendu de /my (counters=[]) ou s'il est
+        # demandé. Jamais renvoyé à /my/counters sans être demandé, sinon le script
+        # portal_home_counters cherche un emplacement absent et plante (textContent de null).
+        if counters and "library_count" not in counters:
+            return values
         values["library_count"] = request.env["comic.customer.album"].search_count(
             [
                 ("partner_id", "=", request.env.user.partner_id.id),

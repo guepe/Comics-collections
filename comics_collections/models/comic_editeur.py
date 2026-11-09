@@ -10,7 +10,7 @@ class ComicEditeur(models.Model):
     partner_id = fields.Many2one("res.partner", string="Contact")
     pays_id = fields.Many2one("res.country", string="Pays")
     site_web = fields.Char(string="Site web")
-    bdgest_editeur_id = fields.Integer(string="ID BDGest")
+    bdgest_editeur_id = fields.Integer(string="ID BDGest", aggregator=False)
 
     serie_ids = fields.One2many("comic.serie", "editeur_id", string="Séries (éditeur principal)")
     edition_ids = fields.One2many("comic.edition", "editeur_id", string="Éditions")

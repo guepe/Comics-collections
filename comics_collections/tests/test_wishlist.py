@@ -104,6 +104,19 @@ class TestWishlist(TransactionCase):
         self.assertEqual(result["length"], 2)
         self.assertIn("write_date", result["records"][0])
 
+    def test_tome_numbers_never_summed_in_groups(self):
+        """Un n° de tome ne s'additionne pas dans les lignes de groupe (ex. « Thorgal 23 »)."""
+        for model in ("comic.wishlist.item", "comic.work", "comic.work.auteur.line"):
+            self.assertFalse(self.env[model]._fields["tome"].aggregator, model)
+        self.assertFalse(self.env["comic.serie"]._fields["bdgest_id"].aggregator)
+
+    def test_click_opens_album(self):
+        line = self._items(self.user_a).filtered(lambda i: i.work_id == self.works[2])
+        action = line.action_open_work()
+        self.assertEqual((action["res_model"], action["res_id"]), ("comic.work", self.works[2].id))
+        # L'album s'ouvre pour l'utilisateur (catalogue partagé en lecture)
+        self.works[2].with_user(self.user_a).check_access("read")
+
     def test_stable_ids(self):
         first = self._items(self.user_a).ids
         self.assertEqual(self._items(self.user_a).ids, first)

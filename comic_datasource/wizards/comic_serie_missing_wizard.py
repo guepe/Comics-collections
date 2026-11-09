@@ -498,7 +498,7 @@ class ComicSerieMissingLine(models.TransientModel):
     _order = "tome"
 
     wizard_id = fields.Many2one("comic.serie.missing.wizard", required=True, ondelete="cascade")
-    tome = fields.Integer()
+    tome = fields.Integer(aggregator=False)
     name = fields.Char(string="Titre")
     isbn = fields.Char(string="ISBN")
     isbn_unverified = fields.Boolean(

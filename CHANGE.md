@@ -2339,3 +2339,37 @@ volontairement par l'utilisateur pour tester le module seul (343 tests verts san
 414 tests verts. Lecture caméra réelle non testable en CI (HTTPS + navigateur).
 
 Versions : `comics_collections` 19.0.4.1.0, `comic_datasource` 19.0.1.4.1, `comic_shop` 19.0.5.0.0.
+
+## 2026-11-09 — Correctifs wishlist : n° de tome additionnés dans les groupes, clic sur un tome
+
+- Symptôme : *Ma wishlist* groupée par série affichait la somme des n° de tome en ligne de groupe
+  (ex. « Thorgal — Kriss de Valnor (4) … 23 »). Odoo agrège par défaut les `fields.Integer` en somme.
+- `aggregator=False` sur `tome` (`comic.work`, `comic.work.auteur.line`, `comic.wishlist.item`,
+  wizards de recherche / tomes manquants de `comic_datasource`) et sur les ID BDGest
+  (`comic.serie.bdgest_id`, `comic.editeur.bdgest_editeur_id`).
+- `tests/test_wishlist.py` : `test_tome_numbers_never_summed_in_groups`.
+- *Ma wishlist* : un clic sur une ligne (liste) ou une carte (kanban) ouvre la fiche de l'album
+  (`comic.wishlist.item.action_open_work`, attribut `action`/`type` sur `<list>` et `<kanban>`) ;
+  test `test_click_opens_album`.
+- `comics_collections` 19.0.4.1.1, `comic_datasource` 19.0.1.4.2.
+
+## 2026-11-09 — Correctif : bouton « Copier » de la wishlist partagée (portail)
+
+- Cause : copie en JS inline via `navigator.clipboard`, API absente hors contexte sécurisé —
+  sur un site en HTTP (staging `http://192.168.0.193`) le bouton ne faisait rien.
+- `comic_shop/static/src/js/portal_wishlist_copy.js` (Interaction) : `navigator.clipboard` en
+  HTTPS, sinon sélection + `document.execCommand("copy")`, à défaut lien sélectionné et bouton
+  « Sélectionné : Ctrl+C » ; template `portal_library_index` sans JS inline.
+- `tests/test_wishlist_share.py` : bouton rendu sans JS inline, script présent et compilé dans
+  `web.assets_frontend`.
+- `comic_shop` 19.0.5.0.1.
+
+## 2026-11-09 — Correctif : erreur JS sur /my (« Cannot set properties of null (textContent) »)
+
+- Cause : `ComicLibraryPortal._prepare_home_portal_values` ajoutait `library_count` à chaque
+  appel, y compris à `/my/counters` ; le script `portal_home_counters` cherchait alors un
+  emplacement `[data-placeholder_count='library_count']` inexistant et plantait.
+- `comic_shop/controllers/portal.py` : `library_count` calculé au rendu de `/my` (counters vide)
+  ou s'il est demandé, jamais renvoyé sans être demandé.
+- `tests/test_portal_dashboard.py` : `test_my_counters_returns_only_requested_keys`.
+- `comic_shop` 19.0.5.0.1 (même lot que le bouton « Copier »).

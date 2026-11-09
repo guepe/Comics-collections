@@ -129,14 +129,13 @@
                                     Toute personne disposant de ce lien peut voir votre wishlist
                                     (albums, séries et tomes uniquement).
                                 </p>
-                                <div class="input-group input-group-sm mb-2">
-                                    <input type="text" readonly="readonly" class="form-control"
+                                <!-- Copie gérée par portal_wishlist_copy.js (repli hors HTTPS) -->
+                                <div class="input-group input-group-sm mb-2 o_comic_wishlist_copy">
+                                    <input type="text" readonly="readonly" class="form-control o_comic_wishlist_copy_input"
                                            id="comic_wishlist_link"
                                            aria-label="Lien de partage de la wishlist"
-                                           t-att-value="wishlist_url"
-                                           onfocus="this.select()"/>
-                                    <button type="button" class="btn btn-outline-primary"
-                                            onclick="var i=document.getElementById('comic_wishlist_link');i.select();if(navigator.clipboard){navigator.clipboard.writeText(i.value).then(()=&gt;{this.textContent='Copié ✓';});}">
+                                           t-att-value="wishlist_url"/>
+                                    <button type="button" class="btn btn-outline-primary o_comic_wishlist_copy_btn">
                                         Copier
                                     </button>
                                 </div>

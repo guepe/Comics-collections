@@ -39,7 +39,7 @@ class ComicSerie(models.Model):
     editeur_id = fields.Many2one("comic.editeur", string="Éditeur")
     image_couverture = fields.Image(string="Couverture")
     synopsis = fields.Html()
-    bdgest_id = fields.Integer(string="ID BDGest")
+    bdgest_id = fields.Integer(string="ID BDGest", aggregator=False)
     bedetheque_url = fields.Char(string="URL Bedetheque")
     work_ids = fields.One2many("comic.work", "serie_id", string="Albums")
     nb_works_total = fields.Integer(string="Tomes au total", compute="_compute_works", store=True)

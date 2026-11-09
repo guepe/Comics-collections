@@ -55,7 +55,7 @@ class ComicWork(models.Model):
 
     serie_id = fields.Many2one("comic.serie", string="Série", ondelete="restrict", index=True, tracking=True)
     titre_canonique = fields.Char(string="Titre canonique", required=True, tracking=True)
-    tome = fields.Integer(tracking=True)
+    tome = fields.Integer(tracking=True, aggregator=False)
     slug = fields.Char(string="Slug URL", index=True, copy=False)
     titre_normalise = fields.Char(
         string="Titre normalisé",
@@ -592,7 +592,7 @@ class ComicWorkAuteurLine(models.Model):
     work_id = fields.Many2one("comic.work", string="Album", required=True, ondelete="cascade", index=True)
     partner_id = fields.Many2one("res.partner", string="Auteur", required=True)
     serie_id = fields.Many2one(related="work_id.serie_id", store=True, string="Série")
-    tome = fields.Integer(related="work_id.tome", store=True, string="Tome")
+    tome = fields.Integer(related="work_id.tome", store=True, string="Tome", aggregator=False)
     role = fields.Selection(
         [
             ("scenariste", "Scénariste"),
