@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_comic_ai_discovery_wizard_user,comic.ai.discovery.wizard user,model_comic_ai_discovery_wizard,comics_collections.group_comic_user,1,1,1,1
+access_comic_ai_discovery_line_user,comic.ai.discovery.line user,model_comic_ai_discovery_line,comics_collections.group_comic_user,1,1,1,1
