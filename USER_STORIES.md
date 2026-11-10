@@ -11,7 +11,7 @@
 - Format : *En tant que… / Je veux… / Afin de…*, puis contexte technique et critères `- [ ]`.
 - Cocher `[x]` dès qu'un critère est réellement livré — jamais par anticipation. Une US dont
   tous les critères sont cochés prend ✅, puis passe en une ligne dans l'[annexe](#4-annexe--livré).
-- Numérotation continue : **prochaine US = US-092**. Une piste 💡 garde son numéro quand elle est
+- Numérotation continue : **prochaine US = US-093**. Une piste 💡 garde son numéro quand elle est
   priorisée.
 - **Depuis le 2026-11-10, les US à faire vivent dans les issues GitHub** (label `us`, label
   `epic:E*`, jalon = épic, Project [Comic Collection — Odoo](https://github.com/users/guepe/projects/3)).
@@ -28,6 +28,7 @@
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
 | **Maintenant** | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064 (#2)                 | 🔄   |
 | **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
+| **Plus tard**  | [E10 — Internationalisation](#e10--internationalisation)                  | US-092 (#9)                 | ⏳   |
 
 ---
 
@@ -46,6 +47,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 6 US   | —                         |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064 (#2)               |
 | E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | #3, #4, #5, #6            |
+| E10  | Internationalisation (interface EN)  | tous                                | ⏳   | —      | #9                        |
 
 ---
 
@@ -95,8 +97,20 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | US-049 | [#5](https://github.com/guepe/Comics-collections/issues/5) | Tableau de bord commerçant — vue marché |
 | US-072 | [#6](https://github.com/guepe/Comics-collections/issues/6) | Réservation de tomes en magasin |
 
-> Bug ouvert : [#1](https://github.com/guepe/Comics-collections/issues/1) — doublons lors de
-> la complétion des séries (à vérifier depuis la déduplication US-050/056).
+> Bugs ouverts : [#1](https://github.com/guepe/Comics-collections/issues/1) — doublons lors de
+> la complétion des séries (à vérifier depuis la déduplication US-050/056) ;
+> [#7](https://github.com/guepe/Comics-collections/issues/7) — « Ajouter à ma wishlist » sur un album
+> possédé ; [#8](https://github.com/guepe/Comics-collections/issues/8) — format des prix des cartes série.
+
+---
+
+### E10 — Internationalisation
+
+> Interface des modules en anglais (l'interface est aujourd'hui en français), puis autres langues.
+
+| US     | Issue | Titre                                         |
+| ------ | ----- | --------------------------------------------- |
+| US-092 | [#9](https://github.com/guepe/Comics-collections/issues/9) | Interface des modules en anglais |
 
 ---
 

@@ -6,6 +6,11 @@ ignore=tools
 [FORMAT]
 max-line-length=120
 
+[ODOOLINT]
+# comics_collections / comic_datasource : LGPL-3 (gratuits, publiables à l'OCA) ;
+# comic_shop, comic_ai, comic_ai_shop : OPL-1 (payants sur l'Odoo Apps Store).
+license-allowed=AGPL-3,GPL-2,GPL-2 or any later version,GPL-3,GPL-3 or any later version,LGPL-3,OPL-1
+
 [MESSAGES CONTROL]
 disable=
     # odoo/requests ne peuvent pas être importés dans l'env isolé pre-commit

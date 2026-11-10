@@ -1,20 +1,28 @@
 {
     "name": "Comic Shop",
     "version": "19.0.5.1.0",
-    "category": "Leisure",
-    "summary": "Sell your comics online and manage customer libraries",
+    "category": "Website/eCommerce",
+    "summary": "Sell comics online and at the POS: albums synced with products, series / author / "
+    "publisher shop pages, customer library on the portal, series follow-up and release e-mails",
     "description": """
-        Commercial extension of Comic Collection.
-        Album ↔ product link, comic webshop, POS integration and customer portal library.
-    """,
-    "author": "Belspace, OCA",
+Comic Shop — the commercial layer of Comic Collection.
+
+Albums linked to products (name, cover, description, ISBN barcode kept in sync),
+bulk product creation per series, webshop pages for series, authors and publishers,
+a personal comic library for every customer on the portal (collection, wishlist,
+ratings, dashboard, ISBN camera scan, shareable wishlist), purchases added
+automatically, series follow-up with "now available" e-mails, and moderation of
+the albums customers propose.
+""",
+    "author": "Belspace",
     "maintainers": ["guepe"],
-    "website": "https://github.com/Belspace/Comics-collections",
-    "license": "LGPL-3",
-    "development_status": "Beta",
-    "images": ["static/description/overview.png"],
+    "website": "https://github.com/guepe/Comics-collections",
+    "support": "ph.delaval@gmail.com",
+    "license": "OPL-1",
     "price": 200.00,
     "currency": "EUR",
+    "development_status": "Beta",
+    "images": ["static/description/banner.png"],
     "depends": [
         "comics_collections",
         "comic_datasource",

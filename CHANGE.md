@@ -2543,3 +2543,32 @@ cinq modules : 472 tests verts.
   (non versionné, `.gitignore`) pour une lecture hors ligne en début de session.
 - `USER_STORIES.md` : textes des US ouvertes remplacés par des tableaux de liens `#n` ; conventions
   mises à jour. `CLAUDE.md` / `AGENTS.md` : règles de passage de relais (issues, `Closes #n`).
+
+## 2026-11-10 — Pages Odoo Apps Store de `comics_collections` et `comic_shop`
+
+- Manifests : résumés orientés App Store, `description` réécrite, catégories *Productivity* et
+  *Website/eCommerce*, `author` « Belspace » (plus « OCA » tant que les modules ne sont pas publiés
+  par l'OCA), `website` corrigé (`github.com/guepe/Comics-collections`), `support`, image
+  principale `static/description/banner.png`.
+- `static/description/index.html` (deux modules) : pages complètes en anglais (héros, grille de
+  fonctionnalités, sections illustrées, modules complémentaires, informations techniques,
+  support) — styles en ligne uniquement (l'App Store retire `<style>` / `<script>`).
+- Captures (1440 px) et bannières (1200×600) prises sur une base jetable au catalogue fictif
+  (séries, auteurs, couvertures générées) : 8 écrans collection, 8 écrans shop.
+- Nouvelle icône de `comics_collections` (bulle de BD) à la place du carré uni.
+- Anciennes images inutilisées supprimées (`overview`, `check`, `check2`, `v2`, `all-artboards` —
+  des JPEG nommés .png).
+- `tools/appstore/` : générateur des pages, catalogue fictif et couvertures, scripts de données
+  (base jetable uniquement), captures Playwright et post-traitement, avec une notice.
+- README.rst régénérés (`--no-gen-html`, pour ne pas écraser les pages).
+
+## 2026-11-10 — Licences et prix ; issues de bugs et épic E10
+
+- Décision : `comics_collections` et `comic_datasource` gratuits (LGPL-3, publiables à l'OCA) ;
+  `comic_shop` (200 €), `comic_ai` (60 €), `comic_ai_shop` (40 €) payants sous **OPL-1**.
+  `comic_datasource` perd son prix. Fichier `LICENSE` (OPL-1, renvoi au texte officiel) dans chaque
+  module payant ; `.pylintrc` : `license-allowed` accepte OPL-1 ; README : tableau licences / prix ;
+  pages App Store : badges et mentions « free » / « paid add-on ».
+- Issues : #7 (« Ajouter à ma wishlist » sur un album possédé), #8 (prix « 12.50 € » sur les cartes
+  série), #9 US-092 interface en anglais — nouvelle épic E10 (label `epic:E10`, jalon
+  « E10 — Internationalisation ») ; prochaine US = US-093.

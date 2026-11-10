@@ -1,18 +1,25 @@
 {
     "name": "Comic Collection",
     "version": "19.0.4.3.0",
-    "category": "Leisure",
-    "summary": "Manage your comic book collection",
+    "category": "Productivity",
+    "summary": "Your comic, manga & graphic-novel collection in Odoo: series, missing volumes, "
+    "wishlist, loans, ISBN scan, dashboard and collection value",
     "description": """
-        Comic book collection management module.
-        Manage your series, albums, authors, publishers and loans.
-    """,
-    "author": "Belspace, OCA",
+Comic Collection — manage a comic book (BD), manga and comics collection in Odoo.
+
+Series and albums with covers, authors and publishers; a private library per user
+(collection, wishlist, reading status, star ratings, purchase price and estimated
+value); automatically followed series with their missing volumes; loans with
+overdue reminders; CSV / Excel import with duplicate detection; ISBN camera scan;
+dashboard, CSV export and PDF inventory.
+""",
+    "author": "Belspace",
     "maintainers": ["guepe"],
-    "website": "https://github.com/Belspace/Comics-collections",
+    "website": "https://github.com/guepe/Comics-collections",
+    "support": "ph.delaval@gmail.com",
     "license": "LGPL-3",
     "development_status": "Beta",
-    "images": ["static/description/overview.png"],
+    "images": ["static/description/banner.png"],
     "depends": ["base", "mail", "contacts"],
     "data": [
         "security/comic_security.xml",

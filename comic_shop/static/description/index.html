@@ -1,528 +1,233 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="generator" content="Docutils: https://docutils.sourceforge.io/" />
-<title>Comic Shop</title>
-<style type="text/css">
-
-/*
-:Author: David Goodger (goodger@python.org)
-:Id: $Id: html4css1.css 9511 2024-01-13 09:50:07Z milde $
-:Copyright: This stylesheet has been placed in the public domain.
-
-Default cascading style sheet for the HTML output of Docutils.
-Despite the name, some widely supported CSS2 features are used.
-
-See https://docutils.sourceforge.io/docs/howto/html-stylesheets.html for how to
-customize this style sheet.
-*/
-
-/* used to remove borders from tables and images */
-.borderless, table.borderless td, table.borderless th {
-  border: 0 }
-
-table.borderless td, table.borderless th {
-  /* Override padding for "table.docutils td" with "! important".
-     The right padding separates the table cells. */
-  padding: 0 0.5em 0 0 ! important }
-
-.first {
-  /* Override more specific margin styles with "! important". */
-  margin-top: 0 ! important }
-
-.last, .with-subtitle {
-  margin-bottom: 0 ! important }
-
-.hidden {
-  display: none }
-
-.subscript {
-  vertical-align: sub;
-  font-size: smaller }
-
-.superscript {
-  vertical-align: super;
-  font-size: smaller }
-
-a.toc-backref {
-  text-decoration: none ;
-  color: black }
-
-blockquote.epigraph {
-  margin: 2em 5em ; }
-
-dl.docutils dd {
-  margin-bottom: 0.5em }
-
-object[type="image/svg+xml"], object[type="application/x-shockwave-flash"] {
-  overflow: hidden;
-}
-
-/* Uncomment (and remove this text!) to get bold-faced definition list terms
-dl.docutils dt {
-  font-weight: bold }
-*/
-
-div.abstract {
-  margin: 2em 5em }
-
-div.abstract p.topic-title {
-  font-weight: bold ;
-  text-align: center }
-
-div.admonition, div.attention, div.caution, div.danger, div.error,
-div.hint, div.important, div.note, div.tip, div.warning {
-  margin: 2em ;
-  border: medium outset ;
-  padding: 1em }
-
-div.admonition p.admonition-title, div.hint p.admonition-title,
-div.important p.admonition-title, div.note p.admonition-title,
-div.tip p.admonition-title {
-  font-weight: bold ;
-  font-family: sans-serif }
-
-div.attention p.admonition-title, div.caution p.admonition-title,
-div.danger p.admonition-title, div.error p.admonition-title,
-div.warning p.admonition-title, .code .error {
-  color: red ;
-  font-weight: bold ;
-  font-family: sans-serif }
-
-/* Uncomment (and remove this text!) to get reduced vertical space in
-   compound paragraphs.
-div.compound .compound-first, div.compound .compound-middle {
-  margin-bottom: 0.5em }
-
-div.compound .compound-last, div.compound .compound-middle {
-  margin-top: 0.5em }
-*/
-
-div.dedication {
-  margin: 2em 5em ;
-  text-align: center ;
-  font-style: italic }
-
-div.dedication p.topic-title {
-  font-weight: bold ;
-  font-style: normal }
-
-div.figure {
-  margin-left: 2em ;
-  margin-right: 2em }
-
-div.footer, div.header {
-  clear: both;
-  font-size: smaller }
-
-div.line-block {
-  display: block ;
-  margin-top: 1em ;
-  margin-bottom: 1em }
-
-div.line-block div.line-block {
-  margin-top: 0 ;
-  margin-bottom: 0 ;
-  margin-left: 1.5em }
-
-div.sidebar {
-  margin: 0 0 0.5em 1em ;
-  border: medium outset ;
-  padding: 1em ;
-  background-color: #ffffee ;
-  width: 40% ;
-  float: right ;
-  clear: right }
-
-div.sidebar p.rubric {
-  font-family: sans-serif ;
-  font-size: medium }
-
-div.system-messages {
-  margin: 5em }
-
-div.system-messages h1 {
-  color: red }
-
-div.system-message {
-  border: medium outset ;
-  padding: 1em }
-
-div.system-message p.system-message-title {
-  color: red ;
-  font-weight: bold }
-
-div.topic {
-  margin: 2em }
-
-h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
-h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
-  margin-top: 0.4em }
-
-h1.title {
-  text-align: center }
-
-h2.subtitle {
-  text-align: center }
-
-hr.docutils {
-  width: 75% }
-
-img.align-left, .figure.align-left, object.align-left, table.align-left {
-  clear: left ;
-  float: left ;
-  margin-right: 1em }
-
-img.align-right, .figure.align-right, object.align-right, table.align-right {
-  clear: right ;
-  float: right ;
-  margin-left: 1em }
-
-img.align-center, .figure.align-center, object.align-center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-table.align-center {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.align-left {
-  text-align: left }
-
-.align-center {
-  clear: both ;
-  text-align: center }
-
-.align-right {
-  text-align: right }
-
-/* reset inner alignment in figures */
-div.align-right {
-  text-align: inherit }
-
-/* div.align-center * { */
-/*   text-align: left } */
-
-.align-top    {
-  vertical-align: top }
-
-.align-middle {
-  vertical-align: middle }
-
-.align-bottom {
-  vertical-align: bottom }
-
-ol.simple, ul.simple {
-  margin-bottom: 1em }
-
-ol.arabic {
-  list-style: decimal }
-
-ol.loweralpha {
-  list-style: lower-alpha }
-
-ol.upperalpha {
-  list-style: upper-alpha }
-
-ol.lowerroman {
-  list-style: lower-roman }
-
-ol.upperroman {
-  list-style: upper-roman }
-
-p.attribution {
-  text-align: right ;
-  margin-left: 50% }
-
-p.caption {
-  font-style: italic }
-
-p.credits {
-  font-style: italic ;
-  font-size: smaller }
-
-p.label {
-  white-space: nowrap }
-
-p.rubric {
-  font-weight: bold ;
-  font-size: larger ;
-  color: maroon ;
-  text-align: center }
-
-p.sidebar-title {
-  font-family: sans-serif ;
-  font-weight: bold ;
-  font-size: larger }
-
-p.sidebar-subtitle {
-  font-family: sans-serif ;
-  font-weight: bold }
-
-p.topic-title {
-  font-weight: bold }
-
-pre.address {
-  margin-bottom: 0 ;
-  margin-top: 0 ;
-  font: inherit }
-
-pre.literal-block, pre.doctest-block, pre.math, pre.code {
-  margin-left: 2em ;
-  margin-right: 2em }
-
-pre.code .ln { color: gray; } /* line numbers */
-pre.code, code { background-color: #eeeeee }
-pre.code .comment, code .comment { color: #5C6576 }
-pre.code .keyword, code .keyword { color: #3B0D06; font-weight: bold }
-pre.code .literal.string, code .literal.string { color: #0C5404 }
-pre.code .name.builtin, code .name.builtin { color: #352B84 }
-pre.code .deleted, code .deleted { background-color: #DEB0A1}
-pre.code .inserted, code .inserted { background-color: #A3D289}
-
-span.classifier {
-  font-family: sans-serif ;
-  font-style: oblique }
-
-span.classifier-delimiter {
-  font-family: sans-serif ;
-  font-weight: bold }
-
-span.interpreted {
-  font-family: sans-serif }
-
-span.option {
-  white-space: nowrap }
-
-span.pre {
-  white-space: pre }
-
-span.problematic, pre.problematic {
-  color: red }
-
-span.section-subtitle {
-  /* font-size relative to parent (h1..h6 element) */
-  font-size: 80% }
-
-table.citation {
-  border-left: solid 1px gray;
-  margin-left: 1px }
-
-table.docinfo {
-  margin: 2em 4em }
-
-table.docutils {
-  margin-top: 0.5em ;
-  margin-bottom: 0.5em }
-
-table.footnote {
-  border-left: solid 1px black;
-  margin-left: 1px }
-
-table.docutils td, table.docutils th,
-table.docinfo td, table.docinfo th {
-  padding-left: 0.5em ;
-  padding-right: 0.5em ;
-  vertical-align: top }
-
-table.docutils th.field-name, table.docinfo th.docinfo-name {
-  font-weight: bold ;
-  text-align: left ;
-  white-space: nowrap ;
-  padding-left: 0 }
-
-/* "booktabs" style (no vertical lines) */
-table.docutils.booktabs {
-  border: 0px;
-  border-top: 2px solid;
-  border-bottom: 2px solid;
-  border-collapse: collapse;
-}
-table.docutils.booktabs * {
-  border: 0px;
-}
-table.docutils.booktabs th {
-  border-bottom: thin solid;
-  text-align: left;
-}
-
-h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
-h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
-  font-size: 100% }
-
-ul.auto-toc {
-  list-style-type: none }
-
-</style>
-</head>
-<body>
-<div class="document" id="comic-shop">
-<h1 class="title">Comic Shop</h1>
-
-<!-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!! This file is generated by oca-gen-addon-readme !!
-!! changes will be overwritten.                   !!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!! source digest: sha256:0c05998bb0fc96f4f40f9133ccecb2720237001f237a461920b72847ffae7f9b
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-<p><a class="reference external image-reference" href="https://odoo-community.org/page/development-status"><img alt="Beta" src="https://img.shields.io/badge/maturity-Beta-yellow.png" /></a> <a class="reference external image-reference" href="http://www.gnu.org/licenses/lgpl-3.0-standalone.html"><img alt="License: LGPL-3" src="https://img.shields.io/badge/license-LGPL--3-blue.png" /></a> <a class="reference external image-reference" href="https://github.com/Belspace/Comics-collections/tree/19.0/comic_shop"><img alt="Belspace/Comics-collections" src="https://img.shields.io/badge/github-Belspace%2FComics--collections-lightgray.png?logo=github" /></a></p>
-<p>Sell comic books online and at the counter, and give customers their own
-library on the portal. Extends <tt class="docutils literal">comics_collections</tt> and <tt class="docutils literal">comic_datasource</tt>.</p>
-<p>It also adds the <em>all comics</em> layer: <strong>Catalogues → Tous les albums / Toutes les
-séries</strong> open the full shared catalogue to every comic user (without the shop,
-<tt class="docutils literal">comics_collections</tt> is a private collection and keeps it for managers).</p>
-<p><strong>Product synchronisation</strong></p>
-<p>A <tt class="docutils literal">comic.edition</tt> can be linked to a <tt class="docutils literal">product.template</tt> (<em>Créer produit</em>).
-Name (<tt class="docutils literal">Série — Titre (T1)</tt>), cover, description and barcode (ISBN-13) follow the
-edition, and are resynchronised when the series, the album or an ISBN changes.
-A barcode typed by hand is kept, and <em>Available in POS</em> is only set when the
-product is created. Products can be bulk-created from a series for all editions
-that have an ISBN. An <tt class="docutils literal">uninstall_hook</tt> cleans up shop-specific data.</p>
-<p><strong>Webshop pages</strong></p>
-<p><tt class="docutils literal">/shop/series</tt>, <tt class="docutils literal">/shop/auteurs</tt> and <tt class="docutils literal">/shop/editeurs</tt> browse the comics on
-sale (published and active products only), with filters on series type. An
-author page only exists for partners credited on an album on sale.</p>
-<p><strong>Customer library</strong> (<tt class="docutils literal">/my/library</tt>)</p>
-<p>Each customer keeps their own library (<tt class="docutils literal">comic.customer.album</tt>, the personal
-library of <tt class="docutils literal">comics_collections</tt>): <em>Ma collection</em> and <em>Ma wishlist</em>, reading
-status, star rating and comments, a dashboard (<tt class="docutils literal">/my/library/dashboard</tt>), with pagination and
-sorting. Albums bought outside the shop are added by ISBN or title search
-(local catalogue + online sources); cover downloads are restricted to the known
-source hosts. Putting an owned album in the wishlist keeps it in the collection;
-adding it to the collection removes it from the wishlist. A customer can share
-their wishlist through a secret, revocable link (<tt class="docutils literal"><span class="pre">/wishlist/&lt;token&gt;</span></tt>): a
-read-only page with covers and links to the albums on sale, nothing else.</p>
-<p><strong>Purchases</strong></p>
-<p>Confirmed sale orders and paid POS orders add the albums to the buyer’s library
-(source <em>Acheté ici</em>), unless the customer switched this off on their library page.
-Cancelled orders and POS refunds remove the entries they created.</p>
-<p><strong>Moderation of portal records</strong></p>
-<p>Series, albums and publishers created from the portal are flagged <em>À valider</em>
-and a review activity is scheduled for a manager. Managers validate them, or
-refuse them — as a duplicate of an existing album (the customer’s library entry
-and ISBN are moved onto it) or as incorrect (removed) — and the customer is
-notified. Products cannot be created for albums awaiting validation.</p>
-<p><strong>Table of contents</strong></p>
-<div class="contents local topic" id="contents">
-<ul class="simple">
-<li><a class="reference internal" href="#installation" id="toc-entry-1">Installation</a></li>
-<li><a class="reference internal" href="#configuration" id="toc-entry-2">Configuration</a></li>
-<li><a class="reference internal" href="#usage" id="toc-entry-3">Usage</a></li>
-<li><a class="reference internal" href="#bug-tracker" id="toc-entry-4">Bug Tracker</a></li>
-<li><a class="reference internal" href="#credits" id="toc-entry-5">Credits</a><ul>
-<li><a class="reference internal" href="#authors" id="toc-entry-6">Authors</a></li>
-<li><a class="reference internal" href="#contributors" id="toc-entry-7">Contributors</a></li>
-<li><a class="reference internal" href="#maintainers" id="toc-entry-8">Maintainers</a></li>
-</ul>
-</li>
-</ul>
+<div style="background:#ffffff;">
+<section style="background:#f3eee4;padding:48px 16px 40px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;text-align:center;">
+    <h1 style="color:#022E51;font-size:44px;font-weight:800;margin:0 0 8px;letter-spacing:-.5px;">Comic Shop</h1>
+    <p style="color:#B74803;font-size:21px;font-weight:600;margin:0 0 18px;">Sell comic books online and at the counter — and keep your customers coming back</p>
+    <p style="color:#2a4a6a;font-size:17px;line-height:1.6;max-width:780px;margin:0 auto 18px;">Your albums become products in one click, with covers, descriptions and ISBN barcodes kept in sync. Customers browse series, authors and publishers on your webshop, keep their own comic library on the portal, follow their series and get an e-mail when the next volume is on sale.</p>
+    <div style="margin-bottom:28px;"><span style="display:inline-block;margin:4px;padding:5px 12px;border-radius:14px;background:#ffffff;color:#022E51;font-size:13px;font-weight:600;border:1px solid rgba(2,46,81,.15);">Odoo 19</span><span style="display:inline-block;margin:4px;padding:5px 12px;border-radius:14px;background:#ffffff;color:#022E51;font-size:13px;font-weight:600;border:1px solid rgba(2,46,81,.15);">eCommerce</span><span style="display:inline-block;margin:4px;padding:5px 12px;border-radius:14px;background:#ffffff;color:#022E51;font-size:13px;font-weight:600;border:1px solid rgba(2,46,81,.15);">Point of Sale</span><span style="display:inline-block;margin:4px;padding:5px 12px;border-radius:14px;background:#ffffff;color:#022E51;font-size:13px;font-weight:600;border:1px solid rgba(2,46,81,.15);">Customer portal</span><span style="display:inline-block;margin:4px;padding:5px 12px;border-radius:14px;background:#ffffff;color:#022E51;font-size:13px;font-weight:600;border:1px solid rgba(2,46,81,.15);">OPL-1</span></div>
+    <img src="banner.png" alt="Comic Shop" style="max-width:100%;border-radius:10px;box-shadow:0 12px 40px rgba(2,46,81,.18);"/>
+  </div>
+</section>
+<section style="padding:48px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <h2 style="color:#022E51;text-align:center;font-size:30px;font-weight:800;margin:0 0 26px;">A comic shop, not just a shop</h2>
+    <div class="row">
+    <div class="col-md-4 col-sm-6" style="padding:12px;">
+      <div style="height:100%;background:#ffffff;border:1px solid rgba(2,46,81,.10);border-radius:10px;padding:22px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:#f3eee4;color:#B74803;
+                    display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;">
+          <i class="fa fa-refresh"></i>
+        </div>
+        <h4 style="color:#022E51;font-size:17px;font-weight:700;margin:0 0 6px;">Album ↔ product sync</h4>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">Name, cover, description and ISBN barcode follow the album. Bulk-create the products of a whole series.</p>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-6" style="padding:12px;">
+      <div style="height:100%;background:#ffffff;border:1px solid rgba(2,46,81,.10);border-radius:10px;padding:22px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:#f3eee4;color:#B74803;
+                    display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;">
+          <i class="fa fa-globe"></i>
+        </div>
+        <h4 style="color:#022E51;font-size:17px;font-weight:700;margin:0 0 6px;">Webshop pages</h4>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">Browse by series, author and publisher; album pages with volume, authors and synopsis.</p>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-6" style="padding:12px;">
+      <div style="height:100%;background:#ffffff;border:1px solid rgba(2,46,81,.10);border-radius:10px;padding:22px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:#f3eee4;color:#B74803;
+                    display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;">
+          <i class="fa fa-book"></i>
+        </div>
+        <h4 style="color:#022E51;font-size:17px;font-weight:700;margin:0 0 6px;">Customer library</h4>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">Collection, wishlist, reading status, ratings and a dashboard for every customer on the portal.</p>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-6" style="padding:12px;">
+      <div style="height:100%;background:#ffffff;border:1px solid rgba(2,46,81,.10);border-radius:10px;padding:22px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:#f3eee4;color:#B74803;
+                    display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;">
+          <i class="fa fa-bell"></i>
+        </div>
+        <h4 style="color:#022E51;font-size:17px;font-weight:700;margin:0 0 6px;">Release e-mails</h4>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">Customers follow series; when a volume goes on sale, you preview and send the « now available » e-mail.</p>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-6" style="padding:12px;">
+      <div style="height:100%;background:#ffffff;border:1px solid rgba(2,46,81,.10);border-radius:10px;padding:22px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:#f3eee4;color:#B74803;
+                    display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;">
+          <i class="fa fa-barcode"></i>
+        </div>
+        <h4 style="color:#022E51;font-size:17px;font-weight:700;margin:0 0 6px;">Scan &amp; POS</h4>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">Scan an ISBN at the counter; paid orders land in the buyer's library automatically.</p>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-6" style="padding:12px;">
+      <div style="height:100%;background:#ffffff;border:1px solid rgba(2,46,81,.10);border-radius:10px;padding:22px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:#f3eee4;color:#B74803;
+                    display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px;">
+          <i class="fa fa-share-alt"></i>
+        </div>
+        <h4 style="color:#022E51;font-size:17px;font-weight:700;margin:0 0 6px;">Shareable wishlist</h4>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">A secret, revocable link to show a wishlist to friends and family — perfect for gifts.</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+<section style="background:#f3eee4;padding:44px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <div class="row" style="align-items:center;display:flex;flex-wrap:wrap;">
+      <div class="col-md-5" style="padding:16px;">
+        <div style="color:#B74803;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Webshop</div>
+        <h3 style="color:#022E51;font-size:26px;font-weight:800;margin:0 0 14px;">Album pages that sell</h3>
+        <p style="color:#2a4a6a;font-size:15px;line-height:1.65;margin:0 0 12px;">Every album on sale gets a rich product page: series and volume, authors with their roles, publisher, synopsis and cover — all coming from your catalogue, always up to date.</p>
+        <ul style="list-style:none;padding:0;margin:8px 0 0;color:#2a4a6a;font-size:14px;"><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Series, author and publisher pages</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Filters by series type</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Only published products are shown</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Author biographies with the AI add-on</li></ul>
+      </div>
+      <div class="col-md-7" style="padding:16px;">
+        <img src="shop_product.png" alt="Album pages that sell" style="width:100%;border-radius:8px;border:1px solid rgba(2,46,81,.12);box-shadow:0 8px 28px rgba(2,46,81,.12);"/>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="background:#ffffff;padding:44px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <div class="row" style="align-items:center;display:flex;flex-wrap:wrap;">
+      <div class="col-md-7" style="padding:16px;">
+        <img src="shop_series.png" alt="Follow a series, never miss a volume" style="width:100%;border-radius:8px;border:1px solid rgba(2,46,81,.12);box-shadow:0 8px 28px rgba(2,46,81,.12);"/>
+      </div>
+      <div class="col-md-5" style="padding:16px;">
+        <div style="color:#B74803;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Series</div>
+        <h3 style="color:#022E51;font-size:26px;font-weight:800;margin:0 0 14px;">Follow a series, never miss a volume</h3>
+        <p style="color:#2a4a6a;font-size:15px;line-height:1.65;margin:0 0 12px;">Customers follow a series from the webshop or their library. When you put a new volume on sale, Odoo tells you how many customers are waiting for it.</p>
+        <ul style="list-style:none;padding:0;margin:8px 0 0;color:#2a4a6a;font-size:14px;"><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Follow / unfollow from the portal</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>List of followed series</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>One e-mail per album and customer</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="background:#f3eee4;padding:44px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <div class="row" style="align-items:center;display:flex;flex-wrap:wrap;">
+      <div class="col-md-5" style="padding:16px;">
+        <div style="color:#B74803;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Release e-mails</div>
+        <h3 style="color:#022E51;font-size:26px;font-weight:800;margin:0 0 14px;">« Good news — it's available! »</h3>
+        <p style="color:#2a4a6a;font-size:15px;line-height:1.65;margin:0 0 12px;">Publish the albums of a series and the assistant shows the customers to notify — followers of the series and customers who have the album in their wishlist — with a preview of the e-mail.</p>
+        <ul style="list-style:none;padding:0;margin:8px 0 0;color:#2a4a6a;font-size:14px;"><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Preview before sending</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Never twice for the same album</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Logged in the album chatter</li></ul>
+      </div>
+      <div class="col-md-7" style="padding:16px;">
+        <img src="shop_release_notify.png" alt="« Good news — it's available! »" style="width:100%;border-radius:8px;border:1px solid rgba(2,46,81,.12);box-shadow:0 8px 28px rgba(2,46,81,.12);"/>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="background:#ffffff;padding:44px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <div class="row" style="align-items:center;display:flex;flex-wrap:wrap;">
+      <div class="col-md-7" style="padding:16px;">
+        <img src="shop_portal_library.png" alt="A comic library for every customer" style="width:100%;border-radius:8px;border:1px solid rgba(2,46,81,.12);box-shadow:0 8px 28px rgba(2,46,81,.12);"/>
+      </div>
+      <div class="col-md-5" style="padding:16px;">
+        <div style="color:#B74803;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Customer portal</div>
+        <h3 style="color:#022E51;font-size:26px;font-weight:800;margin:0 0 14px;">A comic library for every customer</h3>
+        <p style="color:#2a4a6a;font-size:15px;line-height:1.65;margin:0 0 12px;">On <b>My library</b>, customers keep their collection and wishlist, reading status, star ratings and comments. Albums bought in your shop are added automatically; others are added by ISBN, title search or camera scan.</p>
+        <ul style="list-style:none;padding:0;margin:8px 0 0;color:#2a4a6a;font-size:14px;"><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Collection and wishlist</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Purchases added automatically (opt-out)</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Search in your catalogue and online sources</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Albums proposed by customers are moderated</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="background:#f3eee4;padding:44px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <div class="row" style="align-items:center;display:flex;flex-wrap:wrap;">
+      <div class="col-md-5" style="padding:16px;">
+        <div style="color:#B74803;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Customer dashboard</div>
+        <h3 style="color:#022E51;font-size:26px;font-weight:800;margin:0 0 14px;">Their collection, in numbers</h3>
+        <p style="color:#2a4a6a;font-size:15px;line-height:1.65;margin:0 0 12px;">Customers see how many albums and series they own, their complete series, reading progress, favourite genres and their best-rated series.</p>
+        <ul style="list-style:none;padding:0;margin:8px 0 0;color:#2a4a6a;font-size:14px;"><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Personal statistics</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Best-rated series</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Recent additions</li></ul>
+      </div>
+      <div class="col-md-7" style="padding:16px;">
+        <img src="shop_portal_dashboard.png" alt="Their collection, in numbers" style="width:100%;border-radius:8px;border:1px solid rgba(2,46,81,.12);box-shadow:0 8px 28px rgba(2,46,81,.12);"/>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="background:#ffffff;padding:44px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <div class="row" style="align-items:center;display:flex;flex-wrap:wrap;">
+      <div class="col-md-7" style="padding:16px;">
+        <img src="shop_portal_add.png" alt="Scan the barcode with the phone" style="width:100%;border-radius:8px;border:1px solid rgba(2,46,81,.12);box-shadow:0 8px 28px rgba(2,46,81,.12);"/>
+      </div>
+      <div class="col-md-5" style="padding:16px;">
+        <div style="color:#B74803;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Add a comic</div>
+        <h3 style="color:#022E51;font-size:26px;font-weight:800;margin:0 0 14px;">Scan the barcode with the phone</h3>
+        <p style="color:#2a4a6a;font-size:15px;line-height:1.65;margin:0 0 12px;">To add an album bought elsewhere, customers scan its ISBN with their phone camera, or type it. Odoo searches your catalogue first, then Google Books, Open Library and the BnF.</p>
+        <ul style="list-style:none;padding:0;margin:8px 0 0;color:#2a4a6a;font-size:14px;"><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Camera scan (HTTPS)</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Manual entry fallback</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Covers from trusted sources only</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="background:#f3eee4;padding:44px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <div class="row" style="align-items:center;display:flex;flex-wrap:wrap;">
+      <div class="col-md-5" style="padding:16px;">
+        <div style="color:#B74803;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Wishlist</div>
+        <h3 style="color:#022E51;font-size:26px;font-weight:800;margin:0 0 14px;">Gift ideas, shared in one link</h3>
+        <p style="color:#2a4a6a;font-size:15px;line-height:1.65;margin:0 0 12px;">A customer creates a secret link to their wishlist and sends it to friends and family: a read-only page with the covers and a link to each album on sale in your shop. The link can be revoked at any time.</p>
+        <ul style="list-style:none;padding:0;margin:8px 0 0;color:#2a4a6a;font-size:14px;"><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Read-only, no account needed</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Links to your products</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Revocable</li></ul>
+      </div>
+      <div class="col-md-7" style="padding:16px;">
+        <img src="shop_wishlist_public.png" alt="Gift ideas, shared in one link" style="width:100%;border-radius:8px;border:1px solid rgba(2,46,81,.12);box-shadow:0 8px 28px rgba(2,46,81,.12);"/>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="background:#f3eee4;padding:48px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <h2 style="color:#022E51;text-align:center;font-size:30px;font-weight:800;margin:0 0 26px;">Works hand in hand with</h2>
+    <div class="row">
+    <div class="col-md-4" style="padding:12px;">
+      <div style="height:100%;border-radius:10px;padding:22px;background:#ffffff;border:1px solid rgba(2,46,81,.10);">
+        <h4 style="color:#022E51;font-size:18px;font-weight:800;margin:0 0 4px;"><i class="fa fa-th-large" style="color:#B74803;margin-right:8px;"></i>Comic Collection</h4>
+        <div style="color:#6f88a4;font-size:12px;font-family:monospace;margin-bottom:10px;">comics_collections</div>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">The free core (LGPL-3): series, albums, authors, personal libraries, wishlist, loans and import. Required.</p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:12px;">
+      <div style="height:100%;border-radius:10px;padding:22px;background:#ffffff;border:1px solid rgba(2,46,81,.10);">
+        <h4 style="color:#022E51;font-size:18px;font-weight:800;margin:0 0 4px;"><i class="fa fa-cloud-download" style="color:#B74803;margin-right:8px;"></i>Data sources</h4>
+        <div style="color:#6f88a4;font-size:12px;font-family:monospace;margin-bottom:10px;">comic_datasource</div>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">Free (LGPL-3): covers and metadata from Google Books, Open Library and the BnF. Required.</p>
+      </div>
+    </div>
+    <div class="col-md-4" style="padding:12px;">
+      <div style="height:100%;border-radius:10px;padding:22px;background:#ffffff;border:1px solid rgba(2,46,81,.10);">
+        <h4 style="color:#022E51;font-size:18px;font-weight:800;margin:0 0 4px;"><i class="fa fa-magic" style="color:#B74803;margin-right:8px;"></i>AI discovery (paid add-on)</h4>
+        <div style="color:#6f88a4;font-size:12px;font-family:monospace;margin-bottom:10px;">comic_ai + comic_ai_shop</div>
+        <p style="color:#2a4a6a;font-size:14px;line-height:1.55;margin:0;">Customers discover new series from the ones they rated 4★ — with a daily limit to control costs.</p>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+<section style="background:#ffffff;padding:44px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:1100px;margin:auto;">
+    <div class="row" style="align-items:center;display:flex;flex-wrap:wrap;">
+      <div class="col-md-7" style="padding:16px;">
+        <img src="shop_portal_discover.png" alt="Recommendations your customers will love" style="width:100%;border-radius:8px;border:1px solid rgba(2,46,81,.12);box-shadow:0 8px 28px rgba(2,46,81,.12);"/>
+      </div>
+      <div class="col-md-5" style="padding:16px;">
+        <div style="color:#B74803;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">AI add-on</div>
+        <h3 style="color:#022E51;font-size:26px;font-weight:800;margin:0 0 14px;">Recommendations your customers will love</h3>
+        <p style="color:#2a4a6a;font-size:15px;line-height:1.65;margin:0 0 12px;">With <b>comic_ai</b>, customers get 10 to 15 series suggestions based on their favourites, can check each one against the data sources, and add them to their wishlist.</p>
+        <ul style="list-style:none;padding:0;margin:8px 0 0;color:#2a4a6a;font-size:14px;"><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Taste profile from 4★ albums</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Excludes what they already have</li><li style="margin:0 0 7px;"><i class="fa fa-check" style="color:#B74803;margin-right:8px;"></i>Daily limit per customer</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+<section style="padding:48px 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <div class="container" style="max-width:860px;margin:auto;">
+    <h2 style="color:#022E51;text-align:center;font-size:28px;font-weight:800;margin:0 0 22px;">Technical information</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px;background:#ffffff;border:1px solid rgba(2,46,81,.10);border-radius:8px;"><tr><td style="padding:9px 14px;color:#6f88a4;font-weight:600;width:34%;border-bottom:1px solid rgba(2,46,81,.08);">Odoo version</td><td style="padding:9px 14px;color:#2a4a6a;border-bottom:1px solid rgba(2,46,81,.08);">19.0 — Community and Enterprise</td></tr><tr><td style="padding:9px 14px;color:#6f88a4;font-weight:600;width:34%;border-bottom:1px solid rgba(2,46,81,.08);">Dependencies</td><td style="padding:9px 14px;color:#2a4a6a;border-bottom:1px solid rgba(2,46,81,.08);">comics_collections, comic_datasource, sale, website, website_sale, point_of_sale, portal</td></tr><tr><td style="padding:9px 14px;color:#6f88a4;font-weight:600;width:34%;border-bottom:1px solid rgba(2,46,81,.08);">License</td><td style="padding:9px 14px;color:#2a4a6a;border-bottom:1px solid rgba(2,46,81,.08);">OPL-1 (Odoo Proprietary License) — the free core modules are LGPL-3</td></tr><tr><td style="padding:9px 14px;color:#6f88a4;font-weight:600;width:34%;border-bottom:1px solid rgba(2,46,81,.08);">Reinstall-safe</td><td style="padding:9px 14px;color:#2a4a6a;border-bottom:1px solid rgba(2,46,81,.08);">Album ↔ product links are restored automatically when the module is reinstalled</td></tr><tr><td style="padding:9px 14px;color:#6f88a4;font-weight:600;width:34%;border-bottom:1px solid rgba(2,46,81,.08);">Interface language</td><td style="padding:9px 14px;color:#2a4a6a;border-bottom:1px solid rgba(2,46,81,.08);">French</td></tr><tr><td style="padding:9px 14px;color:#6f88a4;font-weight:600;width:34%;border-bottom:1px solid rgba(2,46,81,.08);">Quality</td><td style="padding:9px 14px;color:#2a4a6a;border-bottom:1px solid rgba(2,46,81,.08);">Automated test suite, pre-commit, OCA guidelines</td></tr></table>
+    <p style="text-align:center;color:#2a4a6a;font-size:15px;margin:26px 0 0;"><i class="fa fa-life-ring" style="color:#B74803;margin-right:6px;"></i>Questions, bugs or feature requests: <a href="mailto:ph.delaval@gmail.com" style="color:#B74803;">ph.delaval@gmail.com</a> · <a href="https://github.com/guepe/Comics-collections/issues" style="color:#B74803;">GitHub issues</a></p>
+  </div>
+</section>
 </div>
-<div class="section" id="installation">
-<h1><a class="toc-backref" href="#toc-entry-1">Installation</a></h1>
-<p>This module depends on the following Odoo 19 modules (all standard):</p>
-<ul class="simple">
-<li><tt class="docutils literal">comics_collections</tt></li>
-<li><tt class="docutils literal">comic_datasource</tt></li>
-<li><tt class="docutils literal">sale</tt></li>
-<li><tt class="docutils literal">website</tt></li>
-<li><tt class="docutils literal">website_sale</tt></li>
-<li><tt class="docutils literal">point_of_sale</tt></li>
-<li><tt class="docutils literal">portal</tt></li>
-</ul>
-<p>No extra Python packages are required beyond those needed by <tt class="docutils literal">comic_datasource</tt>.</p>
-</div>
-<div class="section" id="configuration">
-<h1><a class="toc-backref" href="#toc-entry-2">Configuration</a></h1>
-<ol class="arabic simple">
-<li>Install <tt class="docutils literal">comic_shop</tt> on top of <tt class="docutils literal">comics_collections</tt> and <tt class="docutils literal">comic_datasource</tt>.
-A <em>Bandes Dessinées</em> POS category is created at installation.</li>
-<li>In <strong>Point of Sale → Configuration → Settings</strong>, make sure the shop’s POS
-includes the <em>Bandes Dessinées</em> category.</li>
-<li>Set the sale price of comic products (products are created without a price).</li>
-<li>Assign managers to the <em>Gestionnaire</em> comic group: they receive the review
-activities for records created from the portal.</li>
-</ol>
-</div>
-<div class="section" id="usage">
-<h1><a class="toc-backref" href="#toc-entry-3">Usage</a></h1>
-<p><strong>Put an album on sale</strong></p>
-<ol class="arabic simple">
-<li>Open an edition and click <em>Créer produit</em> (or <em>Resynchroniser</em> to
-refresh an existing product). From a series, <em>À publier</em> creates the products
-of all its editions that have an ISBN.</li>
-<li>Set the price and publish the product from the website backend.</li>
-<li>Tell the customers: when customers follow the series or have the album in their
-wishlist, the edition shows <em>N client(s) attendent cet album</em> → <em>Prévenir les
-clients</em>. The wizard shows how many customers will be notified, the recipients
-and a preview of the email, then sends it (once per album and customer, trace in
-the edition chatter). <em>Publier les albums</em> on a series opens the same wizard;
-<em>Prévenir les clients (mise en vente)</em> is also in the action menu of series and
-editions.</li>
-</ol>
-<p><strong>Point of Sale</strong></p>
-<p>Scanning an ISBN selects the product. When a customer is set on the order, the
-album is added to their library at payment.</p>
-<p><strong>Customer portal</strong></p>
-<p>Customers open <em>Ma Bibliothèque BD</em> (<tt class="docutils literal">/my/library</tt>) from their portal, filter
-collection / wishlist, update reading status and star rating, open their
-<em>Tableau de bord BD</em> (<tt class="docutils literal">/my/library/dashboard</tt>), share their wishlist
-(<em>Partager ma wishlist</em> → link to copy, revocable), and add albums with
-<em>Ajouter une BD</em> (the <em>Scanner</em> button reads the ISBN barcode with the phone
-camera; HTTPS is required, manual entry stays available). <em>Mes séries</em>
-(<tt class="docutils literal">/my/library/series</tt>) lists the followed series and those of the library, with
-<em>Suivre la série</em> / <em>Série suivie</em> buttons, also shown on the shop series page and on
-an album of the library. The <em>Ajouter automatiquement mes achats à ma bibliothèque</em>
-switch disables the automatic addition of their purchases.</p>
-<p><strong>Moderation</strong></p>
-<p><em>Comic Shop → À valider (portail)</em> lists the albums created by customers: use
-<em>Valider</em>, or <em>Refuser</em> to open the refusal wizard (duplicate of an existing
-album, or incorrect record, with an optional message to the customer).
-<em>Comic Shop → Bibliothèques clients</em> lists all customer library entries.</p>
-<p><strong>Data model</strong>:</p>
-<pre class="literal-block">
-comic.edition
-  └── product_tmpl_id → product.template
-
-comic.customer.album        (defined in comics_collections, extended here)
-  + source « achete_ici », sale_order_line_id, pos_order_line_id
-  + auto_created, has_product
-</pre>
-</div>
-<div class="section" id="bug-tracker">
-<h1><a class="toc-backref" href="#toc-entry-4">Bug Tracker</a></h1>
-<p>Bugs are tracked on <a class="reference external" href="https://github.com/Belspace/Comics-collections/issues">GitHub Issues</a>.
-In case of trouble, please check there if your issue has already been reported.
-If you spotted it first, help us to smash it by providing a detailed and welcomed
-<a class="reference external" href="https://github.com/Belspace/Comics-collections/issues/new?body=module:%20comic_shop%0Aversion:%2019.0%0A%0A**Steps%20to%20reproduce**%0A-%20...%0A%0A**Current%20behavior**%0A%0A**Expected%20behavior**">feedback</a>.</p>
-<p>Do not contact contributors directly about support or help with technical issues.</p>
-</div>
-<div class="section" id="credits">
-<h1><a class="toc-backref" href="#toc-entry-5">Credits</a></h1>
-<div class="section" id="authors">
-<h2><a class="toc-backref" href="#toc-entry-6">Authors</a></h2>
-<ul class="simple">
-<li>Belspace</li>
-<li>OCA</li>
-</ul>
-</div>
-<div class="section" id="contributors">
-<h2><a class="toc-backref" href="#toc-entry-7">Contributors</a></h2>
-<ul class="simple">
-<li>Pierre-Henri Delaval &lt;<a class="reference external" href="mailto:ph.delaval&#64;gmail.com">ph.delaval&#64;gmail.com</a>&gt; (Belspace)</li>
-</ul>
-</div>
-<div class="section" id="maintainers">
-<h2><a class="toc-backref" href="#toc-entry-8">Maintainers</a></h2>
-<p>Current maintainer:</p>
-<p><a class="reference external image-reference" href="https://github.com/guepe"><img alt="guepe" src="https://github.com/guepe.png?size=40px" /></a></p>
-<p>This module is part of the <a class="reference external" href="https://github.com/Belspace/Comics-collections/tree/19.0/comic_shop">Belspace/Comics-collections</a> project on GitHub.</p>
-<p>You are welcome to contribute.</p>
-</div>
-</div>
-</div>
-</body>
-</html>

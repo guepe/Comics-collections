@@ -179,6 +179,21 @@ depends = ['comics_collections', 'comic_datasource']
 
 ---
 
+## Licences et prix
+
+| Module               | Licence | Prix (Odoo Apps Store) |
+| -------------------- | ------- | ---------------------- |
+| `comics_collections` | LGPL-3  | gratuit                |
+| `comic_datasource`   | LGPL-3  | gratuit                |
+| `comic_shop`         | OPL-1   | 200 €                  |
+| `comic_ai`           | OPL-1   | 60 €                   |
+| `comic_ai_shop`      | OPL-1   | 40 €                   |
+
+Le fichier `LICENSE` à la racine (LGPL-3) couvre les modules gratuits ; chaque module OPL-1
+contient son propre fichier `LICENSE`.
+
+---
+
 ## Prérequis communs
 
 - Odoo **19.0**

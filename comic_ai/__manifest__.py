@@ -6,7 +6,9 @@
     "author": "Belspace, OCA",
     "maintainers": ["guepe"],
     "website": "https://github.com/Belspace/Comics-collections",
-    "license": "LGPL-3",
+    "license": "OPL-1",
+    "price": 60.00,
+    "currency": "EUR",
     "development_status": "Beta",
     "depends": ["comics_collections", "comic_datasource"],
     "data": [
