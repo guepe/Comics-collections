@@ -2667,3 +2667,10 @@ cinq modules : 472 tests verts.
 - **Captures App Store en anglais** (dernier critère de #9) : captures et bannières de
   `comics_collections` et `comic_datasource` refaites avec l'interface et la démo en anglais
   (chaîne `tools/appstore` du dépôt privé).
+
+## 2026-11-10 — comics_collections 19.0.4.4.1 : modèle de traduction versionné
+
+- `comics_collections/i18n/comics_collections.pot` n'était pas commité : le `.gitignore` du module
+  ignorait les `*.pot`. Règle retirée, fichier ajouté (les `fr.po` / `nl.po` / `de.po` l'étaient
+  déjà ; aucun effet sur l'interface).
+- `USER_STORIES.md` : E10 / US-092 marquée livrée.
