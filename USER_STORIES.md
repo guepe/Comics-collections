@@ -28,7 +28,7 @@
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
 | **Maintenant** | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064 (#2)                 | 🔄   |
 | **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
-| **Plus tard**  | [E10 — Internationalisation](#e10--internationalisation)                  | US-092 (#9)                 | 🚧   |
+| **Plus tard**  | [E10 — Internationalisation](#e10--internationalisation)                  | US-092 (#9)                 | ✅   |
 
 ---
 
@@ -47,7 +47,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 6 US   | —                         |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064 (#2)               |
 | E9   | Shop & commerçant                    | `comic_shop` (dépôt privé)          | ⏳   | —      | pro#1 → pro#4             |
-| E10  | Internationalisation (EN, FR, NL, DE) | tous                               | 🚧   | —      | #9                        |
+| E10  | Internationalisation (EN, FR, NL, DE) | tous                               | ✅   | 1      | —                         |
 
 ---
 
@@ -107,7 +107,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 
 ### E10 — Internationalisation
 
-> Interface des modules en anglais (l'interface est aujourd'hui en français), puis autres langues.
+> ✅ Livré le 2026-11-10 (v19.0.1.1.0) : textes source en anglais, traductions FR / NL / DE.
 
 | US     | Issue | Titre                                         |
 | ------ | ----- | --------------------------------------------- |
@@ -246,6 +246,12 @@ anciens fichiers V1 / V2 / V3.
 | US-062  | Tests unitaires CI-compatibles (310 tests, local et CI)                |
 | US-063  | GitHub Actions : tests + pre-commit                                    |
 | US-085  | CI limitée à nos modules (~3 min), README / documentation à jour — 2026-11-05 / 06 |
+
+### E10 — Internationalisation (livré)
+
+| US     | Titre                                                                    |
+| ------ | ------------------------------------------------------------------------ |
+| US-092 | Interface EN (source) + `fr.po` / `nl.po` / `de.po` pour les 5 modules, prompts IA en anglais (langue de sortie inchangée), captures et bannières App Store en anglais — 2026-11-10 (v19.0.1.1.0) |
 
 ### Abandonné ou non attribué
 
