@@ -15,7 +15,7 @@ dashboard, CSV export and PDF inventory.
 """,
     "author": "Belspace",
     "maintainers": ["guepe"],
-    "website": "https://github.com/guepe/Comics-collections",
+    "website": "https://odoo.belspace.net",
     "support": "ph.delaval@gmail.com",
     "license": "LGPL-3",
     "development_status": "Beta",
