@@ -41,11 +41,10 @@
                             </div>
                         </setting>
 
-                        <!-- Open Library -->
+                        <!-- Open Library (le libellé de la case est affiché par <setting> : pas de <label>, #10) -->
                         <setting id="comic_openlibrary_setting"
                                  title="Couvertures et métadonnées alternatives. Gratuit, sans clé API.">
                             <field name="comic_openlibrary_enabled"/>
-                            <label for="comic_openlibrary_enabled" class="o_form_label fw-bold"/>
                             <div class="text-muted mt-1">
                                 Open Library fournit des couvertures et métadonnées pour des millions
                                 d'ouvrages. Activé par défaut.
@@ -56,7 +55,6 @@
                         <setting id="comic_bnf_setting"
                                  title="Données officielles de dépôt légal. Gratuit, sans clé API.">
                             <field name="comic_bnf_enabled"/>
-                            <label for="comic_bnf_enabled" class="o_form_label fw-bold"/>
                             <div class="text-muted mt-1">
                                 La BnF (Bibliothèque nationale de France) indexe l'ensemble des BD
                                 soumises au dépôt légal en France. Prioritaire pour

@@ -2602,3 +2602,19 @@ cinq modules : 472 tests verts.
   travaillé avec », licence et modules complémentaires.
 - Remarque relevée sur les captures : le bloc « Sources de données » des paramètres affiche deux
   fois les libellés « Activer Open Library » / « Activer BnF ».
+
+## 2026-11-10 — Correctifs #1, #7, #10
+
+- **#7** (`comics_collections` 19.0.4.3.1) : `comic.work.in_my_collection` / `in_my_wishlist`
+  (calculés pour l'utilisateur courant, `depends_context("uid")`) ; le bouton « Ajouter à ma
+  wishlist » de la fiche album est masqué pour un album possédé ou déjà souhaité.
+  Test `test_wishlist_button_state_per_user`.
+- **#10** (`comic_datasource` 19.0.1.5.1) : *Paramètres → Sources de données* — `<label>` en double
+  retirés pour Open Library et BnF (`<setting>` affiche déjà le libellé). Test
+  `TestDatasourceSettingsView`.
+- **#1** (doublons à la complétion des séries, issue de mai) : déjà corrigé par les durcissements de
+  l'assistant des tomes manquants (exclusion des tomes, ISBN et titres existants à la détection,
+  réutilisation de l'ISBN connu / de l'album série + tome à l'ajout). Ajout du test de non-régression
+  `test_search_and_add_never_duplicate_albums` (tome possédé, ISBN connu ailleurs, titre identique,
+  doublon de source → aucun second album).
+- Suite complète (deux dépôts) : 504 tests verts.

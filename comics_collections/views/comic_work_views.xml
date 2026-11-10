@@ -94,7 +94,9 @@
                                 class="oe_stat_button"
                                 icon="fa-heart-o"
                                 string="Ajouter à ma wishlist"
-                                invisible="not id"/>
+                                invisible="not id or in_my_collection or in_my_wishlist"/>
+                        <field name="in_my_collection" invisible="1"/>
+                        <field name="in_my_wishlist" invisible="1"/>
                         <button name="action_view_editions"
                                 type="object"
                                 class="oe_stat_button"

@@ -220,3 +220,19 @@ class TestWishlist(TransactionCase):
         data = self.env["comic.customer.album"].with_user(self.user_a).get_dashboard_data()
         json.loads(json.dumps(data))
         self.assertEqual((data["nb_manques"], data["nb_souhaits"], data["nb_wishlist"]), (2, 1, 3))
+
+    # ── Bouton « Ajouter à ma wishlist » de la fiche album (#7) ────────────
+
+    def test_wishlist_button_state_per_user(self):
+        work_a = self.works[1].with_user(self.user_a)
+        work_b = self.works[1].with_user(self.user_b)
+        # T1 possédé par A : bouton masqué pour A, visible pour B
+        self.assertTrue(work_a.in_my_collection)
+        self.assertFalse(work_b.in_my_collection or work_b.in_my_wishlist)
+        # Un souhait de B le masque aussi pour B
+        self._add_wish(self.user_b, self.editions[1])
+        self.env.invalidate_all()
+        self.assertTrue(self.works[1].with_user(self.user_b).in_my_wishlist)
+        self.assertFalse(self.works[2].with_user(self.user_a).in_my_collection)
+        arch = self.env["comic.work"].get_view(self.env.ref("comics_collections.view_comic_work_form").id)["arch"]
+        self.assertIn("in_my_collection or in_my_wishlist", arch)

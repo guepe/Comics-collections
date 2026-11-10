@@ -55,3 +55,12 @@ class TestCompleteFromSources(TransactionCase):
         with patch(f"{AGG}.search", side_effect=GoogleBooksQuotaError("quota")):
             with self.assertRaisesRegex(UserError, "Quota"):
                 self.work.action_complete_from_sources()
+
+
+@tagged("post_install", "-at_install", "comic_datasource")
+class TestDatasourceSettingsView(TransactionCase):
+    def test_source_toggles_labelled_once(self):
+        """#10 : <setting> affiche déjà le libellé de la case — pas de <label> en double."""
+        arch = self.env.ref("comic_datasource.res_config_settings_view_form_comic_datasource").arch_db
+        for field_name in ("comic_openlibrary_enabled", "comic_bnf_enabled"):
+            self.assertNotIn(f'<label for="{field_name}"', arch)

@@ -137,6 +137,9 @@ class ComicWork(models.Model):
         related="primary_edition_id.date_parution",
         readonly=False,
     )
+    # Bibliothèque de l'utilisateur courant (bouton « Ajouter à ma wishlist », #7)
+    in_my_collection = fields.Boolean(string="Dans ma collection", compute="_compute_my_library")
+    in_my_wishlist = fields.Boolean(string="Dans ma wishlist", compute="_compute_my_library")
     synopsis = fields.Html(
         string="Synopsis",
         related="primary_edition_id.synopsis",
@@ -171,6 +174,24 @@ class ComicWork(models.Model):
         # l'ordre par date de parution et changeait dès qu'une édition plus ancienne arrivait.
         for rec in self:
             rec.primary_edition_id = rec.edition_ids.sorted("id")[:1]
+
+    @api.depends_context("uid")
+    @api.depends(
+        "edition_ids.customer_album_ids.partner_id",
+        "edition_ids.customer_album_ids.dans_collection",
+        "edition_ids.customer_album_ids.dans_wishlist",
+    )
+    def _compute_my_library(self):
+        """Album possédé / souhaité par l'utilisateur courant (une de ses éditions)."""
+        partner = self.env.user.partner_id
+        entries = self.env["comic.customer.album"].search(
+            [("partner_id", "=", partner.id), ("edition_id.work_id", "in", [i for i in self.ids if i])]
+        )
+        owned = set(entries.filtered("dans_collection").edition_id.work_id.ids)
+        wished = set(entries.filtered(lambda e: e.dans_wishlist and not e.dans_collection).edition_id.work_id.ids)
+        for work in self:
+            work.in_my_collection = work.id in owned
+            work.in_my_wishlist = work.id in wished
 
     @api.depends("edition_ids")
     def _compute_nb_editions(self):

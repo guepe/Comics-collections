@@ -196,6 +196,42 @@ class TestMissingTomes(TransactionCase):
 
     # ── Quota Google Books ───────────────────────────────────────────────────
 
+    def test_search_and_add_never_duplicate_albums(self):
+        """#1 : la complétion d'une série ne doit jamais dédoubler les BD.
+
+        Résultats piégés : tome déjà possédé, ISBN déjà connu dans le catalogue (autre
+        série), titre identique à un album existant sous un autre numéro, doublon entre
+        deux résultats de sources. Seuls des tomes réellement absents sont proposés, et
+        l'ajout ne crée aucun second album pour un tome ou un ISBN déjà présents.
+        """
+        other = self.env["comic.work"].create({"titre_canonique": "Ailleurs", "tome": 1})
+        self.env["comic.isbn"].create({"edition_id": other.primary_edition_id.id, "isbn_13": ISBN_A})
+        bnf = [
+            ComicSourceResult(source="bnf", title="Album 1", tome=1, isbn=ISBN_C),  # tome possédé
+            ComicSourceResult(source="bnf", title="Nouveau 3", tome=3, isbn=ISBN_A),  # ISBN connu ailleurs
+            ComicSourceResult(source="bnf", title="Album 2", tome=6),  # même titre que le T2
+            ComicSourceResult(source="bnf", title="Nouveau 4", tome=4, isbn=ISBN_B),
+            ComicSourceResult(source="bnf", title="Nouveau 4", tome=4, isbn=ISBN_B),  # doublon de source
+        ]
+        wizard = self._search(bnf_results=bnf)
+        lines = wizard.line_ids
+        self.assertFalse(lines.filtered(lambda line: line.tome in (0, 1, 2, 5)), "Aucun tome déjà possédé")
+        self.assertNotIn(ISBN_A, lines.mapped("isbn"), "Un ISBN déjà au catalogue n'est jamais reproposé")
+        self.assertEqual(len(lines.filtered(lambda line: line.tome == 4)), 1, "Un seul candidat par tome")
+        self.assertEqual(lines.filtered(lambda line: line.tome == 4).isbn, ISBN_B)
+        # Même titre qu'un album existant : c'est cet album (mal numéroté), pas un T6
+        self.assertFalse(lines.filtered(lambda line: line.tome == 6))
+
+        wizard.action_add_to_catalogue()
+        works = self.serie.with_context(active_test=False).work_ids
+        tomes = works.mapped("tome")
+        self.assertEqual(len(tomes), len(set(tomes)), "Un seul album par tome")
+        self.assertEqual(sorted(t for t in tomes if t), [1, 2, 3, 4, 5])
+        self.assertEqual(self.env["comic.isbn"].search_count([("isbn_13", "=", ISBN_A)]), 1)
+        self.assertEqual(self.env["comic.isbn"].search([("isbn_13", "=", ISBN_A)]).edition_id.work_id, other)
+        # Deuxième passage : la série est complète
+        self.assertFalse(self._search().line_ids)
+
     def test_quota_error_gives_clean_message(self):
         wizard = self.Wizard.create({"serie_id": self.serie.id})
         with (
