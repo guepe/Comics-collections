@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """Copie locale du backlog GitHub (issues ouvertes) dans BACKLOG.md.
 
-Les US à faire vivent dans les issues GitHub du dépôt (labels ``us`` / ``epic:E*``,
-jalon = épic, Project « Comic Collection »). Ce script les recopie dans ``BACKLOG.md``
-(non versionné) pour une lecture rapide, hors ligne, en début de session.
+Les US à faire vivent dans les issues GitHub des deux dépôts — public
+``guepe/Comics-collections`` et privé ``guepe/Comics-collections-pro`` (shop, IA) —
+labels ``us`` / ``epic:E*``, jalon = épic, Project « Comic Collection — Odoo ». Ce script
+les recopie dans ``BACKLOG.md`` (non versionné) pour une lecture rapide, hors ligne, en début
+de session. Les issues du dépôt privé sont notées ``pro#n``.
 
 Usage :
     python3 tools/sync_backlog.py            # issues ouvertes
@@ -22,15 +24,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "BACKLOG.md"
 FIELDS = "number,title,labels,milestone,body,url,updatedAt,closedAt,state"
+# (dépôt, préfixe affiché devant le numéro)
+REPOS = [("guepe/Comics-collections", "#"), ("guepe/Comics-collections-pro", "pro#")]
 
 
 def _gh_issues(state, limit):
-    cmd = ["gh", "issue", "list", "--state", state, "--limit", str(limit), "--json", FIELDS]
-    try:
-        out = subprocess.run(cmd, cwd=ROOT, check=True, capture_output=True, text=True).stdout
-    except (OSError, subprocess.CalledProcessError) as exc:
-        sys.exit(f"gh issue list a échoué : {getattr(exc, 'stderr', exc)}")
-    return json.loads(out)
+    issues = []
+    for repo, prefix in REPOS:
+        cmd = ["gh", "issue", "list", "--repo", repo, "--state", state, "--limit", str(limit), "--json", FIELDS]
+        try:
+            out = subprocess.run(cmd, cwd=ROOT, check=True, capture_output=True, text=True).stdout
+        except (OSError, subprocess.CalledProcessError) as exc:
+            sys.exit(f"gh issue list ({repo}) a échoué : {getattr(exc, 'stderr', exc)}")
+        for issue in json.loads(out):
+            issue["ref"] = f"{prefix}{issue['number']}"
+            issues.append(issue)
+    return issues
 
 
 def _labels(issue):
@@ -53,19 +62,19 @@ def _render(open_issues, closed_issues):
         "",
     ]
     groups = {}
-    for issue in sorted(open_issues, key=lambda i: i["number"]):
+    for issue in sorted(open_issues, key=lambda i: (i["ref"].startswith("pro"), i["number"])):
         groups.setdefault(_group(issue), []).append(issue)
     lines.append("## Sommaire")
     lines.append("")
     for group, issues in sorted(groups.items()):
-        lines.append(f"- **{group}** : " + ", ".join(f"#{i['number']} {i['title']}" for i in issues))
+        lines.append(f"- **{group}** : " + ", ".join(f"{i['ref']} {i['title']}" for i in issues))
     lines.append("")
     for group, issues in sorted(groups.items()):
         lines += [f"## {group}", ""]
         for issue in issues:
             labels = ", ".join(_labels(issue))
             lines += [
-                f"### #{issue['number']} — {issue['title']}",
+                f"### {issue['ref']} — {issue['title']}",
                 "",
                 f"{issue['url']} · labels : {labels or '—'} · màj {issue['updatedAt'][:10]}",
                 "",
@@ -75,7 +84,7 @@ def _render(open_issues, closed_issues):
     if closed_issues:
         lines += ["## Fermées récemment", ""]
         for issue in closed_issues:
-            lines.append(f"- #{issue['number']} {issue['title']} (fermée le {(issue.get('closedAt') or '')[:10]})")
+            lines.append(f"- {issue['ref']} {issue['title']} (fermée le {(issue.get('closedAt') or '')[:10]})")
         lines.append("")
     return "\n".join(lines)
 

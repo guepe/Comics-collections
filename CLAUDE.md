@@ -16,6 +16,16 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 | `comic_shop`         | Shop en ligne, caisse (POS partiel), bibliothèque client portail                | ✅ majeure partie livrée |
 | `comic_ai`           | IA (synopsis, traduction, découverte) — Claude + OpenAI ; `comic_ai_shop` = portail | ✅ livré                 |
 
+**Deux dépôts** (depuis le 2026-11-10) :
+
+| Dépôt | Visibilité | Modules | Licence |
+| ----- | ---------- | ------- | ------- |
+| `guepe/Comics-collections` (ici) | public | `comics_collections`, `comic_datasource` | LGPL-3, gratuits (cible OCA) |
+| `guepe/Comics-collections-pro` (`../Comics-collections-pro`) | **privé** | `comic_shop`, `comic_ai`, `comic_ai_shop` | OPL-1, payants (Odoo Apps Store) |
+
+Jamais de code d'un module payant dans ce dépôt public. Une évolution qui touche les deux côtés
+= un commit (et une issue) dans chaque dépôt. Même Project GitHub pour les deux.
+
 ---
 
 ## ⚙️ Environnement technique
@@ -69,7 +79,8 @@ Comics-collections/
 │   ├── models/comic_edition.py   # _inherit = 'comic.edition'
 │   ├── wizards/             # search_wizard, serie_missing_wizard, serie_update_wizard
 │   └── data/comic_datasource_config.xml, comic_serie_cron.xml
-└── comic_shop/              # Shop + bibliothèque client
+└── (comic_shop/, comic_ai/, comic_ai_shop/ : dépôt privé ../Comics-collections-pro)
+    comic_shop/              # Shop + bibliothèque client
     ├── models/
     │   ├── comic_edition.py      # _inherit = 'comic.edition' (product_tmpl_id, sync)
     │   ├── comic_serie.py        # _inherit = 'comic.serie' (création produits en masse)
@@ -263,8 +274,8 @@ find /chemin/module -name "__pycache__" -exec rm -rf {} +
 
 Maintenir à jour en fin de session, avant le commit :
 
-- **US à faire = issues GitHub** (label `us` + `epic:E*`, jalon = épic, Project
-  « Comic Collection — Odoo »). En début de session : `python3 tools/sync_backlog.py` puis lire
+- **US à faire = issues GitHub** des deux dépôts (label `us` + `epic:E*`, jalon = épic, Project
+  « Comic Collection — Odoo ») : shop / IA dans `Comics-collections-pro`, le reste ici. En début de session : `python3 tools/sync_backlog.py` puis lire
   `BACKLOG.md` (copie locale, non versionnée). Cocher les critères dans l'issue (`gh issue edit`),
   jamais par anticipation ; commit de livraison avec `Closes #n`. Nouvelle US = nouvelle issue
   (`gh issue create`, titre « US-0xx — … », numéro suivant indiqué dans `USER_STORIES.md`).
@@ -286,6 +297,8 @@ Maintenir à jour en fin de session, avant le commit :
 ```bash
 ~/.docker/bin/docker exec odoo-web odoo --db_host postgres-Odoo -r odoo -w odoo -d odoo \
   --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
-  -u comics_collections,comic_datasource,comic_shop \
-  --test-tags /comics_collections,/comic_datasource,/comic_shop --stop-after-init --http-port 8070
+  -u comics_collections,comic_datasource,comic_shop,comic_ai,comic_ai_shop \
+  --test-tags /comics_collections,/comic_datasource,/comic_shop,/comic_ai,/comic_ai_shop \
+  --stop-after-init --http-port 8070
+# (les 5 modules sont montés dans le conteneur : 2 depuis ce dépôt, 3 depuis ../Comics-collections-pro)
 ```

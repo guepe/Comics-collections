@@ -15,11 +15,12 @@ Auteur : Belspace — Licence : LGPL-3
 ```
 Comics-collections/
 ├── comics_collections/    # Module principal (requis)
-├── comic_datasource/      # Enrichissement multi-sources (optionnel, recommandé)
-├── comic_shop/            # Shop, caisse, bibliothèque client (optionnel)
-├── comic_ai/              # Assistance IA : synopsis, traduction, découverte (optionnel)
-└── comic_ai_shop/         # Découverte IA sur le portail (auto-installé avec comic_shop + comic_ai)
+└── comic_datasource/      # Enrichissement multi-sources (optionnel, recommandé)
 ```
+
+Les modules **Pro** payants (`comic_shop`, `comic_ai`, `comic_ai_shop`, licence OPL-1) sont
+vendus sur l'Odoo Apps Store ; leur code n'est pas dans ce dépôt (voir
+[Modules Pro](#modules-pro-payants-odoo-apps-store)).
 
 Les modules se déposent dans le répertoire `addons` de votre instance Odoo.
 
@@ -130,52 +131,21 @@ Aller dans **Bandes Dessinées → Configuration → Sources de données** :
 
 ---
 
-## Module 3 — `comic_shop` *(optionnel)*
+## Modules Pro (payants, Odoo Apps Store)
 
-**Vente en ligne, caisse et bibliothèque client.**
+Extensions commerciales sous licence OPL-1, distribuées sur l'Odoo Apps Store (code dans un
+dépôt privé). Elles s'installent par-dessus les deux modules gratuits de ce dépôt.
 
-- Synchronisation édition ↔ `product.template` (nom, couverture, ISBN → code-barres)
-- Création de produits en masse depuis une série
-- Pages webshop `/shop/series`, `/shop/auteurs`, `/shop/editeurs` (produits publiés uniquement)
-- Bibliothèque client sur `/my/library` (la bibliothèque personnelle du cœur, ouverte
-  aux clients) : collection, wishlist, état de lecture, notes en étoiles, tableau de
-  bord `/my/library/dashboard`, ajout de BD achetées ailleurs (recherche ISBN / titre),
-  wishlist partageable par lien secret
-- Achats (commande confirmée, POS payé) ajoutés à la bibliothèque ; annulations et
-  remboursements POS les retirent
-- Modération des fiches créées depuis le portail : *Valider* ou *Refuser* (doublon / incorrect)
-
-### Dépendances Odoo
-
-```python
-depends = ['comics_collections', 'comic_datasource', 'sale',
-           'website', 'website_sale', 'point_of_sale', 'portal']
-```
-
----
-
-## Module 4 — `comic_ai` *(optionnel)*
-
-**Assistance IA avec Claude (Anthropic) ou OpenAI.**
-
-- Paramètres *Bandes Dessinées → Intelligence artificielle* : fournisseur, clés API
-  (paramètres système), modèles (défaut `claude-sonnet-5-5`), langue, test de connexion
-- *Générer le synopsis* / *Traduire le synopsis* (fr, nl, en, de) sur la fiche album ou
-  édition (gestionnaires) : prévisualisation, Appliquer / Régénérer / Annuler, jamais
-  d'écrasement sans confirmation, trace dans le chatter
-- *Ma Collection → Découvrir de nouvelles BD* : suggestions de séries à partir des BD
-  notées 4★, hors séries déjà possédées / souhaitées / suivies, vérification sur les
-  sources, ajout en wishlist
-- `comic_ai_shop` (auto-installé avec `comic_shop`) : la même découverte sur
-  `/my/library/discover`, limitée à `comic_ai.discovery_daily_limit` recherches par
-  client et par jour (défaut 5)
-
-Bibliothèques Python `anthropic` / `openai` importées à la demande : installer celle du
-fournisseur choisi (`pip install anthropic`).
-
-```python
-depends = ['comics_collections', 'comic_datasource']
-```
+- **`comic_shop`** — vente en ligne et en caisse : albums synchronisés avec les produits
+  (nom, couverture, description, ISBN), pages webshop séries / auteurs / éditeurs,
+  bibliothèque de chaque client sur le portail (collection, wishlist, notes, tableau de bord,
+  scan d'ISBN, wishlist partageable), achats ajoutés automatiquement, suivi de séries et
+  emails « disponible », modération des fiches proposées par les clients.
+- **`comic_ai`** — IA (Claude ou OpenAI, clé de l'utilisateur) : génération et traduction des
+  synopsis, biographies d'auteurs et histoires d'éditeurs, remplissage des textes vides en
+  tâche de fond, découverte de nouvelles séries à partir des BD notées 4★.
+- **`comic_ai_shop`** — la découverte IA pour les clients du portail (limite quotidienne) et
+  les biographies sur les pages publiques du shop ; installé automatiquement.
 
 ---
 
@@ -189,8 +159,8 @@ depends = ['comics_collections', 'comic_datasource']
 | `comic_ai`           | OPL-1   | 60 €                   |
 | `comic_ai_shop`      | OPL-1   | 40 €                   |
 
-Le fichier `LICENSE` à la racine (LGPL-3) couvre les modules gratuits ; chaque module OPL-1
-contient son propre fichier `LICENSE`.
+Le fichier `LICENSE` à la racine (LGPL-3) couvre les modules de ce dépôt ; les modules OPL-1
+sont dans le dépôt privé, chacun avec son fichier `LICENSE`.
 
 ---
 
@@ -207,8 +177,7 @@ contient son propre fichier `LICENSE`.
 ```
 1. comics_collections       ← toujours en premier
 2. comic_datasource          ← si enrichissement souhaité
-3. comic_shop                ← si vente / bibliothèque client (requiert les deux autres)
-4. comic_ai                  ← si assistance IA (comic_ai_shop suit automatiquement avec le shop)
+   (puis, si achetés : comic_shop, comic_ai — comic_ai_shop suit automatiquement)
 ```
 
 ---
@@ -218,10 +187,7 @@ contient son propre fichier `LICENSE`.
 ```
 odoo/addons/
 ├── comics_collections/
-├── comic_datasource/
-├── comic_shop/
-├── comic_ai/
-└── comic_ai_shop/
+└── comic_datasource/
 ```
 
 Ajouter le chemin dans `odoo.conf` :
@@ -230,7 +196,7 @@ Ajouter le chemin dans `odoo.conf` :
 addons_path = /chemin/vers/odoo/addons,/chemin/vers/Comics-collections
 ```
 
-> Après chaque mise à jour du code : `odoo -d <base> -u comics_collections,comic_datasource,comic_shop,comic_ai
+> Après chaque mise à jour du code : `odoo -d <base> -u comics_collections,comic_datasource
 > --stop-after-init`, puis redémarrer Odoo (sinon : colonnes manquantes / champs inconnus).
 
 ---
@@ -295,8 +261,8 @@ Tous les tests sont des tests Odoo (`TransactionCase` / `BaseCase` / `HttpCase`,
 
 ```bash
 odoo -d mydb --stop-after-init \
-  -u comics_collections,comic_datasource,comic_shop \
-  --test-tags /comics_collections,/comic_datasource,/comic_shop
+  -u comics_collections,comic_datasource \
+  --test-tags /comics_collections,/comic_datasource
 ```
 
 La CI GitHub (`tests`, `pre-commit`) exécute la même sélection à chaque push sur `19.0`.

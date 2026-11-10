@@ -2572,3 +2572,21 @@ cinq modules : 472 tests verts.
 - Issues : #7 (« Ajouter à ma wishlist » sur un album possédé), #8 (prix « 12.50 € » sur les cartes
   série), #9 US-092 interface en anglais — nouvelle épic E10 (label `epic:E10`, jalon
   « E10 — Internationalisation ») ; prochaine US = US-093.
+
+## 2026-11-10 — Séparation en deux dépôts : public (gratuit) / privé (payant)
+
+- Nouveau dépôt **privé** `guepe/Comics-collections-pro` : `comic_shop`, `comic_ai`,
+  `comic_ai_shop` (OPL-1) extraits avec leur historique (`git filter-repo`), avec les configs
+  pre-commit / lint, les workflows (la CI récupère ce dépôt public pour les dépendances) et
+  `tools/appstore/`. Les entrées futures concernant ces modules vont dans son `CHANGE.md`.
+- Ce dépôt public garde `comics_collections` et `comic_datasource` (LGPL-3) ; les trois modules
+  payants et `tools/appstore/` en sont retirés (l'historique public n'est pas réécrit : les
+  versions passées restent visibles, seules les futures sont protégées).
+- CI publique : installation et tests des deux modules gratuits seulement.
+- Issues du shop transférées dans le dépôt privé (pro#1 → pro#4 pour E9, pro#5 pour le bug des
+  prix) en conservant labels, jalon et Project ; `tools/sync_backlog.py` lit les deux dépôts.
+- README (section « Modules Pro »), CLAUDE.md / AGENTS.md (tableau des deux dépôts, commande de
+  test), USER_STORIES (liens `pro#n`), espace de travail VS Code (dossier `../Comics-collections-pro`).
+- Docker local : les trois montages payants pointent vers `../Comics-collections-pro`.
+- Validation : 500 tests verts avec les cinq modules (deux dépôts), 354 avec les seuls modules
+  gratuits.

@@ -46,7 +46,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E6   | Séries sur le portail                | `comic_shop`                        | ✅   | 3 US   | —                         |
 | E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 6 US   | —                         |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064 (#2)               |
-| E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | #3, #4, #5, #6            |
+| E9   | Shop & commerçant                    | `comic_shop` (dépôt privé)          | ⏳   | —      | pro#1 → pro#4             |
 | E10  | Internationalisation (interface EN)  | tous                                | ⏳   | —      | #9                        |
 
 ---
@@ -88,19 +88,20 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 ### E9 — Shop & commerçant
 
 > Priorité la plus basse : outils pour le vendeur. Exploiter les bibliothèques clients
-> (`comic.customer.album`) pour savoir quoi référencer.
+> (`comic.customer.album`) pour savoir quoi référencer. Issues dans le dépôt privé
+> `guepe/Comics-collections-pro` (notées `pro#n`).
 
 | US     | Issue | Titre                                         |
 | ------ | ----- | --------------------------------------------- |
-| US-046 | [#3](https://github.com/guepe/Comics-collections/issues/3) | Rapport « BD non vendues les plus suivies » |
-| US-047 | [#4](https://github.com/guepe/Comics-collections/issues/4) | Rapport « Séries et auteurs à référencer » |
-| US-049 | [#5](https://github.com/guepe/Comics-collections/issues/5) | Tableau de bord commerçant — vue marché |
-| US-072 | [#6](https://github.com/guepe/Comics-collections/issues/6) | Réservation de tomes en magasin |
+| US-046 | [pro#1](https://github.com/guepe/Comics-collections-pro/issues/1) | Rapport « BD non vendues les plus suivies » |
+| US-047 | [pro#2](https://github.com/guepe/Comics-collections-pro/issues/2) | Rapport « Séries et auteurs à référencer » |
+| US-049 | [pro#3](https://github.com/guepe/Comics-collections-pro/issues/3) | Tableau de bord commerçant — vue marché |
+| US-072 | [pro#4](https://github.com/guepe/Comics-collections-pro/issues/4) | Réservation de tomes en magasin |
 
 > Bugs ouverts : [#1](https://github.com/guepe/Comics-collections/issues/1) — doublons lors de
 > la complétion des séries (à vérifier depuis la déduplication US-050/056) ;
 > [#7](https://github.com/guepe/Comics-collections/issues/7) — « Ajouter à ma wishlist » sur un album
-> possédé ; [#8](https://github.com/guepe/Comics-collections/issues/8) — format des prix des cartes série.
+> possédé ; [pro#5](https://github.com/guepe/Comics-collections-pro/issues/5) — format des prix des cartes série.
 
 ---
 
