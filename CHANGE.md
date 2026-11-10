@@ -2664,3 +2664,6 @@ cinq modules : 472 tests verts.
   bibliothèque (`comic.edition` n'a pas de champ `name`) et « Titre » ne cherchait que le titre de
   l'album. `_rec_names_search` ajouté : `comic.work` → titre + nom de série ; `comic.edition` →
   titre + série de l'album + ISBN-13. Test `test_library_search.py`.
+- **Captures App Store en anglais** (dernier critère de #9) : captures et bannières de
+  `comics_collections` et `comic_datasource` refaites avec l'interface et la démo en anglais
+  (chaîne `tools/appstore` du dépôt privé).
