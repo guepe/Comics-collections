@@ -40,7 +40,7 @@ export class IsbnScanDialog extends Component {
         this.done = false;
         this.state = useState({
             supported: isBarcodeScannerSupported(),
-            errorMessage: _t("La caméra n'est pas accessible (autorisation refusée ou connexion non sécurisée)."),
+            errorMessage: _t("The camera is not accessible (permission denied or insecure connection)."),
             rejected: "",
         });
     }

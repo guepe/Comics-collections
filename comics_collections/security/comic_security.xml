@@ -2,29 +2,29 @@
 <odoo>
 
     <record id="module_category_comic_collection" model="ir.module.category">
-        <field name="name">Bandes Dessinées</field>
+        <field name="name">Comic Books</field>
         <field name="sequence">100</field>
     </record>
 
     <!-- Privilege (lien catégorie → groupes, obligatoire en Odoo 19) -->
 
     <record id="privilege_comic_collection" model="res.groups.privilege">
-        <field name="name">Bandes Dessinées</field>
+        <field name="name">Comic Books</field>
         <field name="category_id" ref="module_category_comic_collection"/>
-        <field name="placeholder">Aucun accès</field>
+        <field name="placeholder">No access</field>
         <field name="sequence">100</field>
     </record>
 
     <!-- Groupes -->
 
     <record id="group_comic_user" model="res.groups">
-        <field name="name">Utilisateur</field>
+        <field name="name">User</field>
         <field name="privilege_id" ref="privilege_comic_collection"/>
         <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
     </record>
 
     <record id="group_comic_manager" model="res.groups">
-        <field name="name">Gestionnaire</field>
+        <field name="name">Manager</field>
         <field name="privilege_id" ref="privilege_comic_collection"/>
         <field name="implied_ids" eval="[Command.link(ref('group_comic_user'))]"/>
         <field name="user_ids" eval="[Command.link(ref('base.user_root')), Command.link(ref('base.user_admin'))]"/>
@@ -39,7 +39,7 @@
          le gestionnaire (règle OR) peut tout supprimer. -->
 
     <record id="rule_comic_serie_user" model="ir.rule">
-        <field name="name">Séries : utilisateur ne supprime que ses propres fiches</field>
+        <field name="name">Series: user can only delete own records</field>
         <field name="model_id" ref="model_comic_serie"/>
         <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
         <field name="perm_read" eval="False"/>
@@ -50,14 +50,14 @@
     </record>
 
     <record id="rule_comic_serie_manager" model="ir.rule">
-        <field name="name">Séries : gestionnaire voit tout</field>
+        <field name="name">Series: manager sees everything</field>
         <field name="model_id" ref="model_comic_serie"/>
         <field name="groups" eval="[Command.link(ref('group_comic_manager'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 
     <record id="rule_comic_work_user" model="ir.rule">
-        <field name="name">Albums : utilisateur ne supprime que ses propres fiches</field>
+        <field name="name">Albums: user can only delete own records</field>
         <field name="model_id" ref="model_comic_work"/>
         <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
         <field name="perm_read" eval="False"/>
@@ -68,14 +68,14 @@
     </record>
 
     <record id="rule_comic_work_manager" model="ir.rule">
-        <field name="name">Albums : gestionnaire voit tout</field>
+        <field name="name">Albums: manager sees everything</field>
         <field name="model_id" ref="model_comic_work"/>
         <field name="groups" eval="[Command.link(ref('group_comic_manager'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
     </record>
 
     <record id="rule_comic_edition_user" model="ir.rule">
-        <field name="name">Éditions : utilisateur ne supprime que ses propres fiches</field>
+        <field name="name">Editions: user can only delete own records</field>
         <field name="model_id" ref="model_comic_edition"/>
         <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
         <field name="perm_read" eval="False"/>
@@ -86,7 +86,7 @@
     </record>
 
     <record id="rule_comic_edition_manager" model="ir.rule">
-        <field name="name">Éditions : gestionnaire voit tout</field>
+        <field name="name">Editions: manager sees everything</field>
         <field name="model_id" ref="model_comic_edition"/>
         <field name="groups" eval="[Command.link(ref('group_comic_manager'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
@@ -95,14 +95,14 @@
     <!-- Record rules : comic.pret — les prêts sont privés -->
 
     <record id="rule_comic_pret_user" model="ir.rule">
-        <field name="name">Prêts : utilisateur voit ses propres prêts</field>
+        <field name="name">Loans: user sees own loans</field>
         <field name="model_id" ref="model_comic_pret"/>
         <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
         <field name="domain_force">[('create_uid', '=', user.id)]</field>
     </record>
 
     <record id="rule_comic_pret_manager" model="ir.rule">
-        <field name="name">Prêts : gestionnaire voit tout</field>
+        <field name="name">Loans: manager sees everything</field>
         <field name="model_id" ref="model_comic_pret"/>
         <field name="groups" eval="[Command.link(ref('group_comic_manager'))]"/>
         <field name="domain_force">[(1, '=', 1)]</field>
@@ -111,7 +111,7 @@
     <!-- Bibliothèque personnelle : chacun ne voit que ses propres entrées.
          (comic_shop ajoute le portail et le « voit tout » du gestionnaire shop.) -->
     <record id="rule_customer_album_user" model="ir.rule">
-        <field name="name">Bibliothèque : utilisateur voit ses propres entrées</field>
+        <field name="name">Library: user sees own entries</field>
         <field name="model_id" ref="model_comic_customer_album"/>
         <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
         <field name="perm_read" eval="True"/>
@@ -123,7 +123,7 @@
 
     <!-- Wishlist (vue SQL, US-089) : chacun ne voit que ses propres manques et souhaits. -->
     <record id="rule_comic_wishlist_item_user" model="ir.rule">
-        <field name="name">Wishlist : utilisateur voit ses propres lignes</field>
+        <field name="name">Wishlist: user sees own lines</field>
         <field name="model_id" ref="model_comic_wishlist_item"/>
         <field name="groups" eval="[Command.link(ref('group_comic_user'))]"/>
         <field name="domain_force">[('user_id', '=', user.id)]</field>

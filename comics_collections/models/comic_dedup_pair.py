@@ -2,7 +2,7 @@ import difflib
 import logging
 from collections import defaultdict
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 
 from ..utils.normalize import normalize_title
 from .comic_work import _score_pair
@@ -18,7 +18,7 @@ BLOCKING_PREFIX_LEN = 4
 
 class ComicDedupPair(models.Model):
     _name = "comic.dedup.pair"
-    _description = "Paire de doublons potentiels"
+    _description = "Potential duplicate pair"
     _order = "score desc, id"
 
     work_a_id = fields.Many2one("comic.work", required=True, ondelete="cascade", string="Album A")
@@ -26,17 +26,17 @@ class ComicDedupPair(models.Model):
     score = fields.Float(digits=(4, 3))
     reason = fields.Selection(
         [
-            ("conflit_certain", "Conflit certain"),
-            ("doublon_probable", "Doublon probable"),
-            ("doublon_possible", "Doublon possible"),
+            ("conflit_certain", "Certain conflict"),
+            ("doublon_probable", "Probable duplicate"),
+            ("doublon_possible", "Possible duplicate"),
         ],
         string="Type",
     )
-    ignored = fields.Boolean(string="Ignoré", default=False)
+    ignored = fields.Boolean(default=False)
 
     _unique_pair = models.Constraint(
         "UNIQUE(work_a_id, work_b_id)",
-        "Cette paire est déjà enregistrée.",
+        "This pair is already registered.",
     )
 
     # ── Actions depuis la liste ───────────────────────────────────────────────
@@ -48,7 +48,7 @@ class ComicDedupPair(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Fusionner deux albums"),
+            "name": self.env._("Merge two albums"),
             "res_model": "comic.work.merge.wizard",
             "view_mode": "form",
             "target": "new",
@@ -231,8 +231,8 @@ class ComicDedupPair(models.Model):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "message": _(
-                    "Analyse terminée : %(n)d paire(s) de doublons potentiels trouvée(s).",
+                "message": self.env._(
+                    "Scan complete: %(n)d potential duplicate pair(s) found.",
                     n=len(new_pairs),
                 ),
                 "type": "success",

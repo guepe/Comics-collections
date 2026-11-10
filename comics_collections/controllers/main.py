@@ -6,20 +6,23 @@ import io
 from odoo import fields, http
 from odoo.http import request
 
-CSV_HEADER = [
-    "Série",
-    "Tome",
-    "Titre",
-    "ISBN",
-    "Éditeur",
-    "État de lecture",
-    "Collection",
-    "Wishlist",
-    "Note",
-    "Prix d'achat",
-    "Valeur estimée",
-    "Date d'ajout",
-]
+
+def _csv_header(env):
+    """Column headers, in the user's language."""
+    return [
+        env._("Series"),
+        env._("Volume"),
+        env._("Title"),
+        "ISBN",
+        env._("Publisher"),
+        env._("Reading status"),
+        env._("Collection"),
+        env._("Wishlist"),
+        env._("Rating"),
+        env._("Purchase price"),
+        env._("Estimated value"),
+        env._("Date added"),
+    ]
 
 
 def _amount(value, digits=2):
@@ -43,7 +46,8 @@ class ComicCollectionExport(http.Controller):
 
         buffer = io.StringIO()
         writer = csv.writer(buffer, delimiter=";", lineterminator="\r\n")
-        writer.writerow(CSV_HEADER)
+        writer.writerow(_csv_header(request.env))
+        yes, no = request.env._("Yes"), request.env._("No")
         for entry in entries:
             work = entry.work_id
             edition = entry.edition_id
@@ -55,8 +59,8 @@ class ComicCollectionExport(http.Controller):
                     edition.isbn_ids.filtered("isbn_13")[:1].isbn_13 or "",
                     edition.editeur_id.name or "",
                     reading_labels.get(entry.etat_lecture, ""),
-                    "Oui" if entry.dans_collection else "Non",
-                    "Oui" if entry.dans_wishlist else "Non",
+                    yes if entry.dans_collection else no,
+                    yes if entry.dans_wishlist else no,
                     _amount(entry.note, 1),
                     _amount(entry.prix_achat),
                     _amount(entry.valeur_estimee),
@@ -65,7 +69,7 @@ class ComicCollectionExport(http.Controller):
             )
 
         content = buffer.getvalue().encode("utf-8-sig")
-        filename = f"ma_collection_{fields.Date.context_today(Album)}.csv"
+        filename = f"my_collection_{fields.Date.context_today(Album)}.csv"
         return request.make_response(
             content,
             headers=[

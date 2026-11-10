@@ -1,0 +1,1041 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* comic_datasource
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20261102\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-10 18:42+0000\n"
+"PO-Revision-Date: 2026-11-10 18:42+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_missing_wizard.py:0
+msgid "%(serie)s - Volume %(tome)s"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid ""
+".\n"
+"                                        Without a key: ~100 req/day (anonymous mode)."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_edition_form_inherit_datasource
+msgid ""
+"<span class=\"o_stat_text\">Complete</span>\n"
+"                            <span class=\"o_stat_text\">info</span>"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_work_form_inherit_datasource
+msgid ""
+"<span class=\"o_stat_text\">Complete</span>\n"
+"                        <span class=\"o_stat_text\">info</span>"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_form_inherit_datasource
+msgid ""
+"<span class=\"o_stat_text\">Missing</span>\n"
+"                            <span class=\"o_stat_text\">volumes</span>"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_edition_form_inherit_datasource
+msgid ""
+"<span class=\"o_stat_text\">Search</span>\n"
+"                            <span class=\"o_stat_text\">the sources</span>"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_form_inherit_datasource
+msgid ""
+"<span class=\"o_stat_text\">Update</span>\n"
+"                            <span class=\"o_stat_text\">albums</span>"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "AIza... (optional)"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Add to catalog"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Add to wishlist"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "Album found in the data sources, but nothing new to add."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "Album not found in the data sources (ISBN or title)."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Albums already in the database"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__nb_existing
+msgid "Albums already in the series"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_update_wizard_form
+msgid "Albums in the series"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__nb_albums
+msgid "Albums to process"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "Alternative covers and metadata. Free, no API key required."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__auteurs_display
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Authors"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Back"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Back to series"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_comic_serie_update_wizard
+msgid "Batch update of a series' albums from data sources"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_result_line__source__bnf
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_serie_missing_line__source__bnf
+msgid "BnF"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_update_wizard_form
+msgid "Close"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "Comic Books"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_comic_datasource_result_line
+msgid "Comic search result line"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_comic_serie
+msgid "Comic series"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_comic_work
+msgid "Comic work (canonical title)"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_comic_edition
+msgid "Comic work edition"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.actions.server,name:comic_datasource.ir_cron_update_editions_ir_actions_server
+msgid "Comics — Daily enrichment of incomplete editions"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.actions.server,name:comic_datasource.ir_cron_check_missing_volumes_ir_actions_server
+msgid "Comics — Weekly missing volumes detection"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_res_config_settings
+msgid "Config Settings"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_serie_missing_wizard__state__confirm
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_serie_update_wizard__state__confirm
+msgid "Confirmation"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__cover_data
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__cover_data
+msgid "Cover"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__cover_url
+msgid "Cover URL"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__create_uid
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__create_uid
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__create_uid
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__create_uid
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__create_date
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__create_date
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__create_date
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__create_date
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.ui.menu,name:comic_datasource.menu_comic_config_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "Data Sources"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.actions.act_window,name:comic_datasource.action_comic_config_settings
+msgid "Data Sources Settings"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_comic_edition__datasource_last_try
+msgid ""
+"Date of the last automatic enrichment attempt (scheduled action). Used to "
+"rotate the batch: editions never attempted go first."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_comic_serie__missing_last_check
+msgid "Date of the last search for missing volumes (manual or scheduled)."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__display_name
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__display_name
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_edition__display_name
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie__display_name
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__display_name
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__display_name
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__display_name
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_work__display_name
+#: model:ir.model.fields,field_description:comic_datasource.field_res_config_settings__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_result_line__title_action__skip
+msgid "Do not import"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_search_wizard__state__done
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_serie_missing_wizard__state__done
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_serie_update_wizard__state__done
+msgid "Done"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__is_duplicate
+msgid "Duplicate"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__edition_id
+msgid "Edition to enrich"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_res_config_settings__comic_bnf_enabled
+msgid "Enable BnF (Bibliothèque nationale de France)"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_res_config_settings__comic_openlibrary_enabled
+msgid "Enable Open Library"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid "Error during search: %(error)s"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__existing_edition_id
+msgid "Existing edition"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__existing_title
+msgid "Existing title in database"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_serie_missing_line__source__expected
+msgid "Expected"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__nb_expected
+msgid "Expected volumes"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_edition_form_inherit_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_work_form_inherit_datasource
+msgid ""
+"Fills in empty fields (cover, synopsis, pages, ISBN, authors…) from Google "
+"Books, Open Library and the BnF"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_res_config_settings__comic_google_books_api_key
+msgid ""
+"Free API key to create on console.cloud.google.com. Without a key, a reduced"
+" shared anonymous quota applies; with a key, 1000 requests/day."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "Free key on"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_result_line__source__google
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_serie_missing_line__source__google
+msgid "Google Books"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_res_config_settings__comic_google_books_api_key
+msgid "Google Books API key"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid ""
+"Google Books quota reached: try again tomorrow or add an API key in Settings"
+" > Comic Books > Data Sources."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "Google Books quota reached: try again tomorrow or add an API key."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/res_config_settings.py:0
+msgid "Google Books — Connection OK"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/res_config_settings.py:0
+msgid ""
+"Google Books: access denied (HTTP 403).\n"
+"Check that the API key is valid and that \"Books API\" is enabled in the Google Cloud console."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/res_config_settings.py:0
+msgid ""
+"Google Books: quota exceeded (HTTP 429).\n"
+"You have reached the free request limit. Add an API key in Settings > Comic Books > Data Sources to increase the quota (1000 req/day)."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/res_config_settings.py:0
+msgid ""
+"Google Books: unexpected error HTTP %(status)s (after %(retries)s "
+"attempt(s))."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__has_customer_library
+msgid "Has Customer Library"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__has_duplicates
+msgid "Has Duplicates"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__has_title_conflicts
+msgid "Has Title Conflicts"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_edition__id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie__id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_work__id
+#: model:ir.model.fields,field_description:comic_datasource.field_res_config_settings__id
+msgid "ID"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__isbn
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__isbn
+msgid "ISBN"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "ISBN (9782...) or album title"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_search_wizard__search_type__isbn
+msgid "ISBN / EAN-13"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__import_report
+msgid "Import Report"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Import report"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Import selection"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "Info added: %(fields)s."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_result_line__title_action__keep
+msgid "Keep the existing title"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__write_uid
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__write_uid
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__write_uid
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__write_uid
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__write_date
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__write_date
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__write_date
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__write_date
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_edition__datasource_last_try
+msgid "Last enrichment attempt"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie__missing_last_check
+msgid "Last missing volumes detection"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "Main source: synopses, HD covers and general metadata."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__isbn_unverified
+msgid "Missing ISBN"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Missing Volumes"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__nb_missing
+msgid "Missing albums"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_comic_serie_missing_line
+msgid "Missing volume detected in a series"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__line_ids
+msgid "Missing volumes"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_comic_serie_missing_wizard
+msgid "Missing volumes detection in a series"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_serie.py:0
+msgid "Missing volumes — %(serie)s"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Multi-source comic search"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model,name:comic_datasource.model_comic_datasource_search_wizard
+msgid "Multi-source comic search and import"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "New search"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_comic_serie_missing_line__isbn_unverified
+msgid ""
+"No ISBN returned by the source — less reliable deduplication, check "
+"manually."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_update_wizard.py:0
+msgid "No album to process."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid ""
+"No missing volume detected for this series.\n"
+"                        Google Books and the BnF may not have all the volumes."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid "No result found for \"%(term)s\"."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid "No result found for ISBN %(isbn)s."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_missing_wizard.py:0
+msgid "No volume selected."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_comic_serie_missing_wizard__nb_expected
+msgid ""
+"Number of expected volumes: the series' \"Number of volumes released\" if "
+"set, otherwise the highest known volume number (albums in the database and "
+"data source results)."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_comic_serie__nb_tomes_parus
+msgid ""
+"Number of volumes published by the publisher (manual entry). Used as the "
+"reference for missing volumes detection. Leave at 0 to rely on the highest "
+"known volume number (albums in the database and data source results)."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie__nb_tomes_parus
+msgid "Number of volumes released"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_res_config_settings__comic_bnf_enabled
+msgid ""
+"Official legal deposit data for French-language comics. Free, no API key "
+"required."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "Official legal deposit data. Free, no API key required."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_result_line__source__openlibrary
+msgid "Open Library"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid ""
+"Open Library provides covers and metadata for millions\n"
+"                                of books. Enabled by default."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__editeur
+msgid "Publisher"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__date_parution
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__date_parution
+msgid "Release"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__import_report
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__import_report
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Report"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__result_data
+msgid "Result Data"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__result_ids
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_search_wizard__state__results
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_serie_missing_wizard__state__results
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Results"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__search_term
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_search_wizard__state__search
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Search"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.actions.act_window,name:comic_datasource.action_comic_datasource_search_wizard_standalone
+#: model:ir.ui.menu,name:comic_datasource.menu_comic_datasource_search
+msgid "Search Comics"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__search_type
+msgid "Search Type"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.actions.act_window,name:comic_datasource.action_comic_datasource_search_wizard
+msgid "Search and Import Comics"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Search for an album"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Search for missing volumes"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__selected
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__selected
+msgid "Select"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid "Select at least one result to import."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__serie_name
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__serie_id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__serie_id
+msgid "Series"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid "Series to analyse"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_update_wizard_form
+msgid "Series to update"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__source
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__source
+msgid "Source"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_res_config_settings__comic_openlibrary_enabled
+msgid "Source of covers and metadata. Free, no API key required."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid ""
+"Sources queried (in order of priority):\n"
+"                            <b>Google Books</b> → <b>Open Library</b> → <b>BnF</b>"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_search_wizard__state
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_wizard__state
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_update_wizard__state
+msgid "State"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "Test the Google Books connection"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid ""
+"The BnF (Bibliothèque nationale de France) indexes all comics\n"
+"                                submitted to legal deposit in France. Takes priority for\n"
+"                                <code>date_depot_legal</code>. Enabled by default."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_missing_wizard.py:0
+msgid ""
+"The Google Books request quota has been reached: the missing volumes search "
+"could not be completed. Try again later, or add a Google Books API key in "
+"Settings > Comic Books > Data Sources."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid ""
+"This action queries Google Books and the BnF to find the volumes\n"
+"                            of the series that are not yet in your database.\n"
+"                            The number of expected volumes is the series' \"Number of volumes\n"
+"                            released\" if set, otherwise the highest known volume number.\n"
+"                            <span invisible=\"not has_customer_library\">\n"
+"                                The detected volumes can be added to your wishlist.\n"
+"                            </span>\n"
+"                            <span invisible=\"has_customer_library\">\n"
+"                                The detected volumes can be added to the catalog.\n"
+"                            </span>"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_update_wizard_form
+msgid ""
+"This action will query the data sources (Google Books, Open Library, BnF)\n"
+"                            for each album in the series and update:\n"
+"                            cover, synopsis, number of pages, release date, missing authors."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_work.py:0
+msgid "This album has no edition to complete yet."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__title
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__name
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_search_wizard__search_type__title
+msgid "Title"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__title_action
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Title action"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__title_conflict
+msgid "Title conflict"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "Title in database"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,help:comic_datasource.field_comic_serie_missing_wizard__has_customer_library
+msgid ""
+"True if the customer library (comic_shop) is installed: added volumes are "
+"then placed in the user's wishlist."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_update_wizard.py:0
+msgid "Try again later or add an API key in the settings."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/res_config_settings.py:0
+msgid ""
+"Unable to reach Google Books: %(error)s\n"
+"Check your internet connection."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid "Untitled"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_update_wizard_form
+msgid "Update albums"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_serie.py:0
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_update_wizard_form
+msgid "Update from data sources"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_update_wizard_form
+msgid "Update report"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields.selection,name:comic_datasource.selection__comic_datasource_result_line__title_action__use_new
+msgid "Use the source title"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid "View albums"
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__tome
+msgid "Vol."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__tome
+msgid "Volume"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_missing_wizard.py:0
+msgid "Volume %(tome)s — %(name)s"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_serie_missing_wizard_form
+msgid ""
+"Volumes detected via Google Books and the BnF. \"Expected\" lines are\n"
+"                        volumes the series should contain (based on the number of volumes released\n"
+"                        or the highest known volume) but that the sources did not return —\n"
+"                        you can deselect them. Volume 0 (special issue) is never\n"
+"                        considered missing."
+msgstr ""
+
+#. module: comic_datasource
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_datasource_result_line__wizard_id
+#: model:ir.model.fields,field_description:comic_datasource.field_comic_serie_missing_line__wizard_id
+msgid "Wizard"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/res_config_settings.py:0
+msgid "anonymous mode"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "authors"
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.res_config_settings_view_form_comic_datasource
+msgid "console.cloud.google.com"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "cover"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "legal deposit"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "number of pages"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "release date"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/comic_edition.py:0
+msgid "synopsis"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/res_config_settings.py:0
+msgid "with API key"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_update_wizard.py:0
+msgid "⏭️ %(n)s skipped (not found or already up to date):"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid "⏭️ %(n)s skipped / error(s)"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_update_wizard.py:0
+msgid "⚠️ Google Books quota reached: update interrupted."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid ""
+"⚠️ Some albums (highlighted in orange) have an ISBN already in the database.\n"
+"                        Importing them will update the existing album."
+msgstr ""
+
+#. module: comic_datasource
+#: model_terms:ir.ui.view,arch_db:comic_datasource.view_comic_datasource_search_wizard_form
+msgid ""
+"⚠️ Some titles (highlighted in red) differ from the version in the database (e.g. English vs French title).\n"
+"                        Choose the action to take on each line."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid "✅ %(n)s created:"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_update_wizard.py:0
+msgid "✅ %(n)s updated:"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_missing_wizard.py:0
+msgid "✅ %(n)s volume(s) added to the catalog:"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_missing_wizard.py:0
+msgid "✅ %(n)s volume(s) added to your wishlist:"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/models/res_config_settings.py:0
+msgid ""
+"✅ %(total)s result(s) found (%(mode)s). The Google Books source is "
+"operational."
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_serie_update_wizard.py:0
+msgid "❌ %(n)s error(s):"
+msgstr ""
+
+#. module: comic_datasource
+#. odoo-python
+#: code:addons/comic_datasource/wizards/comic_datasource_search_wizard.py:0
+msgid "🔄 %(n)s updated:"
+msgstr ""

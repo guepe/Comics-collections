@@ -2,21 +2,21 @@
 <templates xml:space="preserve">
 
     <t t-name="comics_collections.IsbnScanDialog">
-        <Dialog title.translate="Scanner un ISBN" fullscreen="true" footer="false"
+        <Dialog title.translate="Scan an ISBN" fullscreen="true" footer="false"
                 contentClass="'o-barcode-modal o_comic_isbn_scan_dialog'">
             <t t-if="state.supported">
                 <div t-if="state.rejected" class="alert alert-warning position-absolute top-0 start-0 end-0 m-2 text-center z-2" role="status">
-                    Code « <t t-esc="state.rejected"/> » ignoré : ce n'est pas un ISBN
-                    (EAN-13 commençant par 978 ou 979).
+                    Code “<t t-esc="state.rejected"/>” ignored: this is not an ISBN
+                    (EAN-13 starting with 978 or 979).
                 </div>
                 <BarcodeVideoScanner facingMode="'environment'"
                                      onResult.bind="onResult" onError.bind="onError"/>
             </t>
             <div t-else="" class="h-100 d-flex flex-column justify-content-center align-items-center gap-1 text-center p-3">
                 <i class="fa fa-2x fa-camera text-muted"/>
-                <strong>Caméra indisponible</strong>
+                <strong>Camera unavailable</strong>
                 <span class="text-muted" t-esc="state.errorMessage"/>
-                <span class="text-muted">Fermez cette fenêtre et saisissez l'ISBN manuellement.</span>
+                <span class="text-muted">Close this window and enter the ISBN manually.</span>
             </div>
         </Dialog>
     </t>

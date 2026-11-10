@@ -6,25 +6,25 @@
         <field name="name">comic.serie.missing.wizard.form</field>
         <field name="model">comic.serie.missing.wizard</field>
         <field name="arch" type="xml">
-            <form string="Tomes manquants">
+            <form string="Missing Volumes">
 
                 <!-- Confirmation -->
                 <group invisible="state != 'confirm'">
-                    <group string="Série à analyser">
+                    <group string="Series to analyse">
                         <field name="serie_id" readonly="1"/>
-                        <field name="nb_existing" readonly="1" string="Albums déjà en base"/>
+                        <field name="nb_existing" readonly="1" string="Albums already in the database"/>
                     </group>
                     <group>
                         <div class="alert alert-info" role="status">
-                            Cette action interroge Google Books et la BnF pour trouver les tomes
-                            de la série qui ne sont pas encore dans votre base.
-                            Le nombre de tomes attendus est le « Nombre de tomes parus » de la
-                            série s'il est renseigné, sinon le plus grand numéro de tome connu.
+                            This action queries Google Books and the BnF to find the volumes
+                            of the series that are not yet in your database.
+                            The number of expected volumes is the series' "Number of volumes
+                            released" if set, otherwise the highest known volume number.
                             <span invisible="not has_customer_library">
-                                Les tomes détectés pourront être ajoutés à votre wishlist.
+                                The detected volumes can be added to your wishlist.
                             </span>
                             <span invisible="has_customer_library">
-                                Les tomes détectés pourront être ajoutés au catalogue.
+                                The detected volumes can be added to the catalog.
                             </span>
                         </div>
                     </group>
@@ -33,15 +33,15 @@
                 <!-- Résultats -->
                 <group invisible="state != 'results'">
                     <div invisible="nb_missing != 0" class="alert alert-warning" role="status">
-                        Aucun tome manquant détecté pour cette série.
-                        Google Books et BnF n'ont peut-être pas tous les volumes.
+                        No missing volume detected for this series.
+                        Google Books and the BnF may not have all the volumes.
                     </div>
                     <div class="alert alert-info" role="status" invisible="nb_missing == 0">
-                        Tomes détectés via Google Books et BnF. Les lignes "Attendu" sont des
-                        tomes que la série devrait contenir (selon le nombre de tomes parus ou
-                        le plus grand tome connu) mais que les sources n'ont pas retournés —
-                        vous pouvez les désélectionner. Le tome 0 (hors-série) n'est jamais
-                        considéré comme manquant.
+                        Volumes detected via Google Books and the BnF. "Expected" lines are
+                        volumes the series should contain (based on the number of volumes released
+                        or the highest known volume) but that the sources did not return —
+                        you can deselect them. Volume 0 (special issue) is never
+                        considered missing.
                     </div>
                     <field name="nb_expected" readonly="1"/>
                     <field name="nb_missing" invisible="1"/>
@@ -68,7 +68,7 @@
                 </group>
 
                 <!-- Rapport -->
-                <group invisible="state != 'done'" string="Rapport">
+                <group invisible="state != 'done'" string="Report">
                     <field name="import_report" nolabel="1" widget="html" readonly="1"/>
                 </group>
 
@@ -79,37 +79,37 @@
                 <footer>
                     <!-- État : confirmation -->
                     <button name="action_search"
-                            string="Rechercher les tomes manquants"
+                            string="Search for missing volumes"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'confirm'"/>
 
                     <!-- État : résultats -->
                     <button name="action_add_to_wishlist"
-                            string="Ajouter à la wishlist"
+                            string="Add to wishlist"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'results' or not has_customer_library"/>
                     <button name="action_add_to_catalogue"
-                            string="Ajouter au catalogue"
+                            string="Add to catalog"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'results' or has_customer_library"/>
                     <button name="action_back"
-                            string="Retour"
+                            string="Back"
                             type="object"
                             class="btn-secondary"
                             invisible="state != 'results'"/>
 
                     <!-- État : terminé -->
                     <button name="action_close_and_return"
-                            string="Retour à la série"
+                            string="Back to series"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'done'"/>
 
                     <button name="action_close_and_return"
-                            string="Fermer"
+                            string="Close"
                             type="object"
                             class="btn-secondary"
                             invisible="state == 'done'"/>

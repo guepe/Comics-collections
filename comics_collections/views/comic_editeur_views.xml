@@ -5,11 +5,11 @@
         <field name="name">comic.editeur.list</field>
         <field name="model">comic.editeur</field>
         <field name="arch" type="xml">
-            <list string="Éditeurs">
+            <list string="Publishers">
                 <field name="name"/>
                 <field name="pays_id"/>
                 <field name="site_web" widget="url"/>
-                <field name="comic_serie_count" string="Séries" optional="show"/>
+                <field name="comic_serie_count" string="Series" optional="show"/>
                 <field name="comic_work_count" string="Albums" optional="show"/>
             </list>
         </field>
@@ -19,13 +19,13 @@
         <field name="name">comic.editeur.form</field>
         <field name="model">comic.editeur</field>
         <field name="arch" type="xml">
-            <form string="Éditeur">
+            <form string="Publisher">
                 <sheet>
                     <div name="button_box" class="oe_button_box">
                         <button name="action_view_comic_series" type="object"
                                 class="oe_stat_button" icon="fa-folder-open"
                                 invisible="not comic_serie_count">
-                            <field name="comic_serie_count" widget="statinfo" string="Séries"/>
+                            <field name="comic_serie_count" widget="statinfo" string="Series"/>
                         </button>
                         <button name="action_view_comic_works" type="object"
                                 class="oe_stat_button" icon="fa-book"
@@ -34,7 +34,7 @@
                         </button>
                     </div>
                     <div class="oe_title">
-                        <h1><field name="name" placeholder="Nom de l'éditeur"/></h1>
+                        <h1><field name="name" placeholder="Publisher name"/></h1>
                     </div>
                     <group>
                         <group>
@@ -47,7 +47,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Séries" name="comic_series">
+                        <page string="Series" name="comic_series">
                             <field name="comic_serie_ids" nolabel="1" readonly="1">
                                 <list>
                                     <field name="name"/>
@@ -61,9 +61,9 @@
                             <field name="comic_work_ids" nolabel="1" readonly="1">
                                 <list>
                                     <field name="serie_id"/>
-                                    <field name="tome" string="T°"/>
-                                    <field name="titre_canonique" string="Titre"/>
-                                    <field name="auteur_names" string="Auteurs" optional="show"/>
+                                    <field name="tome" string="Vol."/>
+                                    <field name="titre_canonique" string="Title"/>
+                                    <field name="auteur_names" string="Authors" optional="show"/>
                                     <field name="date_parution" optional="show"/>
                                 </list>
                             </field>
@@ -75,7 +75,7 @@
     </record>
 
     <record id="action_comic_editeur" model="ir.actions.act_window">
-        <field name="name">Éditeurs</field>
+        <field name="name">Publishers</field>
         <field name="res_model">comic.editeur</field>
         <field name="view_mode">list,form</field>
     </record>

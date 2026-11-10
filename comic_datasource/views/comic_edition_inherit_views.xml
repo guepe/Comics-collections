@@ -13,10 +13,10 @@
                             type="object"
                             class="oe_stat_button"
                             icon="fa-cloud-download"
-                            title="Remplit les champs vides (couverture, synopsis, pages, ISBN, auteurs…) depuis Google Books, Open Library et la BnF">
+                            title="Fills in empty fields (cover, synopsis, pages, ISBN, authors…) from Google Books, Open Library and the BnF">
                         <div class="o_stat_info">
-                            <span class="o_stat_text">Compléter</span>
-                            <span class="o_stat_text">les infos</span>
+                            <span class="o_stat_text">Complete</span>
+                            <span class="o_stat_text">info</span>
                         </div>
                     </button>
                     <button name="action_search_datasource"
@@ -24,8 +24,8 @@
                             class="oe_stat_button"
                             icon="fa-search">
                         <div class="o_stat_info">
-                            <span class="o_stat_text">Rechercher</span>
-                            <span class="o_stat_text">sur les sources</span>
+                            <span class="o_stat_text">Search</span>
+                            <span class="o_stat_text">the sources</span>
                         </div>
                     </button>
                 </div>
@@ -45,10 +45,10 @@
                         class="oe_stat_button"
                         icon="fa-cloud-download"
                         invisible="not primary_edition_id"
-                        title="Remplit les champs vides (couverture, synopsis, pages, ISBN, auteurs…) depuis Google Books, Open Library et la BnF">
+                        title="Fills in empty fields (cover, synopsis, pages, ISBN, authors…) from Google Books, Open Library and the BnF">
                     <div class="o_stat_info">
-                        <span class="o_stat_text">Compléter</span>
-                        <span class="o_stat_text">les infos</span>
+                        <span class="o_stat_text">Complete</span>
+                        <span class="o_stat_text">info</span>
                     </div>
                 </button>
             </xpath>

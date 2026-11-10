@@ -4,12 +4,12 @@
     <!-- Inventaire de la collection (US-071) : imprimable depuis « Ma bibliothèque »
          et depuis le tableau de bord (action_print_my_inventory). -->
     <record id="action_report_comic_collection_inventory" model="ir.actions.report">
-        <field name="name">Inventaire de ma collection</field>
+        <field name="name">My Collection Inventory</field>
         <field name="model">comic.customer.album</field>
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">comics_collections.report_comic_collection_inventory</field>
         <field name="report_file">comics_collections.report_comic_collection_inventory</field>
-        <field name="print_report_name">'Inventaire collection'</field>
+        <field name="print_report_name">'Collection inventory'</field>
         <field name="binding_model_id" ref="model_comic_customer_album"/>
         <field name="binding_type">report</field>
     </record>
@@ -20,14 +20,14 @@
             <t t-set="currency" t-value="inventory['currency']"/>
             <t t-call="web.external_layout">
                 <div class="page o_comic_inventory">
-                    <h2>Inventaire de ma collection</h2>
+                    <h2>My Collection Inventory</h2>
                     <div class="row mb-3">
                         <div class="col-6">
-                            <strong>Propriétaire :</strong>
+                            <strong>Owner:</strong>
                             <span t-out="inventory['owners']"/>
                         </div>
                         <div class="col-6 text-end">
-                            <strong>Date :</strong>
+                            <strong>Date:</strong>
                             <span t-out="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y')"/>
                         </div>
                     </div>
@@ -35,13 +35,13 @@
                     <table class="table table-sm o_main_table">
                         <thead>
                             <tr>
-                                <th class="text-end">Tome</th>
-                                <th>Titre</th>
+                                <th class="text-end">Volume</th>
+                                <th>Title</th>
                                 <th>ISBN</th>
-                                <th>État de lecture</th>
-                                <th class="text-end">Note</th>
-                                <th class="text-end">Prix d'achat</th>
-                                <th class="text-end">Valeur estimée</th>
+                                <th>Reading status</th>
+                                <th class="text-end">Rating</th>
+                                <th class="text-end">Purchase price</th>
+                                <th class="text-end">Estimated value</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -68,8 +68,8 @@
                                 </tr>
                                 <tr class="o_comic_inventory_subtotal">
                                     <td colspan="5" class="text-end">
-                                        <em>Sous-total <t t-out="serie['name']"/>
-                                            (<t t-out="serie['count']"/> album<t t-if="serie['count'] &gt; 1">s</t>)</em>
+                                        <em>Subtotal <t t-out="serie['name']"/>
+                                            (<t t-out="serie['count']"/> <t t-if="serie['count'] &gt; 1">albums</t><t t-else="">album</t>)</em>
                                     </td>
                                     <td class="text-end">
                                         <em t-out="serie['prix_achat']"
@@ -85,8 +85,8 @@
                         <tfoot>
                             <tr class="o_comic_inventory_total">
                                 <td colspan="5" class="text-end">
-                                    <strong>Total général
-                                        (<t t-out="inventory['count']"/> album<t t-if="inventory['count'] &gt; 1">s</t>)</strong>
+                                    <strong>Grand total
+                                        (<t t-out="inventory['count']"/> <t t-if="inventory['count'] &gt; 1">albums</t><t t-else="">album</t>)</strong>
                                 </td>
                                 <td class="text-end">
                                     <strong t-out="inventory['prix_achat']"
@@ -99,7 +99,7 @@
                             </tr>
                         </tfoot>
                     </table>
-                    <p>Nombre d'albums : <strong t-out="inventory['count']"/></p>
+                    <p>Number of albums: <strong t-out="inventory['count']"/></p>
                 </div>
             </t>
         </t>

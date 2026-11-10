@@ -2639,3 +2639,28 @@ cinq modules : 472 tests verts.
   versions + entrées CHANGE.md). Dry-run par défaut, `--apply` pour publier. Sert aux deux dépôts.
 - `.github/workflows/release.yml` : GitHub Release créée à chaque tag `v*` (notes = message du tag).
 - `RELEASE.md` : procédure ; CLAUDE.md / AGENTS.md : règle des branches et des versions.
+
+## 2026-11-10 — US-092 (#9) : interface en anglais, néerlandais, allemand (et français)
+
+- **Choix technique** : Odoo 19 ne charge jamais de `.po` pour `en_US` (le texte du code *est*
+  l'anglais). Les textes source des 5 modules passent donc en **anglais** ; le français revient par
+  `i18n/fr.po`, avec `nl.po` et `de.po` en plus. Un utilisateur fr_BE retrouve ses libellés d'avant.
+- `comics_collections` 19.0.4.4.0, `comic_datasource` 19.0.1.6.0 : `string`/`help`/Selection,
+  messages (`self.env._()` + placeholders nommés), vues, menus, actions, groupes, crons, rapport
+  d'inventaire, dashboard OWL (`_t`), scan ISBN, export CSV, assistant d'import (colonnes en `_lt`,
+  alias de colonnes anglais ajoutés — les alias français restent), wizards de sources.
+- Fichiers `i18n/<module>.pot` + `fr.po`, `nl.po`, `de.po` dans chaque module (exportés par
+  `odoo i18n export`, validés `msgfmt --check-format`, placeholders et balises contrôlés).
+- Libellés distincts pour éviter les collisions : menu racine / catégorie / privilège / app des
+  paramètres = « Comic Books » (FR « Bandes Dessinées »), distinct du genre et du type « Comics » ;
+  champs sans `string` (libellé déduit du nom français) dotés d'un libellé explicite.
+- Genres de base en anglais à la source (`comic.genre.name` devient `translate=True`), traduits par
+  les `.po` (données `noupdate` : bases existantes inchangées).
+- Badge de tome : « Vol. 3 » (EN), « T3 » (FR), « Deel 3 » (NL), « Bd. 3 » (DE) — y compris dans
+  `display_name` (« Thorgal T01 — … » en français) ; rapport d'inventaire : pluriel en mots entiers.
+- Tests : assertions de texte passées en anglais ; suite complète (deux dépôts) : 504 verts.
+- Pages App Store : « EN · FR · NL · DE ». Captures encore en français (à refaire).
+- **Ma bibliothèque, recherche « Album » / « Titre »** : « Album » renvoyait toute la
+  bibliothèque (`comic.edition` n'a pas de champ `name`) et « Titre » ne cherchait que le titre de
+  l'album. `_rec_names_search` ajouté : `comic.work` → titre + nom de série ; `comic.edition` →
+  titre + série de l'album + ISBN-13. Test `test_library_search.py`.

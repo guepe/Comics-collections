@@ -4,7 +4,7 @@ import re
 
 import requests
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 from ..sources.google_books import GoogleBooksQuotaError
@@ -32,27 +32,27 @@ def _normalize_title(title: str) -> str:
 
 class ComicSerieMissingWizard(models.TransientModel):
     _name = "comic.serie.missing.wizard"
-    _description = "Détection des tomes manquants dans une série"
+    _description = "Missing volumes detection in a series"
 
-    serie_id = fields.Many2one("comic.serie", required=True, readonly=True)
+    serie_id = fields.Many2one("comic.serie", string="Series", required=True, readonly=True)
     state = fields.Selection(
-        [("confirm", "Confirmation"), ("results", "Résultats"), ("done", "Terminé")],
+        [("confirm", "Confirmation"), ("results", "Results"), ("done", "Done")],
         default="confirm",
     )
-    nb_existing = fields.Integer(compute="_compute_nb_existing")
-    line_ids = fields.One2many("comic.serie.missing.line", "wizard_id", string="Tomes manquants")
-    nb_missing = fields.Integer(compute="_compute_nb_missing")
+    nb_existing = fields.Integer(string="Albums already in the series", compute="_compute_nb_existing")
+    line_ids = fields.One2many("comic.serie.missing.line", "wizard_id", string="Missing volumes")
+    nb_missing = fields.Integer(string="Missing albums", compute="_compute_nb_missing")
     import_report = fields.Html(readonly=True)
     nb_expected = fields.Integer(
-        string="Tomes attendus",
+        string="Expected volumes",
         readonly=True,
-        help="Nombre de tomes attendus : « Nombre de tomes parus » de la série s'il est renseigné, "
-        "sinon le plus grand numéro de tome connu (albums en base et résultats des sources).",
+        help='Number of expected volumes: the series\' "Number of volumes released" if set, '
+        "otherwise the highest known volume number (albums in the database and data source results).",
     )
     has_customer_library = fields.Boolean(
         compute="_compute_has_customer_library",
-        help="Vrai si la bibliothèque client (comic_shop) est installée : les tomes ajoutés "
-        "sont alors placés dans la wishlist de l'utilisateur.",
+        help="True if the customer library (comic_shop) is installed: added volumes "
+        "are then placed in the user's wishlist.",
     )
 
     def _compute_has_customer_library(self):
@@ -102,10 +102,10 @@ class ComicSerieMissingWizard(models.TransientModel):
             return self._search_missing()
         except GoogleBooksQuotaError as e:
             raise UserError(
-                _(
-                    "Le quota de requêtes Google Books est atteint : la recherche des tomes "
-                    "manquants n'a pas pu aboutir. Réessayez plus tard, ou ajoutez une clé API "
-                    "Google Books dans Paramètres > Sources de données BD."
+                self.env._(
+                    "The Google Books request quota has been reached: the missing volumes search "
+                    "could not be completed. Try again later, or add a Google Books API key "
+                    "in Settings > Comic Books > Data Sources."
                 )
             ) from e
 
@@ -158,7 +158,7 @@ class ComicSerieMissingWizard(models.TransientModel):
                 continue
             if tome not in candidates:
                 candidates[tome] = {
-                    "name": result.title or f"{serie_name} - Tome {tome}",
+                    "name": result.title or self.env._("%(serie)s - Volume %(tome)s", serie=serie_name, tome=tome),
                     "isbn": norm_isbn or "",
                     "cover_url": None,
                     "date_parution": result.date_parution,
@@ -206,7 +206,7 @@ class ComicSerieMissingWizard(models.TransientModel):
         for t in self._missing_tome_numbers(expected, existing_tomes):
             if t not in candidates:
                 candidates[t] = {
-                    "name": f"{serie_name} - Tome {t}",
+                    "name": self.env._("%(serie)s - Volume %(tome)s", serie=serie_name, tome=t),
                     "isbn": "",
                     "cover_url": None,
                     "date_parution": None,
@@ -379,11 +379,17 @@ class ComicSerieMissingWizard(models.TransientModel):
             created_works._notify_new_release()
 
         if added:
-            target = _("à votre wishlist") if CustomerAlbum is not None else _("au catalogue")
-            items = "".join(f"<li>Tome {line.tome} — {line.name}</li>" for line in added)
-            self.import_report = f"<b>✅ {len(added)} tome(s) ajouté(s) {target} :</b><ul>{items}</ul>"
+            _ = self.env._
+            if CustomerAlbum is not None:
+                title = _("✅ %(n)s volume(s) added to your wishlist:", n=len(added))
+            else:
+                title = _("✅ %(n)s volume(s) added to the catalog:", n=len(added))
+            items = "".join(
+                "<li>%s</li>" % _("Volume %(tome)s — %(name)s", tome=line.tome, name=line.name) for line in added
+            )
+            self.import_report = f"<b>{title}</b><ul>{items}</ul>"
         else:
-            self.import_report = "<p>Aucun tome sélectionné.</p>"
+            self.import_report = "<p>%s</p>" % self.env._("No volume selected.")
 
         self.state = "done"
         return self._reopen()
@@ -494,25 +500,25 @@ class ComicSerieMissingWizard(models.TransientModel):
 
 class ComicSerieMissingLine(models.TransientModel):
     _name = "comic.serie.missing.line"
-    _description = "Tome manquant détecté dans une série"
+    _description = "Missing volume detected in a series"
     _order = "tome"
 
     wizard_id = fields.Many2one("comic.serie.missing.wizard", required=True, ondelete="cascade")
-    tome = fields.Integer(aggregator=False)
-    name = fields.Char(string="Titre")
+    tome = fields.Integer(string="Volume", aggregator=False)
+    name = fields.Char(string="Title")
     isbn = fields.Char(string="ISBN")
     isbn_unverified = fields.Boolean(
-        string="ISBN absent",
-        help="Aucun ISBN retourné par la source — déduplication moins fiable, vérifiez manuellement.",
+        string="Missing ISBN",
+        help="No ISBN returned by the source — less reliable deduplication, check manually.",
     )
-    cover_data = fields.Image(string="Couverture", max_width=80, max_height=110)
-    date_parution = fields.Date(string="Parution")
-    selected = fields.Boolean(string="Sélectionner", default=True)
+    cover_data = fields.Image(string="Cover", max_width=80, max_height=110)
+    date_parution = fields.Date(string="Release")
+    selected = fields.Boolean(string="Select", default=True)
     source = fields.Selection(
         [
             ("google", "Google Books"),
             ("bnf", "BnF"),
-            ("expected", "Attendu"),
+            ("expected", "Expected"),
         ],
         default="google",
     )

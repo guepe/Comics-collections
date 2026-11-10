@@ -12,21 +12,21 @@
                         class="oe_stat_button" icon="fa-folder-open"
                         groups="comics_collections.group_comic_user"
                         invisible="not comic_serie_count">
-                    <field name="comic_serie_count" widget="statinfo" string="Séries BD"/>
+                    <field name="comic_serie_count" widget="statinfo" string="Comic series"/>
                 </button>
                 <button name="action_view_comic_works" type="object"
                         class="oe_stat_button" icon="fa-book"
                         groups="comics_collections.group_comic_user"
                         invisible="not comic_work_count">
-                    <field name="comic_work_count" widget="statinfo" string="Albums BD"/>
+                    <field name="comic_work_count" widget="statinfo" string="Comic albums"/>
                 </button>
             </xpath>
             <xpath expr="//notebook" position="inside">
-                <page string="Bandes dessinées" name="comic_bibliography"
+                <page string="Comic books" name="comic_bibliography"
                       groups="comics_collections.group_comic_user"
                       invisible="not is_comic_author and not comic_work_count">
                     <field name="is_comic_author" invisible="1"/>
-                    <group string="Séries">
+                    <group string="Series">
                         <field name="comic_serie_ids" nolabel="1" colspan="2" readonly="1">
                             <list>
                                 <field name="name"/>
@@ -36,14 +36,14 @@
                             </list>
                         </field>
                     </group>
-                    <group string="A souvent travaillé avec" name="comic_coauthors">
+                    <group string="Frequent collaborators" name="comic_coauthors">
                         <field name="comic_coauthors_html" nolabel="1" colspan="2" readonly="1"/>
                     </group>
-                    <group string="Albums et rôles">
+                    <group string="Albums and roles">
                         <field name="auteur_work_line_ids" nolabel="1" colspan="2" readonly="1">
                             <list default_order="serie_id,tome">
                                 <field name="serie_id"/>
-                                <field name="tome" string="T°"/>
+                                <field name="tome" string="Vol."/>
                                 <field name="work_id" string="Album"/>
                                 <field name="role"/>
                             </list>
@@ -55,7 +55,7 @@
     </record>
 
     <record id="action_comic_auteurs" model="ir.actions.act_window">
-        <field name="name">Auteurs</field>
+        <field name="name">Authors</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">list,form</field>
         <field name="domain">['|', ('is_comic_author', '=', True), ('auteur_work_line_ids', '!=', False)]</field>

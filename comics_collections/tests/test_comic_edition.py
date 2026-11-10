@@ -122,7 +122,7 @@ class TestComicEdition(TransactionCase):
                 "langue": "fr",
             }
         )
-        self.assertIn("Français", edition.display_name)
+        self.assertIn("French", edition.display_name)
 
     def test_display_name_includes_editeur(self):
         edition = self.env["comic.edition"].create(

@@ -9,31 +9,31 @@ class ResPartner(models.Model):
     auteur_work_line_ids = fields.One2many(
         "comic.work.auteur.line",
         "partner_id",
-        string="Rôles BD",
+        string="Comic roles",
     )
     is_comic_author = fields.Boolean(
-        string="Auteur BD",
+        string="Comic author",
         default=False,
         index=True,
-        help="Coché automatiquement dès que le contact est crédité sur un album, "
-        "ou à la création depuis le menu Auteurs.",
+        help="Checked automatically as soon as the contact is credited on an album, "
+        "or when created from the Authors menu.",
     )
     comic_work_ids = fields.Many2many(
         "comic.work",
-        string="Albums BD",
+        string="Comic albums",
         compute="_compute_comic_bibliography",
     )
     comic_serie_ids = fields.Many2many(
         "comic.serie",
-        string="Séries BD",
+        string="Comic series",
         compute="_compute_comic_bibliography",
     )
-    comic_work_count = fields.Integer(string="Nb albums BD", compute="_compute_comic_bibliography")
-    comic_serie_count = fields.Integer(string="Nb séries BD", compute="_compute_comic_bibliography")
+    comic_work_count = fields.Integer(string="Number of comic albums", compute="_compute_comic_bibliography")
+    comic_serie_count = fields.Integer(string="Number of comic series", compute="_compute_comic_bibliography")
 
     # « A souvent travaillé avec » : co-auteurs, par nombre d'albums en commun (US-091)
     comic_coauthors_html = fields.Html(
-        string="A souvent travaillé avec", compute="_compute_comic_coauthors", sanitize=False
+        string="Frequent collaborators", compute="_compute_comic_coauthors", sanitize=False
     )
 
     @api.depends("auteur_work_line_ids.work_id.auteur_line_ids.partner_id")
@@ -47,8 +47,8 @@ class ResPartner(models.Model):
                 self.env,
                 {other: len(works) for other, works in works_by_partner.items()},
                 works_by_partner,
-                self.env._("Aucun co-auteur connu."),
-                self.env._("Albums ensemble"),
+                self.env._("No known co-author."),
+                self.env._("Albums together"),
             )
 
     @api.depends("auteur_work_line_ids.work_id.serie_id")

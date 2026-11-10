@@ -3,9 +3,9 @@ from odoo import fields, models
 
 class ComicGenre(models.Model):
     _name = "comic.genre"
-    _description = "Genre de bande dessinée"
+    _description = "Comic genre"
     _order = "name"
 
-    name = fields.Char(string="Nom", required=True)
+    name = fields.Char(required=True, translate=True)
     description = fields.Text()
-    color = fields.Integer(string="Couleur")
+    color = fields.Integer()

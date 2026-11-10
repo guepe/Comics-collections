@@ -55,7 +55,7 @@ class TestCollectionStats(TransactionCase):
 
     def test_breakdowns(self):
         stats = self._stats()
-        self.assertEqual(dict(stats["by_genre"]), {"Genre Stats": 2, "Sans genre": 1})
+        self.assertEqual(dict(stats["by_genre"]), {"Genre Stats": 2, "No genre": 1})
         reading = {key: count for key, _label, count in stats["by_reading"]}
         self.assertEqual(reading, {"non_lu": 1, "en_cours": 1, "lu": 1})
 

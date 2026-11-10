@@ -20,24 +20,24 @@ _logger = logging.getLogger(__name__)
 TOP_SERIES_LIMIT = 5
 RECENT_LIMIT = 5
 NOTE_ETOILES = [
-    ("0", "Pas de note"),
-    ("1", "1 étoile"),
-    ("2", "2 étoiles"),
-    ("3", "3 étoiles"),
-    ("4", "4 étoiles"),
-    ("5", "5 étoiles"),
+    ("0", "No rating"),
+    ("1", "1 star"),
+    ("2", "2 stars"),
+    ("3", "3 stars"),
+    ("4", "4 stars"),
+    ("5", "5 stars"),
 ]
 
 
 class ComicCustomerAlbum(models.Model):
     _name = "comic.customer.album"
-    _description = "Bibliothèque personnelle — album"
+    _description = "Personal library — album"
     _order = "partner_id, edition_id"
     _rec_name = "edition_id"
 
     partner_id = fields.Many2one(
         "res.partner",
-        string="Propriétaire",
+        string="Owner",
         required=True,
         ondelete="cascade",
         index=True,
@@ -52,67 +52,67 @@ class ComicCustomerAlbum(models.Model):
     )
     source = fields.Selection(
         [
-            ("achete_ailleurs", "Acheté ailleurs"),
-            ("cadeau", "Cadeau"),
-            ("inconnu", "Inconnu"),
+            ("achete_ailleurs", "Bought elsewhere"),
+            ("cadeau", "Gift"),
+            ("inconnu", "Unknown"),
         ],
         default="inconnu",
     )
     etat_lecture = fields.Selection(
         [
-            ("non_lu", "Non lu"),
-            ("en_cours", "En cours"),
-            ("lu", "Lu"),
+            ("non_lu", "Unread"),
+            ("en_cours", "Reading"),
+            ("lu", "Read"),
         ],
-        string="État de lecture",
+        string="Reading status",
         default="non_lu",
     )
-    dans_collection = fields.Boolean(string="Dans la collection", default=True)
-    dans_wishlist = fields.Boolean(string="En wishlist", default=False)
+    dans_collection = fields.Boolean(string="In collection", default=True)
+    dans_wishlist = fields.Boolean(string="In wishlist", default=False)
     ignore_wishlist = fields.Boolean(
-        string="Ignoré dans la wishlist",
+        string="Ignored in wishlist",
         default=False,
-        help="Tome manquant d'une série suivie que l'utilisateur ne veut pas (« ne pas acheter ») : "
-        "il n'apparaît plus dans les manques de sa wishlist.",
+        help='Missing volume of a followed series that the user does not want ("do not buy"): '
+        "it no longer appears among the missing albums of their wishlist.",
     )
-    note = fields.Float(digits=(2, 1))
+    note = fields.Float(string="Rating", digits=(2, 1))
     note_etoiles = fields.Selection(
         NOTE_ETOILES,
-        string="Note (étoiles)",
+        string="Rating (stars)",
         compute="_compute_note_etoiles",
         inverse="_inverse_note_etoiles",
         readonly=False,
-        help="Saisie en étoiles de la note ; la note décimale reste la seule valeur enregistrée.",
+        help="Star input of the rating; the decimal rating remains the only stored value.",
     )
-    commentaire = fields.Text()
+    commentaire = fields.Text(string="Comment")
     date_ajout = fields.Date(
-        string="Date d'ajout",
+        string="Date added",
         default=lambda self: datetime.date.today(),
     )
     work_id = fields.Many2one(
         "comic.work",
-        string="Titre",
+        string="Title",
         compute="_compute_work_id",
         store=True,
         index=True,
     )
     genre_id = fields.Many2one(related="work_id.genre_id", store=True, string="Genre")
     # Galerie « Ma bibliothèque » (même présentation que « Mes albums »)
-    serie_id = fields.Many2one(related="work_id.serie_id", store=True, string="Série")
-    tome = fields.Integer(related="work_id.tome", store=True, string="T°", aggregator=False)
-    image_couverture = fields.Image(related="edition_id.image_couverture", string="Couverture")
+    serie_id = fields.Many2one(related="work_id.serie_id", store=True, string="Series")
+    tome = fields.Integer(related="work_id.tome", store=True, string="Vol.", aggregator=False)
+    image_couverture = fields.Image(related="edition_id.image_couverture", string="Cover")
     currency_id = fields.Many2one(
         "res.currency",
-        string="Devise",
+        string="Currency",
         compute="_compute_currency_id",
-        help="Devise de la société courante, utilisée pour le prix d'achat et la valeur estimée.",
+        help="Currency of the current company, used for the purchase price and the estimated value.",
     )
-    prix_achat = fields.Monetary(string="Prix d'achat", currency_field="currency_id")
-    valeur_estimee = fields.Monetary(string="Valeur estimée", currency_field="currency_id")
+    prix_achat = fields.Monetary(string="Purchase price", currency_field="currency_id")
+    valeur_estimee = fields.Monetary(string="Estimated value", currency_field="currency_id")
 
     _unique_partner_edition = models.Constraint(
         "UNIQUE(partner_id, edition_id)",
-        "Cet album figure déjà dans cette bibliothèque.",
+        "This album is already in this library.",
     )
 
     @api.depends("edition_id.work_id")
@@ -217,7 +217,7 @@ class ComicCustomerAlbum(models.Model):
         genre_counts = defaultdict(int)
         for entry in owned:
             genre = entry.work_id.serie_id.genre_id
-            genre_counts[genre.name if genre else "Sans genre"] += 1
+            genre_counts[genre.name if genre else self.env._("No genre")] += 1
         by_genre = sorted(genre_counts.items(), key=lambda item: (-item[1], item[0]))
 
         # Répartition par état de lecture (dans l'ordre de la sélection)
@@ -321,7 +321,7 @@ class ComicCustomerAlbum(models.Model):
         """Return the inventory report action on the current user's collection."""
         entries = self.search([("partner_id", "=", self.env.user.partner_id.id), ("dans_collection", "=", True)])
         if not entries:
-            raise UserError(self.env._("Votre collection est vide : aucun album à inventorier."))
+            raise UserError(self.env._("Your collection is empty: no album to inventory."))
         return self.env.ref("comics_collections.action_report_comic_collection_inventory").report_action(entries)
 
     def _get_inventory_data(self):
@@ -351,7 +351,7 @@ class ComicCustomerAlbum(models.Model):
             ]
             series.append(
                 {
-                    "name": serie.name or self.env._("Sans série"),
+                    "name": serie.name or self.env._("No series"),
                     "lines": lines,
                     "count": len(lines),
                     "prix_achat": sum(entries.mapped("prix_achat")),

@@ -1,24 +1,24 @@
-from odoo import SUPERUSER_ID, Command, _, api, fields, models
+from odoo import SUPERUSER_ID, Command, api, fields, models
 
 from ..utils.normalize import normalize_title
 
 
 class ComicSerie(models.Model):
     _name = "comic.serie"
-    _description = "Série de bandes dessinées"
+    _description = "Comic series"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "name"
 
-    name = fields.Char(string="Titre", required=True, tracking=True)
+    name = fields.Char(string="Title", required=True, tracking=True)
     name_normalise = fields.Char(
-        string="Titre normalisé",
+        string="Normalized title",
         compute="_compute_name_normalise",
         store=True,
         index=True,
     )
     type = fields.Selection(
         [
-            ("bd", "Bande dessinée"),
+            ("bd", "Comic book"),
             ("manga", "Manga"),
             ("comics", "Comics"),
             ("one_shot", "One-shot"),
@@ -28,30 +28,31 @@ class ComicSerie(models.Model):
     )
     statut = fields.Selection(
         [
-            ("en_cours", "En cours"),
-            ("terminee", "Terminée"),
-            ("abandonnee", "Abandonnée"),
+            ("en_cours", "Ongoing"),
+            ("terminee", "Completed"),
+            ("abandonnee", "Discontinued"),
         ],
+        string="Status",
         default="en_cours",
         tracking=True,
     )
     genre_id = fields.Many2one("comic.genre", string="Genre")
-    editeur_id = fields.Many2one("comic.editeur", string="Éditeur")
-    image_couverture = fields.Image(string="Couverture")
+    editeur_id = fields.Many2one("comic.editeur", string="Publisher")
+    image_couverture = fields.Image(string="Cover")
     synopsis = fields.Html()
-    bdgest_id = fields.Integer(string="ID BDGest", aggregator=False)
-    bedetheque_url = fields.Char(string="URL Bedetheque")
+    bdgest_id = fields.Integer(string="BDGest ID", aggregator=False)
+    bedetheque_url = fields.Char(string="Bedetheque URL")
     work_ids = fields.One2many("comic.work", "serie_id", string="Albums")
     # Auteurs de tous les albums de la série (sans doublon), avec leurs rôles
-    auteur_ids = fields.Many2many("res.partner", string="Auteurs", compute="_compute_auteurs")
-    auteur_names = fields.Char(string="Auteurs (rôles)", compute="_compute_auteurs")
-    nb_works_total = fields.Integer(string="Tomes au total", compute="_compute_works", store=True)
+    auteur_ids = fields.Many2many("res.partner", string="Authors", compute="_compute_auteurs")
+    auteur_names = fields.Char(string="Authors (roles)", compute="_compute_auteurs")
+    nb_works_total = fields.Integer(string="Total volumes", compute="_compute_works", store=True)
     suivi_user_ids = fields.Many2many(
         "res.users",
         "comic_serie_suivi_user_rel",
         "serie_id",
         "user_id",
-        string="Suivie par",
+        string="Followed by",
     )
     # Utilisateurs qui se sont désabonnés explicitement : le suivi automatique
     # (création de la série, album possédé) ne les réabonne plus (US-088).
@@ -60,12 +61,12 @@ class ComicSerie(models.Model):
         "comic_serie_suivi_exclu_user_rel",
         "serie_id",
         "user_id",
-        string="Ne suit plus",
+        string="No longer following",
     )
     # Catalogue partagé : le suivi est propre à chaque utilisateur. Ce booléen
     # non stocké reflète l'utilisateur courant (présence dans suivi_user_ids).
     a_suivre = fields.Boolean(
-        string="À suivre",
+        string="Followed",
         compute="_compute_a_suivre",
         inverse="_inverse_a_suivre",
         search="_search_a_suivre",
@@ -195,7 +196,7 @@ class ComicSerie(models.Model):
         """Liste des séries données (fiches auteur / éditeur)."""
         return {
             "type": "ir.actions.act_window",
-            "name": _("Séries — %s", title),
+            "name": self.env._("Series — %s", title),
             "res_model": "comic.serie",
             "view_mode": "list,kanban,form",
             "domain": [("id", "in", series.ids)],
@@ -206,7 +207,7 @@ class ComicSerie(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": f"Albums — {self.name}",
+            "name": self.env._("Albums — %s", self.name),
             "res_model": "comic.work",
             "view_mode": "list,kanban,form",
             "views": [

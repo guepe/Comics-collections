@@ -1,0 +1,2987 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* comics_collections
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20261102\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-10 18:42+0000\n"
+"PO-Revision-Date: 2026-11-10 15:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_pret.py:0
+msgid "\"%(album)s\" is already lent to %(partner)s and has not been returned."
+msgstr "« %(album)s » est déjà prêté à %(partner)s et n'a pas été rendu."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_pret.py:0
+msgid "\"%(album)s\" lent to %(partner)s was due back on %(date)s."
+msgstr "« %(album)s » prêté à %(partner)s devait revenir le %(date)s."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_isbn.py:0
+msgid "\"%s\" is not a valid EAN-13."
+msgstr "\"%s\" n'est pas un EAN-13 valide."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_isbn.py:0
+msgid "\"%s\" is not a valid ISBN-10."
+msgstr "\"%s\" n'est pas un ISBN-10 valide."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "%(count)s album(s) added to your wishlist."
+msgstr "%(count)s album(s) ajouté(s) à votre wishlist."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "%(count)s album(s) created."
+msgstr "%(count)s album(s) créé(s)."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "%(count)s album(s) skipped (already present)."
+msgstr "%(count)s album(s) ignoré(s) (déjà présents)."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "%(count)s album(s) updated."
+msgstr "%(count)s album(s) mis à jour."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "%(count)s error(s)."
+msgstr "%(count)s erreur(s)."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "%(count)s library entry(ies) contain these albums."
+msgstr "%(count)s entrée(s) de bibliothèque contiennent ces albums."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "%(count)s loan(s) involve these albums (delete them first)."
+msgstr "%(count)s prêt(s) concernent ces albums (supprimez-les d'abord)."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "%(count)s warning(s):"
+msgstr "%(count)s avertissement(s) :"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "%(serie)s — Volume %(tome)s"
+msgstr "%(serie)s — Tome %(tome)s"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "%(total)s line(s) detected. Preview of the first 10."
+msgstr "%(total)s ligne(s) détectée(s). Prévisualisation des 10 premières."
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "%s missing volume"
+msgstr "%s manque"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "%s missing volumes"
+msgstr "%s manques"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "%s wish"
+msgstr "%s souhait"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "%s wishes"
+msgstr "%s souhaits"
+
+#. module: comics_collections
+#: model:ir.actions.report,print_report_name:comics_collections.action_report_comic_collection_inventory
+msgid "'Collection inventory'"
+msgstr "'Inventaire collection'"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__1
+msgid "1 star"
+msgstr "1 étoile"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__2
+msgid "2 stars"
+msgstr "2 étoiles"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__3
+msgid "3 stars"
+msgstr "3 étoiles"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__4
+msgid "4 stars"
+msgstr "4 étoiles"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__5
+msgid "5 stars"
+msgstr "5 étoiles"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+msgid "<i class=\"fa fa-check\"/> I have it"
+msgstr "<i class=\"fa fa-check\"/> Je l'ai"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "<span class=\"ms-2\">Vol.</span>"
+msgstr "<span class=\"ms-2\">T°</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "<strong>Date:</strong>"
+msgstr "<strong>Date :</strong>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "<strong>Owner:</strong>"
+msgstr "<strong>Propriétaire :</strong>"
+
+#. module: comics_collections
+#: model:ir.model.constraint,message:comics_collections.constraint_comic_work_unique_serie_tome_numbered
+msgid "A volume of this series already exists. Each volume number must be unique per series."
+msgstr "Un tome de cette série existe déjà. Chaque numéro de tome doit être unique par série."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Accepted formats: CSV, XLS or XLSX."
+msgstr "Formats acceptés : CSV, XLS ou XLSX."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Accepted values: non_lu, en_cours, lu"
+msgstr "Valeurs acceptées : non_lu, en_cours, lu"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_needaction
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_needaction
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_needaction
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_needaction
+msgid "Action Needed"
+msgstr "Action nécessaire"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__active
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__active
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__active
+msgid "Active"
+msgstr "Actif"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_ids
+msgid "Activities"
+msgstr "Activités"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_exception_decoration
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_exception_decoration
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_exception_decoration
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "Activité d'exception de décoration"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_state
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_state
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_state
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_state
+msgid "Activity State"
+msgstr "État de l'activité"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_type_icon
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_type_icon
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_type_icon
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "Icône de type d'activité"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__date_retour_effective
+msgid "Actual return date"
+msgstr "Date retour réelle"
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_my_library
+msgid ""
+"Add albums to your collection or to your wishlist from the album\n"
+"                list (“Mark as Read” action) or through CSV/Excel import."
+msgstr "Ajoutez des albums à votre collection ou à votre wishlist, depuis la liste des albums (action « Marquer comme lu ») ou par import CSV/Excel."
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Add an album"
+msgstr "Ajouter un album"
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.action_work_add_to_my_wishlist
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Add to My Wishlist"
+msgstr "Ajouter à ma wishlist"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid ""
+"Add your albums one by one, or import your collection\n"
+"                            from a CSV or Excel file."
+msgstr "Ajoutez vos albums un par un, ou importez votre collection depuis un fichier CSV ou Excel."
+
+#. module: comics_collections
+#: model:ir.ui.menu,name:comics_collections.menu_comic_referentiel
+msgid "Advanced Catalog"
+msgstr "Référentiel avancé"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_aventure
+msgid "Adventure"
+msgstr "Aventure"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__edition_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__edition_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__work_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Album"
+msgstr "Album"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__work_a_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_search
+msgid "Album A"
+msgstr "Album A"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__work_b_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_search
+msgid "Album B"
+msgstr "Album B"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_form
+msgid "Album returned"
+msgstr "Album retourné"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Album title"
+msgstr "Titre de l'album"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__comic_work_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__work_ids
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Albums"
+msgstr "Albums"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+msgid "Albums / Volumes"
+msgstr "Albums / Tomes"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__import_policy
+msgid "Albums already present"
+msgstr "Albums déjà présents"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Albums and roles"
+msgstr "Albums et rôles"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Albums by genre"
+msgstr "Albums par genre"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "Albums owned"
+msgstr "Albums possédés"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/res_partner.py:0
+msgid "Albums together"
+msgstr "Albums ensemble"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_serie.py:0
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "Albums — %s"
+msgstr "Albums — %s"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_work_catalogue
+#: model:ir.ui.menu,name:comics_collections.menu_comic_referentiel_albums
+msgid "All Albums"
+msgstr "Tous les albums"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_serie_catalogue
+#: model:ir.ui.menu,name:comics_collections.menu_comic_referentiel_series
+msgid "All Series"
+msgstr "Toutes les séries"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__url_amazon_be
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__url_amazon_be
+msgid "Amazon.be link"
+msgstr "Lien Amazon.be"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Amazon.com.be purchase URL"
+msgstr "URL d'achat Amazon.com.be"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_import_wizard__import_policy
+msgid "An album is \"already present\" if its ISBN is known, or if the same series + volume (or series + title) exists. \"Skip\" leaves it untouched; \"Update\" completes the record."
+msgstr "Un album est « déjà présent » si son ISBN est connu, ou si la même série + tome (ou série + titre) existe. « Ignorer » n'y touche pas ; « Mettre à jour » complète la fiche."
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work_auteur_line__role__dessinateur
+msgid "Artist"
+msgstr "Dessinateur"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Artists, separated by ;, | or line break"
+msgstr "Dessinateurs, séparés par ;, | ou retour ligne"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_attachment_count
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_attachment_count
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_attachment_count
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_attachment_count
+msgid "Attachment Count"
+msgstr "Nombre de pièces jointes"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/utils/author_tables.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__partner_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Author"
+msgstr "Auteur"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+#: model:ir.actions.act_window,name:comics_collections.action_comic_auteurs
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__auteur_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__auteur_line_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__auteur_names
+#: model:ir.ui.menu,name:comics_collections.menu_comic_auteurs
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_list
+msgid "Authors"
+msgstr "Auteurs"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__auteur_names
+msgid "Authors (roles)"
+msgstr "Auteurs (rôles)"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__nb_auteurs_source
+msgid "Authors to transfer"
+msgstr "Auteurs à transférer"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__bdgest_editeur_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__bdgest_id
+msgid "BDGest ID"
+msgstr "ID BDGest"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Back to mapping"
+msgstr "Retour au mapping"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__bedetheque_id
+msgid "Bedetheque ID"
+msgstr "Bedetheque ID"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__bedetheque_url
+msgid "Bedetheque URL"
+msgstr "URL Bedetheque"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_search
+msgid "Borrowed by"
+msgstr "Emprunté par"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__source__achete_ailleurs
+msgid "Bought elsewhere"
+msgstr "Acheté ailleurs"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__template_format__csv
+msgid "CSV"
+msgstr "CSV"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "CSV format"
+msgstr "Format CSV"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_import_wizard
+#: model:ir.ui.menu,name:comics_collections.menu_comic_import
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "CSV/Excel Import"
+msgstr "Import CSV/Excel"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "CSV/Excel import"
+msgstr "Import CSV/Excel"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml:0
+msgid "Camera unavailable"
+msgstr "Caméra indisponible"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_merge_wizard_form
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "Cannot delete:"
+msgstr "Suppression impossible :"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "Cannot merge an album with itself."
+msgstr "Impossible de fusionner un album avec lui-même."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__titre_canonique
+msgid "Canonical title"
+msgstr "Titre canonique"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Canonical title of the work"
+msgstr "Titre canonique de l'œuvre"
+
+#. module: comics_collections
+#: model:ir.ui.menu,name:comics_collections.menu_comic_catalogues
+msgid "Catalogs"
+msgstr "Catalogues"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_dedup_pair__reason__conflit_certain
+msgid "Certain conflict"
+msgstr "Conflit certain"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_search
+msgid "Certain conflicts"
+msgstr "Conflits certains"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_res_partner__is_comic_author
+#: model:ir.model.fields,help:comics_collections.field_res_users__is_comic_author
+msgid "Checked automatically as soon as the contact is credited on an album, or when created from the Authors menu."
+msgstr "Coché automatiquement dès que le contact est crédité sur un album, ou à la création depuis le menu Auteurs."
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_dedup_pair
+msgid ""
+"Click <b>Scan for duplicates</b> in the Action menu\n"
+"                to start detection."
+msgstr "Cliquez sur <b>Analyser les doublons</b> dans le menu Action pour lancer la détection."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Close"
+msgstr "Fermer"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml:0
+msgid "Close this window and enter the ISBN manually."
+msgstr "Fermez cette fenêtre et saisissez l'ISBN manuellement."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__url_club_be
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__url_club_be
+msgid "Club.be link"
+msgstr "Lien Club.be"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Club.be purchase URL"
+msgstr "URL d'achat Club.be"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml:0
+msgid "Code “"
+msgstr "Code « "
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+msgid "Collection"
+msgstr "Collection"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Collection value"
+msgstr "Valeur de la collection"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__collector
+msgid "Collector's edition"
+msgstr "Collector"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__color
+msgid "Color"
+msgstr "Couleur"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work_auteur_line__role__coloriste
+msgid "Colorist"
+msgstr "Coloriste"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Colorists, separated by ;, | or line break"
+msgstr "Coloristes, séparés par ;, | ou retour ligne"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Column"
+msgstr "Colonne"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Column %s"
+msgstr "Colonne %s"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__column_index
+msgid "Column index"
+msgstr "Index colonne"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__mapping_line_ids
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Column mapping"
+msgstr "Mapping des colonnes"
+
+#. module: comics_collections
+#: model:ir.module.category,name:comics_collections.module_category_comic_collection
+#: model:ir.ui.menu,name:comics_collections.menu_comic_root
+#: model:res.groups.privilege,name:comics_collections.privilege_comic_collection
+msgid "Comic Books"
+msgstr "Bandes Dessinées"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Comic album"
+msgstr "Album BD"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_pret
+msgid "Comic album loan"
+msgstr "Prêt d'un album BD"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__comic_work_ids
+#: model:ir.model.fields,field_description:comics_collections.field_res_users__comic_work_ids
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Comic albums"
+msgstr "Albums BD"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__is_comic_author
+#: model:ir.model.fields,field_description:comics_collections.field_res_users__is_comic_author
+msgid "Comic author"
+msgstr "Auteur BD"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__type__bd
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Comic book"
+msgstr "Bande dessinée"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Comic books"
+msgstr "Bandes dessinées"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_isbn
+msgid "Comic edition ISBN"
+msgstr "ISBN d'une édition BD"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_genre
+msgid "Comic genre"
+msgstr "Genre de bande dessinée"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_import_mapping_line
+msgid "Comic import mapping line"
+msgstr "Ligne de mapping d'import BD"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_import_wizard
+msgid "Comic import wizard"
+msgstr "Assistant d'import de bandes dessinées"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_editeur
+msgid "Comic publisher"
+msgstr "Éditeur de bandes dessinées"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__auteur_work_line_ids
+#: model:ir.model.fields,field_description:comics_collections.field_res_users__auteur_work_line_ids
+msgid "Comic roles"
+msgstr "Rôles BD"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_serie
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__comic_serie_ids
+#: model:ir.model.fields,field_description:comics_collections.field_res_users__comic_serie_ids
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Comic series"
+msgstr "Séries BD"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_work
+msgid "Comic work (canonical title)"
+msgstr "Œuvre BD (titre canonique)"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_work_auteur_line
+msgid "Comic work author"
+msgstr "Auteur d'une œuvre BD"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_edition
+msgid "Comic work edition"
+msgstr "Édition d'une œuvre BD"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_comics
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__type__comics
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Comics"
+msgstr "Comics"
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.cron_fill_missing_purchase_links_ir_actions_server
+msgid "Comics — Fill in missing purchase links"
+msgstr "BD — Compléter les liens d'achat manquants"
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.cron_remind_overdue_loans_ir_actions_server
+msgid "Comics — Overdue loan reminders"
+msgstr "BD — Rappel des prêts en retard"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__comicvine_id
+msgid "Comicvine ID"
+msgstr "Comicvine ID"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__commentaire
+msgid "Comment"
+msgstr "Commentaire"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Compact content (collection export)"
+msgstr "Contenu compact export collection"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__statut__terminee
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Completed"
+msgstr "Terminée"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "Completed: %(completed)s · Ongoing: %(ongoing)s"
+msgstr "%(completed)s complète(s) · %(ongoing)s en cours"
+
+#. module: comics_collections
+#: model:ir.ui.menu,name:comics_collections.menu_comic_config_root
+msgid "Configuration"
+msgstr "Configuration"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_merge_wizard_form
+msgid "Confirm merge"
+msgstr "Confirmer la fusion"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_res_partner
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__partner_id
+msgid "Contact"
+msgstr "Contact"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Continue"
+msgstr "Continuer"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__pays_id
+msgid "Country"
+msgstr "Pays"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__image_couverture
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__image_couverture
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__image_couverture
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__image_couverture
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__image_couverture
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "Cover"
+msgstr "Couverture"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Cover URL"
+msgstr "URL couverture"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Cover not downloaded: %s"
+msgstr "Couverture non téléchargée : %s"
+
+#. module: comics_collections
+#: model:ir.model,website_form_label:comics_collections.model_res_partner
+msgid "Create a Customer"
+msgstr "Créer un client"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__create_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__create_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_policier
+msgid "Crime"
+msgstr "Policier"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__currency_id
+msgid "Currency"
+msgstr "Devise"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_customer_album__currency_id
+msgid "Currency of the current company, used for the purchase price and the estimated value."
+msgstr "Devise de la société courante, utilisée pour le prix d'achat et la valeur estimée."
+
+#. module: comics_collections
+#: model:ir.actions.client,name:comics_collections.action_comic_collection_dashboard
+#: model:ir.ui.menu,name:comics_collections.menu_comic_dashboard
+msgid "Dashboard"
+msgstr "Tableau de bord"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__date_ajout
+msgid "Date added"
+msgstr "Date d'ajout"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Date in YYYY-MM-DD format"
+msgstr "Date au format YYYY-MM-DD"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Dates"
+msgstr "Dates"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__description
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_genre_form
+msgid "Description"
+msgstr "Description"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__numerique
+msgid "Digital"
+msgstr "Numérique"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__statut__abandonnee
+msgid "Discontinued"
+msgstr "Abandonnée"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__display_name
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Nom d'affichage"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__state__done
+msgid "Done"
+msgstr "Terminé"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Download errors"
+msgstr "Télécharger les erreurs"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Download template"
+msgstr "Télécharger le modèle"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__pair_id
+msgid "Duplicate pair"
+msgstr "Paire de doublons"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid ""
+"Duplicate title detected: \"%(other)s\" (Volume %(tome)s) already exists in this series with an identical title after normalization.\n"
+"If these are two different editions of the same album, open the existing album and add a version from the \"Other versions\" tab."
+msgstr ""
+"Titre dupliqué détecté : « %(other)s » (Tome %(tome)s) existe déjà dans cette série avec un titre identique après normalisation.\n"
+"Si ce sont deux éditions différentes du même album, ouvrez l'album existant et ajoutez une version depuis l'onglet « Autres versions »."
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__langue__nl
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+msgid "Dutch"
+msgstr "Néerlandais"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "EAN-13 ISBN, preferably without hyphens"
+msgstr "ISBN EAN-13, sans tirets de préférence"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Edit"
+msgstr "Modifier"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__edition_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__edition_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_form
+msgid "Edition"
+msgstr "Édition"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_edition
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__edition_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__edition_ids
+#: model:ir.ui.menu,name:comics_collections.menu_comic_editions
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+msgid "Editions"
+msgstr "Éditions"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__nb_editions_source
+msgid "Editions to transfer"
+msgstr "Éditions à transférer"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "Editions — %s"
+msgstr "Éditions — %s"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__langue__en
+msgid "English"
+msgstr "Anglais"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__error_report_file
+msgid "Error report"
+msgstr "Rapport d'erreurs"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__error_report_filename
+msgid "Error report name"
+msgstr "Nom du rapport d'erreurs"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__valeur_estimee
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "Estimated value"
+msgstr "Valeur estimée"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__date_retour_prevue
+msgid "Expected return date"
+msgstr "Date retour prévue"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Expected technical values: non_lu, en_cours, lu."
+msgstr "Valeurs techniques attendues : non_lu, en_cours, lu."
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Export (CSV)"
+msgstr "Exporter (CSV)"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__url_fnac_be
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__url_fnac_be
+msgid "FNAC.be link"
+msgstr "Lien FNAC.be"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "FNAC.be purchase URL"
+msgstr "URL d'achat FNAC.be"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_fantastique
+msgid "Fantasy"
+msgstr "Fantastique"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__import_file
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "File to import"
+msgstr "Fichier à importer"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__first_edition_cover_id
+msgid "First Edition Cover"
+msgstr "Couverture de l'édition principale"
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_wishlist
+msgid ""
+"Follow a series to see the volumes you are missing, or add\n"
+"                an album to your wishlist yourself from your library."
+msgstr "Suivez une série pour y voir les tomes qui vous manquent, ou ajoutez vous-même un album à votre wishlist depuis votre bibliothèque."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__a_suivre
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_list
+msgid "Followed"
+msgstr "Suivie"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__suivi_user_ids
+msgid "Followed by"
+msgstr "Suivie par"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_follower_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_follower_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_follower_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_follower_ids
+msgid "Followers"
+msgstr "Abonnés"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_partner_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_partner_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_partner_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Abonnés (Partenaires)"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__activity_type_icon
+#: model:ir.model.fields,help:comics_collections.field_comic_pret__activity_type_icon
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__activity_type_icon
+#: model:ir.model.fields,help:comics_collections.field_comic_work__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "Icône Font Awesome, par ex. fa-tasks"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__format
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__format
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+msgid "Format"
+msgstr "Format"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Format: broche, cartonne, integrale, collector, numerique or autre"
+msgstr "Format : broche, cartonne, integrale, collector, numerique ou autre"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_form
+msgid "Free notes…"
+msgstr "Notes libres…"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__langue__fr
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+msgid "French"
+msgstr "Français"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__comic_coauthors_html
+#: model:ir.model.fields,field_description:comics_collections.field_res_users__comic_coauthors_html
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Frequent collaborators"
+msgstr "A souvent travaillé avec"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Generate links from ISBN"
+msgstr "Générer les liens depuis l'ISBN"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Generate purchase links from the main ISBN?"
+msgstr "Générer les liens d'achat depuis l'ISBN principal ?"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_form
+msgid "Generate purchase links from the main ISBN? Existing links will be overwritten."
+msgstr "Générer les liens d'achat depuis l'ISBN principal ? Les liens existants seront écrasés."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__template_file
+msgid "Generated file"
+msgstr "Fichier généré"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__genre_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__genre_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__genre_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_genre_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Genre"
+msgstr "Genre"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_genre
+#: model:ir.ui.menu,name:comics_collections.menu_comic_genres
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_genre_list
+msgid "Genres"
+msgstr "Genres"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__langue__de
+msgid "German"
+msgstr "Allemand"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__source__cadeau
+msgid "Gift"
+msgstr "Cadeau"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid ""
+"Grand total\n"
+"                                        ("
+msgstr ""
+"Total général\n"
+"                                        ("
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__cartonne
+msgid "Hardcover"
+msgstr "Cartonné"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__has_cover
+msgid "Has Cover"
+msgstr "A une couverture"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__has_message
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__has_message
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__has_message
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__has_message
+msgid "Has Message"
+msgstr "A un message"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_historique
+msgid "Historical"
+msgstr "Historique"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_horreur
+msgid "Horror"
+msgstr "Horreur"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_humour
+msgid "Humour"
+msgstr "Humour"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "I have it"
+msgstr "Je l'ai"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "I have it: add to my collection"
+msgstr "Je l'ai : ajouter à ma collection"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__id
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__id
+msgid "ID"
+msgstr "ID"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "ISBN"
+msgstr "ISBN"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__isbn_10
+msgid "ISBN-10"
+msgstr "ISBN-10"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__isbn_13
+msgid "ISBN-13 (EAN-13)"
+msgstr "ISBN-13 (EAN-13)"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__isbn_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__isbn_ids
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "ISBNs"
+msgstr "ISBNs"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_exception_icon
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_exception_icon
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_exception_icon
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_exception_icon
+msgid "Icon"
+msgstr "Icône"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__activity_exception_icon
+#: model:ir.model.fields,help:comics_collections.field_comic_pret__activity_exception_icon
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__activity_exception_icon
+#: model:ir.model.fields,help:comics_collections.field_comic_work__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "Icône pour indiquer une activité d'exception."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_form
+msgid "Identification"
+msgstr "Identification"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__message_needaction
+#: model:ir.model.fields,help:comics_collections.field_comic_pret__message_needaction
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__message_needaction
+#: model:ir.model.fields,help:comics_collections.field_comic_work__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si coché, de nouveaux messages demandent votre attention."
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__message_has_error
+#: model:ir.model.fields,help:comics_collections.field_comic_pret__message_has_error
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__message_has_error
+#: model:ir.model.fields,help:comics_collections.field_comic_work__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si coché, certains messages ont une erreur d'envoi."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "Ignore"
+msgstr "Ignorer"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+msgid "Ignore this volume"
+msgstr "Ignorer ce tome"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "Ignore this volume (don't buy)"
+msgstr "Ignorer ce tome (ne pas acheter)"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__ignored
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_search
+msgid "Ignored"
+msgstr "Ignoré"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__ignore_wishlist
+msgid "Ignored in wishlist"
+msgstr "Ignoré dans la wishlist"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Import"
+msgstr "Importer"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Import a file"
+msgstr "Importer un fichier"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Import template"
+msgstr "Modèle d'import"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__import_filename
+msgid "Imported file name"
+msgstr "Nom du fichier importé"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__dans_collection
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "In collection"
+msgstr "Dans la collection"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__in_my_collection
+msgid "In my collection"
+msgstr "Dans ma collection"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__in_my_wishlist
+msgid "In my wishlist"
+msgstr "Dans ma wishlist"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__dans_wishlist
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "In wishlist"
+msgstr "En wishlist"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work_auteur_line__role__encreur
+msgid "Inker"
+msgstr "Encreur"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Instruction"
+msgstr "Instruction"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Invalid ISBN \"%s\" (check digit): album imported without ISBN."
+msgstr "ISBN « %s » invalide (clé de contrôle) : album importé sans ISBN."
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Inventory (PDF)"
+msgstr "Inventaire (PDF)"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_is_follower
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_is_follower
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_is_follower
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_is_follower
+msgid "Is Follower"
+msgstr "Est un abonné"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__langue
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__langue
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+msgid "Language"
+msgstr "Langue"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Language: fr, nl, en, de or autre"
+msgstr "Langue : fr, nl, en, de ou autre"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__write_uid
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_isbn__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__write_date
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__date_depot_legal
+msgid "Legal deposit"
+msgstr "Dépôt légal"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Legal deposit date in YYYY-MM-DD format"
+msgstr "Date de dépôt légal au format YYYY-MM-DD"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Lent"
+msgstr "Prêtés"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_form
+msgid "Lent album"
+msgstr "Album prêté"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__partner_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_list
+msgid "Lent to"
+msgstr "Prêté à"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__customer_album_ids
+msgid "Libraries"
+msgstr "Bibliothèques"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "Library"
+msgstr "Bibliothèque"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__customer_album_ids
+msgid "Library entries (customers and users) that own or follow this album."
+msgstr "Entrées de bibliothèque (clients et utilisateurs) qui possèdent ou suivent cet album."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Line %(line)s: %(text)s"
+msgstr "Ligne %(line)s : %(text)s"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Links"
+msgstr "Liens"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_form
+msgid "Loan"
+msgstr "Prêt"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__date_pret
+msgid "Loan date"
+msgstr "Date de prêt"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_pret
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__pret_ids
+#: model:ir.ui.menu,name:comics_collections.menu_comic_prets
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_list
+msgid "Loans"
+msgstr "Prêts"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__pret_ids
+msgid "Loans of this album (private: access rules only show your own)."
+msgstr "Prêts de cet album (privés : les règles d'accès ne montrent que les siens)."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__primary_edition_id
+msgid "Main edition"
+msgstr "Édition principale"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Main genre"
+msgstr "Genre principal"
+
+#. module: comics_collections
+#: model:res.groups,name:comics_collections.group_comic_manager
+msgid "Manager"
+msgstr "Gestionnaire"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_manga
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__type__manga
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Manga"
+msgstr "Manga"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__state__mapping
+msgid "Mapping"
+msgstr "Mapping"
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.action_serie_mark_suivie
+msgid "Mark as Followed Series"
+msgstr "Marquer comme Série Suivie"
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.action_work_mark_lu
+msgid "Mark as Read"
+msgstr "Marquer comme Lu"
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.action_work_mark_en_cours
+msgid "Mark as Reading"
+msgstr "Marquer comme En cours"
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.action_work_mark_non_lu
+msgid "Mark as Unread"
+msgstr "Marquer comme Non lu"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+msgid "Merge A → B"
+msgstr "Fusionner A → B"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+msgid "Merge B → A"
+msgstr "Fusionner B → A"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_dedup_pair.py:0
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_merge_wizard_form
+msgid "Merge two albums"
+msgstr "Fusionner deux albums"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_work_merge_wizard
+msgid "Merge two comic albums"
+msgstr "Fusion de deux albums BD"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "Merge: \"%(src)s\" (ID %(sid)s) merged into this album. %(n)d edition(s) transferred. The source album has been archived."
+msgstr "Fusion : « %(src)s » (ID %(sid)s) intégré ici. %(n)d édition(s) transférée(s). L'album source a été archivé."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_has_error
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_has_error
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_has_error
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_has_error
+msgid "Message Delivery error"
+msgstr "Erreur d'envoi du message"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_ids
+msgid "Messages"
+msgstr "Messages"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_wishlist_item__type__manque
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
+msgid "Missing"
+msgstr "Manque"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_customer_album__ignore_wishlist
+msgid "Missing volume of a followed series that the user does not want (\"do not buy\"): it no longer appears among the missing albums of their wishlist."
+msgstr "Tome manquant d'une série suivie que l'utilisateur ne veut pas (« ne pas acheter ») : il n'apparaît plus dans les manques de sa wishlist."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__my_activity_date_deadline
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__my_activity_date_deadline
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_activity_date_deadline
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "Échéance de mon activité"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_work
+#: model:ir.ui.menu,name:comics_collections.menu_comic_albums
+msgid "My Albums"
+msgstr "Mes albums"
+
+#. module: comics_collections
+#: model:ir.ui.menu,name:comics_collections.menu_comic_collection
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "My Collection"
+msgstr "Ma Collection"
+
+#. module: comics_collections
+#: model:ir.actions.report,name:comics_collections.action_report_comic_collection_inventory
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "My Collection Inventory"
+msgstr "Inventaire de ma collection"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_my_library
+#: model:ir.ui.menu,name:comics_collections.menu_comic_my_library
+msgid "My Library"
+msgstr "Ma bibliothèque"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_serie
+#: model:ir.ui.menu,name:comics_collections.menu_comic_series
+msgid "My Series"
+msgstr "Mes séries"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_wishlist
+#: model:ir.ui.menu,name:comics_collections.menu_comic_wishlist
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "My Wishlist"
+msgstr "Ma wishlist"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_form
+msgid "My collection"
+msgstr "Ma collection"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "My followed series"
+msgstr "Mes séries suivies"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_genre__name
+msgid "Name"
+msgstr "Nom"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__release_notified
+msgid "New release notified"
+msgstr "Nouveauté notifiée"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "New volume in a series you follow: <strong>%(serie)s%(tome)s</strong> — %(title)s (released on %(date)s)."
+msgstr "Nouveau tome dans une série que vous suivez : <strong>%(serie)s%(tome)s</strong> — %(title)s (parution le %(date)s)."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_date_deadline
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_date_deadline
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_date_deadline
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "Date limite de l'activité à venir"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_summary
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_summary
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_summary
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_summary
+msgid "Next Activity Summary"
+msgstr "Résumé de l'activité suivante"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_type_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_type_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_type_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_type_id
+msgid "Next Activity Type"
+msgstr "Type de la prochaine activité"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+msgid "No"
+msgstr "Non"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "No albums owned."
+msgstr "Aucun album possédé."
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_dedup_pair
+msgid "No duplicates found."
+msgstr "Aucun doublon trouvé."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "No error report is available."
+msgstr "Aucun rapport d'erreurs n'est disponible."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "No errors."
+msgstr "Aucune erreur."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_customer_album.py:0
+msgid "No genre"
+msgstr "Sans genre"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/res_partner.py:0
+msgid "No known co-author."
+msgstr "Aucun co-auteur connu."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__suivi_exclu_user_ids
+msgid "No longer following"
+msgstr "Ne suit plus"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__0
+msgid "No rating"
+msgstr "Pas de note"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_customer_album.py:0
+msgid "No series"
+msgstr "Sans série"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "No usable XLSX sheet was found."
+msgstr "Aucune feuille XLSX exploitable n'a été trouvée."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "No usable row was found in the file."
+msgstr "Aucune ligne exploitable n'a été trouvée dans le fichier."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "No. of authors"
+msgstr "Nb auteurs"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "None overdue"
+msgstr "Aucun retard"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__name_normalise
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__titre_normalise
+msgid "Normalized title"
+msgstr "Titre normalisé"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+msgid "Not a duplicate"
+msgstr "Pas un doublon"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__notes
+msgid "Notes"
+msgstr "Notes"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_needaction_counter
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_needaction_counter
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_needaction_counter
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Nombre d'actions"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__nb_isbn
+msgid "Number of ISBNs"
+msgstr "Nb ISBN"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__comic_work_count
+msgid "Number of albums"
+msgstr "Nb albums"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "Number of albums:"
+msgstr "Nombre d'albums :"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__nb_auteurs
+msgid "Number of authors"
+msgstr "Nb auteurs"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__comic_work_count
+#: model:ir.model.fields,field_description:comics_collections.field_res_users__comic_work_count
+msgid "Number of comic albums"
+msgstr "Nb albums BD"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_res_partner__comic_serie_count
+#: model:ir.model.fields,field_description:comics_collections.field_res_users__comic_serie_count
+msgid "Number of comic series"
+msgstr "Nb séries BD"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__nb_editions
+msgid "Number of editions"
+msgstr "Nb éditions"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_has_error_counter
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__message_has_error_counter
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__message_has_error_counter
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_has_error_counter
+msgid "Number of errors"
+msgstr "Nombre d'erreurs"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__message_needaction_counter
+#: model:ir.model.fields,help:comics_collections.field_comic_pret__message_needaction_counter
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__message_needaction_counter
+#: model:ir.model.fields,help:comics_collections.field_comic_work__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Nombre de messages nécessitant une action"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__message_has_error_counter
+#: model:ir.model.fields,help:comics_collections.field_comic_pret__message_has_error_counter
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__message_has_error_counter
+#: model:ir.model.fields,help:comics_collections.field_comic_work__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Nombre de messages avec des erreurs d'envoi"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__nb_pages
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__nb_pages
+msgid "Number of pages"
+msgstr "Nombre de pages"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__comic_serie_count
+msgid "Number of series"
+msgstr "Nb séries"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__integrale
+msgid "Omnibus"
+msgstr "Intégrale"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__type__one_shot
+msgid "One-shot"
+msgstr "One-shot"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__statut__en_cours
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Ongoing"
+msgstr "En cours"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__openlibrary_id
+msgid "Open Library ID"
+msgstr "Open Library ID"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__autre
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__langue__autre
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work_auteur_line__role__autre
+msgid "Other"
+msgstr "Autre"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Other versions"
+msgstr "Autres versions"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__en_retard
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_search
+msgid "Overdue"
+msgstr "En retard"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_pret.py:0
+msgid "Overdue loan: get the album back"
+msgstr "Prêt en retard : récupérer l'album"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "Overdue loans"
+msgstr "Prêts en retard"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__partner_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "Owner"
+msgstr "Propriétaire"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__broche
+msgid "Paperback"
+msgstr "Broché"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__partner_id
+msgid "Partner"
+msgstr "Partenaire"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_customer_album
+msgid "Personal library — album"
+msgstr "Bibliothèque personnelle — album"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_form
+msgid "Personal notes..."
+msgstr "Notes personnelles..."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Please map at least one column."
+msgstr "Veuillez mapper au moins une colonne."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Please select a file to import."
+msgstr "Veuillez sélectionner un fichier à importer."
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_dedup_pair__reason__doublon_possible
+msgid "Possible duplicate"
+msgstr "Doublon possible"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_dedup_pair
+#: model:ir.ui.menu,name:comics_collections.menu_comic_dedup
+msgid "Potential Duplicates"
+msgstr "Doublons potentiels"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_dedup_pair
+msgid "Potential duplicate pair"
+msgstr "Paire de doublons potentiels"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+msgid "Potential duplicates"
+msgstr "Doublons potentiels"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__preview_html
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__state__preview
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_import_wizard_form
+msgid "Preview"
+msgstr "Prévisualisation"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_dedup_pair__reason__doublon_probable
+msgid "Probable duplicate"
+msgstr "Doublon probable"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_search
+msgid "Probable duplicates"
+msgstr "Doublons probables"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Provided Excel file"
+msgstr "Excel fourni"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__editeur_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__editeur_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__editeur_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Publisher"
+msgstr "Éditeur"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
+msgid "Publisher name"
+msgstr "Nom de l'éditeur"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_editeur
+#: model:ir.ui.menu,name:comics_collections.menu_comic_editeurs
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_list
+msgid "Publishers"
+msgstr "Éditeurs"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Purchase links"
+msgstr "Liens d'achat"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__prix_achat
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "Purchase price"
+msgstr "Prix d'achat"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Rate your albums in “My Library” to see your favourite series here."
+msgstr "Notez vos albums dans « Ma bibliothèque » pour voir apparaître vos séries préférées."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__note
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "Rating"
+msgstr "Note"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__note_etoiles
+msgid "Rating (stars)"
+msgstr "Note (étoiles)"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Rating between 0 and 5"
+msgstr "Note entre 0 et 5"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Rating ≥ 3★"
+msgstr "Note ≥ 3★"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Rating ≥ 4★"
+msgstr "Note ≥ 4★"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__rating_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__rating_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__rating_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__rating_ids
+msgid "Ratings"
+msgstr "Notes"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__etat_lecture__lu
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "Read"
+msgstr "Lu"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__etat_lecture__en_cours
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "Reading"
+msgstr "En cours"
+
+#. module: comics_collections
+#. odoo-javascript
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__etat_lecture
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "Reading status"
+msgstr "État de lecture"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Recently added"
+msgstr "Derniers ajouts"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "References"
+msgstr "Références"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__date_parution
+msgid "Release"
+msgstr "Parution"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__date_parution
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__date_parution
+msgid "Release date"
+msgstr "Date de parution"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
+msgid "Released"
+msgstr "Parus"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "Remove"
+msgstr "Retirer"
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.action_serie_unmark_suivie
+msgid "Remove from Followed Series"
+msgstr "Retirer des Séries Suivies"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "Remove from my wishlist"
+msgstr "Retirer de ma wishlist"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__result_html
+msgid "Report"
+msgstr "Rapport"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__activity_user_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__activity_user_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__activity_user_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__activity_user_id
+msgid "Responsible User"
+msgstr "Utilisateur responsable"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_list
+msgid "Return"
+msgstr "Retourner"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__retourne
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_search
+msgid "Returned"
+msgstr "Retourné"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__role
+msgid "Role"
+msgstr "Rôle"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_romance
+msgid "Romance"
+msgstr "Romance"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__sample_value
+msgid "Sample"
+msgstr "Exemple"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/isbn_scan/isbn_scan_field.xml:0
+msgid "Scan ISBN"
+msgstr "Scanner l'ISBN"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml:0
+msgid "Scan an ISBN"
+msgstr "Scanner un ISBN"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_dedup_pair.py:0
+msgid "Scan complete: %(n)d potential duplicate pair(s) found."
+msgstr "Analyse terminée : %(n)d paire(s) de doublons potentiels trouvée(s)."
+
+#. module: comics_collections
+#: model:ir.actions.server,name:comics_collections.action_comic_dedup_scan
+msgid "Scan for duplicates"
+msgstr "Analyser les doublons"
+
+#. module: comics_collections
+#: model:comic.genre,name:comics_collections.genre_science_fiction
+msgid "Science fiction"
+msgstr "Science-Fiction"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__score
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+msgid "Score"
+msgstr "Score"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_search
+msgid "Search"
+msgstr "Rechercher"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Search albums"
+msgstr "Rechercher un album"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+msgid "Search editions"
+msgstr "Rechercher une édition"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_search
+msgid "Search loans"
+msgstr "Rechercher un prêt"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Separate several authors with a semicolon, a vertical bar or a line break in scenariste, dessinateur or coloriste. Commas are kept in names."
+msgstr "Séparer plusieurs auteurs par point-virgule, barre verticale ou retour ligne dans scenariste, dessinateur ou coloriste. Les virgules sont conservées dans les noms."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__sequence
+msgid "Sequence"
+msgstr "Séquence"
+
+#. module: comics_collections
+#. odoo-javascript
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+#: code:addons/comics_collections/utils/author_tables.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__serie_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__comic_serie_ids
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__serie_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__serie_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__serie_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Series"
+msgstr "Série"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__serie_ids
+msgid "Series (main publisher)"
+msgstr "Séries (éditeur principal)"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Series name"
+msgstr "Nom de la série"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+msgid "Series title"
+msgstr "Titre de la série"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__serie_type
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Series type"
+msgstr "Type de série"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_serie.py:0
+msgid "Series — %s"
+msgstr "Séries — %s"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Series…"
+msgstr "Série…"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__import_policy__skip
+msgid "Skip albums already present"
+msgstr "Ignorer les albums déjà présents"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__source
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "Source"
+msgstr "Source"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_merge_wizard_form
+msgid "Source album (archived)"
+msgstr "Album source (archivé)"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__source_work_id
+msgid "Source album (will be archived)"
+msgstr "Album source (sera archivé)"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_dedup_wizard.py:0
+msgid "Source and target must be two different albums."
+msgstr "Source et cible doivent être deux albums différents."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__column_name
+msgid "Source column"
+msgstr "Colonne source"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Source example"
+msgstr "Exemple source"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_customer_album__note_etoiles
+msgid "Star input of the rating; the decimal rating remains the only stored value."
+msgstr "Saisie en étoiles de la note ; la note décimale reste la seule valeur enregistrée."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__state
+msgid "State"
+msgstr "État"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__statut
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Status"
+msgstr "Statut"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__activity_state
+#: model:ir.model.fields,help:comics_collections.field_comic_pret__activity_state
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__activity_state
+#: model:ir.model.fields,help:comics_collections.field_comic_work__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"Statut basé sur les activités\n"
+"En retard : la date d'échéance est déjà dépassée\n"
+"Aujourd'hui : la date de l'activité est aujourd'hui\n"
+"Planifiée : activités futures."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "Subtotal"
+msgstr "Sous-total"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Summary or back-cover text"
+msgstr "Résumé ou quatrième de couverture"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__synopsis
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__synopsis
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__synopsis
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "Synopsis"
+msgstr "Synopsis"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_merge_wizard_form
+msgid "Target album (kept)"
+msgstr "Album cible (conservé)"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_merge_wizard__target_work_id
+msgid "Target album (will be kept)"
+msgstr "Album cible (sera conservé)"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__target_field
+msgid "Target field"
+msgstr "Champ cible"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__template_format
+msgid "Template format"
+msgstr "Format du modèle"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__template_filename
+msgid "Template name"
+msgstr "Nom du modèle"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_merge_wizard_form
+msgid ""
+"The <b>source</b> album will be archived. Its editions and authors\n"
+"                        will be transferred to the <b>target</b> album.\n"
+"                        This operation is <b>irreversible</b> (except by manual restore)."
+msgstr "L'album <b>source</b> sera archivé. Ses éditions et auteurs seront transférés vers l'album <b>cible</b>. Cette opération est <b>irréversible</b> (sauf restauration manuelle)."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_pret.py:0
+msgid "The actual return date cannot be earlier than the loan date."
+msgstr "La date de retour réelle ne peut pas précéder la date de prêt."
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/isbn_scan/isbn_scan_dialog.js:0
+msgid "The camera is not accessible (permission denied or insecure connection)."
+msgstr "La caméra n'est pas accessible (autorisation refusée ou connexion non sécurisée)."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_pret.py:0
+msgid "The expected return date cannot be earlier than the loan date."
+msgstr "La date de retour prévue ne peut pas précéder la date de prêt."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "The file Albums_Collection_En_Ligne.xlsx contains the columns N° and Contenu. The Contenu column must be split into series, volume, title, release date and publisher before import."
+msgstr "Le fichier Albums_Collection_En_Ligne.xlsx contient les colonnes N° et Contenu. La colonne Contenu doit être éclatée vers série, tome, titre, date de parution et éditeur avant import."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "The file does not contain any row."
+msgstr "Le fichier ne contient aucune ligne."
+
+#. module: comics_collections
+#: model:ir.model.constraint,message:comics_collections.constraint_comic_isbn_unique_isbn13
+msgid "This ISBN-13 is already registered for another edition."
+msgstr "Cet ISBN-13 est déjà enregistré pour une autre édition."
+
+#. module: comics_collections
+#: model:ir.model.constraint,message:comics_collections.constraint_comic_customer_album_unique_partner_edition
+msgid "This album is already in this library."
+msgstr "Cet album figure déjà dans cette bibliothèque."
+
+#. module: comics_collections
+#: model:ir.model.constraint,message:comics_collections.constraint_comic_dedup_pair_unique_pair
+msgid "This pair is already registered."
+msgstr "Cette paire est déjà enregistrée."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__work_id
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__name
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__work_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Title"
+msgstr "Titre"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "To get back"
+msgstr "À récupérer"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_search
+msgid "To process"
+msgstr "À traiter"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Top-rated series"
+msgstr "Séries les mieux notées"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Topic"
+msgstr "Sujet"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_list
+msgid "Total estimated value"
+msgstr "Valeur estimée totale"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_list
+msgid "Total purchase price"
+msgstr "Prix d'achat total"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__nb_works_total
+msgid "Total volumes"
+msgstr "Tomes au total"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work_auteur_line__role__traducteur
+msgid "Translator"
+msgstr "Traducteur"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_work__release_notified
+msgid "True once the \"new volume\" alert has been sent to the followers of the series (or skipped for lack of followers): the album is never processed again."
+msgstr "Vrai une fois l'alerte « nouveau tome » envoyée aux abonnés de la série (ou écartée faute d'abonnés) : l'album n'est jamais retraité."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_dedup_pair__reason
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__type
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__type
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
+msgid "Type"
+msgstr "Type"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_edition__activity_exception_decoration
+#: model:ir.model.fields,help:comics_collections.field_comic_pret__activity_exception_decoration
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__activity_exception_decoration
+#: model:ir.model.fields,help:comics_collections.field_comic_work__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "Type de l'activité d'exception sur l'enregistrement."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__slug
+msgid "URL slug"
+msgstr "Slug URL"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "Unfollow this series"
+msgstr "Ne plus suivre cette série"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
+msgid "Unfollow this series?"
+msgstr "Ne plus suivre cette série ?"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__source__inconnu
+msgid "Unknown"
+msgstr "Inconnu"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__etat_lecture__non_lu
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+msgid "Unread"
+msgstr "Non lu"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_pret.py:0
+msgid "Unsupported operator for \"Overdue\"."
+msgstr "Opérateur non supporté pour « En retard »."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
+msgid "Upcoming"
+msgstr "À paraître"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__import_policy__update
+msgid "Update existing albums"
+msgstr "Mettre à jour les albums existants"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__state__draft
+msgid "Upload"
+msgstr "Upload"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Use UTF-8 encoding and the semicolon (;) separator."
+msgstr "Utiliser un encodage UTF-8 et le séparateur point-virgule (;)."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Use YYYY-MM-DD. If the source only contains MM/YYYY, use the first day of the month, for example 05/1985 -> 1985-05-01."
+msgstr "Utiliser YYYY-MM-DD. Si la source contient seulement MM/YYYY, mettre le premier jour du mois, par exemple 05/1985 -> 1985-05-01."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__user_id
+#: model:res.groups,name:comics_collections.group_comic_user
+msgid "User"
+msgstr "Utilisateur"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_form
+msgid "Value"
+msgstr "Valeur"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Valued albums"
+msgstr "Albums valorisés"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_list
+msgid "Versions"
+msgstr "Versions"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "View my collection"
+msgstr "Voir ma collection"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__tome
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__tome
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_list
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
+msgid "Vol."
+msgstr "T°"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "Vol. %s"
+msgstr "T%s"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__tome
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work_auteur_line__tome
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "Volume"
+msgstr "Tome"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Volume number"
+msgstr "Numéro du tome"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_list
+msgid "Volumes"
+msgstr "Tomes"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__site_web
+msgid "Website"
+msgstr "Site web"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__wikidata_id
+msgid "Wikidata ID"
+msgstr "Wikidata ID"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_wishlist_item__type__souhait
+msgid "Wish"
+msgstr "Souhait"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
+msgid "Wishes"
+msgstr "Souhaits"
+
+#. module: comics_collections
+#. odoo-javascript
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+#: code:addons/comics_collections/models/comic_work.py:0
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
+msgid "Wishlist"
+msgstr "Wishlist"
+
+#. module: comics_collections
+#: model:ir.model,name:comics_collections.model_comic_wishlist_item
+msgid "Wishlist — missing album or wish"
+msgstr "Wishlist — manque ou souhait"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Wishlist: 1 = to acquire, 0 = already owned"
+msgstr "Wishlist : 1 = à acquérir, 0 = déjà possédé"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Without ISBN"
+msgstr "Sans ISBN"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Without cover"
+msgstr "Sans couverture"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+msgid "Without cover image"
+msgstr "Sans image couverture"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
+msgid "Without edition"
+msgstr "Sans édition"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__wizard_id
+msgid "Wizard"
+msgstr "Assistant"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__work_id
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_form
+msgid "Work"
+msgstr "Œuvre"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_search
+msgid "Work / Title"
+msgstr "Œuvre / Titre"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work_auteur_line__role__scenariste
+msgid "Writer"
+msgstr "Scénariste"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "Writers, separated by ;, | or line break"
+msgstr "Scénaristes, séparés par ;, | ou retour ligne"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "XLS import requires the xlrd Python library. Convert the file to XLSX or install xlrd on the server."
+msgstr "L'import XLS nécessite la bibliothèque Python xlrd. Convertissez le fichier en XLSX ou installez xlrd côté serveur."
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__template_format__xlsx
+msgid "XLSX"
+msgstr "XLSX"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/controllers/main.py:0
+msgid "Yes"
+msgstr "Oui"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_wishlist_item.py:0
+msgid "You can only modify your own wishlist."
+msgstr "Vous ne pouvez modifier que votre propre wishlist."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_customer_album.py:0
+msgid "Your collection is empty: no album to inventory."
+msgstr "Votre collection est vide : aucun album à inventorier."
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_my_library
+msgid "Your library is empty."
+msgstr "Votre bibliothèque est vide."
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
+msgid "Your library is still empty"
+msgstr "Votre bibliothèque est encore vide"
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_wishlist
+msgid "Your wishlist is empty."
+msgstr "Votre wishlist est vide."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "album"
+msgstr "album"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
+msgid "albums"
+msgstr "albums"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "description"
+msgstr "description"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "name"
+msgstr "nom"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "the title or the series is required"
+msgstr "le titre ou la série est obligatoire"
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/wizards/comic_import_wizard.py:0
+msgid "url_club_be and url_amazon_be are optional; they can also be filled in later by the weekly purchase-links job."
+msgstr "url_club_be et url_amazon_be sont optionnels ; ils pourront aussi être complétés plus tard par la tâche hebdomadaire des liens d'achat."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+msgid "volumes"
+msgstr "tomes"
+
+#. module: comics_collections
+#. odoo-javascript
+#: code:addons/comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml:0
+msgid ""
+"” ignored: this is not an ISBN\n"
+"                    (EAN-13 starting with 978 or 979)."
+msgstr " » ignoré : ce n'est pas un ISBN (EAN-13 commençant par 978 ou 979)."

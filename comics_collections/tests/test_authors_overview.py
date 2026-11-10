@@ -34,8 +34,8 @@ class TestAuthorsOverview(TransactionCase):
         self.assertEqual(set(self.serie.auteur_ids), {self.leo, self.rodolphe, self.icar})
         names = self.serie.auteur_names
         self.assertEqual(names.count("Leo"), 1, "Chaque auteur une seule fois")
-        self.assertIn("Leo (Scénariste, Dessinateur)", names)
-        self.assertIn("Rodolphe (Scénariste)", names)
+        self.assertIn("Leo (Writer, Artist)", names)
+        self.assertIn("Rodolphe (Writer)", names)
 
     def test_coauthors_sorted_by_shared_albums(self):
         html = str(self.leo.comic_coauthors_html)
@@ -46,4 +46,4 @@ class TestAuthorsOverview(TransactionCase):
         # Auteurs et séries cliquables
         self.assertIn(f"/odoo/res.partner/{self.rodolphe.id}", html)
         self.assertIn(f'/odoo/comic.serie/{self.serie.id}">Aldébaran Test</a>', html)
-        self.assertIn("Aucun co-auteur", str(self.env["res.partner"].create({"name": "Solo"}).comic_coauthors_html))
+        self.assertIn("No known co-author", str(self.env["res.partner"].create({"name": "Solo"}).comic_coauthors_html))

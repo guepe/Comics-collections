@@ -6,7 +6,7 @@
         <field name="name">comic.dedup.pair.list</field>
         <field name="model">comic.dedup.pair</field>
         <field name="arch" type="xml">
-            <list string="Doublons potentiels" default_order="score desc"
+            <list string="Potential duplicates" default_order="score desc"
                   decoration-muted="ignored == True"
                   decoration-danger="reason == 'conflit_certain'"
                   decoration-warning="reason == 'doublon_probable'">
@@ -14,19 +14,19 @@
                 <field name="reason" string="Type"/>
                 <field name="work_a_id" string="Album A"/>
                 <field name="work_b_id" string="Album B"/>
-                <field name="ignored" string="Ignoré" optional="hide"/>
+                <field name="ignored" string="Ignored" optional="hide"/>
                 <button name="action_open_merge_wizard"
-                        string="Fusionner A → B"
+                        string="Merge A → B"
                         type="object"
                         class="btn-primary btn-sm"
                         invisible="ignored == True"/>
                 <button name="action_open_merge_wizard_reverse"
-                        string="Fusionner B → A"
+                        string="Merge B → A"
                         type="object"
                         class="btn-primary btn-sm"
                         invisible="ignored == True"/>
                 <button name="action_ignore"
-                        string="Pas un doublon"
+                        string="Not a duplicate"
                         type="object"
                         class="btn-secondary btn-sm"
                         invisible="ignored == True"/>
@@ -39,16 +39,16 @@
         <field name="name">comic.dedup.pair.search</field>
         <field name="model">comic.dedup.pair</field>
         <field name="arch" type="xml">
-            <search string="Rechercher">
+            <search string="Search">
                 <field name="work_a_id" string="Album A"/>
                 <field name="work_b_id" string="Album B"/>
                 <separator/>
-                <filter string="À traiter" name="a_traiter" domain="[('ignored', '=', False)]"/>
-                <filter string="Ignorés" name="ignores" domain="[('ignored', '=', True)]"/>
+                <filter string="To process" name="a_traiter" domain="[('ignored', '=', False)]"/>
+                <filter string="Ignored" name="ignores" domain="[('ignored', '=', True)]"/>
                 <separator/>
-                <filter string="Conflits certains" name="certains"
+                <filter string="Certain conflicts" name="certains"
                         domain="[('reason', '=', 'conflit_certain')]"/>
-                <filter string="Doublons probables" name="probables"
+                <filter string="Probable duplicates" name="probables"
                         domain="[('reason', '=', 'doublon_probable')]"/>
             </search>
         </field>
@@ -56,7 +56,7 @@
 
     <!-- ── Action lancer le scan (serveur) ───────────────────────────────────── -->
     <record id="action_comic_dedup_scan" model="ir.actions.server">
-        <field name="name">Analyser les doublons</field>
+        <field name="name">Scan for duplicates</field>
         <field name="model_id" ref="model_comic_dedup_pair"/>
         <field name="binding_model_id" ref="model_comic_dedup_pair"/>
         <field name="state">code</field>
@@ -66,7 +66,7 @@
 
     <!-- ── Action fenêtre doublons ────────────────────────────────────────────── -->
     <record id="action_comic_dedup_pair" model="ir.actions.act_window">
-        <field name="name">Doublons potentiels</field>
+        <field name="name">Potential Duplicates</field>
         <field name="res_model">comic.dedup.pair</field>
         <field name="view_mode">list</field>
         <field name="search_view_id" ref="view_comic_dedup_pair_search"/>
@@ -74,11 +74,11 @@
         <field name="context">{'search_default_a_traiter': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Aucun doublon trouvé.
+                No duplicates found.
             </p>
             <p>
-                Cliquez sur <b>Analyser les doublons</b> dans le menu Action
-                pour lancer la détection.
+                Click <b>Scan for duplicates</b> in the Action menu
+                to start detection.
             </p>
         </field>
     </record>
@@ -88,30 +88,30 @@
         <field name="name">comic.work.merge.wizard.form</field>
         <field name="model">comic.work.merge.wizard</field>
         <field name="arch" type="xml">
-            <form string="Fusionner deux albums">
+            <form string="Merge two albums">
                 <sheet>
                     <div class="alert alert-warning" role="alert">
-                        L'album <b>source</b> sera archivé. Ses éditions et auteurs
-                        seront transférés vers l'album <b>cible</b>.
-                        Cette opération est <b>irréversible</b> (sauf restauration manuelle).
+                        The <b>source</b> album will be archived. Its editions and authors
+                        will be transferred to the <b>target</b> album.
+                        This operation is <b>irreversible</b> (except by manual restore).
                     </div>
                     <group>
-                        <group string="Album source (archivé)">
+                        <group string="Source album (archived)">
                             <field name="source_work_id"/>
                             <field name="nb_editions_source" readonly="1"/>
                             <field name="nb_auteurs_source" readonly="1"/>
                         </group>
-                        <group string="Album cible (conservé)">
+                        <group string="Target album (kept)">
                             <field name="target_work_id"/>
                         </group>
                     </group>
                 </sheet>
                 <footer>
                     <button name="action_confirm_merge"
-                            string="Confirmer la fusion"
+                            string="Confirm merge"
                             type="object"
                             class="btn-danger"/>
-                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>

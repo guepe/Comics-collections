@@ -86,7 +86,7 @@ class TestComicWork(TransactionCase):
                 "tome": 1,
             }
         )
-        self.assertEqual(work.display_name, "Thorgal T01 — La Magicienne trahie")
+        self.assertEqual(work.display_name, "Thorgal Vol. 01 — La Magicienne trahie")
 
     def test_display_name_without_serie_and_tome(self):
         work = self.env["comic.work"].create(
@@ -104,7 +104,7 @@ class TestComicWork(TransactionCase):
                 "tome": 7,
             }
         )
-        self.assertEqual(work.display_name, "T07 — Volume unique")
+        self.assertEqual(work.display_name, "Vol. 07 — Volume unique")
 
     # ── titre_normalise ──────────────────────────────────────────────────────
 

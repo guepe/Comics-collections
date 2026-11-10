@@ -37,8 +37,8 @@ class TestCompleteFromSources(TransactionCase):
         self.assertEqual(self.edition.nb_pages, 48)
         message = action["params"]["message"]
         self.assertIn("synopsis", message)
-        self.assertIn("nombre de pages", message)
-        self.assertIn("auteurs", message)
+        self.assertIn("number of pages", message)
+        self.assertIn("authors", message)
         self.assertEqual(action["params"]["type"], "success")
 
     def test_never_overwrites(self):
@@ -53,7 +53,7 @@ class TestCompleteFromSources(TransactionCase):
         with patch(f"{AGG}.search", return_value=None):
             self.assertEqual(self.work.action_complete_from_sources()["params"]["type"], "warning")
         with patch(f"{AGG}.search", side_effect=GoogleBooksQuotaError("quota")):
-            with self.assertRaisesRegex(UserError, "Quota"):
+            with self.assertRaisesRegex(UserError, "quota reached"):
                 self.work.action_complete_from_sources()
 
 

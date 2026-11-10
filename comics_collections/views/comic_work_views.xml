@@ -10,9 +10,9 @@
                 <field name="image_couverture" string=" " widget="image"
                        options="{'size': [32, 48]}" width="44px"/>
                 <field name="serie_id" optional="hide"/>
-                <field name="tome" string="T°" width="50px"/>
-                <field name="titre_canonique" string="Titre"/>
-                <field name="auteur_names" string="Auteurs"/>
+                <field name="tome" string="Vol." width="50px"/>
+                <field name="titre_canonique" string="Title"/>
+                <field name="auteur_names" string="Authors"/>
                 <field name="editeur_id" optional="show"/>
                 <field name="date_parution" optional="show"/>
                 <field name="nb_editions" string="Versions" optional="hide"/>
@@ -62,7 +62,7 @@
                                 </t>
                                 <t t-if="record.tome.raw_value">
                                     <span class="o_comic_serie_statut" style="background:#1a73e8;">
-                                        T<t t-esc="record.tome.raw_value"/>
+                                        Vol. <t t-esc="record.tome.raw_value"/>
                                     </span>
                                 </t>
                             </div>
@@ -84,7 +84,7 @@
         <field name="name">comic.work.form</field>
         <field name="model">comic.work</field>
         <field name="arch" type="xml">
-            <form string="Album BD">
+            <form string="Comic album">
                 <sheet>
                     <!-- Smartbutton éditions multiples (uniquement si > 1) -->
                     <div name="button_box" class="oe_button_box">
@@ -93,7 +93,7 @@
                                 type="object"
                                 class="oe_stat_button"
                                 icon="fa-heart-o"
-                                string="Ajouter à ma wishlist"
+                                string="Add to My Wishlist"
                                 invisible="not id or in_my_collection or in_my_wishlist"/>
                         <field name="in_my_collection" invisible="1"/>
                         <field name="in_my_wishlist" invisible="1"/>
@@ -111,15 +111,15 @@
                            class="oe_avatar"
                            options="{'preview_image': 'image_couverture', 'size': [128, 192]}"/>
                     <div class="oe_title">
-                        <label for="serie_id" string="Série"/>
+                        <label for="serie_id" string="Series"/>
                         <h2>
-                            <field name="serie_id" placeholder="Série…"/>
-                            <span class="ms-2">T°</span>
+                            <field name="serie_id" placeholder="Series…"/>
+                            <span class="ms-2">Vol.</span>
                             <field name="tome" class="d-inline-block ms-1" style="width:4rem;" placeholder="—"/>
                         </h2>
-                        <label for="titre_canonique" string="Titre"/>
+                        <label for="titre_canonique" string="Title"/>
                         <h1>
-                            <field name="titre_canonique" placeholder="Titre de l'album"/>
+                            <field name="titre_canonique" placeholder="Album title"/>
                         </h1>
                     </div>
 
@@ -135,13 +135,13 @@
                         <group>
                             <field name="date_parution"/>
                             <field name="nb_pages"/>
-                            <field name="nb_auteurs" string="Nb auteurs" readonly="1"/>
+                            <field name="nb_auteurs" string="No. of authors" readonly="1"/>
                         </group>
                     </group>
 
                     <notebook>
                         <!-- Auteurs -->
-                        <page string="Auteurs">
+                        <page string="Authors">
                             <field name="auteur_line_ids">
                                 <list editable="bottom">
                                     <field name="partner_id"/>
@@ -166,12 +166,12 @@
                         </page>
 
                         <!-- Liens d'achat -->
-                        <page string="Liens d'achat">
+                        <page string="Purchase links">
                             <button name="action_generate_purchase_links"
-                                    string="Générer les liens depuis l'ISBN"
+                                    string="Generate links from ISBN"
                                     type="object"
                                     class="btn-secondary mb-3"
-                                    confirm="Générer les liens d'achat depuis l'ISBN principal ?"
+                                    confirm="Generate purchase links from the main ISBN?"
                                     groups="comics_collections.group_comic_manager"/>
                             <group>
                                 <field name="url_club_be" widget="url"/>
@@ -181,7 +181,7 @@
                         </page>
 
                         <!-- Éditions multiples (masqué si une seule édition) — libellé utilisateur : "versions" -->
-                        <page string="Autres versions" name="editions_multiples" invisible="nb_editions &lt;= 1">
+                        <page string="Other versions" name="editions_multiples" invisible="nb_editions &lt;= 1">
                             <field name="edition_ids">
                                 <list>
                                     <field name="langue"/>
@@ -195,7 +195,7 @@
                         </page>
 
                         <!-- Références (données techniques) -->
-                        <page string="Références">
+                        <page string="References">
                             <group>
                                 <field name="slug"/>
                                 <field name="wikidata_id"/>
@@ -216,39 +216,39 @@
         <field name="name">comic.work.search</field>
         <field name="model">comic.work</field>
         <field name="arch" type="xml">
-            <search string="Rechercher un album">
-                <field name="titre_canonique" string="Titre"/>
+            <search string="Search albums">
+                <field name="titre_canonique" string="Title"/>
                 <field name="serie_id"/>
                 <field name="tome"/>
                 <field name="editeur_id"/>
-                <field name="auteur_line_ids" string="Auteur"
+                <field name="auteur_line_ids" string="Author"
                        filter_domain="[('auteur_line_ids.partner_id.name', 'ilike', self)]"/>
                 <field name="edition_ids" string="ISBN"
                        filter_domain="[('edition_ids.isbn_ids.isbn_13', 'ilike', self)]"/>
                 <separator/>
-                <filter string="Ma collection" name="ma_collection"
+                <filter string="My Collection" name="ma_collection"
                         domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True)])]"/>
-                <filter string="Ma wishlist" name="ma_wishlist"
+                <filter string="My Wishlist" name="ma_wishlist"
                         domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_wishlist', '=', True)])]"/>
-                <filter string="Prêtés" name="pretes"
+                <filter string="Lent" name="pretes"
                         domain="[('edition_ids.pret_ids', 'any', [('retourne', '=', False)])]"/>
                 <separator/>
-                <filter string="Note ≥ 3★" name="note_3"
+                <filter string="Rating ≥ 3★" name="note_3"
                         domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('note', '>=', 3)])]"/>
-                <filter string="Note ≥ 4★" name="note_4"
+                <filter string="Rating ≥ 4★" name="note_4"
                         domain="[('edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('note', '>=', 4)])]"/>
                 <separator/>
-                <filter string="Sans couverture" name="sans_couverture"
+                <filter string="Without cover" name="sans_couverture"
                         domain="[('image_couverture', '=', False)]"/>
-                <filter string="Sans ISBN" name="sans_isbn"
+                <filter string="Without ISBN" name="sans_isbn"
                         domain="[('isbn_ids', '=', False)]"/>
-                <filter string="Sans édition" name="sans_edition"
+                <filter string="Without edition" name="sans_edition"
                         domain="[('edition_ids', '=', False)]"/>
                 <group name="group_by">
-                    <filter string="Série" name="groupby_serie" context="{'group_by': 'serie_id'}"/>
-                    <filter string="Éditeur" name="groupby_editeur" context="{'group_by': 'editeur_id'}"/>
+                    <filter string="Series" name="groupby_serie" context="{'group_by': 'serie_id'}"/>
+                    <filter string="Publisher" name="groupby_editeur" context="{'group_by': 'editeur_id'}"/>
                     <filter string="Genre" name="groupby_genre" context="{'group_by': 'genre_id'}"/>
-                    <filter string="Type de série" name="groupby_serie_type" context="{'group_by': 'serie_type'}"/>
+                    <filter string="Series type" name="groupby_serie_type" context="{'group_by': 'serie_type'}"/>
                 </group>
             </search>
         </field>
@@ -259,7 +259,7 @@
          l'utilisateur courant possède une édition ; comic_auto_own fait entrer
          dans sa collection tout album créé depuis cette vue. -->
     <record id="action_comic_work" model="ir.actions.act_window">
-        <field name="name">Mes albums</field>
+        <field name="name">My Albums</field>
         <field name="res_model">comic.work</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="view_comic_work_search"/>
@@ -271,7 +271,7 @@
 
     <!-- Catalogue partagé complet (sans filtre « Ma collection ») : gestionnaire, Référentiel avancé -->
     <record id="action_comic_work_catalogue" model="ir.actions.act_window">
-        <field name="name">Tous les albums</field>
+        <field name="name">All Albums</field>
         <field name="res_model">comic.work</field>
         <field name="view_mode">list,kanban,form</field>
         <field name="search_view_id" ref="view_comic_work_search"/>

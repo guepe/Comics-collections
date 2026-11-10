@@ -22,7 +22,7 @@ ID_FACTOR = 10**9
 
 class ComicWishlistItem(models.Model):
     _name = "comic.wishlist.item"
-    _description = "Wishlist — manque ou souhait"
+    _description = "Wishlist — missing album or wish"
     _auto = False
     # Champs techniques (create/write uid/date) repris de l'album : le widget image du
     # client web lit write_date (clé de cache), absent par défaut d'une vue _auto=False.
@@ -47,16 +47,16 @@ class ComicWishlistItem(models.Model):
         "res.users": ["partner_id", "share", "active"],
     }
 
-    user_id = fields.Many2one("res.users", string="Utilisateur", readonly=True)
-    partner_id = fields.Many2one("res.partner", string="Partenaire", readonly=True)
-    work_id = fields.Many2one("comic.work", string="Titre", readonly=True)
-    serie_id = fields.Many2one("comic.serie", string="Série", readonly=True)
-    tome = fields.Integer(string="T°", readonly=True, aggregator=False)
-    edition_id = fields.Many2one("comic.edition", string="Édition", readonly=True)
-    date_parution = fields.Date(string="Parution", readonly=True)
-    type = fields.Selection([("manque", "Manque"), ("souhait", "Souhait")], readonly=True)
+    user_id = fields.Many2one("res.users", string="User", readonly=True)
+    partner_id = fields.Many2one("res.partner", string="Partner", readonly=True)
+    work_id = fields.Many2one("comic.work", string="Title", readonly=True)
+    serie_id = fields.Many2one("comic.serie", string="Series", readonly=True)
+    tome = fields.Integer(string="Vol.", readonly=True, aggregator=False)
+    edition_id = fields.Many2one("comic.edition", string="Edition", readonly=True)
+    date_parution = fields.Date(string="Release", readonly=True)
+    type = fields.Selection([("manque", "Missing"), ("souhait", "Wish")], readonly=True)
     # Affichage seul de la couverture de l'album.
-    image_couverture = fields.Binary(related="work_id.image_couverture", string="Couverture")
+    image_couverture = fields.Binary(related="work_id.image_couverture", string="Cover")
 
     def init(self):
         # Vue de reporting : exception admise à la règle « ORM uniquement ». Calculer
@@ -128,7 +128,7 @@ class ComicWishlistItem(models.Model):
     def _own_lines(self):
         """Return ``self``, refusing any line that belongs to another user."""
         if any(line.user_id != self.env.user for line in self):
-            raise AccessError(self.env._("Vous ne pouvez modifier que votre propre wishlist."))
+            raise AccessError(self.env._("You can only modify your own wishlist."))
         return self
 
     @staticmethod

@@ -30,5 +30,5 @@ def authors_table(env, counts, works_by_partner, empty_message, count_label):
     head = Markup(
         '<table class="table table-sm o_comic_authors_table"><thead><tr><th>%s</th>'
         '<th class="text-end">%s</th><th>%s</th></tr></thead><tbody>'
-    ) % (escape(env._("Auteur")), escape(count_label), escape(env._("Séries")))
+    ) % (escape(env._("Author")), escape(count_label), escape(env._("Series")))
     return head + Markup("").join(rows) + Markup("</tbody></table>")

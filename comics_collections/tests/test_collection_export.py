@@ -118,11 +118,11 @@ class TestCollectionValue(TransactionCase):
         ids = action["context"]["active_ids"]
         html, _fmt = self.env["ir.actions.report"]._render_qweb_html(REPORT_REF, ids)
         html = html.decode()
-        self.assertIn("Inventaire de ma collection", html)
+        self.assertIn("My Collection Inventory", html)
         self.assertIn("Exp Alpha", html)
         self.assertIn("Exp Beta", html)
-        self.assertIn("Sous-total", html)
-        self.assertIn("Total général", html)
+        self.assertIn("Subtotal", html)
+        self.assertIn("Grand total", html)
         self.assertIn("9782800152851", html)
         self.assertIn(self.user.partner_id.name, html)
         # Montants : sous-total Alpha 22,50 ; total valeur 27,25 ; 3 albums
@@ -159,14 +159,14 @@ class TestCollectionCsvExport(HttpCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("text/csv", response.headers["Content-Type"])
         disposition = response.headers["Content-Disposition"]
-        self.assertRegex(disposition, r'^attachment; filename="ma_collection_\d{4}-\d{2}-\d{2}\.csv"$')
+        self.assertRegex(disposition, r'^attachment; filename="my_collection_\d{4}-\d{2}-\d{2}\.csv"$')
         raw = response.content
         self.assertTrue(raw.startswith(b"\xef\xbb\xbf"), "BOM UTF-8 attendu")
         lines = raw.decode("utf-8-sig").splitlines()
         header = lines[0].split(";")
-        self.assertEqual(header[0], "Série")
+        self.assertEqual(header[0], "Series")
         self.assertEqual(len(header), 12)
-        self.assertIn("Prix d'achat", header)
+        self.assertIn("Purchase price", header)
         rows = [line.split(";") for line in lines[1:]]
         # 3 albums possédés + 1 wishlist, uniquement ceux de l'utilisateur
         self.assertEqual(len(rows), 4)
@@ -174,12 +174,12 @@ class TestCollectionCsvExport(HttpCase):
         self.assertNotIn("Autre", raw.decode("utf-8-sig"))
         first = rows[0]
         self.assertEqual(first[:4], ["Exp Alpha", "1", "Exp Alpha titre 1", "9782800152851"])
-        self.assertEqual(first[5], "Lu")
-        self.assertEqual(first[6:11], ["Oui", "Non", "4.0", "12.50", "20.00"])
+        self.assertEqual(first[5], "Read")
+        self.assertEqual(first[6:11], ["Yes", "No", "4.0", "12.50", "20.00"])
         self.assertEqual(first[11], "2026-05-01")
-        wishlist = [row for row in rows if row[7] == "Oui"]
+        wishlist = [row for row in rows if row[7] == "Yes"]
         self.assertEqual(len(wishlist), 1)
-        self.assertEqual(wishlist[0][6], "Non")
+        self.assertEqual(wishlist[0][6], "No")
 
     def test_anonymous_refused(self):
         self.authenticate(None, None)

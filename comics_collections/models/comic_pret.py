@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 DEFAULT_LOAN_DAYS = 30
@@ -8,21 +8,21 @@ DEFAULT_LOAN_DAYS = 30
 
 class ComicPret(models.Model):
     _name = "comic.pret"
-    _description = "Prêt d'un album BD"
+    _description = "Comic album loan"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "date_pret desc"
 
     edition_id = fields.Many2one("comic.edition", string="Album", required=True, ondelete="restrict", tracking=True)
-    partner_id = fields.Many2one("res.partner", string="Prêté à", required=True, tracking=True)
-    date_pret = fields.Date(string="Date de prêt", default=fields.Date.context_today, tracking=True)
+    partner_id = fields.Many2one("res.partner", string="Lent to", required=True, tracking=True)
+    date_pret = fields.Date(string="Loan date", default=fields.Date.context_today, tracking=True)
     date_retour_prevue = fields.Date(
-        string="Date retour prévue",
+        string="Expected return date",
         default=lambda self: fields.Date.context_today(self) + timedelta(days=DEFAULT_LOAN_DAYS),
         tracking=True,
     )
-    date_retour_effective = fields.Date(string="Date retour réelle", tracking=True)
-    retourne = fields.Boolean(string="Retourné", tracking=True)
-    en_retard = fields.Boolean(string="En retard", compute="_compute_en_retard", search="_search_en_retard")
+    date_retour_effective = fields.Date(string="Actual return date", tracking=True)
+    retourne = fields.Boolean(string="Returned", tracking=True)
+    en_retard = fields.Boolean(string="Overdue", compute="_compute_en_retard", search="_search_en_retard")
     notes = fields.Text()
 
     # ── Retard ───────────────────────────────────────────────────────────────
@@ -35,7 +35,7 @@ class ComicPret(models.Model):
 
     def _search_en_retard(self, operator, value):
         if operator not in ("=", "!=") or not isinstance(value, bool):
-            raise NotImplementedError(_("Opérateur non supporté pour « En retard »."))
+            raise NotImplementedError(self.env._('Unsupported operator for "Overdue".'))
         domain = [
             ("retourne", "=", False),
             ("date_retour_prevue", "<", fields.Date.context_today(self)),
@@ -81,9 +81,9 @@ class ComicPret(models.Model):
     def _check_dates(self):
         for pret in self:
             if pret.date_pret and pret.date_retour_prevue and pret.date_retour_prevue < pret.date_pret:
-                raise ValidationError(_("La date de retour prévue ne peut pas précéder la date de prêt."))
+                raise ValidationError(self.env._("The expected return date cannot be earlier than the loan date."))
             if pret.date_pret and pret.date_retour_effective and pret.date_retour_effective < pret.date_pret:
-                raise ValidationError(_("La date de retour réelle ne peut pas précéder la date de prêt."))
+                raise ValidationError(self.env._("The actual return date cannot be earlier than the loan date."))
 
     @api.constrains("edition_id", "retourne")
     def _check_not_already_lent(self):
@@ -101,8 +101,8 @@ class ComicPret(models.Model):
             )
             if other:
                 raise ValidationError(
-                    _(
-                        "« %(album)s » est déjà prêté à %(partner)s et n'a pas été rendu.",
+                    self.env._(
+                        '"%(album)s" is already lent to %(partner)s and has not been returned.',
                         album=pret.edition_id.display_name,
                         partner=other.partner_id.display_name,
                     )
@@ -126,9 +126,9 @@ class ComicPret(models.Model):
                 continue
             pret.activity_schedule(
                 activity_type_id=todo.id if todo else False,
-                summary=_("Prêt en retard : récupérer l'album"),
-                note=_(
-                    "« %(album)s » prêté à %(partner)s devait revenir le %(date)s.",
+                summary=self.env._("Overdue loan: get the album back"),
+                note=self.env._(
+                    '"%(album)s" lent to %(partner)s was due back on %(date)s.',
                     album=pret.edition_id.display_name,
                     partner=pret.partner_id.display_name,
                     date=pret.date_retour_prevue,

@@ -5,22 +5,22 @@
         <field name="name">comic.import.wizard.form</field>
         <field name="model">comic.import.wizard</field>
         <field name="arch" type="xml">
-            <form string="Import CSV/Excel">
+            <form string="CSV/Excel Import">
                 <sheet>
                     <field name="state" invisible="1"/>
                     <field name="template_file" invisible="1"/>
                     <field name="template_filename" invisible="1"/>
                     <field name="error_report_file" invisible="1"/>
                     <field name="error_report_filename" invisible="1"/>
-                    <separator string="Modèle d'import"/>
+                    <separator string="Import template"/>
                     <group invisible="state != 'draft'">
                         <field name="template_format" widget="radio"/>
                         <button name="action_download_template"
                                 type="object"
-                                string="Télécharger le modèle"
+                                string="Download template"
                                 class="btn-secondary"/>
                     </group>
-                    <separator string="Fichier à importer" invisible="state != 'draft'"/>
+                    <separator string="File to import" invisible="state != 'draft'"/>
                     <group invisible="state != 'draft'">
                         <field name="import_file"
                                filename="import_filename"
@@ -28,7 +28,7 @@
                         <field name="import_filename" invisible="1"/>
                         <field name="import_policy"/>
                     </group>
-                    <separator string="Mapping des colonnes" invisible="state != 'mapping'"/>
+                    <separator string="Column mapping" invisible="state != 'mapping'"/>
                     <field name="mapping_line_ids" invisible="state != 'mapping'">
                         <list editable="bottom" create="false" delete="false">
                             <field name="column_name"/>
@@ -46,42 +46,42 @@
                 <footer>
                     <button name="action_prepare_mapping"
                             type="object"
-                            string="Continuer"
+                            string="Continue"
                             class="btn-primary"
                             invisible="state != 'draft'"/>
                     <button name="action_preview_import"
                             type="object"
-                            string="Prévisualiser"
+                            string="Preview"
                             class="btn-primary"
                             invisible="state != 'mapping'"/>
                     <button name="action_import"
                             type="object"
-                            string="Importer"
+                            string="Import"
                             class="btn-primary"
                             invisible="state != 'preview'"/>
                     <button name="action_back_to_mapping"
                             type="object"
-                            string="Retour au mapping"
+                            string="Back to mapping"
                             class="btn-secondary"
                             invisible="state != 'preview'"/>
                     <button name="action_download_error_report"
                             type="object"
-                            string="Télécharger les erreurs"
+                            string="Download errors"
                             class="btn-secondary"
                             invisible="not error_report_file"/>
                     <button name="action_reset"
                             type="object"
-                            string="Modifier"
+                            string="Edit"
                             class="btn-secondary"
                             invisible="state == 'draft'"/>
-                    <button string="Fermer" special="cancel" class="btn-secondary"/>
+                    <button string="Close" special="cancel" class="btn-secondary"/>
                 </footer>
             </form>
         </field>
     </record>
 
     <record id="action_comic_import_wizard" model="ir.actions.act_window">
-        <field name="name">Import CSV/Excel</field>
+        <field name="name">CSV/Excel Import</field>
         <field name="res_model">comic.import.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>

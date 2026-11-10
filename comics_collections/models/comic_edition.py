@@ -9,61 +9,64 @@ _PURCHASE_LINK_TEMPLATES = {
 
 class ComicEdition(models.Model):
     _name = "comic.edition"
-    _description = "Édition d'une œuvre BD"
+    _description = "Comic work edition"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "work_id, date_parution"
+    # Sans champ « name » : rechercher par titre / série de l'album ou par ISBN
+    _rec_names_search = ["work_id.titre_canonique", "work_id.serie_id.name", "isbn_ids.isbn_13"]
 
     work_id = fields.Many2one(
-        "comic.work", string="Œuvre", required=True, ondelete="restrict", index=True, tracking=True
+        "comic.work", string="Work", required=True, ondelete="restrict", index=True, tracking=True
     )
-    editeur_id = fields.Many2one("comic.editeur", string="Éditeur", tracking=True)
-    date_parution = fields.Date(string="Date de parution", tracking=True)
-    date_depot_legal = fields.Date(string="Dépôt légal")
+    editeur_id = fields.Many2one("comic.editeur", string="Publisher", tracking=True)
+    date_parution = fields.Date(string="Release date", tracking=True)
+    date_depot_legal = fields.Date(string="Legal deposit")
     langue = fields.Selection(
         [
-            ("fr", "Français"),
-            ("nl", "Néerlandais"),
-            ("en", "Anglais"),
-            ("de", "Allemand"),
-            ("autre", "Autre"),
+            ("fr", "French"),
+            ("nl", "Dutch"),
+            ("en", "English"),
+            ("de", "German"),
+            ("autre", "Other"),
         ],
+        string="Language",
         default="fr",
         tracking=True,
     )
     format = fields.Selection(
         [
-            ("broche", "Broché"),
-            ("cartonne", "Cartonné"),
-            ("integrale", "Intégrale"),
-            ("collector", "Collector"),
-            ("numerique", "Numérique"),
-            ("autre", "Autre"),
+            ("broche", "Paperback"),
+            ("cartonne", "Hardcover"),
+            ("integrale", "Omnibus"),
+            ("collector", "Collector's edition"),
+            ("numerique", "Digital"),
+            ("autre", "Other"),
         ],
         default="cartonne",
         tracking=True,
     )
-    image_couverture = fields.Image(string="Couverture")
+    image_couverture = fields.Image(string="Cover")
     synopsis = fields.Html()
-    nb_pages = fields.Integer(string="Nombre de pages")
-    url_club_be = fields.Char(string="Lien Club.be")
-    url_amazon_be = fields.Char(string="Lien Amazon.be")
-    url_fnac_be = fields.Char(string="Lien FNAC.be")
+    nb_pages = fields.Integer(string="Number of pages")
+    url_club_be = fields.Char(string="Club.be link")
+    url_amazon_be = fields.Char(string="Amazon.be link")
+    url_fnac_be = fields.Char(string="FNAC.be link")
     isbn_ids = fields.One2many("comic.isbn", "edition_id", string="ISBNs")
     customer_album_ids = fields.One2many(
         "comic.customer.album",
         "edition_id",
-        string="Bibliothèques",
-        help="Entrées de bibliothèque (clients et utilisateurs) qui possèdent ou suivent cet album.",
+        string="Libraries",
+        help="Library entries (customers and users) that own or follow this album.",
     )
     pret_ids = fields.One2many(
         "comic.pret",
         "edition_id",
-        string="Prêts",
-        help="Prêts de cet album (privés : les règles d'accès ne montrent que les siens).",
+        string="Loans",
+        help="Loans of this album (private: access rules only show your own).",
     )
     active = fields.Boolean(default=True)
 
-    nb_isbn = fields.Integer(string="Nb ISBN", compute="_compute_nb_isbn", store=True)
+    nb_isbn = fields.Integer(string="Number of ISBNs", compute="_compute_nb_isbn", store=True)
 
     @api.depends("isbn_ids")
     def _compute_nb_isbn(self):
@@ -71,7 +74,7 @@ class ComicEdition(models.Model):
             rec.nb_isbn = len(rec.isbn_ids)
 
     def _compute_display_name(self):
-        langue_labels = dict(self._fields["langue"].selection)
+        langue_labels = dict(self._fields["langue"]._description_selection(self.env))
         for rec in self:
             work_name = rec.work_id.display_name if rec.work_id else "?"
             parts = []

@@ -5,11 +5,12 @@ import re
 import requests
 from datetime import date
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 from odoo.addons.comics_collections.utils.normalize import normalize_title
 
 from ..models.comic_edition import _find_or_create_author
+from ..sources.google_books import GoogleBooksQuotaError
 from ..sources.base import normalize_isbn as _normalize_isbn
 
 
@@ -25,21 +26,21 @@ def _clean_isbn(term):
 
 class ComicDatasourceSearchWizard(models.TransientModel):
     _name = "comic.datasource.search.wizard"
-    _description = "Recherche et import BD multi-sources"
+    _description = "Multi-source comic search and import"
 
-    search_term = fields.Char(string="Rechercher", required=True)
+    search_term = fields.Char(string="Search", required=True)
     search_type = fields.Selection(
-        [("isbn", "ISBN / EAN-13"), ("title", "Titre")],
+        [("isbn", "ISBN / EAN-13"), ("title", "Title")],
         compute="_compute_search_type",
         store=True,
     )
     state = fields.Selection(
-        [("search", "Recherche"), ("results", "Résultats"), ("done", "Terminé")],
+        [("search", "Search"), ("results", "Results"), ("done", "Done")],
         default="search",
     )
-    edition_id = fields.Many2one("comic.edition", string="Édition à enrichir")
-    result_ids = fields.One2many("comic.datasource.result.line", "wizard_id", string="Résultats")
-    import_report = fields.Html(string="Rapport", readonly=True)
+    edition_id = fields.Many2one("comic.edition", string="Edition to enrich")
+    result_ids = fields.One2many("comic.datasource.result.line", "wizard_id", string="Results")
+    import_report = fields.Html(string="Report", readonly=True)
     has_duplicates = fields.Boolean(compute="_compute_has_duplicates")
     has_title_conflicts = fields.Boolean(compute="_compute_has_duplicates")
 
@@ -70,17 +71,24 @@ class ComicDatasourceSearchWizard(models.TransientModel):
             if isbn:
                 agg = aggregator.search(isbn=isbn)
                 if not agg.data:
-                    raise UserError(_("Aucun résultat trouvé pour l'ISBN %s.") % isbn)
+                    raise UserError(self.env._("No result found for ISBN %(isbn)s.", isbn=isbn))
                 lines = [self._aggregated_to_line_vals(agg, isbn)]
             else:
                 raw_results = aggregator.search_list(title=self.search_term)
                 if not raw_results:
-                    raise UserError(_('Aucun résultat trouvé pour "%s".') % self.search_term)
+                    raise UserError(self.env._('No result found for "%(term)s".', term=self.search_term))
                 lines = [self._source_result_to_line_vals(r) for r in raw_results[:15]]
         except UserError:
             raise
+        except GoogleBooksQuotaError as e:
+            raise UserError(
+                self.env._(
+                    "Google Books quota reached: try again tomorrow or add an API key "
+                    "in Settings > Comic Books > Data Sources."
+                )
+            ) from e
         except Exception as e:
-            raise UserError(_("Erreur lors de la recherche : %s") % str(e))
+            raise UserError(self.env._("Error during search: %(error)s", error=str(e))) from e
 
         for vals in lines:
             if vals.get("isbn"):
@@ -164,7 +172,7 @@ class ComicDatasourceSearchWizard(models.TransientModel):
         self.ensure_one()
         selected = self.result_ids.filtered("selected")
         if not selected:
-            raise UserError(_("Sélectionnez au moins un résultat à importer."))
+            raise UserError(self.env._("Select at least one result to import."))
 
         created, updated, ignored = [], [], []
         for line in selected:
@@ -206,7 +214,7 @@ class ComicDatasourceSearchWizard(models.TransientModel):
         else:
             use_title = data.get("title") or line.title or ""
         if not use_title:
-            use_title = data.get("serie_name") or line.serie_name or _("Sans titre")
+            use_title = data.get("serie_name") or line.serie_name or self.env._("Untitled")
 
         if existing:
             work_vals = {}
@@ -362,15 +370,16 @@ class ComicDatasourceSearchWizard(models.TransientModel):
             _logger.debug("Invalid date format for %s: %s", field, date_str)
 
     def _build_report(self, created, updated, ignored):
+        _ = self.env._
         lines = []
         if created:
-            lines.append(f"<b>✅ {len(created)} créé(s) :</b>")
+            lines.append("<b>%s</b>" % _("✅ %(n)s created:", n=len(created)))
             lines += [f"<li>{r.display_name}</li>" for r in created if r]
         if updated:
-            lines.append(f"<b>🔄 {len(updated)} mis à jour :</b>")
+            lines.append("<b>%s</b>" % _("🔄 %(n)s updated:", n=len(updated)))
             lines += [f"<li>{r.display_name}</li>" for r in updated if r]
         if ignored:
-            lines.append(f"<b>⏭️ {len(ignored)} ignoré(s) / erreur(s)</b>")
+            lines.append("<b>%s</b>" % _("⏭️ %(n)s skipped / error(s)", n=len(ignored)))
         return "<ul>" + "".join(lines) + "</ul>"
 
     def action_back(self):
@@ -415,17 +424,17 @@ class ComicDatasourceSearchWizard(models.TransientModel):
 
 class ComicDatasourceResultLine(models.TransientModel):
     _name = "comic.datasource.result.line"
-    _description = "Ligne de résultat de recherche BD"
+    _description = "Comic search result line"
 
     wizard_id = fields.Many2one("comic.datasource.search.wizard", required=True, ondelete="cascade")
-    selected = fields.Boolean(string="Sélectionner", default=False)
-    title = fields.Char(string="Titre")
-    serie_name = fields.Char(string="Série")
-    tome = fields.Integer(string="T.", aggregator=False)
+    selected = fields.Boolean(string="Select", default=False)
+    title = fields.Char()
+    serie_name = fields.Char(string="Series")
+    tome = fields.Integer(string="Vol.", aggregator=False)
     isbn = fields.Char(string="ISBN")
-    editeur = fields.Char(string="Éditeur")
-    auteurs_display = fields.Char(string="Auteurs")
-    date_parution = fields.Char(string="Parution")
+    editeur = fields.Char(string="Publisher")
+    auteurs_display = fields.Char(string="Authors")
+    date_parution = fields.Char(string="Release")
     source = fields.Selection(
         [
             ("google", "Google Books"),
@@ -433,19 +442,19 @@ class ComicDatasourceResultLine(models.TransientModel):
             ("bnf", "BnF"),
         ],
     )
-    cover_url = fields.Char(string="URL couverture")
-    cover_data = fields.Image(string="Couverture", max_width=120, max_height=160)
-    is_duplicate = fields.Boolean(string="Doublon")
-    existing_edition_id = fields.Many2one("comic.edition", string="Édition existante")
-    title_conflict = fields.Boolean(string="Conflit de titre")
-    existing_title = fields.Char(string="Titre existant en base")
+    cover_url = fields.Char(string="Cover URL")
+    cover_data = fields.Image(string="Cover", max_width=120, max_height=160)
+    is_duplicate = fields.Boolean(string="Duplicate")
+    existing_edition_id = fields.Many2one("comic.edition", string="Existing edition")
+    title_conflict = fields.Boolean(string="Title conflict")
+    existing_title = fields.Char(string="Existing title in database")
     title_action = fields.Selection(
         [
-            ("keep", "Garder le titre existant"),
-            ("use_new", "Utiliser le titre de la source"),
-            ("skip", "Ne pas importer"),
+            ("keep", "Keep the existing title"),
+            ("use_new", "Use the source title"),
+            ("skip", "Do not import"),
         ],
-        string="Action sur le titre",
+        string="Title action",
         default="keep",
     )
     result_data = fields.Text()

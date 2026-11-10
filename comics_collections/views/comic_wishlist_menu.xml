@@ -3,7 +3,7 @@
 
     <!-- Ma wishlist (US-089) : chargé après comic_menu.xml, qui définit le menu parent. -->
     <menuitem id="menu_comic_wishlist"
-              name="Ma wishlist"
+              name="My Wishlist"
               parent="comics_collections.menu_comic_collection"
               action="action_comic_wishlist"
               groups="comics_collections.group_comic_user"

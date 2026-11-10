@@ -13,8 +13,8 @@
                             class="oe_stat_button"
                             icon="fa-refresh">
                         <div class="o_stat_info">
-                            <span class="o_stat_text">Mettre à jour</span>
-                            <span class="o_stat_text">les albums</span>
+                            <span class="o_stat_text">Update</span>
+                            <span class="o_stat_text">albums</span>
                         </div>
                     </button>
                     <button name="action_search_missing_volumes"
@@ -22,8 +22,8 @@
                             class="oe_stat_button"
                             icon="fa-search">
                         <div class="o_stat_info">
-                            <span class="o_stat_text">Tomes</span>
-                            <span class="o_stat_text">manquants</span>
+                            <span class="o_stat_text">Missing</span>
+                            <span class="o_stat_text">volumes</span>
                         </div>
                     </button>
             </xpath>
@@ -39,25 +39,25 @@
         <field name="name">comic.serie.update.wizard.form</field>
         <field name="model">comic.serie.update.wizard</field>
         <field name="arch" type="xml">
-            <form string="Mise à jour depuis les sources de données">
+            <form string="Update from data sources">
 
                 <!-- Confirmation -->
                 <group invisible="state != 'confirm'">
-                    <group string="Série à mettre à jour">
+                    <group string="Series to update">
                         <field name="serie_id" readonly="1"/>
-                        <field name="nb_albums" readonly="1" string="Albums dans la série"/>
+                        <field name="nb_albums" readonly="1" string="Albums in the series"/>
                     </group>
                     <group>
                         <div class="alert alert-info" role="status">
-                            Cette action va interroger les sources de données (Google Books, Open Library, BnF)
-                            pour chaque album de la série et mettre à jour :
-                            couverture, synopsis, nombre de pages, date de parution, auteurs manquants.
+                            This action will query the data sources (Google Books, Open Library, BnF)
+                            for each album in the series and update:
+                            cover, synopsis, number of pages, release date, missing authors.
                         </div>
                     </group>
                 </group>
 
                 <!-- Rapport -->
-                <group invisible="state != 'done'" string="Rapport de mise à jour">
+                <group invisible="state != 'done'" string="Update report">
                     <field name="import_report" nolabel="1" widget="html" readonly="1"/>
                 </group>
 
@@ -66,12 +66,12 @@
 
                 <footer>
                     <button name="action_run"
-                            string="Mettre à jour les albums"
+                            string="Update albums"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'confirm'"/>
                     <button name="action_close_and_return"
-                            string="Fermer"
+                            string="Close"
                             type="object"
                             class="btn-secondary"/>
                 </footer>

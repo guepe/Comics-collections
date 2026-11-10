@@ -14,25 +14,27 @@ import requests
 
 from odoo import _, fields, models
 from odoo.exceptions import UserError
+from odoo.tools.translate import LazyTranslate
 
 from ..models.comic_isbn import ComicIsbn
 from ..utils.normalize import normalize_title
 
 _logger = logging.getLogger(__name__)
+_lt = LazyTranslate(__name__)
 
 _COVER_MAX_BYTES = 5 * 1024 * 1024
 
 
 class ComicImportWizard(models.TransientModel):
     _name = "comic.import.wizard"
-    _description = "Assistant d'import de bandes dessinées"
+    _description = "Comic import wizard"
 
     state = fields.Selection(
         selection=[
             ("draft", "Upload"),
             ("mapping", "Mapping"),
-            ("preview", "Prévisualisation"),
-            ("done", "Terminé"),
+            ("preview", "Preview"),
+            ("done", "Done"),
         ],
         default="draft",
         required=True,
@@ -42,43 +44,43 @@ class ComicImportWizard(models.TransientModel):
             ("xlsx", "XLSX"),
             ("csv", "CSV"),
         ],
-        string="Format du modèle",
+        string="Template format",
         default="xlsx",
         required=True,
     )
-    template_file = fields.Binary(string="Fichier généré", readonly=True, attachment=False)
-    template_filename = fields.Char(string="Nom du modèle", readonly=True)
-    import_file = fields.Binary(string="Fichier à importer", attachment=False)
-    import_filename = fields.Char(string="Nom du fichier importé")
+    template_file = fields.Binary(string="Generated file", readonly=True, attachment=False)
+    template_filename = fields.Char(string="Template name", readonly=True)
+    import_file = fields.Binary(string="File to import", attachment=False)
+    import_filename = fields.Char(string="Imported file name")
     import_policy = fields.Selection(
         selection=[
-            ("update", "Mettre à jour les albums existants"),
-            ("skip", "Ignorer les albums déjà présents"),
+            ("update", "Update existing albums"),
+            ("skip", "Skip albums already present"),
         ],
-        string="Albums déjà présents",
-        help="Un album est « déjà présent » si son ISBN est connu, ou si la même série + tome "
-        "(ou série + titre) existe. « Ignorer » n'y touche pas ; « Mettre à jour » complète la fiche.",
+        string="Albums already present",
+        help='An album is "already present" if its ISBN is known, or if the same series + volume '
+        '(or series + title) exists. "Skip" leaves it untouched; "Update" completes the record.',
         default="update",
         required=True,
     )
-    preview_html = fields.Html(string="Prévisualisation", readonly=True)
-    result_html = fields.Html(string="Rapport", readonly=True)
-    error_report_file = fields.Binary(string="Rapport d'erreurs", readonly=True, attachment=False)
-    error_report_filename = fields.Char(string="Nom du rapport d'erreurs", readonly=True)
+    preview_html = fields.Html(string="Preview", readonly=True)
+    result_html = fields.Html(string="Report", readonly=True)
+    error_report_file = fields.Binary(string="Error report", readonly=True, attachment=False)
+    error_report_filename = fields.Char(string="Error report name", readonly=True)
     mapping_line_ids = fields.One2many(
         "comic.import.mapping.line",
         "wizard_id",
-        string="Mapping des colonnes",
+        string="Column mapping",
     )
 
     def action_download_template(self):
         self.ensure_one()
         if self.template_format == "csv":
             content = self._build_csv_template()
-            filename = "modele_import_albums_bd.csv"
+            filename = "comic_album_import_template.csv"
         else:
             content = self._build_xlsx_template()
-            filename = "modele_import_albums_bd.xlsx"
+            filename = "comic_album_import_template.xlsx"
 
         self.write(
             {
@@ -99,13 +101,13 @@ class ComicImportWizard(models.TransientModel):
         self.ensure_one()
         rows = self._get_source_rows()
         if not rows:
-            raise UserError(_("Le fichier ne contient aucune ligne."))
+            raise UserError(self.env._("The file does not contain any row."))
 
         headers = rows[0]
         sample_row = rows[1] if len(rows) > 1 else []
         commands = [(5, 0, 0)]
         for index, header in enumerate(headers):
-            column_name = str(header or "").strip() or "Colonne %s" % (index + 1)
+            column_name = str(header or "").strip() or self.env._("Column %s", index + 1)
             sample_value = sample_row[index] if index < len(sample_row) else ""
             commands.append(
                 (
@@ -175,7 +177,7 @@ class ComicImportWizard(models.TransientModel):
                 "state": "done",
                 "result_html": self._build_result_html(stats),
                 "error_report_file": base64.b64encode(report) if report else False,
-                "error_report_filename": "rapport_erreurs_import_bd.csv" if report else False,
+                "error_report_filename": "comic_import_error_report.csv" if report else False,
             }
         )
         return self._action_reopen()
@@ -210,7 +212,7 @@ class ComicImportWizard(models.TransientModel):
     def action_download_error_report(self):
         self.ensure_one()
         if not self.error_report_file:
-            raise UserError(_("Aucun rapport d'erreurs n'est disponible."))
+            raise UserError(self.env._("No error report is available."))
         return {
             "type": "ir.actions.act_url",
             "url": (
@@ -225,7 +227,7 @@ class ComicImportWizard(models.TransientModel):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": "Import CSV/Excel",
+            "name": self.env._("CSV/Excel import"),
             "res_model": self._name,
             "res_id": self.id,
             "view_mode": "form",
@@ -242,7 +244,7 @@ class ComicImportWizard(models.TransientModel):
     def _get_source_rows(self):
         self.ensure_one()
         if not self.import_file:
-            raise UserError(_("Veuillez sélectionner un fichier à importer."))
+            raise UserError(self.env._("Please select a file to import."))
         filename = (self.import_filename or "").lower()
         content = base64.b64decode(self.import_file)
         if filename.endswith(".xlsx"):
@@ -251,11 +253,11 @@ class ComicImportWizard(models.TransientModel):
             return self._read_xls_rows(content)
         if filename.endswith(".csv") or not filename:
             return self._read_csv_rows(content)
-        raise UserError(_("Formats acceptés : CSV, XLS ou XLSX."))
+        raise UserError(self.env._("Accepted formats: CSV, XLS or XLSX."))
 
     def _normalise_mapped_rows(self, rows):
         if not rows:
-            raise UserError(_("Le fichier ne contient aucune ligne."))
+            raise UserError(self.env._("The file does not contain any row."))
 
         mapped_columns = [
             (line.column_index, line.target_field)
@@ -263,7 +265,7 @@ class ComicImportWizard(models.TransientModel):
             if line.target_field
         ]
         if not mapped_columns:
-            raise UserError(_("Veuillez mapper au moins une colonne."))
+            raise UserError(self.env._("Please map at least one column."))
 
         normalised = []
         for line_number, row in enumerate(rows[1:], start=2):
@@ -284,13 +286,13 @@ class ComicImportWizard(models.TransientModel):
                 normalised.append(values)
 
         if not normalised:
-            raise UserError(_("Aucune ligne exploitable n'a été trouvée dans le fichier."))
+            raise UserError(self.env._("No usable row was found in the file."))
         return normalised
 
     @classmethod
     def _normalise_import_rows(cls, rows):
         if not rows:
-            raise UserError(_("Le fichier ne contient aucune ligne."))
+            raise UserError(_("The file does not contain any row."))
 
         headers = [cls._normalise_header(value) for value in rows[0]]
         data_rows = rows[1:]
@@ -317,7 +319,7 @@ class ComicImportWizard(models.TransientModel):
             normalised = [r for r in normalised if r.get("_table", "").strip().lower() == "album"]
 
         if not normalised:
-            raise UserError(_("Aucune ligne exploitable n'a été trouvée dans le fichier."))
+            raise UserError(_("No usable row was found in the file."))
         return normalised
 
     @classmethod
@@ -334,6 +336,21 @@ class ComicImportWizard(models.TransientModel):
             "titre_de_l_album": "titre_canonique",
             "name": "titre_canonique",
             "contenu": "contenu",
+            # English headers
+            "series": "serie_name",
+            "series_name": "serie_name",
+            "volume": "tome",
+            "title": "titre_canonique",
+            "publisher": "editeur",
+            "language": "langue",
+            "release_date": "date_parution",
+            "pages": "nb_pages",
+            "writer": "scenariste",
+            "artist": "dessinateur",
+            "colorist": "coloriste",
+            "cover_url": "url_couverture",
+            "reading_status": "etat_lecture",
+            "rating": "note",
             # BDGest export columns
             "num": "tome",
             "dl": "date_parution",  # Date de dépôt légal/parution (MM/YYYY)
@@ -460,8 +477,8 @@ class ComicImportWizard(models.TransientModel):
         except ImportError as exc:
             raise UserError(
                 _(
-                    "L'import XLS nécessite la bibliothèque Python xlrd. "
-                    "Convertissez le fichier en XLSX ou installez xlrd côté serveur."
+                    "XLS import requires the xlrd Python library. "
+                    "Convert the file to XLSX or install xlrd on the server."
                 )
             ) from exc
 
@@ -583,7 +600,7 @@ class ComicImportWizard(models.TransientModel):
             target = rel.attrib.get("Target", "")
             if "worksheets/" in target:
                 return target.lstrip("/") if target.startswith("/xl/") else "xl/" + target
-        raise UserError(_("Aucune feuille XLSX exploitable n'a été trouvée."))
+        raise UserError(_("No usable XLSX sheet was found."))
 
     @staticmethod
     def _xlsx_column_index(reference):
@@ -627,16 +644,18 @@ class ComicImportWizard(models.TransientModel):
         title = (row.get("titre_canonique") or row.get("titre_album") or row.get("name") or "").strip()
         serie_name = (row.get("serie_name") or "").strip()
         if not title and not serie_name:
-            raise UserError(_("le titre ou la série est obligatoire"))
+            raise UserError(self.env._("the title or the series is required"))
 
         isbn = self._clean_isbn(row.get("isbn"))
         if isbn and not ComicIsbn._validate_ean13(isbn):
-            warnings.append(_("ISBN « %s » invalide (clé de contrôle) : album importé sans ISBN.") % row.get("isbn"))
+            warnings.append(
+                self.env._('Invalid ISBN "%s" (check digit): album imported without ISBN.', row.get("isbn"))
+            )
             isbn = False
         tome = self._parse_integer(row.get("tome"))
         if not title:
             # Album sans titre : on le nomme d'après la série (+ tome pour rester unique)
-            title = _("%(serie)s — Tome %(tome)s", serie=serie_name, tome=tome) if tome else serie_name
+            title = self.env._("%(serie)s — Volume %(tome)s", serie=serie_name, tome=tome) if tome else serie_name
 
         existing_edition = self._find_edition_by_isbn(isbn)
         serie = self._get_or_create_serie(serie_name, row) if serie_name else self.env["comic.serie"].browse()
@@ -699,7 +718,7 @@ class ComicImportWizard(models.TransientModel):
             if cover:
                 edition.image_couverture = cover
             else:
-                warnings.append(_("Couverture non téléchargée : %s") % cover_url)
+                warnings.append(self.env._("Cover not downloaded: %s", cover_url))
 
         self._sync_customer_album(edition, row)
         return action
@@ -1024,9 +1043,8 @@ class ComicImportWizard(models.TransientModel):
         except ValueError:
             return False
 
-    @classmethod
-    def _build_preview_html(cls, rows, total):
-        headers = [column["name"] for column in cls._template_columns()]
+    def _build_preview_html(self, rows, total):
+        headers = [column["name"] for column in self._template_columns()]
         table = ['<table class="table table-sm table-hover"><thead><tr>']
         table.extend("<th>%s</th>" % escape(header) for header in headers)
         table.append("</tr></thead><tbody>")
@@ -1035,38 +1053,37 @@ class ComicImportWizard(models.TransientModel):
             table.extend("<td>%s</td>" % escape(str(row.get(header, "") or "")) for header in headers)
             table.append("</tr>")
         table.append("</tbody></table>")
-        return "<p>%s ligne(s) détectée(s). Prévisualisation des 10 premières.</p>%s" % (total, "".join(table))
+        intro = escape(self.env._("%(total)s line(s) detected. Preview of the first 10.", total=total))
+        return "<p>%s</p>%s" % (intro, "".join(table))
 
-    @staticmethod
-    def _build_result_html(stats):
-        errors = "".join(
-            "<li>Ligne %s : %s</li>"
-            % (
-                error["line"],
-                escape(error["error"]),
-            )
-            for error in stats["errors"]
-        )
-        error_block = "<ul>%s</ul>" % errors if errors else "<p>Aucune erreur.</p>"
+    def _build_result_html(self, stats):
+        def strong(value):
+            return "<strong>%s</strong>" % value
+
+        def line_item(line, text):
+            return "<li>%s</li>" % self.env._("Line %(line)s: %(text)s", line=line, text=escape(str(text)))
+
+        errors = "".join(line_item(error["line"], error["error"]) for error in stats["errors"])
+        error_block = "<ul>%s</ul>" % errors if errors else "<p>%s</p>" % self.env._("No errors.")
         warnings = stats.get("warnings") or []
         warning_block = ""
         if warnings:
-            warning_block = "<p><strong>%s</strong> avertissement(s) :</p><ul>%s</ul>" % (
-                len(warnings),
-                "".join("<li>Ligne %s : %s</li>" % (w["line"], escape(str(w["warning"]))) for w in warnings),
+            warning_block = "<p>%s</p><ul>%s</ul>" % (
+                self.env._("%(count)s warning(s):", count=strong(len(warnings))),
+                "".join(line_item(w["line"], w["warning"]) for w in warnings),
             )
         return """
-            <p><strong>%s</strong> album(s) créé(s).</p>
-            <p><strong>%s</strong> album(s) mis à jour.</p>
-            <p><strong>%s</strong> album(s) ignoré(s) (déjà présents).</p>
-            <p><strong>%s</strong> erreur(s).</p>
+            <p>%s</p>
+            <p>%s</p>
+            <p>%s</p>
+            <p>%s</p>
             %s
             %s
         """ % (
-            stats["created"],
-            stats["updated"],
-            stats.get("skipped", 0),
-            len(stats["errors"]),
+            self.env._("%(count)s album(s) created.", count=strong(stats["created"])),
+            self.env._("%(count)s album(s) updated.", count=strong(stats["updated"])),
+            self.env._("%(count)s album(s) skipped (already present).", count=strong(stats.get("skipped", 0))),
+            self.env._("%(count)s error(s).", count=strong(len(stats["errors"]))),
             error_block,
             warning_block,
         )
@@ -1079,7 +1096,7 @@ class ComicImportWizard(models.TransientModel):
         buffer = StringIO(newline="")
         writer = csv.writer(buffer, delimiter=";", lineterminator="\n")
         headers = [column["name"] for column in cls._template_columns()]
-        writer.writerow(["ligne", "erreur", *headers])
+        writer.writerow(["line", "error", *headers])
         for error in errors:
             row = error["row"]
             writer.writerow(
@@ -1096,112 +1113,112 @@ class ComicImportWizard(models.TransientModel):
         return [
             {
                 "name": "serie_name",
-                "description": "Nom de la série",
+                "description": _lt("Series name"),
                 "example": "Agent 212 (L')",
             },
             {
                 "name": "tome",
-                "description": "Numéro du tome",
+                "description": _lt("Volume number"),
                 "example": "5",
             },
             {
                 "name": "titre_canonique",
-                "description": "Titre canonique de l'œuvre",
+                "description": _lt("Canonical title of the work"),
                 "example": "Poulet aux amendes",
             },
             {
                 "name": "langue",
-                "description": "Langue : fr, nl, en, de ou autre",
+                "description": _lt("Language: fr, nl, en, de or autre"),
                 "example": "fr",
             },
             {
                 "name": "editeur",
-                "description": "Nom de l'éditeur",
+                "description": _lt("Publisher name"),
                 "example": "Dupuis",
             },
             {
                 "name": "date_parution",
-                "description": "Date au format YYYY-MM-DD",
+                "description": _lt("Date in YYYY-MM-DD format"),
                 "example": "1985-05-01",
             },
             {
                 "name": "date_depot_legal",
-                "description": "Date de dépôt légal au format YYYY-MM-DD",
+                "description": _lt("Legal deposit date in YYYY-MM-DD format"),
                 "example": "",
             },
             {
                 "name": "nb_pages",
-                "description": "Nombre de pages",
+                "description": _lt("Number of pages"),
                 "example": "",
             },
             {
                 "name": "isbn",
-                "description": "ISBN EAN-13, sans tirets de préférence",
+                "description": _lt("EAN-13 ISBN, preferably without hyphens"),
                 "example": "",
             },
             {
                 "name": "format",
-                "description": "Format : broche, cartonne, integrale, collector, numerique ou autre",
+                "description": _lt("Format: broche, cartonne, integrale, collector, numerique or autre"),
                 "example": "cartonne",
             },
             {
                 "name": "scenariste",
-                "description": "Scénaristes, séparés par ;, | ou retour ligne",
+                "description": _lt("Writers, separated by ;, | or line break"),
                 "example": "",
             },
             {
                 "name": "dessinateur",
-                "description": "Dessinateurs, séparés par ;, | ou retour ligne",
+                "description": _lt("Artists, separated by ;, | or line break"),
                 "example": "",
             },
             {
                 "name": "coloriste",
-                "description": "Coloristes, séparés par ;, | ou retour ligne",
+                "description": _lt("Colorists, separated by ;, | or line break"),
                 "example": "",
             },
             {
                 "name": "genre",
-                "description": "Genre principal",
+                "description": _lt("Main genre"),
                 "example": "Humour",
             },
             {
                 "name": "synopsis",
-                "description": "Résumé ou quatrième de couverture",
+                "description": _lt("Summary or back-cover text"),
                 "example": "",
             },
             {
                 "name": "etat_lecture",
-                "description": "Valeurs acceptées : non_lu, en_cours, lu",
+                "description": _lt("Accepted values: non_lu, en_cours, lu"),
                 "example": "non_lu",
             },
             {
                 "name": "note",
-                "description": "Note entre 0 et 5",
+                "description": _lt("Rating between 0 and 5"),
                 "example": "",
             },
             {
                 "name": "url_couverture",
-                "description": "URL de la couverture",
+                "description": _lt("Cover URL"),
                 "example": "",
             },
             {
                 "name": "url_club_be",
-                "description": "URL d'achat Club.be",
+                "description": _lt("Club.be purchase URL"),
                 "example": "",
             },
             {
                 "name": "url_amazon_be",
-                "description": "URL d'achat Amazon.com.be",
+                "description": _lt("Amazon.com.be purchase URL"),
                 "example": "",
             },
             {
                 "name": "url_fnac_be",
-                "description": "URL d'achat FNAC.be",
+                "description": _lt("FNAC.be purchase URL"),
                 "example": "",
             },
             {
                 "name": "dans_wishlist",
-                "description": "Wishlist : 1 = à acquérir, 0 = déjà possédé",
+                "description": _lt("Wishlist: 1 = to acquire, 0 = already owned"),
                 "example": "0",
             },
         ]
@@ -1210,38 +1227,46 @@ class ComicImportWizard(models.TransientModel):
     def _instruction_rows(cls):
         return [
             (
-                "Format CSV",
-                "Utiliser un encodage UTF-8 et le séparateur point-virgule (;).",
+                _lt("CSV format"),
+                _lt("Use UTF-8 encoding and the semicolon (;) separator."),
             ),
             (
-                "Dates",
-                "Utiliser YYYY-MM-DD. Si la source contient seulement MM/YYYY, "
-                "mettre le premier jour du mois, par exemple 05/1985 -> 1985-05-01.",
+                _lt("Dates"),
+                _lt(
+                    "Use YYYY-MM-DD. If the source only contains MM/YYYY, "
+                    "use the first day of the month, for example 05/1985 -> 1985-05-01."
+                ),
             ),
             (
-                "Auteurs",
-                "Séparer plusieurs auteurs par point-virgule, barre verticale "
-                "ou retour ligne dans scenariste, dessinateur ou coloriste. "
-                "Les virgules sont conservées dans les noms.",
+                _lt("Authors"),
+                _lt(
+                    "Separate several authors with a semicolon, a vertical bar "
+                    "or a line break in scenariste, dessinateur or coloriste. "
+                    "Commas are kept in names."
+                ),
             ),
             (
-                "État de lecture",
-                "Valeurs techniques attendues : non_lu, en_cours, lu.",
+                _lt("Reading status"),
+                _lt("Expected technical values: non_lu, en_cours, lu."),
             ),
             (
-                "Excel fourni",
-                "Le fichier Albums_Collection_En_Ligne.xlsx contient les colonnes N° "
-                "et Contenu. La colonne Contenu doit être éclatée vers série, tome, "
-                "titre, date de parution et éditeur avant import.",
+                _lt("Provided Excel file"),
+                _lt(
+                    "The file Albums_Collection_En_Ligne.xlsx contains the columns N° "
+                    "and Contenu. The Contenu column must be split into series, volume, "
+                    "title, release date and publisher before import."
+                ),
             ),
             (
-                "Exemple source",
+                _lt("Source example"),
                 "Agent 212 (L') -5- Poulet aux amendes 05/1985 Dupuis 11/03/2017 Neuf 12",
             ),
             (
-                "Liens",
-                "url_club_be et url_amazon_be sont optionnels ; ils pourront aussi "
-                "être générés automatiquement par le connecteur BDGest.",
+                _lt("Links"),
+                _lt(
+                    "url_club_be and url_amazon_be are optional; they can also "
+                    "be filled in later by the weekly purchase-links job."
+                ),
             ),
         ]
 
@@ -1261,12 +1286,13 @@ class ComicImportWizard(models.TransientModel):
             [column["name"] for column in columns],
             [column["example"] for column in columns],
         ]
+        # Libellés traduits (_lt) convertis en texte : les cellules XLSX attendent des str
         instruction_rows = [
-            ["Sujet", "Instruction"],
-            *cls._instruction_rows(),
+            [str(_lt("Topic")), str(_lt("Instruction"))],
+            *[[str(cell) for cell in row] for row in cls._instruction_rows()],
             [],
-            ["Colonne", "Description"],
-            *[(column["name"], column["description"]) for column in columns],
+            [str(_lt("Column")), str(_lt("Description"))],
+            *[(column["name"], str(column["description"])) for column in columns],
         ]
 
         output = BytesIO()
@@ -1371,7 +1397,7 @@ class ComicImportWizard(models.TransientModel):
                    xmlns:dcterms="http://purl.org/dc/terms/"
                    xmlns:dcmitype="http://purl.org/dc/dcmitype/"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <dc:title>Modèle d'import albums BD</dc:title>
+  <dc:title>Comic album import template</dc:title>
   <dc:creator>Odoo Comic Collection</dc:creator>
   <cp:lastModifiedBy>Odoo Comic Collection</cp:lastModifiedBy>
   <dcterms:created xsi:type="dcterms:W3CDTF">{created_at}</dcterms:created>
@@ -1479,26 +1505,28 @@ class ComicImportWizard(models.TransientModel):
 
 class ComicImportMappingLine(models.TransientModel):
     _name = "comic.import.mapping.line"
-    _description = "Ligne de mapping d'import BD"
+    _description = "Comic import mapping line"
     _order = "sequence, id"
 
     wizard_id = fields.Many2one(
         "comic.import.wizard",
-        string="Assistant",
+        string="Wizard",
         required=True,
         ondelete="cascade",
     )
-    sequence = fields.Integer(string="Séquence", default=10)
+    sequence = fields.Integer(default=10)
     # Index (0-based) de la colonne dans le fichier — indépendant de l'ordre d'affichage
-    column_index = fields.Integer(string="Index colonne", required=True, readonly=True)
-    column_name = fields.Char(string="Colonne source", required=True, readonly=True)
-    sample_value = fields.Char(string="Exemple", readonly=True)
+    column_index = fields.Integer(string="Column index", required=True, readonly=True)
+    column_name = fields.Char(string="Source column", required=True, readonly=True)
+    sample_value = fields.Char(string="Sample", readonly=True)
     target_field = fields.Selection(
         selection="_selection_target_field",
-        string="Champ cible",
+        string="Target field",
     )
 
     def _selection_target_field(self):
-        return [(column["name"], column["description"]) for column in ComicImportWizard._template_columns()] + [
-            ("compact_content", "Contenu compact export collection"),
+        return [
+            (column["name"], self.env._(column["description"])) for column in ComicImportWizard._template_columns()
+        ] + [
+            ("compact_content", self.env._("Compact content (collection export)")),
         ]

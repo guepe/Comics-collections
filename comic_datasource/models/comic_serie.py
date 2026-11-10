@@ -1,6 +1,6 @@
 import logging
 
-from odoo import _, fields, models
+from odoo import fields, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -10,24 +10,24 @@ class ComicSerie(models.Model):
     _inherit = "comic.serie"
 
     nb_tomes_parus = fields.Integer(
-        string="Nombre de tomes parus",
+        string="Number of volumes released",
         tracking=True,
-        help="Nombre de tomes publiés par l'éditeur (saisie manuelle). Sert de référence à la "
-        "détection des tomes manquants. Laisser à 0 pour se baser sur le plus grand numéro de tome "
-        "connu (albums en base et résultats des sources).",
+        help="Number of volumes published by the publisher (manual entry). Used as the reference for "
+        "missing volumes detection. Leave at 0 to rely on the highest known volume number "
+        "(albums in the database and data source results).",
     )
     missing_last_check = fields.Datetime(
-        string="Dernière détection des tomes manquants",
+        string="Last missing volumes detection",
         readonly=True,
         copy=False,
-        help="Date de la dernière recherche de tomes manquants (manuelle ou planifiée).",
+        help="Date of the last search for missing volumes (manual or scheduled).",
     )
 
     def action_update_albums_from_datasource(self):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Mise à jour depuis les sources de données"),
+            "name": self.env._("Update from data sources"),
             "res_model": "comic.serie.update.wizard",
             "view_mode": "form",
             "target": "new",
@@ -38,7 +38,7 @@ class ComicSerie(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": _("Tomes manquants — ") + self.name,
+            "name": self.env._("Missing volumes — %(serie)s", serie=self.name),
             "res_model": "comic.serie.missing.wizard",
             "view_mode": "form",
             "target": "new",

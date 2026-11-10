@@ -11,15 +11,15 @@ _logger = logging.getLogger(__name__)
 
 class ComicSerieUpdateWizard(models.TransientModel):
     _name = "comic.serie.update.wizard"
-    _description = "Mise à jour en lot des albums d'une série depuis les sources de données"
+    _description = "Batch update of a series' albums from data sources"
 
-    serie_id = fields.Many2one("comic.serie", required=True, readonly=True)
-    nb_albums = fields.Integer(compute="_compute_nb_albums", string="Albums à traiter")
+    serie_id = fields.Many2one("comic.serie", string="Series", required=True, readonly=True)
+    nb_albums = fields.Integer(compute="_compute_nb_albums", string="Albums to process")
     state = fields.Selection(
-        [("confirm", "Confirmation"), ("done", "Terminé")],
+        [("confirm", "Confirmation"), ("done", "Done")],
         default="confirm",
     )
-    import_report = fields.Html(string="Rapport", readonly=True)
+    import_report = fields.Html(string="Report", readonly=True)
 
     @api.depends("serie_id.work_ids")
     def _compute_nb_albums(self):
@@ -71,28 +71,33 @@ class ComicSerieUpdateWizard(models.TransientModel):
         report = self._build_report(updated, skipped, errors)
         if quota_hit:
             report = (
-                "<p><b>⚠️ Quota Google Books atteint : mise à jour interrompue.</b> "
-                "Réessayez plus tard ou ajoutez une clé API dans les paramètres.</p>" + report
+                "<p><b>%s</b> %s</p>"
+                % (
+                    self.env._("⚠️ Google Books quota reached: update interrupted."),
+                    self.env._("Try again later or add an API key in the settings."),
+                )
+                + report
             )
         self.import_report = report
         self.state = "done"
         return self._reopen()
 
     def _build_report(self, updated, skipped, errors):
+        _ = self.env._
         lines = []
         if updated:
-            lines.append(f"<b>✅ {len(updated)} mis à jour :</b><ul>")
+            lines.append("<b>%s</b><ul>" % _("✅ %(n)s updated:", n=len(updated)))
             lines += [f"<li>{w.titre_canonique}</li>" for w in updated]
             lines.append("</ul>")
         if skipped:
-            lines.append(f"<b>⏭️ {len(skipped)} ignoré(s) (non trouvé ou déjà à jour) :</b><ul>")
+            lines.append("<b>%s</b><ul>" % _("⏭️ %(n)s skipped (not found or already up to date):", n=len(skipped)))
             lines += [f"<li>{w.titre_canonique}</li>" for w in skipped]
             lines.append("</ul>")
         if errors:
-            lines.append(f"<b>❌ {len(errors)} erreur(s) :</b><ul>")
+            lines.append("<b>%s</b><ul>" % _("❌ %(n)s error(s):", n=len(errors)))
             lines += [f"<li>{w.titre_canonique}</li>" for w in errors]
             lines.append("</ul>")
-        return "".join(lines) or "<p>Aucune œuvre à traiter.</p>"
+        return "".join(lines) or "<p>%s</p>" % _("No album to process.")
 
     def action_close_and_return(self):
         """Ferme le wizard et retourne à la fiche série."""

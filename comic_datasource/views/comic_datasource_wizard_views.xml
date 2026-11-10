@@ -33,33 +33,33 @@
         <field name="name">comic.datasource.search.wizard.form</field>
         <field name="model">comic.datasource.search.wizard</field>
         <field name="arch" type="xml">
-            <form string="Recherche BD multi-sources">
+            <form string="Multi-source comic search">
 
                 <!-- État : recherche -->
                 <group invisible="state != 'search'">
-                    <group string="Rechercher un album">
+                    <group string="Search for an album">
                         <field name="search_term" widget="isbn_scan"
-                               placeholder="ISBN (9782...) ou titre de l'album"
+                               placeholder="ISBN (9782...) or album title"
                                autofocus="1"/>
                         <field name="search_type" readonly="1"/>
                     </group>
                     <group>
                         <div class="text-muted">
-                            Sources interrogées (par ordre de priorité) :
+                            Sources queried (in order of priority):
                             <b>Google Books</b> → <b>Open Library</b> → <b>BnF</b>
                         </div>
                     </group>
                 </group>
 
                 <!-- État : résultats -->
-                <group invisible="state != 'results'" string="Résultats">
+                <group invisible="state != 'results'" string="Results">
                     <div class="alert alert-info mb-2" role="status" invisible="not has_duplicates">
-                        ⚠️ Certains albums (surlignés en orange) ont un ISBN déjà présent en base.
-                        Leur import mettra à jour l'album existant.
+                        ⚠️ Some albums (highlighted in orange) have an ISBN already in the database.
+                        Importing them will update the existing album.
                     </div>
                     <div class="alert alert-warning mb-2" role="status" invisible="not has_title_conflicts">
-                        ⚠️ Certains titres (surlignés en rouge) diffèrent de la version en base (ex : titre en anglais vs français).
-                        Choisissez l'action à effectuer sur chaque ligne.
+                        ⚠️ Some titles (highlighted in red) differ from the version in the database (e.g. English vs French title).
+                        Choose the action to take on each line.
                     </div>
                     <field name="result_ids"
                            widget="one2many"
@@ -71,17 +71,17 @@
                             <field name="selected" widget="boolean_toggle"/>
                             <field name="cover_data" widget="image" options="{'size': [60, 80]}" optional="show"/>
                             <field name="title"/>
-                            <field name="existing_title" string="Titre en base"
+                            <field name="existing_title" string="Title in database"
                                    optional="show" readonly="1"
                                    invisible="not title_conflict"/>
-                            <field name="title_action" string="Action titre"
+                            <field name="title_action" string="Title action"
                                    optional="show"
                                    invisible="not title_conflict"/>
                             <field name="serie_name" optional="show"/>
                             <field name="tome" optional="show"/>
                             <field name="isbn" optional="show"/>
                             <field name="editeur" optional="show"/>
-                            <field name="auteurs_display" string="Auteurs" optional="show"/>
+                            <field name="auteurs_display" string="Authors" optional="show"/>
                             <field name="date_parution" optional="show"/>
                             <field name="source" widget="badge"
                                    decoration-success="source == 'google'"
@@ -97,7 +97,7 @@
                 </group>
 
                 <!-- État : terminé -->
-                <group invisible="state != 'done'" string="Rapport d'import">
+                <group invisible="state != 'done'" string="Import report">
                     <field name="import_report" nolabel="1" widget="html" readonly="1"/>
                 </group>
 
@@ -110,37 +110,37 @@
                 <footer>
                     <!-- Boutons état : recherche -->
                     <button name="action_search"
-                            string="Rechercher"
+                            string="Search"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'search'"/>
 
                     <!-- Boutons état : résultats -->
                     <button name="action_import"
-                            string="Importer la sélection"
+                            string="Import selection"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'results'"/>
                     <button name="action_back"
-                            string="Retour"
+                            string="Back"
                             type="object"
                             class="btn-secondary"
                             invisible="state != 'results'"/>
 
                     <!-- Boutons état : terminé -->
                     <button name="action_view_imported"
-                            string="Voir les albums"
+                            string="View albums"
                             type="object"
                             class="btn-primary"
                             invisible="state != 'done'"/>
                     <button name="action_new_search"
-                            string="Nouvelle recherche"
+                            string="New search"
                             type="object"
                             class="btn-secondary"
                             invisible="state != 'done'"/>
 
                     <button name="action_close_and_return"
-                            string="Fermer"
+                            string="Close"
                             type="object"
                             class="btn-secondary"/>
                 </footer>
@@ -150,7 +150,7 @@
 
     <!-- ── Action pour ouvrir le wizard depuis le menu ───────────────────── -->
     <record id="action_comic_datasource_search_wizard" model="ir.actions.act_window">
-        <field name="name">Rechercher et importer des BD</field>
+        <field name="name">Search and Import Comics</field>
         <field name="res_model">comic.datasource.search.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
@@ -160,7 +160,7 @@
 
     <!-- ── Action standalone (menu + bouton formulaire) ─────────────────── -->
     <record id="action_comic_datasource_search_wizard_standalone" model="ir.actions.act_window">
-        <field name="name">Rechercher des BD</field>
+        <field name="name">Search Comics</field>
         <field name="res_model">comic.datasource.search.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>

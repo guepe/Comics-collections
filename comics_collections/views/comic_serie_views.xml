@@ -5,15 +5,15 @@
         <field name="name">comic.serie.list</field>
         <field name="model">comic.serie</field>
         <field name="arch" type="xml">
-            <list string="Séries">
+            <list string="Series">
                 <field name="name"/>
                 <field name="type"/>
                 <field name="statut"/>
                 <field name="genre_id"/>
                 <field name="editeur_id"/>
-                <field name="auteur_names" string="Auteurs" optional="show"/>
-                <field name="nb_works_total" string="Tomes"/>
-                <field name="a_suivre" string="Suivie" widget="boolean_toggle"/>
+                <field name="auteur_names" string="Authors" optional="show"/>
+                <field name="nb_works_total" string="Volumes"/>
+                <field name="a_suivre" string="Followed" widget="boolean_toggle"/>
             </list>
         </field>
     </record>
@@ -22,7 +22,7 @@
         <field name="name">comic.serie.form</field>
         <field name="model">comic.serie</field>
         <field name="arch" type="xml">
-            <form string="Série">
+            <form string="Series">
                 <sheet>
                     <div name="button_box" class="oe_button_box">
                         <button name="action_view_works"
@@ -37,7 +37,7 @@
                            class="oe_avatar" options="{'preview_image': 'image_couverture'}"/>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" placeholder="Titre de la série"/>
+                            <field name="name" placeholder="Series title"/>
                         </h1>
                     </div>
                     <group>
@@ -46,7 +46,7 @@
                             <field name="statut"/>
                             <field name="genre_id"/>
                             <field name="editeur_id"/>
-                            <field name="auteur_names" string="Auteurs" invisible="not auteur_names"/>
+                            <field name="auteur_names" string="Authors" invisible="not auteur_names"/>
                         </group>
                         <group>
                             <field name="nb_works_total"/>
@@ -61,16 +61,16 @@
                         <page string="Synopsis">
                             <field name="synopsis"/>
                         </page>
-                        <page string="Albums / Tomes">
+                        <page string="Albums / Volumes">
                             <field name="work_ids">
                                 <list>
-                                    <field name="tome" string="T°"/>
-                                    <field name="titre_canonique" string="Titre"/>
-                                    <field name="nb_editions" string="Éditions" optional="hide"/>
+                                    <field name="tome" string="Vol."/>
+                                    <field name="titre_canonique" string="Title"/>
+                                    <field name="nb_editions" string="Editions" optional="hide"/>
                                 </list>
                             </field>
                         </page>
-                        <page string="Références">
+                        <page string="References">
                             <group>
                                 <field name="bdgest_id"/>
                                 <field name="bedetheque_url" widget="url"/>
@@ -87,25 +87,25 @@
         <field name="name">comic.serie.search</field>
         <field name="model">comic.serie</field>
         <field name="arch" type="xml">
-            <search string="Séries">
-                <field name="name" string="Titre"/>
+            <search string="Series">
+                <field name="name" string="Title"/>
                 <field name="genre_id"/>
                 <field name="editeur_id"/>
-                <filter string="En cours" name="en_cours"
+                <filter string="Ongoing" name="en_cours"
                         domain="[('statut', '=', 'en_cours')]"/>
-                <filter string="Terminées" name="terminee"
+                <filter string="Completed" name="terminee"
                         domain="[('statut', '=', 'terminee')]"/>
-                <filter string="Mes séries suivies" name="a_suivre"
+                <filter string="My followed series" name="a_suivre"
                         domain="[('a_suivre', '=', True)]"/>
                 <separator/>
-                <filter string="BD" name="bd" domain="[('type', '=', 'bd')]"/>
+                <filter string="Comic book" name="bd" domain="[('type', '=', 'bd')]"/>
                 <filter string="Manga" name="manga" domain="[('type', '=', 'manga')]"/>
                 <filter string="Comics" name="comics" domain="[('type', '=', 'comics')]"/>
                 <group name="group_by">
                     <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
-                    <filter string="Statut" name="group_statut" context="{'group_by': 'statut'}"/>
+                    <filter string="Status" name="group_statut" context="{'group_by': 'statut'}"/>
                     <filter string="Genre" name="group_genre" context="{'group_by': 'genre_id'}"/>
-                    <filter string="Éditeur" name="group_editeur" context="{'group_by': 'editeur_id'}"/>
+                    <filter string="Publisher" name="group_editeur" context="{'group_by': 'editeur_id'}"/>
                 </group>
             </search>
         </field>
@@ -156,7 +156,7 @@
                                     <t t-esc="record.editeur_id.value || ''"/>
                                 </div>
                                 <div class="o_comic_progress_label">
-                                    <span><t t-esc="record.nb_works_total.raw_value"/> tomes</span>
+                                    <span><t t-esc="record.nb_works_total.raw_value"/> volumes</span>
                                 </div>
                             </div>
                         </div>
@@ -169,7 +169,7 @@
     <!-- « Mes séries » (US-087) : séries dont l'utilisateur possède au moins un album
          ou qu'il suit. -->
     <record id="action_comic_serie" model="ir.actions.act_window">
-        <field name="name">Mes séries</field>
+        <field name="name">My Series</field>
         <field name="res_model">comic.serie</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="domain">['|', ('work_ids.edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True)]), ('suivi_user_ids', 'in', [uid])]</field>
@@ -178,7 +178,7 @@
 
     <!-- Catalogue partagé complet des séries : gestionnaire, Référentiel avancé -->
     <record id="action_comic_serie_catalogue" model="ir.actions.act_window">
-        <field name="name">Toutes les séries</field>
+        <field name="name">All Series</field>
         <field name="res_model">comic.serie</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="context">{}</field>

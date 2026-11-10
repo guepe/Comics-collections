@@ -1,19 +1,19 @@
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
 class ComicIsbn(models.Model):
     _name = "comic.isbn"
-    _description = "ISBN d'une édition BD"
+    _description = "Comic edition ISBN"
     _rec_name = "isbn_13"
 
-    edition_id = fields.Many2one("comic.edition", string="Édition", required=True, ondelete="cascade", index=True)
+    edition_id = fields.Many2one("comic.edition", string="Edition", required=True, ondelete="cascade", index=True)
     isbn_13 = fields.Char(string="ISBN-13 (EAN-13)")
     isbn_10 = fields.Char(string="ISBN-10")
 
     _unique_isbn13 = models.Constraint(
         "UNIQUE(isbn_13)",
-        "Cet ISBN-13 est déjà enregistré pour une autre édition.",
+        "This ISBN-13 is already registered for another edition.",
     )
 
     @api.model_create_multi
@@ -52,13 +52,13 @@ class ComicIsbn(models.Model):
     def _check_isbn_13(self):
         for rec in self:
             if rec.isbn_13 and not self._validate_ean13(rec.isbn_13):
-                raise ValidationError(_('"%s" n\'est pas un EAN-13 valide.') % rec.isbn_13)
+                raise ValidationError(self.env._('"%s" is not a valid EAN-13.', rec.isbn_13))
 
     @api.constrains("isbn_10")
     def _check_isbn_10(self):
         for rec in self:
             if rec.isbn_10 and not self._validate_isbn10(rec.isbn_10):
-                raise ValidationError(_('"%s" n\'est pas un ISBN-10 valide.') % rec.isbn_10)
+                raise ValidationError(self.env._('"%s" is not a valid ISBN-10.', rec.isbn_10))
 
     @staticmethod
     def _validate_ean13(isbn):

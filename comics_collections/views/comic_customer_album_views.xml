@@ -7,7 +7,7 @@
         <field name="name">comic.customer.album.list</field>
         <field name="model">comic.customer.album</field>
         <field name="arch" type="xml">
-            <list string="Bibliothèque">
+            <list string="Library">
                 <field name="partner_id" optional="hide"/>
                 <field name="serie_id" optional="show"/>
                 <field name="tome" optional="show"/>
@@ -19,8 +19,8 @@
                 <field name="note_etoiles" widget="priority"/>
                 <field name="note" optional="hide"/>
                 <field name="currency_id" column_invisible="1"/>
-                <field name="prix_achat" optional="show" sum="Total prix d'achat"/>
-                <field name="valeur_estimee" optional="show" sum="Total valeur estimée"/>
+                <field name="prix_achat" optional="show" sum="Total purchase price"/>
+                <field name="valeur_estimee" optional="show" sum="Total estimated value"/>
                 <field name="date_ajout"/>
             </list>
         </field>
@@ -58,7 +58,7 @@
                                 </t>
                                 <t t-if="record.tome.raw_value">
                                     <span class="o_comic_serie_statut" style="background:#1a73e8;">
-                                        T<t t-esc="record.tome.raw_value"/>
+                                        Vol. <t t-esc="record.tome.raw_value"/>
                                     </span>
                                 </t>
                             </div>
@@ -71,11 +71,11 @@
                                     <field name="note_etoiles" widget="priority" readonly="1"/>
                                     <span>
                                         <i t-if="record.dans_wishlist.raw_value and !record.dans_collection.raw_value"
-                                           class="fa fa-heart text-danger" title="En wishlist"/>
+                                           class="fa fa-heart text-danger" title="In wishlist"/>
                                         <span t-if="record.etat_lecture.raw_value == 'lu'"
-                                              class="badge text-bg-success ms-1">Lu</span>
+                                              class="badge text-bg-success ms-1">Read</span>
                                         <span t-elif="record.etat_lecture.raw_value == 'en_cours'"
-                                              class="badge text-bg-warning ms-1">En cours</span>
+                                              class="badge text-bg-warning ms-1">Reading</span>
                                     </span>
                                 </div>
                             </div>
@@ -90,7 +90,7 @@
         <field name="name">comic.customer.album.form</field>
         <field name="model">comic.customer.album</field>
         <field name="arch" type="xml">
-            <form string="Bibliothèque">
+            <form string="Library">
                 <sheet>
                     <group name="main">
                         <group string="Identification" name="identification">
@@ -99,7 +99,7 @@
                             <field name="source"/>
                             <field name="date_ajout"/>
                         </group>
-                        <group string="Ma collection" name="ma_collection">
+                        <group string="My collection" name="ma_collection">
                             <field name="dans_collection"/>
                             <field name="dans_wishlist"/>
                             <field name="ignore_wishlist"/>
@@ -109,7 +109,7 @@
                         </group>
                     </group>
                     <group name="valeur">
-                        <group string="Valeur" name="valeur_montants">
+                        <group string="Value" name="valeur_montants">
                             <field name="currency_id" invisible="1"/>
                             <field name="prix_achat"/>
                             <field name="valeur_estimee"/>
@@ -117,7 +117,7 @@
                     </group>
                     <group name="commentaire">
                         <field name="commentaire"
-                               placeholder="Notes personnelles..."
+                               placeholder="Personal notes..."
                                nolabel="1"/>
                     </group>
                 </sheet>
@@ -129,31 +129,31 @@
         <field name="name">comic.customer.album.search</field>
         <field name="model">comic.customer.album</field>
         <field name="arch" type="xml">
-            <search string="Bibliothèque">
+            <search string="Library">
                 <field name="edition_id" string="Album"/>
-                <field name="work_id" string="Titre"/>
-                <field name="partner_id" string="Propriétaire"/>
-                <filter string="Dans la collection" name="collection"
+                <field name="work_id" string="Title"/>
+                <field name="partner_id" string="Owner"/>
+                <filter string="In collection" name="collection"
                         domain="[('dans_collection', '=', True)]"/>
-                <filter string="En wishlist" name="wishlist"
+                <filter string="In wishlist" name="wishlist"
                         domain="[('dans_wishlist', '=', True)]"/>
                 <separator/>
-                <filter string="Non lus" name="non_lu" domain="[('etat_lecture', '=', 'non_lu')]"/>
-                <filter string="En cours" name="en_cours" domain="[('etat_lecture', '=', 'en_cours')]"/>
-                <filter string="Lus" name="lu" domain="[('etat_lecture', '=', 'lu')]"/>
+                <filter string="Unread" name="non_lu" domain="[('etat_lecture', '=', 'non_lu')]"/>
+                <filter string="Reading" name="en_cours" domain="[('etat_lecture', '=', 'en_cours')]"/>
+                <filter string="Read" name="lu" domain="[('etat_lecture', '=', 'lu')]"/>
                 <separator/>
-                <filter string="Note ≥ 3★" name="note_3" domain="[('note', '>=', 3)]"/>
-                <filter string="Note ≥ 4★" name="note_4" domain="[('note', '>=', 4)]"/>
+                <filter string="Rating ≥ 3★" name="note_3" domain="[('note', '>=', 3)]"/>
+                <filter string="Rating ≥ 4★" name="note_4" domain="[('note', '>=', 4)]"/>
                 <group name="group_by">
-                    <filter string="Propriétaire" name="by_partner"
+                    <filter string="Owner" name="by_partner"
                             context="{'group_by': 'partner_id'}"/>
                     <filter string="Source" name="by_source"
                             context="{'group_by': 'source'}"/>
-                    <filter string="État de lecture" name="by_etat"
+                    <filter string="Reading status" name="by_etat"
                             context="{'group_by': 'etat_lecture'}"/>
                     <filter string="Genre" name="by_genre"
                             context="{'group_by': 'genre_id'}"/>
-                    <filter string="Série" name="by_serie"
+                    <filter string="Series" name="by_serie"
                             context="{'group_by': 'serie_id'}"/>
                 </group>
             </search>
@@ -161,7 +161,7 @@
     </record>
 
     <record id="action_comic_my_library" model="ir.actions.act_window">
-        <field name="name">Ma bibliothèque</field>
+        <field name="name">My Library</field>
         <field name="res_model">comic.customer.album</field>
         <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="view_comic_customer_album_search"/>
@@ -169,11 +169,11 @@
         <field name="context">{'search_default_collection': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Votre bibliothèque est vide.
+                Your library is empty.
             </p>
             <p>
-                Ajoutez des albums à votre collection ou à votre wishlist, depuis la liste des
-                albums (action « Marquer comme lu ») ou par import CSV/Excel.
+                Add albums to your collection or to your wishlist from the album
+                list (“Mark as Read” action) or through CSV/Excel import.
             </p>
         </field>
     </record>

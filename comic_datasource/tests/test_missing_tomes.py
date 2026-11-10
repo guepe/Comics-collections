@@ -147,7 +147,12 @@ class TestMissingTomes(TransactionCase):
     # ── Alerte nouveautés (US-068) ───────────────────────────────────────────
 
     def _release_messages(self, work):
-        return work.message_ids.filtered(lambda m: "Nouveau tome dans une série que vous suivez" in (m.body or ""))
+        # Indépendant de la langue : l'alerte est la seule notification « discussion »
+        # (mt_comment) postée sur l'album, adressée aux abonnés de la série.
+        comment = self.env.ref("mail.mt_comment")
+        return work.message_ids.filtered(
+            lambda m: m.message_type == "notification" and m.subtype_id == comment and m.partner_ids
+        )
 
     def test_cron_new_recent_tome_notifies_followers(self):
         follower = new_test_user(

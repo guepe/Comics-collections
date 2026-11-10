@@ -28,7 +28,7 @@
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
 | **Maintenant** | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064 (#2)                 | 🔄   |
 | **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
-| **Plus tard**  | [E10 — Internationalisation](#e10--internationalisation)                  | US-092 (#9)                 | ⏳   |
+| **Plus tard**  | [E10 — Internationalisation](#e10--internationalisation)                  | US-092 (#9)                 | 🚧   |
 
 ---
 
@@ -47,7 +47,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 6 US   | —                         |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064 (#2)               |
 | E9   | Shop & commerçant                    | `comic_shop` (dépôt privé)          | ⏳   | —      | pro#1 → pro#4             |
-| E10  | Internationalisation (interface EN)  | tous                                | ⏳   | —      | #9                        |
+| E10  | Internationalisation (EN, FR, NL, DE) | tous                               | 🚧   | —      | #9                        |
 
 ---
 

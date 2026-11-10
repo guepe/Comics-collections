@@ -8,32 +8,32 @@
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
 
-                <app data-string="Bandes Dessinées"
-                     string="Bandes Dessinées"
+                <app data-string="Comic Books"
+                     string="Comic Books"
                      name="comic_datasource"
                      groups="comics_collections.group_comic_manager">
 
                     <!-- Google Books API -->
-                    <block title="Sources de données" id="comic_datasource_sources">
+                    <block title="Data Sources" id="comic_datasource_sources">
 
                         <setting id="comic_google_books_setting"
-                                 title="Source principale : synopsis, couvertures HD et métadonnées générales.">
+                                 title="Main source: synopses, HD covers and general metadata.">
                             <div class="row">
                                 <div class="col-lg-8">
                                     <label for="comic_google_books_api_key" class="o_form_label fw-bold"/>
                                     <div class="text-muted mt-1">
-                                        Clé gratuite sur
+                                        Free key on
                                         <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a>.
-                                        Sans clé : ~100 req/jour (mode anonyme).
+                                        Without a key: ~100 req/day (anonymous mode).
                                     </div>
                                     <div class="mt-2">
                                         <field name="comic_google_books_api_key"
-                                               placeholder="AIza... (optionnel)"
+                                               placeholder="AIza... (optional)"
                                                class="o_field_widget"/>
                                     </div>
                                     <div class="mt-2">
                                         <button name="action_test_google_books"
-                                                string="Tester la connexion Google Books"
+                                                string="Test the Google Books connection"
                                                 type="object"
                                                 class="btn btn-secondary btn-sm"/>
                                     </div>
@@ -43,22 +43,22 @@
 
                         <!-- Open Library (le libellé de la case est affiché par <setting> : pas de <label>, #10) -->
                         <setting id="comic_openlibrary_setting"
-                                 title="Couvertures et métadonnées alternatives. Gratuit, sans clé API.">
+                                 title="Alternative covers and metadata. Free, no API key required.">
                             <field name="comic_openlibrary_enabled"/>
                             <div class="text-muted mt-1">
-                                Open Library fournit des couvertures et métadonnées pour des millions
-                                d'ouvrages. Activé par défaut.
+                                Open Library provides covers and metadata for millions
+                                of books. Enabled by default.
                             </div>
                         </setting>
 
                         <!-- BnF -->
                         <setting id="comic_bnf_setting"
-                                 title="Données officielles de dépôt légal. Gratuit, sans clé API.">
+                                 title="Official legal deposit data. Free, no API key required.">
                             <field name="comic_bnf_enabled"/>
                             <div class="text-muted mt-1">
-                                La BnF (Bibliothèque nationale de France) indexe l'ensemble des BD
-                                soumises au dépôt légal en France. Prioritaire pour
-                                <code>date_depot_legal</code>. Activée par défaut.
+                                The BnF (Bibliothèque nationale de France) indexes all comics
+                                submitted to legal deposit in France. Takes priority for
+                                <code>date_depot_legal</code>. Enabled by default.
                             </div>
                         </setting>
 

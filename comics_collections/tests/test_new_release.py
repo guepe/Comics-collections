@@ -38,7 +38,7 @@ class TestNewRelease(TransactionCase):
         return self.env["comic.work"].create(vals)
 
     def _release_messages(self, work):
-        return work.message_ids.filtered(lambda m: "Nouveau tome dans une série que vous suivez" in (m.body or ""))
+        return work.message_ids.filtered(lambda m: "New volume in a series you follow" in (m.body or ""))
 
     # ── Détection d'une nouveauté ────────────────────────────────────────────
 
@@ -70,7 +70,7 @@ class TestNewRelease(TransactionCase):
         expected = self.user_a.partner_id | self.user_b.partner_id
         self.assertEqual(messages.partner_ids, expected)
         self.assertEqual(messages.notification_ids.res_partner_id, expected)
-        self.assertIn("T1", messages.body)
+        self.assertIn("Vol. 1", messages.body)
         self.assertIn(work.date_parution.strftime("%d/%m/%Y"), messages.body)
 
         work._notify_new_release()

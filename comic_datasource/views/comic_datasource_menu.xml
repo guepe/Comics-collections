@@ -3,7 +3,7 @@
 
     <!-- Entrée de menu sous Ma Collection -->
     <menuitem id="menu_comic_datasource_search"
-              name="Rechercher des BD"
+              name="Search Comics"
               parent="comics_collections.menu_comic_collection"
               action="comic_datasource.action_comic_datasource_search_wizard_standalone"
               groups="comics_collections.group_comic_user"
@@ -11,7 +11,7 @@
 
     <!-- Configuration > Paramètres sources de données -->
     <record id="action_comic_config_settings" model="ir.actions.act_window">
-        <field name="name">Paramètres Sources de données</field>
+        <field name="name">Data Sources Settings</field>
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="res_config_settings_view_form_comic_datasource"/>
@@ -19,7 +19,7 @@
     </record>
 
     <menuitem id="menu_comic_config_datasource"
-              name="Sources de données"
+              name="Data Sources"
               parent="comics_collections.menu_comic_config_root"
               action="action_comic_config_settings"
               groups="comics_collections.group_comic_manager"

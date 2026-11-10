@@ -199,6 +199,19 @@ Quota Google : `GoogleBooksQuotaError` remonte volontairement → coupe-circuit 
 
 ---
 
+## 🌍 Traductions (US-092)
+
+- **Textes source en anglais** dans le code (Python, vues, QWeb, JS) ; jamais de français dans un
+  `string=`, un message ou un template. Le français vient de `i18n/fr.po` (Odoo ne traduit jamais
+  vers `en_US`). Langues livrées : EN (source), FR, NL, DE.
+- Messages : `self.env._("… %(name)s …", name=…)` (placeholders nommés ; jamais `source=` ni
+  `lang=` comme nom de placeholder). JS : `_t()`. Tout champ visible a un `string` explicite.
+- Après tout ajout / changement de texte : régénérer `i18n/<module>.pot` (`odoo i18n export`
+  sur une base jetable), puis `msgmerge --no-fuzzy-matching -U <lang>.po <module>.pot` et traduire
+  les nouvelles entrées dans les 3 `.po` (vocabulaire FR : album / tome / série ; badge « T3 »).
+
+---
+
 ## 🧑‍💻 Conventions de code
 
 **Nommage :** modèles `comic.xxx` · classes `ComicXxx` · fichiers `comic_xxx.py` / `comic_xxx_views.xml`

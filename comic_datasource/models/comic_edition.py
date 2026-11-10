@@ -4,7 +4,7 @@ from datetime import date
 
 import requests
 
-from odoo import _, fields, models
+from odoo import fields, models
 from odoo.exceptions import UserError
 from odoo.addons.comics_collections.utils.normalize import normalize_title
 from ..sources.base import normalize_isbn as _normalize_isbn
@@ -46,11 +46,11 @@ class ComicEdition(models.Model):
     _inherit = "comic.edition"
 
     datasource_last_try = fields.Datetime(
-        string="Dernier enrichissement tenté",
+        string="Last enrichment attempt",
         readonly=True,
         copy=False,
-        help="Date de la dernière tentative d'enrichissement automatique (cron). "
-        "Sert à faire tourner le lot : les éditions jamais tentées passent en premier.",
+        help="Date of the last automatic enrichment attempt (scheduled action). "
+        "Used to rotate the batch: editions never attempted go first.",
     )
 
     def _apply_datasource_data(self, data):
@@ -165,14 +165,26 @@ class ComicEdition(models.Model):
         return None
 
     # Champs dont on signale le remplissage après « Compléter les infos »
-    _COMPLETE_FIELDS = {
-        "image_couverture": "couverture",
-        "synopsis": "synopsis",
-        "nb_pages": "nombre de pages",
-        "date_parution": "date de parution",
-        "date_depot_legal": "dépôt légal",
-        "isbn_ids": "ISBN",
-    }
+    _COMPLETE_FIELDS = (
+        "image_couverture",
+        "synopsis",
+        "nb_pages",
+        "date_parution",
+        "date_depot_legal",
+        "isbn_ids",
+    )
+
+    def _complete_field_labels(self):
+        """Libellés (traduits) des champs signalés après « Compléter les infos »."""
+        _ = self.env._
+        return {
+            "image_couverture": _("cover"),
+            "synopsis": _("synopsis"),
+            "nb_pages": _("number of pages"),
+            "date_parution": _("release date"),
+            "date_depot_legal": _("legal deposit"),
+            "isbn_ids": _("ISBN"),
+        }
 
     def action_complete_from_sources(self):
         """Va chercher sur les sources les infos manquantes (champs vides seulement) et dit ce qui a été ajouté."""
@@ -185,19 +197,20 @@ class ComicEdition(models.Model):
         try:
             agg = self._fetch_datasource(ComicDataAggregator(env=self.env))
         except GoogleBooksQuotaError as exc:
-            raise UserError(_("Quota Google Books atteint : réessayez demain ou ajoutez une clé API.")) from exc
+            raise UserError(self.env._("Google Books quota reached: try again tomorrow or add an API key.")) from exc
         if agg and agg.data:
             self._apply_datasource_data(agg.data)
         self.datasource_last_try = fields.Datetime.now()
-        added = [label for f, label in self._COMPLETE_FIELDS.items() if self[f] and not before[f]]
+        labels = self._complete_field_labels()
+        added = [labels[f] for f in self._COMPLETE_FIELDS if self[f] and not before[f]]
         if len(self.work_id.auteur_line_ids) > nb_auteurs:
-            added.append(_("auteurs"))
+            added.append(self.env._("authors"))
         if added:
-            message, kind = _("Infos ajoutées : %s.", ", ".join(added)), "success"
+            message, kind = self.env._("Info added: %(fields)s.", fields=", ".join(added)), "success"
         elif agg and agg.data:
-            message, kind = _("Album trouvé sur les sources, mais rien de nouveau à ajouter."), "info"
+            message, kind = self.env._("Album found in the data sources, but nothing new to add."), "info"
         else:
-            message, kind = _("Album introuvable sur les sources (ISBN ou titre)."), "warning"
+            message, kind = self.env._("Album not found in the data sources (ISBN or title)."), "warning"
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",

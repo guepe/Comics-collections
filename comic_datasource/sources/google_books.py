@@ -41,8 +41,7 @@ class GoogleBooksSource(BaseComicSource):
                     "Sources de données pour augmenter la limite (1000 req/jour)."
                 )
                 raise GoogleBooksQuotaError(
-                    "Quota Google Books dépassé. Ajoutez une clé API dans "
-                    "Paramètres > Bandes Dessinées > Sources de données."
+                    "Google Books quota exceeded. Add an API key in Settings > Comic Books > Data Sources."
                 )
             if resp.status_code == 403:
                 _logger.error("Google Books: accès refusé (HTTP 403) — clé API invalide ou API non activée.")

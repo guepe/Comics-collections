@@ -3,55 +3,55 @@
 
     <!-- Menu racine -->
     <menuitem id="menu_comic_root"
-              name="Bandes Dessinées"
+              name="Comic Books"
               web_icon="comics_collections,static/description/icon.png"
               groups="comics_collections.group_comic_user"
               sequence="50"/>
 
     <!-- Ma Collection — parcours utilisateur courant -->
     <menuitem id="menu_comic_collection"
-              name="Ma Collection"
+              name="My Collection"
               parent="menu_comic_root"
               groups="comics_collections.group_comic_user"
               sequence="10"/>
 
     <menuitem id="menu_comic_dashboard"
-              name="Tableau de bord"
+              name="Dashboard"
               parent="menu_comic_collection"
               action="action_comic_collection_dashboard"
               groups="comics_collections.group_comic_user"
               sequence="5"/>
 
     <menuitem id="menu_comic_series"
-              name="Mes séries"
+              name="My Series"
               parent="menu_comic_collection"
               action="action_comic_serie"
               groups="comics_collections.group_comic_user"
               sequence="10"/>
 
     <menuitem id="menu_comic_albums"
-              name="Mes albums"
+              name="My Albums"
               parent="menu_comic_collection"
               action="action_comic_work"
               groups="comics_collections.group_comic_user"
               sequence="20"/>
 
     <menuitem id="menu_comic_my_library"
-              name="Ma bibliothèque"
+              name="My Library"
               parent="menu_comic_collection"
               action="action_comic_my_library"
               groups="comics_collections.group_comic_user"
               sequence="25"/>
 
     <menuitem id="menu_comic_prets"
-              name="Prêts"
+              name="Loans"
               parent="menu_comic_collection"
               action="action_comic_pret"
               groups="comics_collections.group_comic_user"
               sequence="30"/>
 
     <menuitem id="menu_comic_import"
-              name="Import CSV/Excel"
+              name="CSV/Excel Import"
               parent="menu_comic_collection"
               action="action_comic_import_wizard"
               groups="comics_collections.group_comic_user"
@@ -59,20 +59,20 @@
 
     <!-- Catalogues -->
     <menuitem id="menu_comic_catalogues"
-              name="Catalogues"
+              name="Catalogs"
               parent="menu_comic_root"
               groups="comics_collections.group_comic_user"
               sequence="20"/>
 
     <menuitem id="menu_comic_auteurs"
-              name="Auteurs"
+              name="Authors"
               parent="menu_comic_catalogues"
               action="action_comic_auteurs"
               groups="comics_collections.group_comic_user"
               sequence="10"/>
 
     <menuitem id="menu_comic_editeurs"
-              name="Éditeurs"
+              name="Publishers"
               parent="menu_comic_catalogues"
               action="action_comic_editeur"
               groups="comics_collections.group_comic_user"
@@ -94,7 +94,7 @@
 
     <!-- Référentiel avancé — visible managers uniquement -->
     <menuitem id="menu_comic_referentiel"
-              name="Référentiel avancé"
+              name="Advanced Catalog"
               parent="menu_comic_config_root"
               groups="comics_collections.group_comic_manager"
               sequence="10"/>
@@ -102,28 +102,28 @@
     <!-- Catalogue complet (US-087) : la collection est privée dans le cœur ;
          comic_shop réexpose le catalogue aux utilisateurs. -->
     <menuitem id="menu_comic_referentiel_albums"
-              name="Tous les albums"
+              name="All Albums"
               parent="menu_comic_referentiel"
               action="action_comic_work_catalogue"
               groups="comics_collections.group_comic_manager"
               sequence="5"/>
 
     <menuitem id="menu_comic_referentiel_series"
-              name="Toutes les séries"
+              name="All Series"
               parent="menu_comic_referentiel"
               action="action_comic_serie_catalogue"
               groups="comics_collections.group_comic_manager"
               sequence="10"/>
 
     <menuitem id="menu_comic_editions"
-              name="Éditions"
+              name="Editions"
               parent="menu_comic_referentiel"
               action="action_comic_edition"
               groups="comics_collections.group_comic_manager"
               sequence="20"/>
 
     <menuitem id="menu_comic_dedup"
-              name="Doublons potentiels"
+              name="Potential Duplicates"
               parent="menu_comic_config_root"
               action="action_comic_dedup_pair"
               groups="comics_collections.group_comic_manager"

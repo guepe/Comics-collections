@@ -98,11 +98,11 @@ class TestCollectionDashboard(TransactionCase):
 
     def test_breakdowns_with_percent(self):
         data = self._data(self.user)
-        self.assertEqual(data["by_genre"], [{"label": "Sans genre", "count": 2, "percent": 100.0}])
+        self.assertEqual(data["by_genre"], [{"label": "No genre", "count": 2, "percent": 100.0}])
         reading = {row["key"]: (row["label"], row["count"], row["percent"]) for row in data["by_reading"]}
-        self.assertEqual(reading["lu"], ("Lu", 1, 50.0))
-        self.assertEqual(reading["non_lu"], ("Non lu", 1, 50.0))
-        self.assertEqual(reading["en_cours"], ("En cours", 0, 0.0))
+        self.assertEqual(reading["lu"], ("Read", 1, 50.0))
+        self.assertEqual(reading["non_lu"], ("Unread", 1, 50.0))
+        self.assertEqual(reading["en_cours"], ("Reading", 0, 0.0))
 
     def test_empty_library(self):
         data = self._data(self.empty)

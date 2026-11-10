@@ -2,7 +2,7 @@
 <odoo noupdate="1">
 
     <record id="genre_aventure" model="comic.genre">
-        <field name="name">Aventure</field>
+        <field name="name">Adventure</field>
         <field name="color">1</field>
     </record>
 
@@ -12,22 +12,22 @@
     </record>
 
     <record id="genre_science_fiction" model="comic.genre">
-        <field name="name">Science-Fiction</field>
+        <field name="name">Science fiction</field>
         <field name="color">4</field>
     </record>
 
     <record id="genre_fantastique" model="comic.genre">
-        <field name="name">Fantastique</field>
+        <field name="name">Fantasy</field>
         <field name="color">5</field>
     </record>
 
     <record id="genre_policier" model="comic.genre">
-        <field name="name">Policier</field>
+        <field name="name">Crime</field>
         <field name="color">6</field>
     </record>
 
     <record id="genre_historique" model="comic.genre">
-        <field name="name">Historique</field>
+        <field name="name">Historical</field>
         <field name="color">7</field>
     </record>
 
@@ -42,7 +42,7 @@
     </record>
 
     <record id="genre_horreur" model="comic.genre">
-        <field name="name">Horreur</field>
+        <field name="name">Horror</field>
         <field name="color">10</field>
     </record>
 

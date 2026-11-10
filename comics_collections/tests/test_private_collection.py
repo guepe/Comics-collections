@@ -50,7 +50,7 @@ class TestPrivateCollection(TransactionCase):
 
     def test_my_albums_domain(self):
         action = self.env.ref("comics_collections.action_comic_work")
-        self.assertEqual(action.name, "Mes albums")
+        self.assertEqual(action.name, "My Albums")
         self.assertNotIn("search_default_ma_collection", action.context)
         self.assertIn("comic_auto_own", action.context)
         domain = self._action_domain("comics_collections.action_comic_work", self.user)
@@ -61,7 +61,7 @@ class TestPrivateCollection(TransactionCase):
 
     def test_my_series_domain(self):
         action = self.env.ref("comics_collections.action_comic_serie")
-        self.assertEqual(action.name, "Mes séries")
+        self.assertEqual(action.name, "My Series")
         domain = self._action_domain("comics_collections.action_comic_serie", self.user)
         Serie = self.env["comic.serie"].with_user(self.user)
         series = Serie.search(domain)

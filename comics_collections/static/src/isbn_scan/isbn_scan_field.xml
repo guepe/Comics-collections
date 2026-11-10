@@ -5,7 +5,7 @@
         <xpath expr="//div[hasclass('o_field_input_buttons')]" position="inside">
             <button t-if="hasScanButton" type="button"
                     class="btn btn-link m-0 py-0 px-2 o_comic_isbn_scan_button"
-                    title="Scanner l'ISBN" aria-label="Scanner l'ISBN"
+                    title="Scan ISBN" aria-label="Scan ISBN"
                     t-on-click="onScanClick">
                 <i class="fa fa-barcode"/>
             </button>

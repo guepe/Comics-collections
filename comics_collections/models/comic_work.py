@@ -6,7 +6,7 @@ from datetime import timedelta
 
 from markupsafe import Markup
 
-from odoo import SUPERUSER_ID, _, api, fields, models
+from odoo import SUPERUSER_ID, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 from ..utils.normalize import normalize_title
@@ -48,17 +48,19 @@ def _score_pair(same_serie, tome_a, titre_norm_a, serie_norm_a, tome_b, titre_no
 
 class ComicWork(models.Model):
     _name = "comic.work"
-    _description = "Œuvre BD (titre canonique)"
+    _description = "Comic work (canonical title)"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _rec_name = "titre_canonique"
+    # Recherche « Album » / « Titre » : titre de l'album ou nom de la série
+    _rec_names_search = ["titre_canonique", "serie_id.name"]
     _order = "serie_id, tome"
 
-    serie_id = fields.Many2one("comic.serie", string="Série", ondelete="restrict", index=True, tracking=True)
-    titre_canonique = fields.Char(string="Titre canonique", required=True, tracking=True)
-    tome = fields.Integer(tracking=True, aggregator=False)
-    slug = fields.Char(string="Slug URL", index=True, copy=False)
+    serie_id = fields.Many2one("comic.serie", string="Series", ondelete="restrict", index=True, tracking=True)
+    titre_canonique = fields.Char(string="Canonical title", required=True, tracking=True)
+    tome = fields.Integer(string="Volume", tracking=True, aggregator=False)
+    slug = fields.Char(string="URL slug", index=True, copy=False)
     titre_normalise = fields.Char(
-        string="Titre normalisé",
+        string="Normalized title",
         compute="_compute_titre_normalise",
         store=True,
         index=True,
@@ -70,36 +72,36 @@ class ComicWork(models.Model):
     bedetheque_id = fields.Char(string="Bedetheque ID")
     comicvine_id = fields.Char(string="Comicvine ID")
 
-    auteur_line_ids = fields.One2many("comic.work.auteur.line", "work_id", string="Auteurs")
-    edition_ids = fields.One2many("comic.edition", "work_id", string="Éditions")
+    auteur_line_ids = fields.One2many("comic.work.auteur.line", "work_id", string="Authors")
+    edition_ids = fields.One2many("comic.edition", "work_id", string="Editions")
     active = fields.Boolean(default=True)
     release_notified = fields.Boolean(
-        string="Nouveauté notifiée",
+        string="New release notified",
         copy=False,
-        help="Vrai une fois l'alerte « nouveau tome » envoyée aux abonnés de la série "
-        "(ou écartée faute d'abonnés) : l'album n'est jamais retraité.",
+        help='True once the "new volume" alert has been sent to the followers of the series '
+        "(or skipped for lack of followers): the album is never processed again.",
     )
 
     # Regroupements de la recherche (genre / type portés par la série)
     genre_id = fields.Many2one(related="serie_id.genre_id", store=True, string="Genre", index=True)
-    serie_type = fields.Selection(related="serie_id.type", store=True, string="Type de série")
+    serie_type = fields.Selection(related="serie_id.type", store=True, string="Series type")
 
-    nb_editions = fields.Integer(string="Nb éditions", compute="_compute_nb_editions", store=True)
-    nb_auteurs = fields.Integer(string="Nb auteurs", compute="_compute_nb_auteurs", store=True)
-    auteur_names = fields.Char(string="Auteurs", compute="_compute_auteur_names")
+    nb_editions = fields.Integer(string="Number of editions", compute="_compute_nb_editions", store=True)
+    nb_auteurs = fields.Integer(string="Number of authors", compute="_compute_nb_auteurs", store=True)
+    auteur_names = fields.Char(string="Authors", compute="_compute_auteur_names")
 
     # Unicité limitée aux tomes numérotés : tome = 0 (hors-série, album sans
     # numéro) peut exister plusieurs fois dans une même série.
     _unique_serie_tome_numbered = models.UniqueIndex(
         "(serie_id, tome) WHERE tome > 0",
-        "Un tome de cette série existe déjà. Chaque numéro de tome doit être unique par série.",
+        "A volume of this series already exists. Each volume number must be unique per series.",
     )
 
     # ── Édition principale — façade "album tout-en-un" ───────────────────────
 
     primary_edition_id = fields.Many2one(
         "comic.edition",
-        string="Édition principale",
+        string="Main edition",
         compute="_compute_primary_edition_id",
         store=True,
         index=True,
@@ -107,19 +109,19 @@ class ComicWork(models.Model):
 
     # Champs délégués à l'édition principale (écriture transparente)
     image_couverture = fields.Image(
-        string="Couverture",
+        string="Cover",
         related="primary_edition_id.image_couverture",
         readonly=False,
     )
     editeur_id = fields.Many2one(
         "comic.editeur",
-        string="Éditeur",
+        string="Publisher",
         related="primary_edition_id.editeur_id",
         readonly=False,
     )
     langue = fields.Selection(
         related="primary_edition_id.langue",
-        string="Langue",
+        string="Language",
         readonly=False,
     )
     format = fields.Selection(
@@ -128,18 +130,18 @@ class ComicWork(models.Model):
         readonly=False,
     )
     nb_pages = fields.Integer(
-        string="Nombre de pages",
+        string="Number of pages",
         related="primary_edition_id.nb_pages",
         readonly=False,
     )
     date_parution = fields.Date(
-        string="Date de parution",
+        string="Release date",
         related="primary_edition_id.date_parution",
         readonly=False,
     )
     # Bibliothèque de l'utilisateur courant (bouton « Ajouter à ma wishlist », #7)
-    in_my_collection = fields.Boolean(string="Dans ma collection", compute="_compute_my_library")
-    in_my_wishlist = fields.Boolean(string="Dans ma wishlist", compute="_compute_my_library")
+    in_my_collection = fields.Boolean(string="In my collection", compute="_compute_my_library")
+    in_my_wishlist = fields.Boolean(string="In my wishlist", compute="_compute_my_library")
     synopsis = fields.Html(
         string="Synopsis",
         related="primary_edition_id.synopsis",
@@ -152,17 +154,17 @@ class ComicWork(models.Model):
     )
     url_club_be = fields.Char(
         related="primary_edition_id.url_club_be",
-        string="Lien Club.be",
+        string="Club.be link",
         readonly=False,
     )
     url_amazon_be = fields.Char(
         related="primary_edition_id.url_amazon_be",
-        string="Lien Amazon.be",
+        string="Amazon.be link",
         readonly=False,
     )
     url_fnac_be = fields.Char(
         related="primary_edition_id.url_fnac_be",
-        string="Lien FNAC.be",
+        string="FNAC.be link",
         readonly=False,
     )
 
@@ -227,7 +229,7 @@ class ComicWork(models.Model):
     def _compute_display_name(self):
         for rec in self:
             serie = rec.serie_id.name if rec.serie_id else ""
-            tome = f" T{rec.tome:02d}" if rec.tome else ""
+            tome = " " + self.env._("Vol. %s", f"{rec.tome:02d}") if rec.tome else ""
             sep = " — " if (serie or tome) and rec.titre_canonique else ""
             rec.display_name = f"{serie}{tome}{sep}{rec.titre_canonique}".strip()
 
@@ -299,17 +301,17 @@ class ComicWork(models.Model):
         blockers = []
         prets = self.env["comic.pret"].sudo().search([("edition_id", "in", self.edition_ids.ids)])
         if prets:
-            blockers.append(_("%(count)s prêt(s) concernent ces albums (supprimez-les d'abord).", count=len(prets)))
+            blockers.append(self.env._("%(count)s loan(s) involve these albums (delete them first).", count=len(prets)))
         albums = self.env["comic.customer.album"].sudo().search_count([("edition_id", "in", self.edition_ids.ids)])
         if albums:
-            blockers.append(_("%(count)s entrée(s) de bibliothèque contiennent ces albums.", count=albums))
+            blockers.append(self.env._("%(count)s library entry(ies) contain these albums.", count=albums))
         return blockers
 
     @api.ondelete(at_uninstall=False)
     def _unlink_except_blocked(self):
         blockers = self._get_unlink_blockers()
         if blockers:
-            raise UserError(_("Suppression impossible :") + "\n- " + "\n- ".join(blockers))
+            raise UserError(self.env._("Cannot delete:") + "\n- " + "\n- ".join(blockers))
 
     def unlink(self):
         # Contrôle explicite AVANT de toucher aux éditions (sinon un prêt lèverait une
@@ -375,13 +377,18 @@ class ComicWork(models.Model):
 
     def _new_release_message_body(self):
         self.ensure_one()
-        tome = f" T{self.tome}" if self.tome else ""
-        return Markup("Nouveau tome dans une série que vous suivez : <strong>%s%s</strong> — %s (parution le %s).") % (
-            self.serie_id.name,
-            tome,
-            self.titre_canonique,
-            self.date_parution.strftime("%d/%m/%Y"),
-        )
+        tome = " " + self.env._("Vol. %s", self.tome) if self.tome else ""
+        return Markup(
+            self.env._(
+                "New volume in a series you follow: <strong>%(serie)s%(tome)s</strong> — %(title)s "
+                "(released on %(date)s)."
+            )
+        ) % {
+            "serie": self.serie_id.name,
+            "tome": tome,
+            "title": self.titre_canonique,
+            "date": self.date_parution.strftime("%d/%m/%Y"),
+        }
 
     def _notify_new_release(self):
         """Prévient les abonnés de la série de chaque nouveau tome (une seule fois par album).
@@ -440,8 +447,8 @@ class ComicWork(models.Model):
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
-                "title": _("Wishlist"),
-                "message": _("%(count)s album(s) ajouté(s) à votre wishlist.", count=added),
+                "title": self.env._("Wishlist"),
+                "message": self.env._("%(count)s album(s) added to your wishlist.", count=added),
                 "type": "success" if added else "info",
                 "sticky": False,
             },
@@ -453,7 +460,7 @@ class ComicWork(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "name": f"Éditions — {self.display_name}",
+            "name": self.env._("Editions — %s", self.display_name),
             "res_model": "comic.edition",
             "view_mode": "list,form",
             "domain": [("work_id", "=", self.id)],
@@ -465,7 +472,7 @@ class ComicWork(models.Model):
         """Liste des albums donnés, groupée par série (fiches auteur / éditeur)."""
         return {
             "type": "ir.actions.act_window",
-            "name": _("Albums — %s", title),
+            "name": self.env._("Albums — %s", title),
             "res_model": "comic.work",
             "view_mode": "list,kanban,form",
             "views": [
@@ -562,11 +569,11 @@ class ComicWork(models.Model):
             )
             if duplicate:
                 raise ValidationError(
-                    _(
-                        "Titre dupliqué détecté : « %(other)s » (Tome %(tome)s) existe "
-                        "déjà dans cette série avec un titre identique après normalisation.\n"
-                        "Si ce sont deux éditions différentes du même album, ouvrez l'album "
-                        "existant et ajoutez une version depuis l'onglet « Autres versions ».",
+                    self.env._(
+                        'Duplicate title detected: "%(other)s" (Volume %(tome)s) already exists '
+                        "in this series with an identical title after normalization.\n"
+                        "If these are two different editions of the same album, open the existing "
+                        'album and add a version from the "Other versions" tab.',
                         other=duplicate.display_name,
                         tome=duplicate.tome,
                     )
@@ -576,7 +583,7 @@ class ComicWork(models.Model):
         """Transfer all editions and auteur lines to target_work, then archive self."""
         self.ensure_one()
         if self.id == target_work.id:
-            raise UserError(_("Impossible de fusionner un album avec lui-même."))
+            raise UserError(self.env._("Cannot merge an album with itself."))
 
         editions_count = len(self.edition_ids)
 
@@ -592,10 +599,10 @@ class ComicWork(models.Model):
                 line.unlink()
 
         target_work.message_post(
-            body=_(
-                "Fusion : « %(source)s » (ID %(sid)s) intégré ici. "
-                "%(n)d édition(s) transférée(s). L'album source a été archivé.",
-                source=self.display_name,
+            body=self.env._(
+                'Merge: "%(src)s" (ID %(sid)s) merged into this album. '
+                "%(n)d edition(s) transferred. The source album has been archived.",
+                src=self.display_name,
                 sid=self.id,
                 n=editions_count,
             )
@@ -608,22 +615,21 @@ class ComicWork(models.Model):
 
 class ComicWorkAuteurLine(models.Model):
     _name = "comic.work.auteur.line"
-    _description = "Auteur d'une œuvre BD"
+    _description = "Comic work author"
 
     work_id = fields.Many2one("comic.work", string="Album", required=True, ondelete="cascade", index=True)
-    partner_id = fields.Many2one("res.partner", string="Auteur", required=True)
-    serie_id = fields.Many2one(related="work_id.serie_id", store=True, string="Série")
-    tome = fields.Integer(related="work_id.tome", store=True, string="Tome", aggregator=False)
+    partner_id = fields.Many2one("res.partner", string="Author", required=True)
+    serie_id = fields.Many2one(related="work_id.serie_id", store=True, string="Series")
+    tome = fields.Integer(related="work_id.tome", store=True, string="Volume", aggregator=False)
     role = fields.Selection(
         [
-            ("scenariste", "Scénariste"),
-            ("dessinateur", "Dessinateur"),
-            ("coloriste", "Coloriste"),
-            ("encreur", "Encreur"),
-            ("traducteur", "Traducteur"),
-            ("autre", "Autre"),
+            ("scenariste", "Writer"),
+            ("dessinateur", "Artist"),
+            ("coloriste", "Colorist"),
+            ("encreur", "Inker"),
+            ("traducteur", "Translator"),
+            ("autre", "Other"),
         ],
-        string="Rôle",
         required=True,
         default="dessinateur",
     )

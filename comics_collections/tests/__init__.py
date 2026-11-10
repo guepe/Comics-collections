@@ -22,3 +22,4 @@ from . import test_private_collection
 from . import test_wishlist
 from . import test_isbn_scan
 from . import test_authors_overview
+from . import test_library_search

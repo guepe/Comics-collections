@@ -238,6 +238,6 @@ class TestMerge(TransactionCase):
         source._merge_into(target)
         messages = target.message_ids.mapped("body")
         self.assertTrue(
-            any("Fusion" in (m or "") for m in messages),
+            any("Merge" in (m or "") for m in messages),
             "Le chatter de la cible doit contenir un message de fusion",
         )

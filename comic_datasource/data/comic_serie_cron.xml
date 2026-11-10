@@ -2,7 +2,7 @@
 <odoo>
 
     <record id="ir_cron_check_missing_volumes" model="ir.cron">
-        <field name="name">BD — Détection hebdomadaire des tomes manquants</field>
+        <field name="name">Comics — Weekly missing volumes detection</field>
         <field name="model_id" ref="comics_collections.model_comic_serie"/>
         <field name="state">code</field>
         <field name="code">model._cron_check_missing_volumes()</field>
@@ -12,7 +12,7 @@
     </record>
 
     <record id="ir_cron_update_editions" model="ir.cron">
-        <field name="name">BD — Enrichissement quotidien des éditions incomplètes</field>
+        <field name="name">Comics — Daily enrichment of incomplete editions</field>
         <field name="model_id" ref="comics_collections.model_comic_edition"/>
         <field name="state">code</field>
         <field name="code">model._cron_update_editions()</field>

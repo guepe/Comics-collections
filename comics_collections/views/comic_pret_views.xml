@@ -6,17 +6,17 @@
         <field name="name">comic.pret.list</field>
         <field name="model">comic.pret</field>
         <field name="arch" type="xml">
-            <list string="Prêts" default_order="date_pret desc"
+            <list string="Loans" default_order="date_pret desc"
                   decoration-danger="en_retard"
                   decoration-success="retourne">
                 <field name="en_retard" column_invisible="1"/>
                 <field name="edition_id" string="Album"/>
-                <field name="partner_id" string="Prêté à"/>
+                <field name="partner_id" string="Lent to"/>
                 <field name="date_pret"/>
                 <field name="date_retour_prevue"/>
                 <field name="date_retour_effective" optional="hide"/>
                 <field name="retourne" widget="boolean_toggle"/>
-                <button name="action_retourner" type="object" string="Retourner" icon="fa-undo"
+                <button name="action_retourner" type="object" string="Return" icon="fa-undo"
                         invisible="retourne"/>
             </list>
         </field>
@@ -27,19 +27,19 @@
         <field name="name">comic.pret.form</field>
         <field name="model">comic.pret</field>
         <field name="arch" type="xml">
-            <form string="Prêt">
+            <form string="Loan">
                 <header>
-                    <button name="action_retourner" type="object" string="Album retourné"
+                    <button name="action_retourner" type="object" string="Album returned"
                             class="btn-primary" invisible="retourne"/>
                 </header>
                 <sheet>
-                    <widget name="web_ribbon" title="En retard" bg_color="text-bg-danger" invisible="not en_retard"/>
-                    <widget name="web_ribbon" title="Retourné" bg_color="text-bg-success" invisible="not retourne"/>
+                    <widget name="web_ribbon" title="Overdue" bg_color="text-bg-danger" invisible="not en_retard"/>
+                    <widget name="web_ribbon" title="Returned" bg_color="text-bg-success" invisible="not retourne"/>
                     <field name="en_retard" invisible="1"/>
                     <group>
                         <group>
-                            <field name="edition_id" string="Album prêté"/>
-                            <field name="partner_id" string="Prêté à"/>
+                            <field name="edition_id" string="Lent album"/>
+                            <field name="partner_id" string="Lent to"/>
                         </group>
                         <group>
                             <field name="date_pret"/>
@@ -48,7 +48,7 @@
                             <field name="retourne"/>
                         </group>
                     </group>
-                    <field name="notes" placeholder="Notes libres…"/>
+                    <field name="notes" placeholder="Free notes…"/>
                 </sheet>
                 <chatter/>
             </form>
@@ -60,20 +60,20 @@
         <field name="name">comic.pret.search</field>
         <field name="model">comic.pret</field>
         <field name="arch" type="xml">
-            <search string="Rechercher un prêt">
+            <search string="Search loans">
                 <field name="edition_id" string="Album"/>
-                <field name="partner_id" string="Emprunté par"/>
+                <field name="partner_id" string="Borrowed by"/>
                 <separator/>
-                <filter string="En cours" name="en_cours" domain="[('retourne', '=', False)]"/>
-                <filter string="Retournés" name="retournes" domain="[('retourne', '=', True)]"/>
-                <filter string="En retard" name="en_retard" domain="[('en_retard', '=', True)]"/>
+                <filter string="Ongoing" name="en_cours" domain="[('retourne', '=', False)]"/>
+                <filter string="Returned" name="retournes" domain="[('retourne', '=', True)]"/>
+                <filter string="Overdue" name="en_retard" domain="[('en_retard', '=', True)]"/>
             </search>
         </field>
     </record>
 
     <!-- ── Action comic.pret ─────────────────────────────────────────────────  -->
     <record id="action_comic_pret" model="ir.actions.act_window">
-        <field name="name">Prêts</field>
+        <field name="name">Loans</field>
         <field name="res_model">comic.pret</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_comic_pret_search"/>

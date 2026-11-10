@@ -1,6 +1,6 @@
 {
     "name": "Comic Datasource",
-    "version": "19.0.1.5.1",
+    "version": "19.0.1.6.0",
     "category": "Productivity",
     "summary": "Covers and metadata for your comics from Google Books, Open Library and the BnF: "
     "one-click completion, search & import, missing volumes detection",
@@ -9,8 +9,8 @@ Comic Datasource — fills in your comic catalogue automatically.
 
 Covers, synopses, page counts, publication dates, publishers and authors from Google
 Books, Open Library and the BnF (French legal deposit), merged field by field. Only
-empty fields are filled — your own data is never overwritten. One-click *Compléter les
-infos* on an album, search and import wizard, series update, detection of the missing
+empty fields are filled — your own data is never overwritten. One-click *Complete info*
+on an album, search and import wizard, series update, detection of the missing
 volumes of followed series, optional nightly jobs.
 """,
     "author": "Belspace",

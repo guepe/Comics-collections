@@ -1,4 +1,5 @@
 import {Component, onWillStart, useState} from "@odoo/owl";
+import {_t} from "@web/core/l10n/translation";
 import {registry} from "@web/core/registry";
 import {Layout} from "@web/search/layout";
 import {standardActionServiceProps} from "@web/webclient/actions/action_service";
@@ -34,40 +35,48 @@ export class CollectionDashboard extends Component {
 
     get kpis() {
         const data = this.state.data;
-        const plural = (count, word) => `${count} ${word}${count > 1 ? "s" : ""}`;
+        const plural = (count, singular, pluralForm) =>
+            count > 1 ? pluralForm.replace("%s", count) : singular.replace("%s", count);
         return [
             {
                 key: "nb_albums",
-                label: "Albums possédés",
+                label: _t("Albums owned"),
                 value: data.nb_albums,
-                hint: "Voir ma collection",
+                hint: _t("View my collection"),
                 icon: "fa-book",
                 color: "primary",
                 onClick: () => this.openAlbums(),
             },
             {
                 key: "nb_wishlist",
-                label: "Wishlist",
+                label: _t("Wishlist"),
                 value: data.nb_wishlist,
-                hint: `${plural(data.nb_manques, "manque")} · ${plural(data.nb_souhaits, "souhait")}`,
+                hint: `${plural(data.nb_manques, _t("%s missing volume"), _t("%s missing volumes"))} · ${plural(
+                    data.nb_souhaits,
+                    _t("%s wish"),
+                    _t("%s wishes")
+                )}`,
                 icon: "fa-heart",
                 color: "danger",
                 onClick: () => this.openWishlist(),
             },
             {
                 key: "nb_series",
-                label: "Séries",
+                label: _t("Series"),
                 value: data.nb_series,
-                hint: `${plural(data.series_completes, "complète")} · ${data.series_en_cours} en cours`,
+                // Pas de pluriel distinct en anglais pour « series » : libellés « Completed: n »
+                hint: _t("Completed: %(completed)s · Ongoing: %(ongoing)s")
+                    .replace("%(completed)s", data.series_completes)
+                    .replace("%(ongoing)s", data.series_en_cours),
                 icon: "fa-th-large",
                 color: "info",
                 onClick: () => this.openSeries(),
             },
             {
                 key: "loans_late",
-                label: "Prêts en retard",
+                label: _t("Overdue loans"),
                 value: data.loans_late,
-                hint: data.loans_late ? "À récupérer" : "Aucun retard",
+                hint: data.loans_late ? _t("To get back") : _t("None overdue"),
                 icon: "fa-exchange",
                 color: data.loans_late ? "warning" : "success",
                 alert: data.loans_late > 0,
