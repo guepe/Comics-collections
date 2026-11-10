@@ -52,3 +52,6 @@ Clés API
 
 # Claude Code — paramètres locaux (peuvent contenir des credentials)
 .claude/
+
+# Copie locale des issues GitHub (tools/sync_backlog.py)
+BACKLOG.md

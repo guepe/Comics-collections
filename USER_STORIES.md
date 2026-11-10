@@ -13,6 +13,11 @@
   tous les critères sont cochés prend ✅, puis passe en une ligne dans l'[annexe](#4-annexe--livré).
 - Numérotation continue : **prochaine US = US-092**. Une piste 💡 garde son numéro quand elle est
   priorisée.
+- **Depuis le 2026-11-10, les US à faire vivent dans les issues GitHub** (label `us`, label
+  `epic:E*`, jalon = épic, Project [Comic Collection — Odoo](https://github.com/users/guepe/projects/3)).
+  Ce fichier garde la feuille de route, la vue des épics et l'annexe du livré, avec un lien
+  `#n` vers chaque issue. Copie locale lisible hors ligne : `python3 tools/sync_backlog.py`
+  → `BACKLOG.md`. Une US livrée : issue fermée par `Closes #n`, puis une ligne dans l'annexe.
 - Le détail technique de chaque livraison est dans `CHANGE.md` (entrées datées).
 
 ---
@@ -21,7 +26,7 @@
 
 | Horizon        | Épic                                                                      | US                          | État |
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
-| **Maintenant** | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064                      | 🔄   |
+| **Maintenant** | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064 (#2)                 | 🔄   |
 | **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
 
 ---
@@ -39,8 +44,8 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ✅   | 9 US   | —                         |
 | E6   | Séries sur le portail                | `comic_shop`                        | ✅   | 3 US   | —                         |
 | E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 6 US   | —                         |
-| E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064                    |
-| E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | US-046, 047, 049, 072     |
+| E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064 (#2)               |
+| E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | #3, #4, #5, #6            |
 
 ---
 
@@ -69,109 +74,29 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 
 ### E8 — Qualité & publication OCA
 
-> Livré : pre-commit, CI (tests + pre-commit), README OCA, manifests, LICENSE, tests (310).
+> Livré : pre-commit, CI (tests + pre-commit), README OCA, manifests, LICENSE, tests.
 > Reste la publication, à l'initiative du mainteneur (action visible de l'extérieur).
 
-**US-064 — Dépôt GitHub public + proposition OCA** 🔄
-
-```
-En tant que développeur OCA
-Je veux publier le dépôt et soumettre une proposition à l'OCA
-Afin que les modules soient intégrés à la communauté
-
-Contexte technique :
-  Prérequis livrés : US-059 → US-063. Dépôt OCA cible à identifier.
-
-Critères d'acceptance :
-- [ ] Vérifier l'historique git : aucun secret, aucun __pycache__
-- [ ] Dépôt GitHub public, branche principale 19.0
-- [x] .gitignore adapté Odoo
-- [ ] Issue sur OCA/maintainer-tools proposant les modules
-- [ ] PR sur le dépôt OCA cible (ou dépôt « incoming »)
-```
+| US     | Issue | Titre                                         |
+| ------ | ----- | --------------------------------------------- |
+| US-064 | [#2](https://github.com/guepe/Comics-collections/issues/2) | Dépôt GitHub public + proposition OCA |
 
 ---
 
 ### E9 — Shop & commerçant
 
-> Priorité la plus basse : outils pour le vendeur.
-> Exploiter les bibliothèques clients (`comic.customer.album`) pour savoir quoi référencer.
-> « Hors catalogue » = `edition_id.product_tmpl_id = False`.
-> La notification des clients à la mise en vente (ex-US-048) est passée dans US-069 (E6).
+> Priorité la plus basse : outils pour le vendeur. Exploiter les bibliothèques clients
+> (`comic.customer.album`) pour savoir quoi référencer.
 
-**US-046 — Rapport « BD non vendues les plus suivies »** ⏳
+| US     | Issue | Titre                                         |
+| ------ | ----- | --------------------------------------------- |
+| US-046 | [#3](https://github.com/guepe/Comics-collections/issues/3) | Rapport « BD non vendues les plus suivies » |
+| US-047 | [#4](https://github.com/guepe/Comics-collections/issues/4) | Rapport « Séries et auteurs à référencer » |
+| US-049 | [#5](https://github.com/guepe/Comics-collections/issues/5) | Tableau de bord commerçant — vue marché |
+| US-072 | [#6](https://github.com/guepe/Comics-collections/issues/6) | Réservation de tomes en magasin |
 
-```
-En tant que commerçant
-Je veux voir quelles BD présentes dans les bibliothèques clients ne sont pas dans mon catalogue
-Afin d'identifier les titres à référencer en priorité
-
-Contexte technique :
-  comic.customer.album → edition_id → work_id → serie_id ; groupement par série,
-  tri par nb de clients distincts. Vue SQL read-only (_auto = False) si l'agrégation l'exige.
-
-Critères d'acceptance :
-- [ ] Menu back-office « Rapports > Bibliothèques clients »
-- [ ] Colonnes : série / nb clients distincts / nb éditions concernées / source principale
-- [ ] Filtre par période (date_ajout) et par source (achete_ailleurs ou toutes)
-- [ ] Export CSV (bouton standard Odoo)
-- [ ] Décoration : vert si > 5 clients, orange si 2–5, gris si 1
-```
-
-**US-047 — Rapport « Séries et auteurs à référencer »** ⏳
-
-```
-En tant que commerçant
-Je veux voir les auteurs et séries les plus suivis par mes clients pour des BD hors catalogue
-Afin de prendre des décisions d'achat basées sur la demande réelle
-
-Contexte technique :
-  comic.customer.album → edition_id → work_id → auteur_line_ids → partner_id
-
-Critères d'acceptance :
-- [ ] « Top auteurs hors catalogue » : auteur / rôle principal / nb clients / nb séries
-- [ ] « Top séries hors catalogue » (complément d'US-046, vue auteurs)
-- [ ] Vue pivot auteurs × genres
-- [ ] Graphique barres « Top 10 séries à référencer »
-- [ ] Graphique camembert « Répartition par genre des BD hors catalogue »
-```
-
-**US-049 — Tableau de bord commerçant — vue marché** ⏳
-
-```
-En tant que commerçant
-Je veux une vue synthétique de la demande de mes clients
-Afin d'avoir une vue d'ensemble pour mes décisions d'achat
-
-Contexte technique :
-  S'appuie sur les vues d'US-046 et US-047.
-
-Critères d'acceptance :
-- [ ] Menu « Rapports > Vue marché »
-- [ ] KPI : clients avec une bibliothèque active / éditions hors catalogue / séries hors
-      catalogue / taux de couverture (% des éditions des bibliothèques vendues par le shop)
-- [ ] Graphiques : Top 10 séries et Top 10 auteurs hors catalogue
-- [ ] Courbe : ajouts en bibliothèque par semaine
-- [ ] Tableau : séries au plus fort ratio « clients intéressés / tomes vendus »
-- [ ] Filtres par période et par genre
-```
-
-**US-072 — Réservation de tomes en magasin** ⏳
-
-```
-En tant que client
-Je veux réserver un tome à paraître ou en rupture
-Afin d'être sûr de l'avoir dès son arrivée
-
-Contexte technique :
-  Vérifier d'abord le natif : website_sale_stock propose « Me prévenir » pour les produits
-  en rupture. Il ne resterait que la pré-commande des tomes à paraître.
-
-Critères d'acceptance :
-- [ ] Bouton « Réserver » sur la page produit / série du shop
-- [ ] Liste des réservations côté commerçant, par album
-- [ ] Notification au client quand l'album est disponible
-```
+> Bug ouvert : [#1](https://github.com/guepe/Comics-collections/issues/1) — doublons lors de
+> la complétion des séries (à vérifier depuis la déduplication US-050/056).
 
 ---
 

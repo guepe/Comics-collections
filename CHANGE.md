@@ -2532,3 +2532,14 @@ cinq modules : 472 tests verts.
   et page du module de base) ; champ `comic.editeur.comic_top_authors_html` supprimé, test associé
   retiré (la vérification des séries cliquables passe sur la liste des co-auteurs). Le prompt de
   l'histoire de la maison garde les auteurs les plus publiés comme contexte.
+
+## 2026-11-10 — Backlog sur GitHub (issues + Project) avec copie locale
+
+- US ouvertes déplacées dans les issues GitHub : #2 US-064 (E8), #3 US-046, #4 US-047, #5 US-049,
+  #6 US-072 (E9) — labels `us`, `epic:E8` / `epic:E9`, jalons « E8 — Qualité & publication OCA » et
+  « E9 — Shop & commerçant », Project #3 renommé « Comic Collection — Odoo » (colonne Backlog).
+  Issue #1 (doublons à la complétion des séries) conservée avec le label `bug`.
+- `tools/sync_backlog.py` : copie les issues ouvertes (et `--closed N`) dans `BACKLOG.md`
+  (non versionné, `.gitignore`) pour une lecture hors ligne en début de session.
+- `USER_STORIES.md` : textes des US ouvertes remplacés par des tableaux de liens `#n` ; conventions
+  mises à jour. `CLAUDE.md` / `AGENTS.md` : règles de passage de relais (issues, `Closes #n`).

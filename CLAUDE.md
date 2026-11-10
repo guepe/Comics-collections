@@ -263,10 +263,13 @@ find /chemin/module -name "__pycache__" -exec rm -rf {} +
 
 Maintenir à jour en fin de session, avant le commit :
 
-- **`USER_STORIES.md`** (document unique : feuille de route, épics, US à venir, annexe du livré) :
-  cocher `[x]` dès qu'un critère est fait, jamais par anticipation. US terminée → `✅`, puis une
-  ligne dans l'annexe « Livré » de son épic et mise à jour de la feuille de route. Nouvelle US =
-  numéro suivant (indiqué dans les conventions en tête du fichier).
+- **US à faire = issues GitHub** (label `us` + `epic:E*`, jalon = épic, Project
+  « Comic Collection — Odoo »). En début de session : `python3 tools/sync_backlog.py` puis lire
+  `BACKLOG.md` (copie locale, non versionnée). Cocher les critères dans l'issue (`gh issue edit`),
+  jamais par anticipation ; commit de livraison avec `Closes #n`. Nouvelle US = nouvelle issue
+  (`gh issue create`, titre « US-0xx — … », numéro suivant indiqué dans `USER_STORIES.md`).
+- **`USER_STORIES.md`** : feuille de route, vue des épics (liens `#n`) et annexe « Livré ». US
+  terminée → une ligne dans l'annexe de son épic et mise à jour de la feuille de route.
 - **`CHANGE.md`** : ajouter une entrée datée avec tous les fichiers modifiés, méthodes ajoutées, bugs corrigés, décisions techniques. Ne pas relire tout le fichier — juste appender.
 
 ---
