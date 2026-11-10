@@ -2618,3 +2618,13 @@ cinq modules : 472 tests verts.
   `test_search_and_add_never_duplicate_albums` (tome possédé, ISBN connu ailleurs, titre identique,
   doublon de source → aucun second album).
 - Suite complète (deux dépôts) : 504 tests verts.
+
+## 2026-11-10 — Pages App Store : encodage ; page du shop retirée du dépôt public
+
+- Les pages `index.html` générées n'avaient plus de déclaration d'encodage : ouvertes dans un
+  navigateur, les tirets longs, accents, guillemets et étoiles s'affichaient mal (« â€” »).
+  Le générateur (`tools/appstore/gen_pages.py`, dépôt privé) produit à nouveau un document complet
+  avec `<meta charset="utf-8"/>` ; les cinq pages sont régénérées (le tiret du sous-titre de
+  `comics_collections`, remplacé à la main par « - », redevient « — »).
+- `comic_shop/static/description/index.html`, réapparu dans ce dépôt public (ancienne version
+  enregistrée depuis un onglet resté ouvert), est retiré : la page du shop vit dans le dépôt privé.
