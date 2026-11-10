@@ -1,20 +1,25 @@
 {
     "name": "Comic Datasource",
     "version": "19.0.1.5.0",
-    "category": "Leisure",
-    "summary": "Multi-source connector to enrich comic book records",
+    "category": "Productivity",
+    "summary": "Covers and metadata for your comics from Google Books, Open Library and the BnF: "
+    "one-click completion, search & import, missing volumes detection",
     "description": """
-        Aggregates multiple data sources for comic books:
-        - Google Books API (free API key)
-        - Open Library API (no key required)
-        - BnF SRU API (no key required, French legal deposit)
-    """,
-    "author": "Belspace, OCA",
+Comic Datasource — fills in your comic catalogue automatically.
+
+Covers, synopses, page counts, publication dates, publishers and authors from Google
+Books, Open Library and the BnF (French legal deposit), merged field by field. Only
+empty fields are filled — your own data is never overwritten. One-click *Compléter les
+infos* on an album, search and import wizard, series update, detection of the missing
+volumes of followed series, optional nightly jobs.
+""",
+    "author": "Belspace",
     "maintainers": ["guepe"],
-    "website": "https://github.com/Belspace/Comics-collections",
+    "website": "https://github.com/guepe/Comics-collections",
+    "support": "ph.delaval@gmail.com",
     "license": "LGPL-3",
     "development_status": "Beta",
-    "images": ["static/description/overview.png"],
+    "images": ["static/description/banner.png"],
     "depends": ["comics_collections"],
     "data": [
         "security/ir.model.access.csv",

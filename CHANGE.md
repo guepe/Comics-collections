@@ -2590,3 +2590,15 @@ cinq modules : 472 tests verts.
 - Docker local : les trois montages payants pointent vers `../Comics-collections-pro`.
 - Validation : 500 tests verts avec les cinq modules (deux dépôts), 354 avec les seuls modules
   gratuits.
+
+## 2026-11-10 — Documentation et page App Store de `comic_datasource` ; readme de la collection
+
+- `comic_datasource` : manifest App Store (catégorie *Productivity*, résumé, description, auteur
+  « Belspace », `website` / `support`, image `banner.png`) ; page `static/description/index.html`
+  illustrée (générée par `tools/appstore/gen_pages.py` du dépôt privé) ; captures `ds_*.png` et
+  bannière (catalogue fictif, résultats de sources saisis à la main) ; ancienne `overview.png`
+  supprimée ; readme : *Compléter les infos*, licence, dépendance du shop.
+- `comics_collections` : readme — galeries de couvertures, auteurs d'une série, « A souvent
+  travaillé avec », licence et modules complémentaires.
+- Remarque relevée sur les captures : le bloc « Sources de données » des paramètres affiche deux
+  fois les libellés « Activer Open Library » / « Activer BnF ».

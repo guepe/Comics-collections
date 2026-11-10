@@ -38,7 +38,12 @@ and loans are private to the lender. The module works on its own, at home;
 - **Authors** — Authors are standard ``res.partner`` records linked to albums with a
   role (scénariste, dessinateur, coloriste, encreur, traducteur, autre). The contact
   form shows a *Bandes dessinées* tab and smart buttons listing every series and
-  album the author worked on.
+  album the author worked on, and the authors they most often worked with (shared
+  albums, clickable series). The series form gathers all the authors of its albums
+  with their roles.
+
+- **Cover galleries** — *Mes séries*, *Mes albums* and *Ma bibliothèque* open as cover
+  galleries (series, volume badge, stars, reading status); list views remain available.
 
 - **Publishers & Genres** — ``comic.editeur`` and ``comic.genre``. The publisher form
   lists its series and albums (through the editions it published).
@@ -63,3 +68,7 @@ and loans are private to the lender. The module works on its own, at home;
 
 - **Chatter & tracking** — Series, albums, editions and loans inherit
   ``mail.thread`` and ``mail.activity.mixin``.
+
+**Free and open source** — LGPL-3. Optional add-ons: ``comic_datasource`` (free:
+covers and metadata from Google Books, Open Library and the BnF) and the paid
+``comic_shop``, ``comic_ai`` and ``comic_ai_shop`` modules (Odoo Apps Store).

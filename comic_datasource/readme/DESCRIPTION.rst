@@ -31,6 +31,9 @@ merged field by field: the first non-empty value wins.
 
 **Features**
 
+- **Compléter les infos** — one button on an album (or edition) form: looks the main
+  edition up on the sources (ISBN, or strict title match), fills only the empty fields
+  (cover, synopsis, pages, dates, ISBN, authors) and tells what was added.
 - **Search wizard** — search the sources by ISBN or title, compare the
   results and import the selected albums into the catalogue.
 - **Edition enrichment** — *Rechercher sur les sources* button on an edition.
@@ -40,3 +43,6 @@ merged field by field: the first non-empty value wins.
   the catalogue or, with ``comic_shop`` installed, to the user's wishlist.
 - **Scheduled jobs** (disabled by default) — daily enrichment of incomplete
   editions, weekly missing-tome detection on followed series (batches of 20).
+
+**Free and open source** — LGPL-3, part of the free *Comic Collection* core with
+``comics_collections``. It is also required by the paid *Comic Shop* module.
