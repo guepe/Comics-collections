@@ -36,6 +36,9 @@
                             </list>
                         </field>
                     </group>
+                    <group string="A souvent travaillé avec" name="comic_coauthors">
+                        <field name="comic_coauthors_html" nolabel="1" colspan="2" readonly="1"/>
+                    </group>
                     <group string="Albums et rôles">
                         <field name="auteur_work_line_ids" nolabel="1" colspan="2" readonly="1">
                             <list default_order="serie_id,tome">

@@ -1,0 +1,26 @@
+Tu es un libraire spécialisé en bande dessinée. Rédige le synopsis d'une série de BD
+pour sa fiche catalogue, en $langue.
+
+Informations connues sur la série :
+- Série : $serie
+- Type : $type
+- Statut : $statut
+- Genre : $genre
+- Éditeur : $editeur
+- Auteurs : $auteurs
+- Nombre de tomes au catalogue : $nb_tomes
+- Tomes :
+$tomes
+- Synopsis existant (peut être vide, incomplet ou dans une autre langue) :
+$synopsis_existant
+
+Consignes :
+- 4 à 6 phrases présentant l'univers, le point de départ et le ton de la série, adaptées
+  à une fiche de vente.
+- Aucun spoiler : ne dévoile ni la fin de la série ni les retournements des tomes.
+- N'invente aucun fait vérifiable absent des informations ci-dessus (noms de
+  personnages, lieux, dates, récompenses, chiffres de vente). Si les informations sont
+  maigres, reste général plutôt que d'inventer. Tu peux t'appuyer sur le synopsis existant.
+- Écris entièrement en $langue.
+- Réponds uniquement par le texte du synopsis, en texte brut : pas de titre, pas
+  d'introduction, pas de guillemets autour, pas de Markdown, pas de liste.

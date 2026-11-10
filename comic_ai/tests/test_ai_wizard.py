@@ -236,3 +236,66 @@ class TestAiWizard(TransactionCase):
         wizard = self._wizard()
         with self.assertRaises(AccessError):
             wizard.with_user(self.user).action_generate()
+
+    # ── Synopsis de série ────────────────────────────────────────────────────
+
+    def test_serie_synopsis_prompt_and_apply(self):
+        self.serie.write({"genre_id": self.env["comic.genre"].create({"name": "SF"}).id, "editeur_id": self.editeur.id})
+        wizard = self._wizard(record=self.serie)
+        self.assertEqual((wizard.serie_id, wizard.edition_id), (self.serie, self.env["comic.edition"]))
+        prompt = wizard._build_prompt()
+        for expected in ("Les Mondes d'Aldébaran", "SF", "Dargaud", "Leo (scénario)", "T1 : La Catastrophe"):
+            self.assertIn(expected, prompt)
+        self._generate(wizard, reply="Une série de science-fiction.")
+        self.assertFalse(wizard.destination_has_synopsis)
+        wizard.action_apply()
+        self.assertIn("Une série de science-fiction.", self.serie.synopsis)
+        self.assertFalse(self.edition.synopsis, "La série ne touche pas aux éditions")
+        self.assertTrue(self.serie.message_ids.filtered(lambda m: "Synopsis généré par IA" in (m.body or "")))
+
+    def test_serie_overwrite_needs_confirmation_and_translate(self):
+        self.serie.synopsis = "<p>Une colonie isolée.</p>"
+        wizard = self._wizard(record=self.serie, mode="translate")
+        wizard.target_lang = "nl"
+        self.assertFalse(wizard.target_edition_id)
+        self.assertIn("Une colonie isolée.", wizard._build_prompt())
+        self._generate(wizard, reply="Een geïsoleerde kolonie.")
+        with self.assertRaises(UserError):
+            wizard.action_apply()
+        wizard.replace_confirmed = True
+        wizard.action_apply()
+        self.assertIn("Een geïsoleerde kolonie.", self.serie.synopsis)
+
+    def test_serie_wizard_reserved_to_managers(self):
+        with self.assertRaises(AccessError):
+            self.serie.with_user(self.user).action_open_ai_wizard()
+
+    # ── Biographie d'auteur / histoire d'éditeur (US-091) ────────────────────
+
+    def test_author_bio_prompt_apply_and_trace(self):
+        wizard = self._wizard(record=self.leo)
+        self.assertEqual(wizard.partner_id, self.leo)
+        prompt = wizard._build_prompt()
+        for expected in ("Leo", "Les Mondes d'Aldébaran", "Dargaud", "homonyme"):
+            self.assertIn(expected, prompt)
+        self._generate(wizard, reply="Leo est un auteur brésilien de BD.")
+        wizard.action_apply()
+        self.assertIn("Leo est un auteur", self.leo.comic_bio)
+        self.assertTrue(self.leo.message_ids.filtered(lambda m: "Biographie générée par IA" in (m.body or "")))
+
+    def test_publisher_history_needs_confirmation(self):
+        self.editeur.comic_histoire = "<p>Maison fondée par…</p>"
+        wizard = self._wizard(record=self.editeur)
+        self.assertIn("Les Mondes d'Aldébaran", wizard._build_prompt())
+        self._generate(wizard, reply="Dargaud est une maison d'édition.")
+        with self.assertRaises(UserError):
+            wizard.action_apply()
+        wizard.replace_confirmed = True
+        wizard.action_apply()
+        self.assertIn("Dargaud est une maison", self.editeur.comic_histoire)
+
+    def test_bio_wizard_reserved_to_managers(self):
+        with self.assertRaises(AccessError):
+            self.leo.with_user(self.user).action_open_ai_wizard()
+        with self.assertRaises(AccessError):
+            self.editeur.with_user(self.user).action_open_ai_wizard()

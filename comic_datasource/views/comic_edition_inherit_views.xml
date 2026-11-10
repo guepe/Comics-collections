@@ -9,6 +9,16 @@
         <field name="arch" type="xml">
             <xpath expr="//sheet/field[@name='image_couverture']" position="before">
                 <div name="button_box" class="oe_button_box">
+                    <button name="action_complete_from_sources"
+                            type="object"
+                            class="oe_stat_button"
+                            icon="fa-cloud-download"
+                            title="Remplit les champs vides (couverture, synopsis, pages, ISBN, auteurs…) depuis Google Books, Open Library et la BnF">
+                        <div class="o_stat_info">
+                            <span class="o_stat_text">Compléter</span>
+                            <span class="o_stat_text">les infos</span>
+                        </div>
+                    </button>
                     <button name="action_search_datasource"
                             type="object"
                             class="oe_stat_button"
@@ -19,6 +29,28 @@
                         </div>
                     </button>
                 </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Fiche album : « Compléter les infos » sur l'édition principale -->
+    <record id="view_comic_work_form_inherit_datasource" model="ir.ui.view">
+        <field name="name">comic.work.form.inherit.datasource</field>
+        <field name="model">comic.work</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_work_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_complete_from_sources"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-cloud-download"
+                        invisible="not primary_edition_id"
+                        title="Remplit les champs vides (couverture, synopsis, pages, ISBN, auteurs…) depuis Google Books, Open Library et la BnF">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Compléter</span>
+                        <span class="o_stat_text">les infos</span>
+                    </div>
+                </button>
             </xpath>
         </field>
     </record>

@@ -11,7 +11,7 @@
 - Format : *En tant que… / Je veux… / Afin de…*, puis contexte technique et critères `- [ ]`.
 - Cocher `[x]` dès qu'un critère est réellement livré — jamais par anticipation. Une US dont
   tous les critères sont cochés prend ✅, puis passe en une ligne dans l'[annexe](#4-annexe--livré).
-- Numérotation continue : **prochaine US = US-090**. Une piste 💡 garde son numéro quand elle est
+- Numérotation continue : **prochaine US = US-092**. Une piste 💡 garde son numéro quand elle est
   priorisée.
 - Le détail technique de chaque livraison est dans `CHANGE.md` (entrées datées).
 
@@ -38,7 +38,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E4   | Bibliothèque client (portail)        | `comic_shop`                        | ✅   | 6 US   | —                         |
 | E5   | Tableau de bord & suivi de séries    | `comics_collections` / `comic_shop` | ✅   | 9 US   | —                         |
 | E6   | Séries sur le portail                | `comic_shop`                        | ✅   | 3 US   | —                         |
-| E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 4 US   | —                         |
+| E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 6 US   | —                         |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064                    |
 | E9   | Shop & commerçant                    | `comic_shop`                        | ⏳   | —      | US-046, 047, 049, 072     |
 
@@ -60,9 +60,10 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 
 ### E7 — IA (`comic_ai`)
 
-> E7 est entièrement livré le 2026-11-09 (US-026 → 029) — voir
+> E7 est entièrement livré : US-026 → 029 (2026-11-09), US-090 et US-091 (2026-11-10) — voir
 > l'[annexe](#e7--ia-livré). Modules `comic_ai` (back-office) et `comic_ai_shop`
 > (portail, auto-installé avec `comic_shop`).
+
 
 ---
 
@@ -287,6 +288,8 @@ anciens fichiers V1 / V2 / V3.
 | US-026 | Paramètres IA (*Bandes Dessinées → Intelligence artificielle*) : fournisseur Claude / OpenAI, clés en `ir.config_parameter`, modèles (défaut `claude-sonnet-5-5`), langue, *Tester la connexion IA* ; service `comic.ai.service` (SDK importés à la demande, erreurs claires, repli serveur en cas de refus) — 2026-11-09 |
 | US-027 | *Générer le synopsis* (album / édition, gestionnaires) : prévisualisation modifiable, Appliquer / Régénérer / Annuler, confirmation avant remplacement, trace chatter — 2026-11-09 |
 | US-028 | *Traduire le synopsis* (fr / nl / en / de) : remplace le synopsis ou l'écrit sur l'édition de la langue cible — 2026-11-09 |
+| US-090 | Synopsis vides remplis en tâche de fond (séries et albums) : cron désactivé par défaut, lots réglables, mention « Généré automatiquement par IA », case `synopsis_auto` + filtre « à relire », arrêt à la première erreur du fournisseur ; aussi synopsis de série dans l'assistant — 2026-11-10 |
+| US-091 | Onglet *Biographie* de l'auteur et *Histoire de la maison* de l'éditeur : texte IA (même assistant : aperçu, confirmation, trace « à relire »), listes « A souvent travaillé avec » (co-auteurs, albums en commun) et « Auteurs principaux de la maison » — 2026-11-10 |
 | US-029 | *Découvrir de nouvelles BD* : profil 4★ modifiable, 10–15 suggestions hors séries connues, vérification sur les sources, ajout en wishlist ; portail `/my/library/discover` (`comic_ai_shop`, limite quotidienne, création modérée) — 2026-11-09 |
 
 ### E8 — Qualité & publication OCA (livré)

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- US-090 : filtre « synopsis généré automatiquement » (à relire) -->
+    <record id="view_comic_serie_search_comic_ai" model="ir.ui.view">
+        <field name="name">comic.serie.search.comic_ai</field>
+        <field name="model">comic.serie</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_serie_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter string="Synopsis généré par IA (à relire)" name="synopsis_auto"
+                        domain="[('synopsis_auto', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_comic_work_search_comic_ai" model="ir.ui.view">
+        <field name="name">comic.work.search.comic_ai</field>
+        <field name="model">comic.work</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_work_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter string="Synopsis généré par IA (à relire)" name="synopsis_auto"
+                        domain="[('synopsis_auto', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_res_partner_filter_comic_ai" model="ir.ui.view">
+        <field name="name">res.partner.search.comic_ai</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter string="Biographie générée par IA (à relire)" name="comic_bio_auto"
+                        domain="[('comic_bio_auto', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

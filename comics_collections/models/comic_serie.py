@@ -42,6 +42,9 @@ class ComicSerie(models.Model):
     bdgest_id = fields.Integer(string="ID BDGest", aggregator=False)
     bedetheque_url = fields.Char(string="URL Bedetheque")
     work_ids = fields.One2many("comic.work", "serie_id", string="Albums")
+    # Auteurs de tous les albums de la série (sans doublon), avec leurs rôles
+    auteur_ids = fields.Many2many("res.partner", string="Auteurs", compute="_compute_auteurs")
+    auteur_names = fields.Char(string="Auteurs (rôles)", compute="_compute_auteurs")
     nb_works_total = fields.Integer(string="Tomes au total", compute="_compute_works", store=True)
     suivi_user_ids = fields.Many2many(
         "res.users",
@@ -165,6 +168,22 @@ class ComicSerie(models.Model):
                     edition = ed[0]
                     break
             serie.first_edition_cover_id = edition
+
+    @api.depends("work_ids.auteur_line_ids.partner_id", "work_ids.auteur_line_ids.role", "work_ids.active")
+    def _compute_auteurs(self):
+        role_labels = dict(self.env["comic.work.auteur.line"]._fields["role"]._description_selection(self.env))
+        for serie in self:
+            roles_by_partner = {}
+            for line in serie.work_ids.filtered("active").auteur_line_ids.sorted(lambda li: (li.tome or 0, li.id)):
+                roles = roles_by_partner.setdefault(line.partner_id, [])
+                label = role_labels.get(line.role, line.role)
+                if label and label not in roles:
+                    roles.append(label)
+            serie.auteur_ids = self.env["res.partner"].union(*roles_by_partner)
+            serie.auteur_names = " · ".join(
+                f"{partner.name} ({', '.join(roles)})" if roles else partner.name
+                for partner, roles in roles_by_partner.items()
+            )
 
     @api.depends("work_ids")
     def _compute_works(self):

@@ -1,0 +1,23 @@
+Tu es un spécialiste de l'édition de bande dessinée. Rédige une courte présentation de
+la maison d'édition ci-dessous pour sa fiche catalogue, en $langue.
+
+Ce que le catalogue sait de cet éditeur :
+- Nom : $nom
+- Pays : $pays
+- Site web : $site
+- Séries publiées (au catalogue) : $series
+- Nombre d'albums au catalogue : $nb_albums (parutions $annees)
+- Auteurs les plus publiés (albums) : $auteurs
+- Présentation existante (peut être vide, incomplète ou dans une autre langue) :
+$histoire_existante
+
+Consignes :
+- 4 à 6 phrases : histoire de la maison, ligne éditoriale, séries et auteurs phares.
+- Exactitude avant tout : n'écris un fait (date de fondation, fondateurs, groupe
+  d'appartenance, rachats, chiffres) que si tu en es certain pour cette maison précise.
+  En cas de doute ou si tu ne la connais pas, appuie-toi uniquement sur les informations
+  ci-dessus, sans rien inventer. Ne confonds pas avec une maison homonyme.
+- Ton neutre et informatif, sans superlatifs promotionnels.
+- Écris entièrement en $langue.
+- Réponds uniquement par le texte de la présentation, en texte brut : pas de titre, pas
+  d'introduction, pas de guillemets autour, pas de Markdown, pas de liste.

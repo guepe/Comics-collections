@@ -1,5 +1,7 @@
 from odoo import api, fields, models
 
+from ..utils.author_tables import authors_table
+
 
 class ResPartner(models.Model):
     _inherit = "res.partner"
@@ -28,6 +30,26 @@ class ResPartner(models.Model):
     )
     comic_work_count = fields.Integer(string="Nb albums BD", compute="_compute_comic_bibliography")
     comic_serie_count = fields.Integer(string="Nb séries BD", compute="_compute_comic_bibliography")
+
+    # « A souvent travaillé avec » : co-auteurs, par nombre d'albums en commun (US-091)
+    comic_coauthors_html = fields.Html(
+        string="A souvent travaillé avec", compute="_compute_comic_coauthors", sanitize=False
+    )
+
+    @api.depends("auteur_work_line_ids.work_id.auteur_line_ids.partner_id")
+    def _compute_comic_coauthors(self):
+        for partner in self:
+            works_by_partner = {}
+            for work in partner.auteur_work_line_ids.work_id:
+                for other in work.auteur_line_ids.partner_id - partner:
+                    works_by_partner[other] = works_by_partner.get(other, self.env["comic.work"]) | work
+            partner.comic_coauthors_html = authors_table(
+                self.env,
+                {other: len(works) for other, works in works_by_partner.items()},
+                works_by_partner,
+                self.env._("Aucun co-auteur connu."),
+                self.env._("Albums ensemble"),
+            )
 
     @api.depends("auteur_work_line_ids.work_id.serie_id")
     def _compute_comic_bibliography(self):

@@ -9,6 +9,8 @@
         <field name="arch" type="xml">
             <list string="Bibliothèque">
                 <field name="partner_id" optional="hide"/>
+                <field name="serie_id" optional="show"/>
+                <field name="tome" optional="show"/>
                 <field name="edition_id"/>
                 <field name="source" optional="show"/>
                 <field name="etat_lecture"/>
@@ -21,6 +23,66 @@
                 <field name="valeur_estimee" optional="show" sum="Total valeur estimée"/>
                 <field name="date_ajout"/>
             </list>
+        </field>
+    </record>
+
+    <!-- Galerie : même présentation que « Mes albums » (couverture, tome, série),
+         plus l'état de lecture, les étoiles et la wishlist -->
+    <record id="view_comic_customer_album_kanban" model="ir.ui.view">
+        <field name="name">comic.customer.album.kanban</field>
+        <field name="model">comic.customer.album</field>
+        <field name="arch" type="xml">
+            <kanban class="o_comic_kanban_series" sample="1" default_order="serie_id,tome,id">
+                <field name="id"/>
+                <field name="edition_id"/>
+                <field name="work_id"/>
+                <field name="serie_id"/>
+                <field name="tome"/>
+                <field name="image_couverture"/>
+                <field name="etat_lecture"/>
+                <field name="dans_collection"/>
+                <field name="dans_wishlist"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_comic_serie_card">
+                            <div class="o_comic_serie_cover">
+                                <t t-if="record.image_couverture.raw_value">
+                                    <img loading="lazy"
+                                         t-att-src="'/web/image/comic.edition/' + record.edition_id.raw_value + '/image_couverture'"
+                                         t-att-alt="record.work_id.value"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="o_comic_serie_placeholder">
+                                        <span t-esc="record.work_id.value"/>
+                                    </div>
+                                </t>
+                                <t t-if="record.tome.raw_value">
+                                    <span class="o_comic_serie_statut" style="background:#1a73e8;">
+                                        T<t t-esc="record.tome.raw_value"/>
+                                    </span>
+                                </t>
+                            </div>
+                            <div class="o_comic_serie_info">
+                                <div class="o_comic_serie_title" t-esc="record.work_id.value"/>
+                                <div class="o_comic_serie_meta">
+                                    <t t-esc="record.serie_id.value || ''"/>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <field name="note_etoiles" widget="priority" readonly="1"/>
+                                    <span>
+                                        <i t-if="record.dans_wishlist.raw_value and !record.dans_collection.raw_value"
+                                           class="fa fa-heart text-danger" title="En wishlist"/>
+                                        <span t-if="record.etat_lecture.raw_value == 'lu'"
+                                              class="badge text-bg-success ms-1">Lu</span>
+                                        <span t-elif="record.etat_lecture.raw_value == 'en_cours'"
+                                              class="badge text-bg-warning ms-1">En cours</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
         </field>
     </record>
 
@@ -91,6 +153,8 @@
                             context="{'group_by': 'etat_lecture'}"/>
                     <filter string="Genre" name="by_genre"
                             context="{'group_by': 'genre_id'}"/>
+                    <filter string="Série" name="by_serie"
+                            context="{'group_by': 'serie_id'}"/>
                 </group>
             </search>
         </field>
@@ -99,7 +163,7 @@
     <record id="action_comic_my_library" model="ir.actions.act_window">
         <field name="name">Ma bibliothèque</field>
         <field name="res_model">comic.customer.album</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="view_comic_customer_album_search"/>
         <field name="domain">[('partner_id.user_ids', 'in', [uid])]</field>
         <field name="context">{'search_default_collection': 1}</field>

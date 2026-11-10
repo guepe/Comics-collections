@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- US-091 : biographie de l'auteur sur sa page publique /shop/auteurs/<id> -->
+    <template id="shop_auteur_detail_bio" inherit_id="comic_shop.shop_auteur_detail_page"
+              name="BD — Fiche auteur : biographie">
+        <xpath expr="//div[hasclass('row')][hasclass('mb-5')]" position="after">
+            <section t-if="auteur.has_comic_bio" class="o_comic_shop_bio mb-5">
+                <h2 class="h4 mb-3">Biographie</h2>
+                <div class="text-muted" t-out="auteur.comic_bio"/>
+            </section>
+        </xpath>
+    </template>
+
+    <!-- US-091 : histoire de la maison sur la page publique /shop/editeurs/<id> -->
+    <template id="shop_editeur_detail_histoire" inherit_id="comic_shop.shop_editeur_detail_page"
+              name="BD — Fiche éditeur : histoire de la maison">
+        <xpath expr="//div[hasclass('d-flex')][hasclass('mb-5')]" position="after">
+            <section t-if="editeur.has_comic_histoire" class="o_comic_shop_histoire mb-5">
+                <h2 class="h4 mb-3">Histoire de la maison</h2>
+                <div class="text-muted" t-out="editeur.comic_histoire"/>
+            </section>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,7 +1,9 @@
 **Synopsis generation and translation** (comic managers)
 
-1. Open an album (or an edition, in *Configuration → Référentiel avancé*) and go to
-   the *Synopsis* tab. On an album, the assistant works on its main edition.
+1. Open an album, a series (or an edition, in *Configuration → Référentiel avancé*)
+   and go to the *Synopsis* tab. On an album, the assistant works on its main
+   edition; on a series, on the series synopsis (written from its type, status,
+   genre, publisher, authors and volumes; a translation replaces it).
 2. Click *Générer le synopsis* (or *Traduire le synopsis* when a synopsis exists).
 3. In the AI assistant, choose the action:
 
@@ -25,7 +27,7 @@ Each application is logged in the edition chatter (action, provider, model).
 Provider errors (invalid key, timeout, quota…) are shown as clear messages.
 
 The prompts are plain text files in ``comic_ai/prompts/`` (``synopsis.txt``,
-``translate.txt``) and can be adjusted without touching the code.
+``translate.txt``, ``serie_synopsis.txt``) and can be adjusted without touching the code.
 
 **Discover new comics (AI taste profile)**
 
@@ -50,3 +52,27 @@ The prompts are plain text files in ``comic_ai/prompts/`` (``synopsis.txt``,
 Provider errors (invalid key, timeout, quota, unreadable answer) are shown as clear
 messages. With *comic_shop*, the module *comic_ai_shop* offers the same discovery to
 the customers of the portal library.
+
+**Fill empty synopses in the background**
+
+In *Settings → Bandes Dessinées → Intelligence artificielle*, tick *Remplir
+automatiquement les synopsis vides* (disabled by default: each synopsis is a paid AI
+call). Every hour, the scheduled action *BD — IA : synopsis vides (séries et albums)*
+writes the empty synopses of active series and albums (main edition), by batches of
+*Synopsis par passage* (default 20), with the same prompt as the assistant and the
+mention *(Généré automatiquement par IA)*. Existing synopses are never touched. The
+filter *Synopsis généré par IA (à relire)* lists them for review; editing a synopsis
+removes the flag. *Lancer maintenant* schedules an immediate run. A provider error
+(invalid key, quota) stops the current batch. With *Inclure les biographies d'auteurs
+et les histoires des éditeurs* (on by default), the same task then fills the empty
+biographies of credited authors and histories of publishers having editions (filter
+*Biographie générée par IA (à relire)* on contacts).
+
+**Author biography and publisher history**
+
+The author form has a *Biographie* tab and the publisher form a *Histoire de la
+maison* tab. Comic managers use *Générer* / *Traduire* there (same assistant as the
+synopsis: preview, confirmation before replacing, chatter trace marked "à relire").
+The prompts give the AI the catalogue facts (roles, series, publishers, years,
+co-authors) and forbid uncertain facts. The author tab also lists the authors the
+person has often worked with.

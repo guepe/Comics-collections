@@ -9,3 +9,4 @@ from . import test_wishlist_share
 from . import test_release_notify
 from . import test_portal_series
 from . import test_portal_isbn_scan
+from . import test_relink_products

@@ -6,3 +6,6 @@ It brings the AI discovery by taste profile to the customers of the portal libra
 series missing from the catalogue are proposed through the moderated circuit of the
 shop (records *à valider*). A daily limit per customer keeps the AI costs under
 control.
+
+It also shows the author biography and the publisher history (``comic_ai``) on the
+public pages ``/shop/auteurs/<id>`` and ``/shop/editeurs/<id>``.

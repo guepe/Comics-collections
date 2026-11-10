@@ -97,6 +97,10 @@ class ComicCustomerAlbum(models.Model):
         index=True,
     )
     genre_id = fields.Many2one(related="work_id.genre_id", store=True, string="Genre")
+    # Galerie « Ma bibliothèque » (même présentation que « Mes albums »)
+    serie_id = fields.Many2one(related="work_id.serie_id", store=True, string="Série")
+    tome = fields.Integer(related="work_id.tome", store=True, string="T°", aggregator=False)
+    image_couverture = fields.Image(related="edition_id.image_couverture", string="Couverture")
     currency_id = fields.Many2one(
         "res.currency",
         string="Devise",

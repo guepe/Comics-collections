@@ -24,6 +24,24 @@
                         </div>
                     </setting>
 
+                    <setting id="comic_ai_auto_synopsis_setting"
+                             help="Toutes les heures, l'IA rédige les synopsis vides des séries et des albums, puis (option) les biographies d'auteurs et histoires d'éditeurs vides, avec la mention « Généré automatiquement par IA ». Chaque texte est un appel payant.">
+                        <field name="comic_ai_auto_synopsis"/>
+                        <div class="mt-2" invisible="not comic_ai_auto_synopsis">
+                            <label for="comic_ai_auto_synopsis_batch" class="o_light_label me-2"/>
+                            <field name="comic_ai_auto_synopsis_batch" class="w-auto"/>
+                        </div>
+                        <div class="mt-2" invisible="not comic_ai_auto_synopsis">
+                            <field name="comic_ai_auto_bio" class="w-auto me-2"/>
+                            <label for="comic_ai_auto_bio" class="o_light_label"/>
+                        </div>
+                        <div class="mt-2">
+                            <button name="action_run_auto_synopsis_now" type="object"
+                                    string="Lancer maintenant" icon="fa-play"
+                                    class="btn btn-secondary btn-sm"/>
+                        </div>
+                    </setting>
+
                     <setting id="comic_ai_claude_setting" string="Claude (Anthropic)"
                              help="Clé sur platform.claude.com.">
                         <div class="row mt-1">

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- US-091 : onglet « Biographie » de l'auteur (texte IA + « A souvent travaillé avec ») -->
+    <record id="view_partner_form_comic_ai_bio" model="ir.ui.view">
+        <field name="name">res.partner.form.comic_ai.bio</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="comics_collections.view_partner_form_comic_author"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='comic_bibliography']" position="before">
+                <page string="Biographie" name="comic_bio"
+                      groups="comics_collections.group_comic_user"
+                      invisible="not is_comic_author and not comic_work_count">
+                    <div class="d-flex gap-2 mb-3" name="comic_ai_buttons"
+                         groups="comics_collections.group_comic_manager" invisible="not id">
+                        <button name="action_open_ai_wizard" type="object"
+                                string="Générer la biographie" icon="fa-magic" class="btn-secondary"/>
+                        <button name="action_open_ai_wizard" type="object"
+                                string="Traduire la biographie" icon="fa-language" class="btn-secondary"
+                                context="{'comic_ai_mode': 'translate'}" invisible="not comic_bio"/>
+                    </div>
+                    <field name="comic_bio" placeholder="Biographie de l'auteur…"/>
+                    <group string="A souvent travaillé avec" name="comic_bio_coauthors"/>
+                </page>
+            </xpath>
+            <!-- La liste des co-auteurs passe dans l'onglet Biographie -->
+            <xpath expr="//group[@name='comic_bio_coauthors']" position="inside">
+                <field name="comic_coauthors_html" position="move"/>
+            </xpath>
+            <xpath expr="//group[@name='comic_coauthors']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- US-091 : onglet « Histoire de la maison » de l'éditeur (texte IA) -->
+    <record id="view_comic_editeur_form_comic_ai" model="ir.ui.view">
+        <field name="name">comic.editeur.form.comic_ai</field>
+        <field name="model">comic.editeur</field>
+        <field name="inherit_id" ref="comics_collections.view_comic_editeur_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='comic_series']" position="before">
+                <page string="Histoire de la maison" name="comic_histoire">
+                    <div class="d-flex gap-2 mb-3" name="comic_ai_buttons"
+                         groups="comics_collections.group_comic_manager" invisible="not id">
+                        <button name="action_open_ai_wizard" type="object"
+                                string="Générer l'histoire" icon="fa-magic" class="btn-secondary"/>
+                        <button name="action_open_ai_wizard" type="object"
+                                string="Traduire l'histoire" icon="fa-language" class="btn-secondary"
+                                context="{'comic_ai_mode': 'translate'}" invisible="not comic_histoire"/>
+                    </div>
+                    <field name="comic_histoire" placeholder="Histoire de la maison d'édition…"/>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

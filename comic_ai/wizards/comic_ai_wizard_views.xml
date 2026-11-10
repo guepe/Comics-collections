@@ -13,8 +13,11 @@
                 <field name="provider" invisible="1"/>
                 <group>
                     <group>
-                        <field name="work_id" readonly="1"/>
-                        <field name="edition_id" readonly="1"/>
+                        <field name="serie_id" readonly="1" invisible="not serie_id"/>
+                        <field name="partner_id" readonly="1" invisible="not partner_id"/>
+                        <field name="editeur_id" readonly="1" invisible="not editeur_id"/>
+                        <field name="work_id" readonly="1" invisible="not edition_id"/>
+                        <field name="edition_id" readonly="1" invisible="not edition_id"/>
                         <field name="mode" widget="radio"/>
                     </group>
                     <group>
@@ -30,18 +33,18 @@
 
                 <div class="alert alert-warning" role="alert"
                      invisible="mode != 'translate' or source_synopsis">
-                    Cette édition n'a pas encore de synopsis à traduire : générez-en un d'abord.
+                    Cette fiche n'a pas encore de synopsis à traduire : générez-en un d'abord.
                 </div>
 
                 <!-- Prévisualisation : ancien / nouveau -->
                 <div invisible="state != 'preview'">
                     <div class="row">
                         <div class="col-12 col-md" invisible="not destination_has_synopsis">
-                            <h5>Synopsis existant</h5>
+                            <h5>Texte existant</h5>
                             <field name="destination_synopsis" readonly="1" nolabel="1"/>
                         </div>
                         <div class="col-12 col-md">
-                            <h5>Nouveau synopsis</h5>
+                            <h5>Nouveau texte</h5>
                             <field name="generated_text" nolabel="1" class="w-100"/>
                         </div>
                     </div>

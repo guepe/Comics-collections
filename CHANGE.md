@@ -2433,3 +2433,102 @@ cinq modules : 472 tests verts.
   `max_completion_tokens`, message « réponse tronquée » si la limite est atteinte avant le texte
   (`finish_reason == "length"` / `stop_reason == "max_tokens"`). Tests ajoutés.
 - Vérifié en réel : *Tester la connexion IA* → « OpenAI répond (modèle gpt-5-mini) ».
+
+## 2026-11-09 — Synopsis de série par IA (`comic_ai` 19.0.1.1.0)
+
+- Demande utilisateur : l'assistant IA (US-027/028) couvre aussi la fiche série.
+- `wizards/comic_ai_wizard.py` : `serie_id` (alternative à `edition_id`, contrainte « l'un ou
+  l'autre »), `_source_record` / `_destination_record`, `_serie_values` (type, statut, genre,
+  éditeur, auteurs des tomes, liste des tomes) ; traduction d'une série = remplacement de son
+  synopsis (pas d'édition par langue) ; même confirmation avant remplacement et trace chatter.
+- `models/comic_serie.py` : `action_open_ai_wizard` (gestionnaires) ; boutons *Générer* /
+  *Traduire le synopsis* dans l'onglet Synopsis de la série ; prompt `prompts/serie_synopsis.txt`.
+- Tests : `test_serie_synopsis_prompt_and_apply`, `test_serie_overwrite_needs_confirmation_and_translate`,
+  `test_serie_wizard_reserved_to_managers` (comic_ai : 57 tests verts).
+
+## 2026-11-10 — US-090 : synopsis vides remplis par l'IA en tâche de fond (`comic_ai` 19.0.1.2.0)
+
+- `models/comic_ai_auto_synopsis.py` : `comic.ai.service._cron_fill_empty_synopses(limit)` —
+  séries puis éditions principales d'albums actifs au synopsis vide (`is_html_empty`), lot
+  `comic_ai.auto_synopsis_batch` (défaut 20) ; prompt de l'assistant réutilisé (wizard créé en
+  interne), langue de l'édition sinon langue par défaut ; revérification « toujours vide » avant
+  écriture ; mention « (Généré automatiquement par IA) » ; trace chatter ; arrêt du lot à la
+  première `ComicAiError` ; `ir.cron._commit_progress` (progression, temps alloué) en contexte cron.
+- Mixin `comic.ai.synopsis.auto.mixin` : case `synopsis_auto` sur `comic.serie` / `comic.edition`
+  (related sur `comic.work`), décochée dès qu'un synopsis est modifié hors tâche de fond ; filtres
+  « Synopsis généré par IA (à relire) » sur séries et albums.
+- `data/comic_ai_cron.xml` : cron horaire désactivé par défaut. Paramètres IA : interrupteur
+  *Remplir automatiquement les synopsis vides* (actif du cron), *Synopsis par passage*,
+  *Lancer maintenant* (`_trigger`).
+- USER_STORIES : US-090 ✅ ; US-091 (biographies auteurs / éditeurs) créée en piste 💡, à cadrer.
+- Tests `test_auto_synopsis` (7) : seuls les vides, mention + case, lot, paramètre, arrêt sur
+  erreur, case décochée à la retouche, langue de l'édition, interrupteur / lancement immédiat.
+
+## 2026-11-10 — Correctif : fiches BD du shop vides (liens produit ↔ édition perdus)
+
+- Cause : la désinstallation de `comic_shop` (uninstall_hook) coupe volontairement les liens
+  `product_template.comic_edition_id` / `comic_edition.product_tmpl_id` pour préserver les données ;
+  à la réinstallation, rien ne les recréait → page produit sans auteurs, série, synopsis…
+  Base locale : 0 lien sur 84 produits.
+- `comic_shop/models/product_template.py` : `_comic_relink_editions()` — produits et éditions sans
+  lien uniquement ; correspondance par code-barres = ISBN-13 ou ISBN-10 (converti en 13, cherché
+  aussi dans `isbn_10`), sinon par nom de produit (toutes langues installées) = `_get_product_name`
+  d'une seule édition ; une édition n'est jamais reliée à deux produits ; idempotent.
+- `post_init_hook` : relance automatique à chaque (ré)installation de `comic_shop` ; action
+  *Relier aux éditions BD* sur les produits (gestionnaires).
+- Base locale : 72 produits reliés ; 10 restent sans édition au catalogue (Caroline Baldwin T1–T9
+  d'une autre édition, Thorgal T30 en anglais).
+- Tests `test_relink_products` (4). `comic_shop` 19.0.5.1.0.
+
+## 2026-11-10 — Auteurs de la série, « Compléter les infos », US-091 (biographies)
+
+**Fiche série** (`comics_collections` 19.0.4.2.0)
+- `comic.serie.auteur_ids` / `auteur_names` (calculés) : auteurs de tous les albums actifs, sans
+  doublon, avec leurs rôles (« Leo (Scénariste, Dessinateur) · Rodolphe (Scénariste) ») ; affichés
+  sur la fiche et en colonne optionnelle de la liste.
+
+**Fiche album / édition** (`comic_datasource` 19.0.1.5.0)
+- Bouton *Compléter les infos* : `comic.edition.action_complete_from_sources()` (album → édition
+  principale) — recherche par ISBN ou titre strict (`_fetch_datasource`, extrait du cron),
+  `_apply_datasource_data` (champs vides seulement), notification de ce qui a été ajouté
+  (couverture, synopsis, pages, dates, ISBN, auteurs), quota Google → message clair.
+
+**US-091 — Biographie d'auteur, histoire de la maison d'édition** (`comic_ai` 19.0.1.3.0)
+- `comics_collections` : `res.partner.comic_coauthors_html` (« A souvent travaillé avec » :
+  co-auteurs triés par albums en commun, séries) et `comic.editeur.comic_top_authors_html`
+  (auteurs les plus publiés) — `utils/author_tables.py`.
+- `comic_ai` : champs `res.partner.comic_bio` et `comic.editeur.comic_histoire` ; onglets
+  *Biographie* et *Histoire de la maison* (boutons Générer / Traduire, listes déplacées dans ces
+  onglets) ; assistant généralisé (`partner_id`, `editeur_id`, `TEXT_FIELDS`, contrainte
+  `num_nonnulls(...) = 1`) ; prompts `author_bio.txt` / `editeur_histoire.txt` (faits du catalogue,
+  interdiction des faits incertains et des homonymes) ; trace « … générée par IA — à relire » ;
+  écriture de la biographie en sudo (le gestionnaire BD n'a pas le droit d'écrire les contacts).
+- Tests : `test_authors_overview` (3), `test_complete_from_sources` (3), 3 tests wizard.
+  Suite complète, cinq modules : 497 tests verts.
+
+## 2026-11-10 — Biographies en tâche de fond et sur le shop, galeries, séries cliquables
+
+- **Tâche de fond IA** (`comic_ai` 19.0.1.4.0) : après les synopsis, la même tâche remplit les
+  biographies vides des auteurs crédités et les histoires vides des éditeurs ayant des éditions
+  (option *Inclure les biographies…*, `comic_ai.auto_bio` stocké « True »/« False », activée par
+  défaut) ; mention « Généré automatiquement par IA », cases `comic_bio_auto` /
+  `comic_histoire_auto` décochées à la retouche, filtre « Biographie générée par IA (à relire) » ;
+  contexte générique `comic_ai_auto_text` ; cron renommé « BD — IA : textes vides (synopsis,
+  biographies, éditeurs) » ; champs `has_comic_bio` / `has_comic_histoire`.
+- **Shop** (`comic_ai_shop` 19.0.1.1.0) : biographie sur `/shop/auteurs/<id>`, histoire de la maison
+  sur `/shop/editeurs/<id>` (`views/shop_bio_templates.xml`).
+- **Séries cliquables** dans « A souvent travaillé avec » / « Auteurs principaux » (`author_tables`).
+- **Galeries par défaut** (`comics_collections` 19.0.4.3.0) : *Mes albums* et *Ma bibliothèque*
+  s'ouvrent en kanban ; nouveau kanban de la bibliothèque calqué sur *Mes albums* (couverture de
+  l'édition, badge tome, série, étoiles, état de lecture, wishlist) ; champs liés stockés
+  `serie_id`, `tome` et `image_couverture` sur `comic.customer.album` (tri série/tome, regroupement
+  par série, colonnes de la liste).
+- Tests : bios en tâche de fond (2), shop (2), séries cliquables ; suite complète, cinq modules :
+  501 tests verts.
+
+## 2026-11-10 — Fiche éditeur : liste « Auteurs principaux de la maison » retirée
+
+- Demande utilisateur : la liste est retirée de la fiche éditeur (onglet *Histoire de la maison*
+  et page du module de base) ; champ `comic.editeur.comic_top_authors_html` supprimé, test associé
+  retiré (la vérification des séries cliquables passe sur la liste des co-auteurs). Le prompt de
+  l'histoire de la maison garde les auteurs les plus publiés comme contexte.

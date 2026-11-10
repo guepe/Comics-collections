@@ -3,7 +3,8 @@ from odoo.exceptions import AccessError, UserError
 
 
 class ComicEdition(models.Model):
-    _inherit = "comic.edition"
+    _name = "comic.edition"
+    _inherit = ["comic.edition", "comic.ai.synopsis.auto.mixin"]
 
     def action_open_ai_wizard(self):
         """Ouvre l'assistant IA (synopsis / traduction) sur cette édition (gestionnaires)."""

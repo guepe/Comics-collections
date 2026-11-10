@@ -1,9 +1,11 @@
-from odoo import _, models
+from odoo import _, fields, models
 from odoo.exceptions import UserError
 
 
 class ComicWork(models.Model):
     _inherit = "comic.work"
+
+    synopsis_auto = fields.Boolean(related="primary_edition_id.synopsis_auto", string="Synopsis généré automatiquement")
 
     def action_open_ai_wizard(self):
         """Assistant IA de l'album : agit sur son édition principale."""

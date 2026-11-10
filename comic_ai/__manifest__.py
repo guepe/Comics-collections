@@ -1,6 +1,6 @@
 {
     "name": "Comic AI",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.4.0",
     "category": "Leisure",
     "summary": "AI assistance for comic records: synopsis, translation, discovery (Claude / OpenAI)",
     "author": "Belspace, OCA",
@@ -15,6 +15,9 @@
         "wizards/comic_ai_wizard_views.xml",
         "views/comic_ai_buttons_views.xml",
         "wizards/comic_ai_discovery_wizard_views.xml",
+        "views/comic_ai_auto_synopsis_views.xml",
+        "views/comic_ai_bio_views.xml",
+        "data/comic_ai_cron.xml",
     ],
     # Bibliothèques importées à la demande (message clair si absentes) : le module
     # s'installe sans elles. Voir comic.ai.service._import_sdk().

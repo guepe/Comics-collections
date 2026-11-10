@@ -1,6 +1,6 @@
 {
     "name": "Comic Shop",
-    "version": "19.0.5.0.1",
+    "version": "19.0.5.1.0",
     "category": "Leisure",
     "summary": "Sell your comics online and manage customer libraries",
     "description": """
@@ -54,5 +54,6 @@
     "installable": True,
     "application": False,
     "auto_install": False,
+    "post_init_hook": "post_init_hook",
     "uninstall_hook": "uninstall_hook",
 }

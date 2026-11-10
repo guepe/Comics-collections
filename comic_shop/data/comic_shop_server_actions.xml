@@ -54,4 +54,15 @@ products.write({'is_published': False})
         </field>
     </record>
 
+    <!-- Relier les produits à leur édition BD (ISBN, puis nom) — après réinstallation -->
+    <record id="action_product_relink_comic_editions" model="ir.actions.server">
+        <field name="name">Relier aux éditions BD</field>
+        <field name="model_id" ref="product.model_product_template"/>
+        <field name="binding_model_id" ref="product.model_product_template"/>
+        <field name="binding_type">action</field>
+        <field name="group_ids" eval="[Command.link(ref('comics_collections.group_comic_manager'))]"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_comic_relink_editions()</field>
+    </record>
+
 </odoo>

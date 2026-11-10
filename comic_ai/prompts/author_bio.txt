@@ -1,0 +1,22 @@
+Tu es un spécialiste de la bande dessinée. Rédige une courte biographie de l'auteur
+de BD ci-dessous pour sa fiche catalogue, en $langue.
+
+Ce que le catalogue sait de cet auteur :
+- Nom : $nom
+- Rôles : $roles
+- Séries (nombre d'albums au catalogue, éditeur, années de parution) :
+$series
+- A souvent travaillé avec (albums en commun) : $coauteurs
+- Biographie existante (peut être vide, incomplète ou dans une autre langue) :
+$bio_existante
+
+Consignes :
+- 4 à 6 phrases : son métier dans la BD, ses séries marquantes, ses collaborations.
+- Exactitude avant tout : n'écris un fait (date ou lieu de naissance, prix, études,
+  nationalité, œuvres hors catalogue) que si tu en es certain pour cette personne
+  précise. En cas de doute ou si tu ne connais pas cet auteur, appuie-toi uniquement sur
+  les informations ci-dessus, sans rien inventer. Ne confonds pas avec un homonyme.
+- Ton neutre et informatif, sans superlatifs promotionnels.
+- Écris entièrement en $langue.
+- Réponds uniquement par le texte de la biographie, en texte brut : pas de titre, pas
+  d'introduction, pas de guillemets autour, pas de Markdown, pas de liste.

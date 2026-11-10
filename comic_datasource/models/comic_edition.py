@@ -4,7 +4,8 @@ from datetime import date
 
 import requests
 
-from odoo import fields, models
+from odoo import _, fields, models
+from odoo.exceptions import UserError
 from odoo.addons.comics_collections.utils.normalize import normalize_title
 from ..sources.base import normalize_isbn as _normalize_isbn
 
@@ -135,16 +136,7 @@ class ComicEdition(models.Model):
             # sa place aux suivantes au prochain passage.
             edition.datasource_last_try = fields.Datetime.now()
             try:
-                agg = None
-                isbn = edition._get_primary_isbn()
-                if isbn:
-                    agg = aggregator.search(isbn=isbn)
-                elif edition.work_id.titre_canonique:
-                    results = aggregator.search_list(title=edition.work_id.titre_canonique)
-                    best = _best_title_match(results or [], edition.work_id)
-                    if best:
-                        agg = aggregator.search(isbn=best.isbn)
-
+                agg = edition._fetch_datasource(aggregator)
                 if not agg or not agg.data:
                     continue
 
@@ -158,6 +150,64 @@ class ComicEdition(models.Model):
                 _logger.exception('Cron édition : erreur sur "%s"', edition.display_name)
 
         _logger.info("Cron éditions terminé : %d/%d enrichie(s).", updated, len(editions))
+
+    def _fetch_datasource(self, aggregator):
+        """Résultat agrégé pour l'édition : par ISBN, sinon par titre strict (``_best_title_match``)."""
+        self.ensure_one()
+        isbn = self._get_primary_isbn()
+        if isbn:
+            return aggregator.search(isbn=isbn)
+        if self.work_id.titre_canonique:
+            results = aggregator.search_list(title=self.work_id.titre_canonique)
+            best = _best_title_match(results or [], self.work_id)
+            if best:
+                return aggregator.search(isbn=best.isbn)
+        return None
+
+    # Champs dont on signale le remplissage après « Compléter les infos »
+    _COMPLETE_FIELDS = {
+        "image_couverture": "couverture",
+        "synopsis": "synopsis",
+        "nb_pages": "nombre de pages",
+        "date_parution": "date de parution",
+        "date_depot_legal": "dépôt légal",
+        "isbn_ids": "ISBN",
+    }
+
+    def action_complete_from_sources(self):
+        """Va chercher sur les sources les infos manquantes (champs vides seulement) et dit ce qui a été ajouté."""
+        self.ensure_one()
+        from ..aggregator import ComicDataAggregator
+        from ..sources.google_books import GoogleBooksQuotaError
+
+        before = {f: bool(self[f]) for f in self._COMPLETE_FIELDS}
+        nb_auteurs = len(self.work_id.auteur_line_ids)
+        try:
+            agg = self._fetch_datasource(ComicDataAggregator(env=self.env))
+        except GoogleBooksQuotaError as exc:
+            raise UserError(_("Quota Google Books atteint : réessayez demain ou ajoutez une clé API.")) from exc
+        if agg and agg.data:
+            self._apply_datasource_data(agg.data)
+        self.datasource_last_try = fields.Datetime.now()
+        added = [label for f, label in self._COMPLETE_FIELDS.items() if self[f] and not before[f]]
+        if len(self.work_id.auteur_line_ids) > nb_auteurs:
+            added.append(_("auteurs"))
+        if added:
+            message, kind = _("Infos ajoutées : %s.", ", ".join(added)), "success"
+        elif agg and agg.data:
+            message, kind = _("Album trouvé sur les sources, mais rien de nouveau à ajouter."), "info"
+        else:
+            message, kind = _("Album introuvable sur les sources (ISBN ou titre)."), "warning"
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "message": message,
+                "type": kind,
+                "sticky": False,
+                "next": {"type": "ir.actions.client", "tag": "soft_reload"},
+            },
+        }
 
     def _cron_update_albums(self, batch_size=30):
         """Backward-compatible entrypoint for older cron records."""
