@@ -2628,3 +2628,14 @@ cinq modules : 472 tests verts.
   `comics_collections`, remplacé à la main par « - », redevient « — »).
 - `comic_shop/static/description/index.html`, réapparu dans ce dépôt public (ancienne version
   enregistrée depuis un onglet resté ouvert), est retiré : la page du shop vit dans le dépôt privé.
+
+## 2026-11-10 — Système de release : 19.0-dev / 19.0, tags, GitHub Releases
+
+- Branches : développement sur `19.0-dev` ; `19.0` ne reçoit que des releases (App Store, staging).
+  CI (tests, pre-commit) sur les deux branches.
+- `tools/release.py` : vérifications (branche, arbre propre, à jour, fast-forward possible, CI verte
+  sur le commit, version montée pour chaque module modifié, nouvelles entrées CHANGE.md), puis push
+  du commit sur `19.0` sans changer de branche locale et tag annoté `v19.0.X.Y.Z` (modules +
+  versions + entrées CHANGE.md). Dry-run par défaut, `--apply` pour publier. Sert aux deux dépôts.
+- `.github/workflows/release.yml` : GitHub Release créée à chaque tag `v*` (notes = message du tag).
+- `RELEASE.md` : procédure ; CLAUDE.md / AGENTS.md : règle des branches et des versions.

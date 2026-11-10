@@ -26,6 +26,10 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 Jamais de code d'un module payant dans ce dépôt public. Une évolution qui touche les deux côtés
 = un commit (et une issue) dans chaque dépôt. Même Project GitHub pour les deux.
 
+**Branches et releases** (voir `RELEASE.md`) : on développe et on pousse sur **`19.0-dev`** ;
+`19.0` ne reçoit que des releases (`tools/release.py`, tag `v19.0.X.Y.Z` par dépôt), lues par
+l'App Store et le staging. Monter la version du manifest de tout module modifié.
+
 ---
 
 ## ⚙️ Environnement technique
@@ -37,7 +41,7 @@ Jamais de code d'un module payant dans ce dépôt public. Une évolution qui tou
 | PostgreSQL  | 16                         |
 | Licence     | LGPL-3 (OCA style)         |
 | Style       | PEP8, OCA guidelines       |
-| Branche Git | `19.0`                     |
+| Branche Git | `19.0-dev` (dev) · `19.0` (releases) |
 | Style OCA   | (maintainer-quality-tools) |
 
 **Dépendances Python :** `requests`, `lxml`, `openpyxl`, `xlrd`, `xmltodict` (+ `anthropic` / `openai` pour `comic_ai`, importés à la demande)
