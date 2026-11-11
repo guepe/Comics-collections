@@ -2726,3 +2726,9 @@ cinq modules : 472 tests verts.
 - « Ajouter à ma wishlist » (action sur les albums) : le résultat dit désormais clairement
   combien d'albums ont été ajoutés et combien étaient déjà possédés (un album possédé n'est
   jamais remis en wishlist) ; avant, une notification discrète « 0 album(s) ajouté(s) ».
+
+## 2026-11-11 — Avertissement au chargement (`comics_collections` 19.0.4.6.1)
+
+- « Two fields (auteur_names, auteur_line_ids) of comic.work() have the same label: Authors » :
+  le champ calculé `auteur_names` s'appelle désormais « Author names » (FR « Noms des
+  auteurs ») ; la colonne de la liste garde le titre « Auteurs ».

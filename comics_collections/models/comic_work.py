@@ -89,7 +89,7 @@ class ComicWork(models.Model):
 
     nb_editions = fields.Integer(string="Number of editions", compute="_compute_nb_editions", store=True)
     nb_auteurs = fields.Integer(string="Number of authors", compute="_compute_nb_auteurs", store=True)
-    auteur_names = fields.Char(string="Authors", compute="_compute_auteur_names")
+    auteur_names = fields.Char(string="Author names", compute="_compute_auteur_names")
 
     # Unicité limitée aux tomes numérotés : tome = 0 (hors-série, album sans
     # numéro) peut exister plusieurs fois dans une même série.
