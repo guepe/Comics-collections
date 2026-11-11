@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="comic_mobile.SerieScreen">
+        <section class="o_cm_screen o_cm_serie" t-if="state.serie">
+            <t t-set="s" t-value="state.serie"/>
+            <header class="o_cm_serie_head" t-attf-style="background-color: {{ color }}">
+                <div class="o_cm_serie_bar">
+                    <button type="button" class="o_cm_round_btn" aria-label="Back" t-on-click="() => props.back()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+                    </button>
+                    <button type="button" t-attf-class="o_cm_follow {{ s.followed ? 'active' : '' }}"
+                            t-att-aria-pressed="s.followed ? 'true' : 'false'" t-on-click="toggleFollow">
+                        <t t-if="s.followed">Followed</t><t t-else="">Follow</t>
+                    </button>
+                </div>
+                <span class="o_cm_serie_kicker" t-if="kicker" t-esc="kicker"/>
+                <h1 class="o_cm_serie_title" t-esc="s.name"/>
+                <span class="o_cm_serie_authors" t-esc="s.authors.concat(s.publisher ? [s.publisher] : []).join(' · ')"/>
+                <div class="o_cm_progress_row">
+                    <span t-esc="countLabel"/>
+                    <span t-esc="readLabel"/>
+                </div>
+                <div class="o_cm_progress" role="progressbar" t-att-aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
+                    <span t-attf-style="width: {{ progress }}%"/>
+                </div>
+            </header>
+
+            <h2 class="o_cm_section_title">Volumes</h2>
+            <ul class="o_cm_list">
+                <t t-foreach="s.albums" t-as="album" t-key="album.key">
+                    <li t-attf-class="o_cm_row {{ album.missing ? 'missing' : '' }}">
+                        <ComicCover album="album" small="true"/>
+                        <span class="o_cm_row_text">
+                            <span class="o_cm_row_title" t-esc="album.title"/>
+                            <span t-if="album.owned" class="o_cm_row_meta">
+                                <t t-esc="readingLabel(album)"/>
+                                <t t-if="album.rating"> · <t t-esc="'★'.repeat(album.rating)"/></t>
+                            </span>
+                            <span t-elif="album.wished" class="o_cm_row_meta">In your wishlist</span>
+                            <span t-elif="album.missing" class="o_cm_row_meta o_cm_accent">You're missing it</span>
+                        </span>
+                        <button t-if="album.owned" type="button" t-attf-class="o_cm_reading_btn o_cm_reading_{{ album.reading }}"
+                                t-att-aria-label="readingLabel(album)" title="Change the reading status"
+                                t-on-click="() => this.cycleReading(album)">
+                            <span class="o_cm_reading_dot_inline"/>
+                        </button>
+                        <button t-else="" type="button" class="o_cm_btn o_cm_btn_small" t-on-click="() => this.markOwned(album)">I have it</button>
+                    </li>
+                </t>
+            </ul>
+        </section>
+    </t>
+</templates>

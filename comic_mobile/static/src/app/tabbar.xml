@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="comic_mobile.TabBar">
+        <nav class="o_cm_tabbar" aria-label="Main navigation">
+            <button type="button" t-attf-class="o_cm_tab {{ props.current === 'collection' ? 'active' : '' }}"
+                    t-att-aria-current="props.current === 'collection' ? 'page' : false"
+                    t-on-click="() => props.onSelect('collection')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5a2 2 0 0 1 2-2h4v18H6a2 2 0 0 1-2-2z"/><path d="M10 3h4v18h-4z"/><path d="M14 4.5l3.8-1 3.2 16.5-3.8 1z"/></svg>
+                <span>Collection</span>
+            </button>
+            <button type="button" class="o_cm_tab o_cm_tab_scan" t-on-click="() => props.onSelect('scan')">
+                <span class="o_cm_tab_scan_disc">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 8v8M10 8v8M13 8v8M16 8v8"/></svg>
+                </span>
+                <span>Scan</span>
+            </button>
+            <button type="button" t-attf-class="o_cm_tab {{ props.current === 'wishlist' ? 'active' : '' }}"
+                    t-att-aria-current="props.current === 'wishlist' ? 'page' : false"
+                    t-on-click="() => props.onSelect('wishlist')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+                <span>Wishlist</span>
+            </button>
+        </nav>
+    </t>
+</templates>

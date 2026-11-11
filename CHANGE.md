@@ -2674,3 +2674,24 @@ cinq modules : 472 tests verts.
   ignorait les `*.pot`. Règle retirée, fichier ajouté (les `fr.po` / `nl.po` / `de.po` l'étaient
   déjà ; aucun effet sur l'interface).
 - `USER_STORIES.md` : E10 / US-092 marquée livrée.
+
+## 2026-11-11 — US-093 (#11) : app mobile `comic_mobile` (PWA)
+
+- Nouveau module gratuit **`comic_mobile`** 19.0.1.0.0 (LGPL-3, dépend de `comics_collections`) :
+  app installable sur l'écran d'accueil (iPhone / Android), servie par Odoo sur `/comics/app`.
+  Maquette : https://claude.ai/artifact/4xmt5TPH6yfZHYbeVQx2QA
+- `controllers/main.py` : page autonome (réservée au groupe utilisateur BD, sinon retour à
+  `/odoo`), informations de session du back-office (langue de l'utilisateur), manifeste web
+  public `/comic_mobile/manifest.webmanifest` ; icônes `static/img/` (apple-touch-icon, 192, 512).
+- `models/comic_mobile_api.py` : `comic.mobile.api` (AbstractModel), méthodes `mobile_*` pour
+  l'utilisateur connecté — `get_summary`, `get_collection` (filtres de lecture, recherche titre /
+  série / auteur / ISBN, pagination), `get_serie`, `set_follow`, `get_wishlist` (manques et
+  souhaits groupés par série, « à paraître »), `scan` (owned / wished / missing / unknown, tomes de
+  la série, « tome suivant »), `add` (collection / wishlist, un album possédé n'est jamais
+  déclassé), `set_reading`.
+- `static/src/app/` : application OWL dans son bundle `comic_mobile.assets_app` (sans le
+  back-office) — écrans Collection, Scan (scanner vidéo d'Odoo, ZXing sur Safari ; saisie manuelle
+  en secours, HTTPS requis pour la caméra), Série, Wishlist ; barre d'onglets ; couvertures réelles
+  ou aplat aux couleurs de la série. Menu *Ma Collection → App mobile*.
+- Traductions `i18n/` (.pot, fr, nl, de) ; tests `test_mobile_api.py`, `test_mobile_routes.py`
+  (10) ; CI : `comic_mobile` installé et testé. Suite complète : 516 tests verts.

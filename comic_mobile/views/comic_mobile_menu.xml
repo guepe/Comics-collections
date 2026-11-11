@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_comic_mobile_app" model="ir.actions.act_url">
+        <field name="name">Mobile app</field>
+        <field name="url">/comics/app</field>
+        <field name="target">self</field>
+    </record>
+
+    <menuitem id="menu_comic_mobile_app"
+              name="Mobile App"
+              parent="comics_collections.menu_comic_collection"
+              action="action_comic_mobile_app"
+              sequence="99"/>
+</odoo>

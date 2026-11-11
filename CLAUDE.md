@@ -13,6 +13,7 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 | -------------------- | ------------------------------------------------------------------------------- | ------------------------ |
 | `comics_collections` | Collection, catalogue, import CSV/XLSX, déduplication                           | ✅ livré                 |
 | `comic_datasource`   | Enrichissement multi-sources (Google Books, Open Library, BnF)                  | ✅ livré                 |
+| `comic_mobile`       | App mobile installable (PWA, `/comics/app`) : scan ISBN, collection, série, wishlist | 🔄 US-093              |
 | `comic_shop`         | Shop en ligne, caisse (POS partiel), bibliothèque client portail                | ✅ majeure partie livrée |
 | `comic_ai`           | IA (synopsis, traduction, découverte) — Claude + OpenAI ; `comic_ai_shop` = portail | ✅ livré                 |
 
@@ -20,7 +21,7 @@ Modules Odoo 19 pour gérer une collection de BD et vendre en ligne :
 
 | Dépôt | Visibilité | Modules | Licence |
 | ----- | ---------- | ------- | ------- |
-| `guepe/Comics-collections` (ici) | public | `comics_collections`, `comic_datasource` | LGPL-3, gratuits (cible OCA) |
+| `guepe/Comics-collections` (ici) | public | `comics_collections`, `comic_datasource`, `comic_mobile` | LGPL-3, gratuits (cible OCA) |
 | `guepe/Comics-collections-pro` (`../Comics-collections-pro`) | **privé** | `comic_shop`, `comic_ai`, `comic_ai_shop` | OPL-1, payants (Odoo Apps Store) |
 
 Jamais de code d'un module payant dans ce dépôt public. Une évolution qui touche les deux côtés
@@ -83,6 +84,10 @@ Comics-collections/
 │   ├── models/comic_edition.py   # _inherit = 'comic.edition'
 │   ├── wizards/             # search_wizard, serie_missing_wizard, serie_update_wizard
 │   └── data/comic_datasource_config.xml, comic_serie_cron.xml
+├── comic_mobile/            # App mobile (PWA) : page autonome /comics/app (bundle OWL)
+│   ├── models/comic_mobile_api.py   # AbstractModel comic.mobile.api (mobile_* : données JSON)
+│   ├── controllers/main.py  # page + manifeste web ; static/src/app/ : écrans OWL
+│   └── tests/
 └── (comic_shop/, comic_ai/, comic_ai_shop/ : dépôt privé ../Comics-collections-pro)
     comic_shop/              # Shop + bibliothèque client
     ├── models/
@@ -314,8 +319,8 @@ Maintenir à jour en fin de session, avant le commit :
 ```bash
 ~/.docker/bin/docker exec odoo-web odoo --db_host postgres-Odoo -r odoo -w odoo -d odoo \
   --addons-path=/mnt/extra-addons,/usr/lib/python3/dist-packages/odoo/addons \
-  -u comics_collections,comic_datasource,comic_shop,comic_ai,comic_ai_shop \
-  --test-tags /comics_collections,/comic_datasource,/comic_shop,/comic_ai,/comic_ai_shop \
+  -u comics_collections,comic_datasource,comic_mobile,comic_shop,comic_ai,comic_ai_shop \
+  --test-tags /comics_collections,/comic_datasource,/comic_mobile,/comic_shop,/comic_ai,/comic_ai_shop \
   --stop-after-init --http-port 8070
-# (les 5 modules sont montés dans le conteneur : 2 depuis ce dépôt, 3 depuis ../Comics-collections-pro)
+# (modules montés dans le conteneur : 3 depuis ce dépôt (+ comic_mobile), 3 depuis ../Comics-collections-pro)
 ```

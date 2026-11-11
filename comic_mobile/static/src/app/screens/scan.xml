@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="comic_mobile.ScanScreen">
+        <section class="o_cm_scan">
+            <div class="o_cm_scan_camera">
+                <div class="o_cm_scan_top">
+                    <button type="button" class="o_cm_round_btn" aria-label="Close the scanner" t-on-click="() => props.close()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                    </button>
+                    <span class="o_cm_scan_heading">Scan an album</span>
+                    <span class="o_cm_round_spacer"/>
+                </div>
+                <div t-if="!state.result" class="o_cm_scan_view">
+                    <t t-if="state.camera">
+                        <BarcodeVideoScanner facingMode="'environment'" cssClass="'o_cm_scan_video'"
+                                             onResult.bind="onCameraResult" onError.bind="onCameraError"/>
+                        <div class="o_cm_scan_frame" aria-hidden="true">
+                            <span class="o_cm_corner tl"/><span class="o_cm_corner tr"/>
+                            <span class="o_cm_corner bl"/><span class="o_cm_corner br"/>
+                            <span class="o_cm_scan_line"/>
+                        </div>
+                    </t>
+                    <div t-else="" class="o_cm_scan_nocam">
+                        <strong>Camera unavailable</strong>
+                        <span t-if="state.cameraError" t-esc="state.cameraError"/>
+                        <span>The camera needs a secure (HTTPS) connection. Type the ISBN below.</span>
+                    </div>
+                </div>
+                <span t-if="state.rejected" class="o_cm_scan_hint" role="status">
+                    Code “<t t-esc="state.rejected"/>” ignored: not an ISBN.
+                </span>
+                <span t-elif="state.loading" class="o_cm_scan_hint" role="status">Searching…</span>
+                <span t-elif="!state.result and state.camera" class="o_cm_scan_hint">Point the camera at the barcode on the back cover.</span>
+            </div>
+
+            <div class="o_cm_sheet">
+                <span class="o_cm_sheet_grip" aria-hidden="true"/>
+
+                <form t-if="!state.result" class="o_cm_manual" t-on-submit="onManualSubmit">
+                    <label for="o_cm_isbn" class="o_cm_label">Or type the ISBN</label>
+                    <div class="o_cm_manual_row">
+                        <input id="o_cm_isbn" type="text" inputmode="numeric" autocomplete="off" placeholder="978…"
+                               t-att-value="state.manual" t-on-input="onManualInput"/>
+                        <button type="submit" class="o_cm_btn o_cm_btn_primary" t-att-disabled="state.loading">Search</button>
+                    </div>
+                </form>
+
+                <t t-elif="state.result.status === 'unknown'">
+                    <span class="o_cm_status unknown" t-esc="statusInfo.label"/>
+                    <h2 class="o_cm_result_title">ISBN <t t-esc="state.result.isbn"/></h2>
+                    <p class="o_cm_muted">This album is not in your Odoo catalogue yet. Add it from Odoo (import, or search the data sources), then scan it again.</p>
+                    <div class="o_cm_actions">
+                        <button type="button" class="o_cm_btn o_cm_btn_primary" t-on-click="scanAgain">Scan another album</button>
+                    </div>
+                </t>
+
+                <t t-else="">
+                    <t t-set="r" t-value="state.result"/>
+                    <div class="o_cm_result">
+                        <ComicCover album="r"/>
+                        <div class="o_cm_result_info">
+                            <span t-attf-class="o_cm_status {{ statusInfo.css }}" t-esc="statusInfo.label"/>
+                            <h2 class="o_cm_result_title"><t t-esc="r.serie"/><t t-if="r.tome"> <t t-esc="r.tome"/></t></h2>
+                            <span class="o_cm_result_sub" t-esc="r.title"/>
+                            <span class="o_cm_muted small">
+                                <t t-esc="r.authors.join(' · ')"/>
+                                <t t-if="r.publisher"><br/><t t-esc="r.publisher"/><t t-if="r.year"> · <t t-esc="r.year"/></t></t>
+                            </span>
+                        </div>
+                    </div>
+
+                    <button t-if="r.serie_total" type="button" class="o_cm_card o_cm_strip_card" t-on-click="() => props.openSerie(r.serie_id)">
+                        <span class="o_cm_strip_head">
+                            <strong t-esc="r.serie"/>
+                            <span class="o_cm_muted"><t t-esc="r.serie_owned"/> / <t t-esc="r.serie_total"/></span>
+                        </span>
+                        <span class="o_cm_strip">
+                            <t t-foreach="r.strip" t-as="t" t-key="t.work_id">
+                                <span t-attf-class="o_cm_strip_tome {{ t.owned ? 'owned' : '' }} {{ t.work_id === r.work_id ? 'current' : '' }}" t-esc="t.tome"/>
+                            </t>
+                        </span>
+                        <span class="o_cm_muted small" t-esc="stripHint"/>
+                    </button>
+
+                    <div class="o_cm_actions">
+                        <t t-if="r.status !== 'owned'">
+                            <button type="button" class="o_cm_btn o_cm_btn_primary" t-on-click="() => this.add('collection')">I'm buying it — add to my collection</button>
+                            <button t-if="r.status === 'missing'" type="button" class="o_cm_btn o_cm_btn_ghost" t-on-click="() => this.add('wishlist')">Later — add to my wishlist</button>
+                        </t>
+                        <button type="button" class="o_cm_btn o_cm_btn_ghost" t-on-click="scanAgain">Scan another album</button>
+                    </div>
+                </t>
+            </div>
+        </section>
+    </t>
+</templates>

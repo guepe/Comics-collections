@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="comic_mobile.CollectionScreen">
+        <section class="o_cm_screen">
+            <header class="o_cm_header">
+                <span class="o_cm_kicker" t-esc="subtitle"/>
+                <h1 class="o_cm_title">My Collection</h1>
+                <label class="o_cm_search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                    <input type="search" placeholder="Title, series, author, ISBN" aria-label="Search my collection"
+                           t-att-value="state.search" t-on-input="onSearch"/>
+                </label>
+                <div class="o_cm_chips" role="group" aria-label="Reading status">
+                    <t t-foreach="filters" t-as="f" t-key="f.key">
+                        <button type="button" t-attf-class="o_cm_chip {{ state.reading === f.key ? 'active' : '' }}"
+                                t-att-aria-pressed="state.reading === f.key ? 'true' : 'false'"
+                                t-on-click="() => this.setReading(f.key)" t-esc="f.label"/>
+                    </t>
+                </div>
+            </header>
+            <div t-if="!state.loading and !state.albums.length" class="o_cm_empty">
+                <strong>No album here yet.</strong>
+                <span>Scan the barcode of an album to add it to your collection.</span>
+            </div>
+            <div class="o_cm_grid">
+                <t t-foreach="state.albums" t-as="album" t-key="album.key">
+                    <button type="button" class="o_cm_grid_item" t-on-click="() => props.openSerie(album.serie_id)"
+                            t-att-disabled="!album.serie_id">
+                        <ComicCover album="album" showReading="true"/>
+                        <span class="o_cm_grid_title" t-esc="album.title"/>
+                    </button>
+                </t>
+            </div>
+            <button t-if="state.albums.length &lt; state.total" type="button" class="o_cm_more"
+                    t-att-disabled="state.loading" t-on-click="() => this.load(true)">Show more</button>
+        </section>
+    </t>
+</templates>

@@ -15,7 +15,8 @@ Auteur : Belspace — Licence : LGPL-3
 ```
 Comics-collections/
 ├── comics_collections/    # Module principal (requis)
-└── comic_datasource/      # Enrichissement multi-sources (optionnel, recommandé)
+├── comic_datasource/      # Enrichissement multi-sources (optionnel, recommandé)
+└── comic_mobile/          # App mobile installable (PWA) : scan ISBN, collection, wishlist
 ```
 
 Les modules **Pro** payants (`comic_shop`, `comic_ai`, `comic_ai_shop`, licence OPL-1) sont
@@ -155,6 +156,7 @@ dépôt privé). Elles s'installent par-dessus les deux modules gratuits de ce d
 | -------------------- | ------- | ---------------------- |
 | `comics_collections` | LGPL-3  | gratuit                |
 | `comic_datasource`   | LGPL-3  | gratuit                |
+| `comic_mobile`       | LGPL-3  | gratuit                |
 | `comic_shop`         | OPL-1   | 200 €                  |
 | `comic_ai`           | OPL-1   | 60 €                   |
 | `comic_ai_shop`      | OPL-1   | 40 €                   |
@@ -177,6 +179,7 @@ sont dans le dépôt privé, chacun avec son fichier `LICENSE`.
 ```
 1. comics_collections       ← toujours en premier
 2. comic_datasource          ← si enrichissement souhaité
+3. comic_mobile              ← app mobile (/comics/app, « Ajouter à l'écran d'accueil »)
    (puis, si achetés : comic_shop, comic_ai — comic_ai_shop suit automatiquement)
 ```
 

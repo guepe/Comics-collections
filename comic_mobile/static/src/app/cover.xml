@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="comic_mobile.Cover">
+        <div t-attf-class="o_cm_cover {{ props.small ? 'o_cm_cover_small' : '' }}" t-attf-style="background-color: {{ color }}">
+            <img t-if="props.album.cover" t-att-src="props.album.cover" alt="" loading="lazy" class="o_cm_cover_img"/>
+            <div t-else="" class="o_cm_cover_placeholder">
+                <span class="o_cm_cover_serie" t-esc="props.album.serie or props.album.title"/>
+                <span class="o_cm_cover_disc"/>
+                <span class="o_cm_cover_title" t-esc="props.album.title"/>
+            </div>
+            <span t-if="props.small and props.album.tome" class="o_cm_cover_num" t-esc="props.album.tome"/>
+            <span t-elif="tomeLabel" class="o_cm_badge_tome" t-esc="tomeLabel"/>
+            <span t-if="props.showReading and props.album.reading" role="img"
+                  t-att-aria-label="readingLabel" t-att-title="readingLabel"
+                  t-attf-class="o_cm_reading_dot o_cm_reading_{{ props.album.reading }}"/>
+        </div>
+    </t>
+</templates>

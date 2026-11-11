@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="comic_mobile.WishlistScreen">
+        <section class="o_cm_screen">
+            <header class="o_cm_header">
+                <span class="o_cm_kicker" t-esc="subtitle"/>
+                <h1 class="o_cm_title">My Wishlist</h1>
+                <div class="o_cm_chips" role="group" aria-label="Filter">
+                    <t t-foreach="filters" t-as="f" t-key="f.key">
+                        <button type="button" t-attf-class="o_cm_chip {{ state.filter === f.key ? 'active' : '' }}"
+                                t-att-aria-pressed="state.filter === f.key ? 'true' : 'false'"
+                                t-on-click="() => { state.filter = f.key; }" t-esc="f.label"/>
+                    </t>
+                </div>
+            </header>
+            <div t-if="state.data and !groups.length" class="o_cm_empty">
+                <strong>Nothing to look for.</strong>
+                <span>The missing volumes of the series you follow, and your wishes, will show up here.</span>
+            </div>
+            <t t-foreach="groups" t-as="g" t-key="g.serie_id or 0">
+                <div class="o_cm_group">
+                    <button type="button" class="o_cm_group_head" t-on-click="() => g.serie_id and props.openSerie(g.serie_id)">
+                        <strong t-esc="g.serie"/>
+                        <span t-if="g.total" class="o_cm_muted"><t t-esc="g.owned"/> / <t t-esc="g.total"/></span>
+                    </button>
+                    <ul class="o_cm_list o_cm_card_list">
+                        <t t-foreach="g.items" t-as="item" t-key="item.key">
+                            <li class="o_cm_row">
+                                <ComicCover album="item" small="true"/>
+                                <span class="o_cm_row_text">
+                                    <span class="o_cm_row_title" t-esc="item.title"/>
+                                    <span class="o_cm_row_meta" t-esc="meta(item)"/>
+                                </span>
+                                <span class="o_cm_row_end">
+                                    <span t-attf-class="o_cm_tag {{ tag(item).css }}" t-esc="tag(item).label"/>
+                                    <button type="button" class="o_cm_link_btn" t-on-click="() => this.gotIt(item)">I have it</button>
+                                </span>
+                            </li>
+                        </t>
+                    </ul>
+                </div>
+            </t>
+        </section>
+    </t>
+</templates>

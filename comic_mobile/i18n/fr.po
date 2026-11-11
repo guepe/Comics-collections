@@ -1,0 +1,481 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* comic_mobile
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0-20261102\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-11 14:21+0000\n"
+"PO-Revision-Date: 2026-11-11 14:21+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.js:0
+msgid "%(albums)s albums · %(series)s series"
+msgstr "%(albums)s albums · %(series)s séries"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.js:0
+msgid "%(missing)s missing volumes · %(wishes)s wishes"
+msgstr "%(missing)s tomes manquants · %(wishes)s souhaits"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/serie.js:0
+msgid "%(owned)s of %(total)s volumes"
+msgstr "%(owned)s tomes sur %(total)s"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/serie.js:0
+msgid "%s read"
+msgstr "%s lus"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+#: code:addons/comic_mobile/static/src/app/screens/serie.js:0
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.js:0
+msgid "Added to your collection."
+msgstr "Ajouté à ta collection."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+msgid "Added to your wishlist."
+msgstr "Ajouté à ta wishlist."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.js:0
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.js:0
+msgid "All"
+msgstr "Tout"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+msgid "Already on your shelf."
+msgstr "Déjà dans ta bibliothèque."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/serie.xml:0
+msgid "Back"
+msgstr "Retour"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Camera unavailable"
+msgstr "Caméra indisponible"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/serie.xml:0
+msgid "Change the reading status"
+msgstr "Changer l'état de lecture"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Close the scanner"
+msgstr "Fermer le scanner"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Code “"
+msgstr "Code « "
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/tabbar.xml:0
+msgid "Collection"
+msgstr "Collection"
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/controllers/main.py:0
+msgid "Comics"
+msgstr "BD"
+
+#. module: comic_mobile
+#: model:ir.model,name:comic_mobile.model_comic_mobile_api
+msgid "Comics mobile app — data API"
+msgstr "App mobile BD — API de données"
+
+#. module: comic_mobile
+#: model:ir.model.fields,field_description:comic_mobile.field_comic_mobile_api__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.js:0
+msgid "Expected in %s"
+msgstr "Prévu en %s"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.xml:0
+msgid "Filter"
+msgstr "Filtre"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/serie.xml:0
+msgid "Follow"
+msgstr "Suivre"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/serie.xml:0
+msgid "Followed"
+msgstr "Suivie"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/serie.xml:0
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.xml:0
+msgid "I have it"
+msgstr "Je l'ai"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "I'm buying it — add to my collection"
+msgstr "Je l'achète — ajouter à ma collection"
+
+#. module: comic_mobile
+#: model:ir.model.fields,field_description:comic_mobile.field_comic_mobile_api__id
+msgid "ID"
+msgstr "ID"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "ISBN"
+msgstr "ISBN"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+#: code:addons/comic_mobile/static/src/app/screens/serie.xml:0
+msgid "In your wishlist"
+msgstr "Dans ta wishlist"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+msgid "It fills a gap in your series."
+msgstr "Il comble un trou dans ta série."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+msgid "It's the next volume: it continues your series."
+msgstr "C'est le tome suivant : il complète ta série."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Later — add to my wishlist"
+msgstr "Plus tard — mettre en wishlist"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/tabbar.xml:0
+msgid "Main navigation"
+msgstr "Navigation principale"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.js:0
+msgid "Missing"
+msgstr "Manque"
+
+#. module: comic_mobile
+#: model:ir.ui.menu,name:comic_mobile.menu_comic_mobile_app
+msgid "Mobile App"
+msgstr "App mobile"
+
+#. module: comic_mobile
+#: model:ir.actions.act_url,name:comic_mobile.action_comic_mobile_app
+msgid "Mobile app"
+msgstr "App mobile"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.xml:0
+msgid "My Collection"
+msgstr "Ma collection"
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/controllers/main.py:0
+msgid "My Comics"
+msgstr "Mes BD"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.xml:0
+msgid "My Wishlist"
+msgstr "Ma wishlist"
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/controllers/main.py:0
+msgid "My comic collection"
+msgstr "Ma collection de BD"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.xml:0
+msgid "No album here yet."
+msgstr "Pas encore d'album ici."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+msgid "Not in the catalogue"
+msgstr "Pas dans le catalogue"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.xml:0
+msgid "Nothing to look for."
+msgstr "Rien à chercher."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Or type the ISBN"
+msgstr "Ou tape l'ISBN"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Point the camera at the barcode on the back cover."
+msgstr "Vise le code-barres au dos de l'album."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.js:0
+#: code:addons/comic_mobile/static/src/app/utils.js:0
+msgid "Read"
+msgstr "Lu"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.js:0
+#: code:addons/comic_mobile/static/src/app/utils.js:0
+msgid "Reading"
+msgstr "En cours"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.xml:0
+msgid "Reading status"
+msgstr "État de lecture"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.js:0
+msgid "Released in %s"
+msgstr "Paru en %s"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/tabbar.xml:0
+msgid "Scan"
+msgstr "Scanner"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Scan an album"
+msgstr "Scanner un album"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Scan another album"
+msgstr "Scanner un autre album"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.xml:0
+msgid "Scan the barcode of an album to add it to your collection."
+msgstr "Scanne le code-barres d'un album pour l'ajouter à ta collection."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Search"
+msgstr "Chercher"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.xml:0
+msgid "Search my collection"
+msgstr "Chercher dans ma collection"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "Searching…"
+msgstr "Recherche…"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.xml:0
+msgid "Show more"
+msgstr "Afficher plus"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "The camera needs a secure (HTTPS) connection. Type the ISBN below."
+msgstr "La caméra demande une connexion sécurisée (HTTPS). Tape l'ISBN ci-dessous."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.xml:0
+msgid ""
+"The missing volumes of the series you follow, and your wishes, will show up "
+"here."
+msgstr "Les tomes manquants des séries que tu suis, et tes souhaits, apparaîtront ici."
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/models/comic_mobile_api.py:0
+msgid "This album has no edition yet."
+msgstr "Cet album n'a pas encore d'édition."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid ""
+"This album is not in your Odoo catalogue yet. Add it from Odoo (import, or "
+"search the data sources), then scan it again."
+msgstr "Cet album n'est pas encore dans ton catalogue Odoo. Ajoute-le depuis Odoo (import, ou recherche dans les sources de données), puis scanne-le à nouveau."
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/models/comic_mobile_api.py:0
+msgid "This album is not in your collection."
+msgstr "Cet album n'est pas dans ta collection."
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/models/comic_mobile_api.py:0
+msgid "This album no longer exists."
+msgstr "Cet album n'existe plus."
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/models/comic_mobile_api.py:0
+msgid "This series no longer exists."
+msgstr "Cette série n'existe plus."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.xml:0
+msgid "Title, series, author, ISBN"
+msgstr "Titre, série, auteur, ISBN"
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/models/comic_mobile_api.py:0
+msgid "Unknown destination."
+msgstr "Destination inconnue."
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/models/comic_mobile_api.py:0
+msgid "Unknown reading status."
+msgstr "État de lecture inconnu."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/collection.js:0
+#: code:addons/comic_mobile/static/src/app/utils.js:0
+msgid "Unread"
+msgstr "Non lu"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.js:0
+msgid "Upcoming"
+msgstr "À paraître"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/cover.js:0
+msgid "Vol. %s"
+msgstr "T%s"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/serie.xml:0
+msgid "Volumes"
+msgstr "Tomes"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/wishlist.js:0
+msgid "Wish"
+msgstr "Souhait"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/tabbar.xml:0
+msgid "Wishlist"
+msgstr "Wishlist"
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/models/comic_mobile_api.py:0
+msgid "Without series"
+msgstr "Sans série"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+msgid "You don't own this series yet."
+msgstr "Tu n'as pas encore cette série."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+msgid "You own it"
+msgstr "Tu l'as"
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.js:0
+#: code:addons/comic_mobile/static/src/app/screens/serie.xml:0
+msgid "You're missing it"
+msgstr "Il te manque"
+
+#. module: comic_mobile
+#. odoo-python
+#: code:addons/comic_mobile/models/comic_mobile_api.py:0
+msgid "“%(code)s” is not a valid ISBN."
+msgstr "« %(code)s » n'est pas un ISBN valide."
+
+#. module: comic_mobile
+#. odoo-javascript
+#: code:addons/comic_mobile/static/src/app/screens/scan.xml:0
+msgid "” ignored: not an ISBN."
+msgstr " » ignoré : ce n'est pas un ISBN."

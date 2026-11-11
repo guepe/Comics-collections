@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Page autonome de l'app mobile : application OWL dans son propre bundle -->
+    <template id="index" name="Comics — Mobile app">&lt;!DOCTYPE html&gt;
+        <html t-att-lang="(session_info.get('user_context') or {}).get('lang', 'en_US').replace('_', '-')">
+            <head>
+                <meta charset="utf-8"/>
+                <title>My Comics</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+                <meta name="theme-color" content="#022E51"/>
+                <meta name="mobile-web-app-capable" content="yes"/>
+                <meta name="apple-mobile-web-app-capable" content="yes"/>
+                <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+                <meta name="apple-mobile-web-app-title" content="Comics"/>
+                <meta name="darkreader-lock"/>
+                <link rel="manifest" href="/comic_mobile/manifest.webmanifest"/>
+                <link rel="apple-touch-icon" href="/comic_mobile/static/img/apple-touch-icon.png"/>
+                <link rel="icon" type="image/png" href="/comic_mobile/static/img/icon-192.png"/>
+                <link rel="preconnect" href="https://fonts.googleapis.com"/>
+                <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&amp;family=Inter:wght@400;500;600;700&amp;display=swap"/>
+                <script type="text/javascript">
+                    var odoo = {
+                        csrf_token: "<t t-esc="request.csrf_token(None)"/>",
+                        debug: "<t t-esc="debug"/>",
+                        __session_info__: <t t-out="session_info_json"/>,
+                    };
+                </script>
+                <script type="text/javascript">
+                    // Page blanche impossible : toute erreur au démarrage est affichée à l'écran.
+                    window.__comicMobileStartError = function (message) {
+                        if (window.__comicMobileStarted || document.querySelector(".o_cm_app")) { return; }
+                        var box = document.getElementById("o_cm_boot_error") || document.createElement("pre");
+                        box.id = "o_cm_boot_error";
+                        box.style.cssText = "white-space:pre-wrap;margin:24px;padding:16px;border-radius:12px;background:#fbe3d3;color:#8f3802;font:13px/1.4 -apple-system,sans-serif";
+                        box.textContent = "The app could not start / L'app n'a pas pu démarrer :\n\n" + message;
+                        (document.body || document.documentElement).appendChild(box);
+                    };
+                    window.addEventListener("error", function (ev) {
+                        window.__comicMobileStartError((ev.message || "Error") + (ev.filename ? "\n" + ev.filename + ":" + ev.lineno : ""));
+                    });
+                    window.addEventListener("unhandledrejection", function (ev) {
+                        var r = ev.reason || {};
+                        window.__comicMobileStartError((r.message || String(r)) + (r.stack ? "\n" + r.stack : ""));
+                    });
+                    window.setTimeout(function () {
+                        var details = "";
+                        try {
+                            var errors = odoo.loader.findErrors();
+                            details = "\n\n" + JSON.stringify(errors, function (key, value) {
+                                return value instanceof Set ? Array.from(value) : value;
+                            }, 1);
+                        } catch (e) {
+                            details = "\n\n(no loader diagnostics: " + e.message + ")";
+                        }
+                        window.__comicMobileStartError("Timeout: the application did not start after 15 s (" + navigator.userAgent + ")" + details);
+                    }, 15000);
+                </script>
+                <t t-call-assets="comic_mobile.assets_app"/>
+            </head>
+            <body class="o_comic_mobile_body"/>
+        </html>
+    </template>
+</odoo>

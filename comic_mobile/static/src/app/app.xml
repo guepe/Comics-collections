@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="comic_mobile.App">
+        <div class="o_cm_app">
+            <main class="o_cm_main">
+                <CollectionScreen t-if="state.screen === 'collection'" t-key="'c' + state.stamp" openSerie.bind="openSerie"/>
+                <WishlistScreen t-elif="state.screen === 'wishlist'" t-key="'w' + state.stamp" openSerie.bind="openSerie"/>
+                <ScanScreen t-elif="state.screen === 'scan'" t-key="'s' + state.stamp" close.bind="goBack" openSerie.bind="openSerie"/>
+                <SerieScreen t-elif="state.screen === 'serie'" t-key="'r' + state.serieId" serieId="state.serieId" back.bind="goBack"/>
+            </main>
+            <ComicTabBar t-if="state.screen !== 'scan'" current="state.tab" onSelect.bind="selectTab"/>
+            <MainComponentsContainer/>
+        </div>
+    </t>
+</templates>

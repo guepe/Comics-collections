@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "comic_mobile/static/src/app/app.scss"
+        ],
+        "createdAt": "2026-11-11T14:27:55.782Z",
+        "reason": "Claude triage: .o_cm_corner are 30px L-shaped viewfinder corner brackets of the barcode scanner (two borders each), not side-accent cards"
+      }
+    ]
+  }
+}

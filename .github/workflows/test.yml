@@ -60,8 +60,8 @@ jobs:
             --db_password=odoo \
             -d ci_test \
             --addons-path=/opt/odoo/addons,${{ github.workspace }} \
-            -i comics_collections,comic_datasource \
+            -i comics_collections,comic_datasource,comic_mobile \
             --test-enable \
-            --test-tags /comics_collections,/comic_datasource \
+            --test-tags /comics_collections,/comic_datasource,/comic_mobile \
             --stop-after-init \
             --no-http
