@@ -99,9 +99,25 @@
                         domain="[('a_suivre', '=', True)]"/>
                 <separator/>
                 <filter string="Comic book" name="bd" domain="[('type', '=', 'bd')]"/>
-                <filter string="Manga" name="manga" domain="[('type', '=', 'manga')]"/>
                 <filter string="Comics" name="comics" domain="[('type', '=', 'comics')]"/>
+                <filter string="Manga" name="manga" domain="[('type', '=', 'manga')]"/>
+                <separator/>
+                <filter string="Started" name="started" domain="[('my_owned_count', '&gt;', 0)]"/>
+                <filter string="Not started" name="not_started" domain="[('my_owned_count', '=', 0)]"/>
+                <separator/>
+                <filter string="Complete" name="complete"
+                        domain="[('my_owned_count', '&gt;', 0), ('my_missing_count', '=', 0)]"/>
+                <filter string="Incomplete" name="incomplete" domain="[('my_missing_count', '&gt;', 0)]"/>
+                <separator/>
+                <filter string="Read" name="read"
+                        domain="[('my_owned_count', '&gt;', 0), ('my_unread_count', '=', 0)]"/>
+                <filter string="Unread" name="unread" domain="[('my_unread_count', '&gt;', 0)]"/>
+                <filter string="Lent" name="lent" domain="[('my_lent_count', '&gt;', 0)]"/>
+                <searchpanel class="o_comic_alpha_panel" view_types="kanban,list">
+                    <field name="name_initial" string="A-Z" icon="fa-font" select="one"/>
+                </searchpanel>
                 <group name="group_by">
+                    <filter string="Initial" name="group_initial" context="{'group_by': 'name_initial'}"/>
                     <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
                     <filter string="Status" name="group_statut" context="{'group_by': 'statut'}"/>
                     <filter string="Genre" name="group_genre" context="{'group_by': 'genre_id'}"/>
@@ -111,12 +127,15 @@
         </field>
     </record>
 
-    <!-- ── Vue Kanban Séries (US-009) ──────────────────────────────────────── -->
+    <!-- ── Vue Kanban Séries : lignes « Mes séries » ───────────────────────────
+         Une ligne pleine largeur par série : couverture, titre, étoiles (ma note
+         moyenne), suivi, puis mes compteurs (possédés / total, lus, prêtés, manquants).
+         Les compteurs my_* sont ceux de l'utilisateur connecté. -->
     <record id="view_comic_serie_kanban" model="ir.ui.view">
         <field name="name">comic.serie.kanban</field>
         <field name="model">comic.serie</field>
         <field name="arch" type="xml">
-            <kanban class="o_comic_kanban_series" sample="1">
+            <kanban class="o_comic_kanban_rows" sample="1">
                 <field name="id"/>
                 <field name="name"/>
                 <field name="type"/>
@@ -125,44 +144,118 @@
                 <field name="first_edition_cover_id"/>
                 <field name="nb_works_total"/>
                 <field name="editeur_id"/>
+                <field name="a_suivre"/>
+                <field name="my_owned_count"/>
+                <field name="my_read_count"/>
+                <field name="my_lent_count"/>
+                <field name="my_missing_count"/>
+                <field name="my_rating"/>
                 <templates>
-                    <t t-name="card">
-                        <div class="o_comic_serie_card">
-                            <!-- Couverture : propre > première édition > placeholder -->
-                            <div class="o_comic_serie_cover">
-                                <t t-if="record.has_cover.raw_value">
-                                    <img loading="lazy"
-                                         t-att-src="'/web/image/comic.serie/' + record.id.raw_value + '/image_couverture'"
-                                         t-att-alt="record.name.value"/>
-                                </t>
-                                <t t-elif="record.first_edition_cover_id.raw_value">
-                                    <img loading="lazy"
-                                         t-att-src="'/web/image/comic.edition/' + record.first_edition_cover_id.raw_value + '/image_couverture'"
-                                         t-att-alt="record.name.value"/>
-                                </t>
-                                <t t-else="">
-                                    <div class="o_comic_serie_placeholder">
-                                        <span t-esc="record.name.value"/>
-                                    </div>
-                                </t>
-                                <span t-attf-class="o_comic_serie_statut o_statut_#{record.statut.raw_value}">
-                                    <t t-esc="record.statut.value"/>
-                                </span>
+                    <t t-name="cover">
+                        <!-- Couverture : propre > première édition > placeholder -->
+                        <div class="o_comic_row_cover">
+                            <img t-if="record.has_cover.raw_value" loading="lazy"
+                                 t-att-src="'/web/image/comic.serie/' + record.id.raw_value + '/image_couverture'"
+                                 t-att-alt="record.name.value"/>
+                            <img t-elif="record.first_edition_cover_id.raw_value" loading="lazy"
+                                 t-att-src="'/web/image/comic.edition/' + record.first_edition_cover_id.raw_value + '/image_couverture'"
+                                 t-att-alt="record.name.value"/>
+                            <div t-else="" class="o_comic_row_placeholder">
+                                <span t-esc="(record.name.value || '?')[0]"/>
                             </div>
-                            <!-- Infos -->
-                            <div class="o_comic_serie_info">
-                                <div class="o_comic_serie_title" t-esc="record.name.value"/>
-                                <div class="o_comic_serie_meta">
-                                    <t t-esc="record.editeur_id.value || ''"/>
-                                </div>
-                                <div class="o_comic_progress_label">
-                                    <span><t t-esc="record.nb_works_total.raw_value"/> volumes</span>
+                        </div>
+                    </t>
+                    <t t-name="title">
+                        <div class="o_comic_row_main">
+                            <div class="o_comic_row_title" t-esc="record.name.value"/>
+                            <div class="o_comic_row_meta">
+                                <span t-esc="record.type.value"/>
+                                <t t-if="record.editeur_id.value"> · <span t-esc="record.editeur_id.value"/></t>
+                                <span t-attf-class="o_comic_row_statut o_statut_#{record.statut.raw_value}"
+                                      t-esc="record.statut.value"/>
+                            </div>
+                            <div class="o_comic_row_stars" t-att-title="record.my_rating.value">
+                                <t t-foreach="[1, 2, 3, 4, 5]" t-as="star" t-key="star">
+                                    <i t-if="record.my_rating.raw_value &gt;= star" class="fa fa-star"/>
+                                    <i t-elif="record.my_rating.raw_value &gt;= star - 0.5" class="fa fa-star-half-o"/>
+                                    <i t-else="" class="fa fa-star-o"/>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-name="card">
+                        <div class="o_comic_row">
+                            <t t-call="cover"/>
+                            <t t-call="title"/>
+                            <div class="o_comic_row_follow">
+                                <button t-if="record.a_suivre.raw_value" name="action_toggle_follow" type="object"
+                                        class="btn btn-sm o_comic_followed" title="Stop following this series">
+                                    <i class="fa fa-check"/> Followed
+                                </button>
+                                <button t-else="" name="action_toggle_follow" type="object"
+                                        class="btn btn-sm btn-outline-secondary" title="Follow this series">
+                                    <i class="fa fa-plus"/> Follow
+                                </button>
+                            </div>
+                            <div class="o_comic_row_stat">
+                                <strong><t t-esc="record.my_owned_count.raw_value"/>/<t t-esc="record.nb_works_total.raw_value"/></strong>
+                                <span>albums</span>
+                            </div>
+                            <div class="o_comic_row_stat">
+                                <strong><t t-esc="record.my_read_count.raw_value"/>/<t t-esc="record.my_owned_count.raw_value"/></strong>
+                                <span>read</span>
+                            </div>
+                            <div class="o_comic_row_stat o_comic_row_stat_wide">
+                                <div>
+                                    <strong t-esc="record.my_lent_count.raw_value"/> <span>lent</span>
+                                    <span class="o_comic_row_sep"/>
+                                    <strong t-esc="record.my_missing_count.raw_value"/> <span>missing</span>
                                 </div>
                             </div>
                         </div>
                     </t>
                 </templates>
             </kanban>
+        </field>
+    </record>
+
+    <!-- « Albums manquants » : séries suivies dont il me manque des tomes numérotés -->
+    <record id="view_comic_serie_kanban_missing" model="ir.ui.view">
+        <field name="name">comic.serie.kanban.missing</field>
+        <field name="model">comic.serie</field>
+        <field name="inherit_id" ref="view_comic_serie_kanban"/>
+        <field name="mode">primary</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="create">false</attribute>
+            </xpath>
+            <xpath expr="//t[@t-name='card']" position="replace">
+                <t t-name="card">
+                    <div class="o_comic_row">
+                        <t t-call="cover"/>
+                        <t t-call="title"/>
+                        <div class="o_comic_row_follow">
+                            <span class="o_comic_followed o_comic_followed_badge"><i class="fa fa-check"/> Followed</span>
+                        </div>
+                        <div class="o_comic_row_stat o_comic_row_stat_wide">
+                            <strong t-esc="record.my_missing_count.raw_value"/>
+                            <span>missing volumes</span>
+                        </div>
+                        <div class="o_comic_row_actions">
+                            <button name="action_view_my_missing" type="object"
+                                    class="btn btn-sm btn-primary" title="See the missing volumes in my wishlist">
+                                <i class="fa fa-eye"/> See
+                            </button>
+                            <button name="action_stop_following" type="object"
+                                    class="btn btn-sm btn-outline-secondary" title="Stop following this series"
+                                    confirm="Stop following this series? Its missing volumes will leave your wishlist.">
+                                <i class="fa fa-times"/> Stop following
+                            </button>
+                        </div>
+                    </div>
+                </t>
+            </xpath>
         </field>
     </record>
 
@@ -174,6 +267,27 @@
         <field name="view_mode">kanban,list,form</field>
         <field name="domain">['|', ('work_ids.edition_ids.customer_album_ids', 'any', [('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True)]), ('suivi_user_ids', 'in', [uid])]</field>
         <field name="context">{'comic_auto_own': True}</field>
+    </record>
+
+    <!-- « Albums manquants » : séries suivies où il me manque des tomes numérotés -->
+    <record id="action_comic_serie_missing" model="ir.actions.act_window">
+        <field name="name">Missing Volumes</field>
+        <field name="res_model">comic.serie</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_ids" eval="[Command.clear(),
+            Command.create({'view_mode': 'kanban', 'view_id': ref('view_comic_serie_kanban_missing')}),
+            Command.create({'view_mode': 'list', 'view_id': ref('view_comic_serie_list')})]"/>
+        <field name="domain">[('suivi_user_ids', 'in', [uid]), ('my_missing_count', '&gt;', 0)]</field>
+        <field name="context">{'create': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No missing volumes.
+            </p>
+            <p>
+                The series you follow are complete. Follow a series to see here
+                the numbered volumes you do not own yet.
+            </p>
+        </field>
     </record>
 
     <!-- Catalogue partagé complet des séries : gestionnaire, Référentiel avancé -->

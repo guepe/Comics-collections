@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0-20261102\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-10 18:42+0000\n"
+"POT-Creation-Date: 2026-11-11 16:38+0000\n"
 "PO-Revision-Date: 2026-11-10 15:12+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -155,14 +155,74 @@ msgid "5 stars"
 msgstr "5 sterren"
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
+msgid "<i class=\"fa fa-calendar\" title=\"Release date\"/>"
+msgstr "<i class=\"fa fa-calendar\" title=\"Verschijningsdatum\"/>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+msgid "<i class=\"fa fa-check\"/> Followed"
+msgstr "<i class=\"fa fa-check\"/> Gevolgd"
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 msgid "<i class=\"fa fa-check\"/> I have it"
 msgstr "<i class=\"fa fa-check\"/> Heb ik"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
+msgid "<i class=\"fa fa-eye\"/> See"
+msgstr "<i class=\"fa fa-eye\"/> Bekijken"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+msgid "<i class=\"fa fa-plus\"/> Follow"
+msgstr "<i class=\"fa fa-plus\"/> Volgen"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
+msgid "<i class=\"fa fa-times\"/> Stop following"
+msgstr "<i class=\"fa fa-times\"/> Niet meer volgen"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
 msgid "<span class=\"ms-2\">Vol.</span>"
 msgstr "<span class=\"ms-2\">Deel</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
+msgid "<span class=\"o_comic_followed o_comic_followed_badge\"><i class=\"fa fa-check\"/> Followed</span>"
+msgstr "<span class=\"o_comic_followed o_comic_followed_badge\"><i class=\"fa fa-check\"/> Gevolgd</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+msgid "<span>albums</span>"
+msgstr "<span>albums</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+msgid ""
+"<span>lent</span>\n"
+"                                    <span class=\"o_comic_row_sep\"/>"
+msgstr ""
+"<span>uitgeleend</span>\n"
+"                                    <span class=\"o_comic_row_sep\"/>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
+msgid "<span>missing volumes</span>"
+msgstr "<span>ontbrekende albums</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+msgid "<span>missing</span>"
+msgstr "<span>ontbrekend</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+msgid "<span>read</span>"
+msgstr "<span>gelezen</span>"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
@@ -175,9 +235,19 @@ msgid "<strong>Owner:</strong>"
 msgstr "<strong>Eigenaar:</strong>"
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__a
+msgid "A"
+msgstr ""
+
+#. module: comics_collections
 #: model:ir.model.constraint,message:comics_collections.constraint_comic_work_unique_serie_tome_numbered
 msgid "A volume of this series already exists. Each volume number must be unique per series."
 msgstr "Er bestaat al een deel van deze reeks met dit nummer. Elk deelnummer moet uniek zijn binnen een reeks."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "A-Z"
+msgstr "A-Z"
 
 #. module: comics_collections
 #. odoo-python
@@ -255,6 +325,15 @@ msgstr "Voeg albums toe aan je collectie of verlanglijst vanuit de albumlijst (a
 #: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
 msgid "Add an album"
 msgstr "Een album toevoegen"
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_wishes
+msgid ""
+"Add an album to your wishlist from its form (\"Add to my wishlist\")\n"
+"                or from your library."
+msgstr ""
+"Voeg een album toe aan uw verlanglijst vanuit de fiche (\"Toevoegen aan mijn verlanglijst\")\n"
+"                of vanuit uw bibliotheek."
 
 #. module: comics_collections
 #: model:ir.actions.server,name:comics_collections.action_work_add_to_my_wishlist
@@ -348,10 +427,34 @@ msgid "Albums by genre"
 msgstr "Albums per genre"
 
 #. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__my_unread_count
+msgid "Albums of this series in my collection that I have not read yet."
+msgstr "Albums van deze reeks in mijn collectie die ik nog niet gelezen heb."
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__my_read_count
+msgid "Albums of this series in my collection that I have read."
+msgstr "Albums van deze reeks in mijn collectie die ik gelezen heb."
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__my_owned_count
+msgid "Albums of this series in my collection."
+msgstr "Albums van deze reeks in mijn collectie."
+
+#. module: comics_collections
 #. odoo-javascript
 #: code:addons/comics_collections/static/src/dashboard/collection_dashboard.js:0
 msgid "Albums owned"
 msgstr "Albums in bezit"
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_upcoming
+msgid ""
+"Albums to be released in the series you follow, or that you wish for,\n"
+"                appear here by release date."
+msgstr ""
+"Albums die nog moeten verschijnen in de reeksen die u volgt, of die u wenst,\n"
+"                verschijnen hier op verschijningsdatum."
 
 #. module: comics_collections
 #. odoo-python
@@ -449,6 +552,16 @@ msgid "Authors to transfer"
 msgstr "Over te dragen auteurs"
 
 #. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__my_rating
+msgid "Average rating (0-5) of the albums of this series I have rated."
+msgstr "Gemiddelde beoordeling (0-5) van de albums van deze reeks die ik beoordeeld heb."
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__b
+msgid "B"
+msgstr ""
+
+#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__bdgest_editeur_id
 #: model:ir.model.fields,field_description:comics_collections.field_comic_serie__bdgest_id
 msgid "BDGest ID"
@@ -478,6 +591,11 @@ msgstr "Geleend door"
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__source__achete_ailleurs
 msgid "Bought elsewhere"
 msgstr "Elders gekocht"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__c
+msgid "C"
+msgstr ""
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__template_format__csv
@@ -779,6 +897,11 @@ msgid "Compact content (collection export)"
 msgstr "Compacte inhoud (collectie-export)"
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Complete"
+msgstr "Volledig"
+
+#. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__statut__terminee
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
 msgid "Completed"
@@ -823,6 +946,7 @@ msgstr "Land"
 #: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__image_couverture
 #: model:ir.model.fields,field_description:comics_collections.field_comic_work__image_couverture
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "Cover"
 msgstr "Cover"
@@ -894,6 +1018,11 @@ msgstr "Valuta"
 #: model:ir.model.fields,help:comics_collections.field_comic_customer_album__currency_id
 msgid "Currency of the current company, used for the purchase price and the estimated value."
 msgstr "Valuta van het huidige bedrijf, gebruikt voor de aankoopprijs en de geschatte waarde."
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__d
+msgid "D"
+msgstr ""
 
 #. module: comics_collections
 #: model:ir.actions.client,name:comics_collections.action_comic_collection_dashboard
@@ -994,6 +1123,11 @@ msgid "Dutch"
 msgstr "Nederlands"
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__e
+msgid "E"
+msgstr ""
+
+#. module: comics_collections
 #. odoo-python
 #: code:addons/comics_collections/wizards/comic_import_wizard.py:0
 msgid "EAN-13 ISBN, preferably without hyphens"
@@ -1056,6 +1190,11 @@ msgid "Estimated value"
 msgstr "Geschatte waarde"
 
 #. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_to_read
+msgid "Every album of your collection is marked as read."
+msgstr "Alle albums van uw collectie zijn als gelezen gemarkeerd."
+
+#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_pret__date_retour_prevue
 msgid "Expected return date"
 msgstr "Verwachte terugbrengdatum"
@@ -1071,6 +1210,11 @@ msgstr "Verwachte technische waarden: non_lu, en_cours, lu."
 #: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
 msgid "Export (CSV)"
 msgstr "Exporteren (CSV)"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__f
+msgid "F"
+msgstr ""
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_edition__url_fnac_be
@@ -1106,6 +1250,11 @@ msgid ""
 "Follow a series to see the volumes you are missing, or add\n"
 "                an album to your wishlist yourself from your library."
 msgstr "Volg een reeks om de delen te zien die je nog mist, of voeg zelf een album toe aan je verlanglijst vanuit je bibliotheek."
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+msgid "Follow this series"
+msgstr "Deze reeks volgen"
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_serie__a_suivre
@@ -1174,6 +1323,11 @@ msgid "Frequent collaborators"
 msgstr "Vaste medewerkers"
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__g
+msgid "G"
+msgstr ""
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_edition_form
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
 msgid "Generate links from ISBN"
@@ -1230,6 +1384,11 @@ msgid ""
 msgstr "Algemeen totaal ("
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__h
+msgid "H"
+msgstr ""
+
+#. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__cartonne
 msgid "Hardcover"
 msgstr "Hardcover"
@@ -1263,12 +1422,18 @@ msgid "Humour"
 msgstr "Humor"
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__i
+msgid "I"
+msgstr ""
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "I have it"
 msgstr "Heb ik"
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "I have it: add to my collection"
 msgstr "Heb ik: toevoegen aan mijn collectie"
@@ -1428,6 +1593,17 @@ msgid "In wishlist"
 msgstr "Op verlanglijst"
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Incomplete"
+msgstr "Onvolledig"
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__name_initial
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Initial"
+msgstr "Beginletter"
+
+#. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_work_auteur_line__role__encreur
 msgid "Inker"
 msgstr "Inkter"
@@ -1457,6 +1633,21 @@ msgstr "Inventaris (PDF)"
 #: model:ir.model.fields,field_description:comics_collections.field_comic_work__message_is_follower
 msgid "Is Follower"
 msgstr "Is volger"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__j
+msgid "J"
+msgstr ""
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__k
+msgid "K"
+msgstr ""
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__l
+msgid "L"
+msgstr ""
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_edition__langue
@@ -1519,6 +1710,8 @@ msgid "Legal deposit date in YYYY-MM-DD format"
 msgstr "Datum wettelijk depot in het formaat JJJJ-MM-DD"
 
 #. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_lent_count
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
 msgid "Lent"
 msgstr "Uitgeleend"
@@ -1586,6 +1779,11 @@ msgstr "Uitleningen"
 #: model:ir.model.fields,help:comics_collections.field_comic_edition__pret_ids
 msgid "Loans of this album (private: access rules only show your own)."
 msgstr "Uitleningen van dit album (privé: de toegangsregels tonen alleen je eigen uitleningen)."
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__m
+msgid "M"
+msgstr ""
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_work__primary_edition_id
@@ -1680,10 +1878,17 @@ msgid "Messages"
 msgstr "Berichten"
 
 #. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_missing_count
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_wishlist_item__type__manque
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
 msgid "Missing"
 msgstr "Ontbrekend"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_serie_missing
+#: model:ir.ui.menu,name:comics_collections.menu_comic_missing
+msgid "Missing Volumes"
+msgstr "Ontbrekende albums"
 
 #. module: comics_collections
 #: model:ir.model.fields,help:comics_collections.field_comic_customer_album__ignore_wishlist
@@ -1738,6 +1943,11 @@ msgid "My Wishlist"
 msgstr "Mijn verlanglijst"
 
 #. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_owned_count
+msgid "My albums"
+msgstr "Mijn albums"
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_form
 msgid "My collection"
 msgstr "Mijn collectie"
@@ -1746,6 +1956,21 @@ msgstr "Mijn collectie"
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
 msgid "My followed series"
 msgstr "Mijn gevolgde reeksen"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__my_lent_count
+msgid "My loans of albums of this series that have not been returned yet."
+msgstr "Mijn uitleningen van albums van deze reeks die nog niet terug zijn."
+
+#. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_rating
+msgid "My rating"
+msgstr "Mijn beoordeling"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__n
+msgid "N"
+msgstr ""
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__name
@@ -1835,6 +2060,11 @@ msgid "No longer following"
 msgstr "Niet meer gevolgd"
 
 #. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_serie_missing
+msgid "No missing volumes."
+msgstr "Geen ontbrekende albums."
+
+#. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__0
 msgid "No rating"
 msgstr "Geen beoordeling"
@@ -1844,6 +2074,11 @@ msgstr "Geen beoordeling"
 #: code:addons/comics_collections/models/comic_customer_album.py:0
 msgid "No series"
 msgstr "Geen reeks"
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_upcoming
+msgid "No upcoming release."
+msgstr "Geen aankomende verschijningen."
 
 #. module: comics_collections
 #. odoo-python
@@ -1856,6 +2091,11 @@ msgstr "Er is geen bruikbaar XLSX-werkblad gevonden."
 #: code:addons/comics_collections/wizards/comic_import_wizard.py:0
 msgid "No usable row was found in the file."
 msgstr "Er is geen bruikbare regel gevonden in het bestand."
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_wishes
+msgid "No wishes yet."
+msgstr "Nog geen wensen."
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
@@ -1880,9 +2120,19 @@ msgid "Not a duplicate"
 msgstr "Geen dubbel"
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Not started"
+msgstr "Niet begonnen"
+
+#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_pret__notes
 msgid "Notes"
 msgstr "Notities"
+
+#. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_to_read
+msgid "Nothing left to read."
+msgstr "Niets meer te lezen."
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_edition__message_needaction_counter
@@ -1967,6 +2217,16 @@ msgid "Number of series"
 msgstr "Aantal reeksen"
 
 #. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__my_missing_count
+msgid "Numbered volumes of this series that I do not own (volumes marked \"ignore\" in my wishlist are not counted)."
+msgstr "Genummerde delen van deze reeks die ik niet bezit (delen die in mijn verlanglijst \"genegeerd\" zijn, tellen niet mee)."
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__o
+msgid "O"
+msgstr ""
+
+#. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__integrale
 msgid "Omnibus"
 msgstr "Integrale"
@@ -2024,6 +2284,11 @@ msgstr "Te late uitleningen"
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
 msgid "Owner"
 msgstr "Eigenaar"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__p
+msgid "P"
+msgstr ""
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_edition__format__broche
@@ -2143,6 +2408,16 @@ msgid "Purchase price"
 msgstr "Aankoopprijs"
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__q
+msgid "Q"
+msgstr ""
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__r
+msgid "R"
+msgstr ""
+
+#. module: comics_collections
 #. odoo-javascript
 #: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
 msgid "Rate your albums in “My Library” to see your favourite series here."
@@ -2188,9 +2463,11 @@ msgid "Ratings"
 msgstr "Beoordelingen"
 
 #. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_read_count
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__etat_lecture__lu
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
 msgid "Read"
 msgstr "Gelezen"
 
@@ -2253,6 +2530,7 @@ msgstr "Verwijderen uit gevolgde reeksen"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "Remove from my wishlist"
 msgstr "Verwijderen van mijn verlanglijst"
@@ -2291,6 +2569,11 @@ msgstr "Rol"
 #: model:comic.genre,name:comics_collections.genre_romance
 msgid "Romance"
 msgstr "Romantiek"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__s
+msgid "S"
+msgstr ""
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_import_mapping_line__sample_value
@@ -2350,6 +2633,11 @@ msgstr "Edities zoeken"
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_pret_search
 msgid "Search loans"
 msgstr "Uitleningen zoeken"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
+msgid "See the missing volumes in my wishlist"
+msgstr "De ontbrekende albums in mijn verlanglijst bekijken"
 
 #. module: comics_collections
 #. odoo-python
@@ -2463,6 +2751,11 @@ msgid "Star input of the rating; the decimal rating remains the only stored valu
 msgstr "Invoer van de beoordeling in sterren; de decimale beoordeling blijft de enige opgeslagen waarde."
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Started"
+msgstr "Begonnen"
+
+#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_import_wizard__state
 msgid "State"
 msgstr "Staat"
@@ -2490,6 +2783,17 @@ msgstr ""
 "Gepland: Toekomstige activiteiten."
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
+msgid "Stop following this series"
+msgstr "Deze reeks niet meer volgen"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
+msgid "Stop following this series? Its missing volumes will leave your wishlist."
+msgstr "Deze reeks niet meer volgen? De ontbrekende albums verdwijnen uit uw verlanglijst."
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
 msgid "Subtotal"
 msgstr "Subtotaal"
@@ -2509,6 +2813,11 @@ msgstr "Samenvatting of achterflaptekst"
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
 msgid "Synopsis"
 msgstr "Synopsis"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__t
+msgid "T"
+msgstr ""
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_merge_wizard_form
@@ -2574,6 +2883,15 @@ msgid "The file does not contain any row."
 msgstr "Het bestand bevat geen enkele regel."
 
 #. module: comics_collections
+#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_serie_missing
+msgid ""
+"The series you follow are complete. Follow a series to see here\n"
+"                the numbered volumes you do not own yet."
+msgstr ""
+"De reeksen die u volgt zijn volledig. Volg een reeks om hier\n"
+"                de genummerde delen te zien die u nog niet bezit."
+
+#. module: comics_collections
 #: model:ir.model.constraint,message:comics_collections.constraint_comic_isbn_unique_isbn13
 msgid "This ISBN-13 is already registered for another edition."
 msgstr "Dit ISBN-13 is al geregistreerd voor een andere editie."
@@ -2604,6 +2922,12 @@ msgstr "Dit paar is al geregistreerd."
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_search
 msgid "Title"
 msgstr "Titel"
+
+#. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_to_read
+#: model:ir.ui.menu,name:comics_collections.menu_comic_to_read
+msgid "To Read"
+msgstr "Te lezen"
 
 #. module: comics_collections
 #. odoo-javascript
@@ -2676,6 +3000,11 @@ msgid "Type of the exception activity on record."
 msgstr "Type van de uitzonderingsactiviteit op record."
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__u
+msgid "U"
+msgstr ""
+
+#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_work__slug
 msgid "URL slug"
 msgstr "URL-slug"
@@ -2698,8 +3027,10 @@ msgid "Unknown"
 msgstr "Onbekend"
 
 #. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_unread_count
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__etat_lecture__non_lu
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
 msgid "Unread"
 msgstr "Ongelezen"
 
@@ -2710,6 +3041,9 @@ msgid "Unsupported operator for \"Overdue\"."
 msgstr "Niet-ondersteunde operator voor \"Te laat\"."
 
 #. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_upcoming
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__is_upcoming
+#: model:ir.ui.menu,name:comics_collections.menu_comic_upcoming
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
 msgid "Upcoming"
 msgstr "Aangekondigd"
@@ -2743,6 +3077,11 @@ msgid "User"
 msgstr "Gebruiker"
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__v
+msgid "V"
+msgstr ""
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_form
 msgid "Value"
 msgstr "Waarde"
@@ -2772,6 +3111,7 @@ msgstr "Mijn collectie bekijken"
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_list
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
@@ -2805,6 +3145,11 @@ msgid "Volumes"
 msgstr "Delen"
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__w
+msgid "W"
+msgstr ""
+
+#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__site_web
 msgid "Website"
 msgstr "Website"
@@ -2820,6 +3165,8 @@ msgid "Wish"
 msgstr "Wens"
 
 #. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_wishes
+#: model:ir.ui.menu,name:comics_collections.menu_comic_wishes
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
 msgid "Wishes"
 msgstr "Wensen"
@@ -2893,6 +3240,11 @@ msgid "Writers, separated by ;, | or line break"
 msgstr "Scenaristen, gescheiden door ;, | of een regeleinde"
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__x
+msgid "X"
+msgstr ""
+
+#. module: comics_collections
 #. odoo-python
 #: code:addons/comics_collections/wizards/comic_import_wizard.py:0
 msgid "XLS import requires the xlrd Python library. Convert the file to XLSX or install xlrd on the server."
@@ -2902,6 +3254,11 @@ msgstr "Voor XLS-import is de Python-bibliotheek xlrd nodig. Zet het bestand om 
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_import_wizard__template_format__xlsx
 msgid "XLSX"
 msgstr "XLSX"
+
+#. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__y
+msgid "Y"
+msgstr ""
 
 #. module: comics_collections
 #. odoo-python
@@ -2938,6 +3295,11 @@ msgid "Your wishlist is empty."
 msgstr "Je verlanglijst is leeg."
 
 #. module: comics_collections
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__z
+msgid "Z"
+msgstr ""
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
 msgid "album"
 msgstr "album"
@@ -2972,14 +3334,12 @@ msgid "url_club_be and url_amazon_be are optional; they can also be filled in la
 msgstr "url_club_be en url_amazon_be zijn optioneel; ze kunnen ook later ingevuld worden door de wekelijkse taak voor aankooplinks."
 
 #. module: comics_collections
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
-msgid "volumes"
-msgstr "delen"
-
-#. module: comics_collections
 #. odoo-javascript
 #: code:addons/comics_collections/static/src/isbn_scan/isbn_scan_dialog.xml:0
 msgid ""
 "” ignored: this is not an ISBN\n"
 "                    (EAN-13 starting with 978 or 979)."
 msgstr "” genegeerd: dit is geen ISBN (EAN-13 die begint met 978 of 979)."
+
+#~ msgid "volumes"
+#~ msgstr "delen"

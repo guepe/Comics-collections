@@ -98,6 +98,64 @@
         </field>
     </record>
 
+    <!-- Grandes couvertures : onglets « Souhaits » et « Sorties » -->
+    <record id="view_comic_wishlist_item_kanban_covers" model="ir.ui.view">
+        <field name="name">comic.wishlist.item.kanban.covers</field>
+        <field name="model">comic.wishlist.item</field>
+        <field name="priority">20</field>
+        <field name="arch" type="xml">
+            <kanban class="o_comic_kanban_covers" create="false" default_order="serie_id,tome,work_id"
+                    action="action_open_work" type="object">
+                <field name="work_id"/>
+                <field name="serie_id"/>
+                <field name="type"/>
+                <field name="tome"/>
+                <field name="date_parution"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_comic_cover_card">
+                            <div class="o_comic_cover_card_img">
+                                <field name="image_couverture" widget="image" alt="Cover"/>
+                            </div>
+                            <div class="o_comic_cover_card_title">
+                                <t t-esc="record.serie_id.value"/>
+                                <span t-if="record.tome.raw_value" class="o_comic_cover_card_tome">Vol. <t t-esc="record.tome.raw_value"/></span>
+                            </div>
+                            <div class="o_comic_cover_card_meta" t-esc="record.work_id.value"/>
+                            <div t-if="record.date_parution.raw_value" class="o_comic_cover_card_date">
+                                <i class="fa fa-calendar" title="Release date"/> <field name="date_parution"/>
+                            </div>
+                            <div class="d-flex gap-1 mt-2">
+                                <button name="action_mark_owned" type="object"
+                                        class="btn btn-sm btn-primary" title="I have it: add to my collection">
+                                    <i class="fa fa-check"/> I have it
+                                </button>
+                                <button name="action_remove" type="object"
+                                        class="btn btn-sm btn-outline-secondary" title="Remove from my wishlist"
+                                        invisible="type != 'souhait'">
+                                    <i class="fa fa-times"/>
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_comic_wishlist_item_kanban_upcoming" model="ir.ui.view">
+        <field name="name">comic.wishlist.item.kanban.upcoming</field>
+        <field name="model">comic.wishlist.item</field>
+        <field name="inherit_id" ref="view_comic_wishlist_item_kanban_covers"/>
+        <field name="mode">primary</field>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_order">date_parution,serie_id,tome</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_comic_wishlist_item_search" model="ir.ui.view">
         <field name="name">comic.wishlist.item.search</field>
         <field name="model">comic.wishlist.item</field>
@@ -134,6 +192,50 @@
             <p>
                 Follow a series to see the volumes you are missing, or add
                 an album to your wishlist yourself from your library.
+            </p>
+        </field>
+    </record>
+
+    <!-- « Sorties » : albums à paraître des séries suivies (manques) ou souhaités -->
+    <record id="action_comic_upcoming" model="ir.actions.act_window">
+        <field name="name">Upcoming</field>
+        <field name="res_model">comic.wishlist.item</field>
+        <field name="view_mode">kanban,list</field>
+        <field name="view_ids" eval="[Command.clear(),
+            Command.create({'view_mode': 'kanban', 'view_id': ref('view_comic_wishlist_item_kanban_upcoming')}),
+            Command.create({'view_mode': 'list', 'view_id': ref('view_comic_wishlist_item_list')})]"/>
+        <field name="search_view_id" ref="view_comic_wishlist_item_search"/>
+        <field name="domain">[('user_id', '=', uid), ('is_upcoming', '=', True)]</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No upcoming release.
+            </p>
+            <p>
+                Albums to be released in the series you follow, or that you wish for,
+                appear here by release date.
+            </p>
+        </field>
+    </record>
+
+    <!-- « Souhaits » : souhaits manuels de la wishlist, en grandes couvertures -->
+    <record id="action_comic_wishes" model="ir.actions.act_window">
+        <field name="name">Wishes</field>
+        <field name="res_model">comic.wishlist.item</field>
+        <field name="view_mode">kanban,list</field>
+        <field name="view_ids" eval="[Command.clear(),
+            Command.create({'view_mode': 'kanban', 'view_id': ref('view_comic_wishlist_item_kanban_covers')}),
+            Command.create({'view_mode': 'list', 'view_id': ref('view_comic_wishlist_item_list')})]"/>
+        <field name="search_view_id" ref="view_comic_wishlist_item_search"/>
+        <field name="domain">[('user_id', '=', uid), ('type', '=', 'souhait')]</field>
+        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No wishes yet.
+            </p>
+            <p>
+                Add an album to your wishlist from its form ("Add to my wishlist")
+                or from your library.
             </p>
         </field>
     </record>

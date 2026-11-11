@@ -2674,3 +2674,19 @@ cinq modules : 472 tests verts.
   ignorait les `*.pot`. Règle retirée, fichier ajouté (les `fr.po` / `nl.po` / `de.po` l'étaient
   déjà ; aucun effet sur l'interface).
 - `USER_STORIES.md` : E10 / US-092 marquée livrée.
+
+## 2026-11-11 — Vues « collection » à la Bubble (back-office)
+
+- `comics_collections` 19.0.4.5.0. `comic.serie` : compteurs de l'utilisateur connecté (non
+  stockés, `depends_context("uid")`, `_my_collection_counts()` en 3 requêtes par lot) —
+  `my_owned_count`, `my_read_count`, `my_unread_count`, `my_lent_count`, `my_missing_count`
+  (hors tomes ignorés), `my_rating` ; recherche sur les compteurs (`_search_my_count`) ;
+  `name_initial` stocké (# / A–Z, depuis le nom normalisé) ; actions `action_toggle_follow`,
+  `action_stop_following`, `action_view_my_missing`. `comic.wishlist.item.is_upcoming`.
+- **Mes séries** en lignes : couverture, étoiles, « ✓ Suivie » cliquable, « X/Y albums »,
+  « X/Y lus », prêtés · manquants ; barre alphabétique (searchpanel `name_initial`) ; filtres
+  BD / Comics / Manga, Commencées, Complètes / Incomplètes, Lu / Non lu, Prêtées.
+- Nouveaux menus sous *Ma Collection* : **Pile à lire**, **Albums manquants** (par série :
+  « Voir », « Ne plus suivre »), **À paraître**, **Souhaits** (grandes couvertures).
+- SCSS compatible thème sombre ; traductions FR / NL / DE ; tests `test_serie_my_counts.py` (12).
+  Suite complète (deux dépôts) : 534 verts.

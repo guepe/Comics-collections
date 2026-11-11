@@ -29,6 +29,35 @@
               groups="comics_collections.group_comic_user"
               sequence="10"/>
 
+    <!-- Onglets façon « espace collection » : à lire, manquants, sorties, souhaits -->
+    <menuitem id="menu_comic_to_read"
+              name="To Read"
+              parent="menu_comic_collection"
+              action="action_comic_to_read"
+              groups="comics_collections.group_comic_user"
+              sequence="11"/>
+
+    <menuitem id="menu_comic_missing"
+              name="Missing Volumes"
+              parent="menu_comic_collection"
+              action="action_comic_serie_missing"
+              groups="comics_collections.group_comic_user"
+              sequence="12"/>
+
+    <menuitem id="menu_comic_upcoming"
+              name="Upcoming"
+              parent="menu_comic_collection"
+              action="action_comic_upcoming"
+              groups="comics_collections.group_comic_user"
+              sequence="13"/>
+
+    <menuitem id="menu_comic_wishes"
+              name="Wishes"
+              parent="menu_comic_collection"
+              action="action_comic_wishes"
+              groups="comics_collections.group_comic_user"
+              sequence="14"/>
+
     <menuitem id="menu_comic_albums"
               name="My Albums"
               parent="menu_comic_collection"

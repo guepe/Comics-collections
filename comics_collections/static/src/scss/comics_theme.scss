@@ -500,3 +500,278 @@
         }
     }
 }
+
+// ── Lignes « Mes séries » / « Albums manquants » ──────────────
+// Une série par ligne : couverture, titre + étoiles, suivi, compteurs séparés
+// par des filets. Couleurs Odoo ($o-…) : lisible en thème clair comme sombre.
+
+$o-comic-followed: #2e8b57;
+
+.o_kanban_view.o_comic_kanban_rows,
+.o_kanban_view.o_comic_kanban_covers {
+    .o_kanban_renderer {
+        background: $o-webclient-background-color;
+        padding: 16px 24px;
+        gap: 10px;
+    }
+
+    .o_kanban_record {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .o_kanban_ghost {
+        display: none !important;
+    }
+}
+
+.o_kanban_view.o_comic_kanban_rows {
+    .o_kanban_renderer.o_kanban_ungrouped {
+        flex-direction: column;
+        flex-wrap: nowrap !important;
+    }
+
+    .o_kanban_ungrouped .o_kanban_record {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        max-width: none !important;
+    }
+}
+
+.o_comic_row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 16px;
+    background: $o-view-background-color;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+
+    &:hover {
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+    }
+
+    .o_comic_row_cover {
+        flex: 0 0 56px;
+        width: 56px;
+        height: 76px;
+        border-radius: 4px;
+        overflow: hidden;
+        background: $o-gray-200;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .o_comic_row_placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--comic-ink);
+            color: rgba(255, 255, 255, 0.85);
+            font-family: 'Instrument Serif', Georgia, serif;
+            font-size: 26px;
+        }
+    }
+
+    .o_comic_row_main {
+        flex: 1 1 auto;
+        min-width: 0;
+
+        .o_comic_row_title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: $o-main-text-color;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .o_comic_row_meta {
+            font-size: 0.8rem;
+            color: $text-muted;
+        }
+
+        .o_comic_row_statut {
+            margin-left: 6px;
+            padding: 0 6px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            border: 1px solid $border-color;
+        }
+
+        .o_comic_row_stars {
+            color: var(--comic-star);
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+    }
+
+    .o_comic_followed {
+        color: $o-comic-followed;
+        background: rgba($o-comic-followed, 0.12);
+        border: 1px solid rgba($o-comic-followed, 0.35);
+        font-weight: 600;
+
+        &:hover {
+            background: rgba($o-comic-followed, 0.22);
+        }
+
+        // Badge non cliquable (« Albums manquants » : séries forcément suivies)
+        &.o_comic_followed_badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+    }
+
+    .o_comic_row_follow,
+    .o_comic_row_actions {
+        flex: 0 0 auto;
+        display: flex;
+        gap: 6px;
+    }
+
+    // Colonnes chiffrées séparées par des filets verticaux
+    .o_comic_row_stat {
+        flex: 0 0 96px;
+        align-self: stretch;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-left: 1px solid $border-color;
+        padding-left: 12px;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+
+        strong {
+            font-size: 1.05rem;
+            color: $o-main-text-color;
+        }
+
+        span {
+            font-size: 0.8rem;
+            color: $text-muted;
+        }
+
+        &.o_comic_row_stat_wide {
+            flex-basis: 160px;
+        }
+
+        .o_comic_row_sep::before {
+            content: "·";
+            margin: 0 4px;
+        }
+    }
+
+    @include media-breakpoint-down(md) {
+        flex-wrap: wrap;
+
+        .o_comic_row_stat {
+            flex-basis: auto;
+            border-left: none;
+            padding-left: 0;
+        }
+    }
+}
+
+// ── Barre alphabétique (searchpanel sur l'initiale) ───────────
+.o_search_panel.o_comic_alpha_panel {
+    width: 120px;
+    min-width: 120px;
+
+    .o_search_panel_field {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+        padding-right: 8px;
+
+        > li:first-child {
+            grid-column: 1 / -1;
+        }
+    }
+
+    .o_search_panel_category_value header {
+        justify-content: center;
+        padding: 2px 0;
+        text-align: center;
+    }
+}
+
+// ── Grandes couvertures (« Souhaits », « Sorties ») ───────────
+.o_kanban_view.o_comic_kanban_covers {
+    .o_kanban_ungrouped .o_kanban_record {
+        flex: 0 0 180px !important;
+        width: 180px !important;
+    }
+}
+
+.o_comic_cover_card {
+    width: 180px;
+    padding: 8px;
+    background: $o-view-background-color;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    cursor: pointer;
+
+    .o_comic_cover_card_img {
+        position: relative;
+        aspect-ratio: 2 / 3;
+        border-radius: 4px;
+        overflow: hidden;
+        background: $o-gray-200;
+
+        .o_field_image,
+        .o_field_image > div,
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+        img {
+            object-fit: cover;
+        }
+
+    }
+
+    .o_comic_cover_card_tome {
+        margin-left: 4px;
+        padding: 0 6px;
+        border-radius: 8px;
+        background: var(--comic-ink);
+        color: #fff;
+        font-size: 0.7rem;
+        vertical-align: middle;
+    }
+
+    .o_comic_cover_card_title {
+        margin-top: 6px;
+        font-weight: 600;
+        color: $o-main-text-color;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .o_comic_cover_card_meta,
+    .o_comic_cover_card_date {
+        font-size: 0.8rem;
+        color: $text-muted;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

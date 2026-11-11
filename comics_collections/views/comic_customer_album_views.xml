@@ -178,4 +178,22 @@
         </field>
     </record>
 
+    <!-- « À lire » (pile à lire) : mes albums possédés pas encore lus -->
+    <record id="action_comic_to_read" model="ir.actions.act_window">
+        <field name="name">To Read</field>
+        <field name="res_model">comic.customer.album</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_comic_customer_album_search"/>
+        <field name="domain">[('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True), ('etat_lecture', '!=', 'lu')]</field>
+        <field name="context">{'create': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Nothing left to read.
+            </p>
+            <p>
+                Every album of your collection is marked as read.
+            </p>
+        </field>
+    </record>
+
 </odoo>

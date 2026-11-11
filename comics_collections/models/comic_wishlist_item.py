@@ -57,6 +57,23 @@ class ComicWishlistItem(models.Model):
     type = fields.Selection([("manque", "Missing"), ("souhait", "Wish")], readonly=True)
     # Affichage seul de la couverture de l'album.
     image_couverture = fields.Binary(related="work_id.image_couverture", string="Cover")
+    # Onglet « Sorties » : album pas encore paru (date de parution aujourd'hui ou plus tard).
+    is_upcoming = fields.Boolean(string="Upcoming", compute="_compute_is_upcoming", search="_search_is_upcoming")
+
+    def _compute_is_upcoming(self):
+        today = fields.Date.context_today(self)
+        for line in self:
+            line.is_upcoming = bool(line.date_parution and line.date_parution >= today)
+
+    def _search_is_upcoming(self, operator, value):
+        if operator in ("=", "!="):
+            positive = bool(value) == (operator == "=")
+        elif operator in ("in", "not in") and len(set(map(bool, value))) == 1:
+            positive = bool(next(iter(value))) == (operator == "in")
+        else:
+            return NotImplemented
+        domain = [("date_parution", ">=", fields.Date.context_today(self))]
+        return domain if positive else ["!", *domain]
 
     def init(self):
         # Vue de reporting : exception admise à la règle « ORM uniquement ». Calculer
