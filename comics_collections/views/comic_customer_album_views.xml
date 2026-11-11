@@ -86,6 +86,64 @@
         </field>
     </record>
 
+    <!-- « Pile à lire » en lignes (même style que « Mes séries ») -->
+    <record id="view_comic_customer_album_kanban_rows" model="ir.ui.view">
+        <field name="name">comic.customer.album.kanban.rows</field>
+        <field name="model">comic.customer.album</field>
+        <field name="priority">30</field>
+        <field name="arch" type="xml">
+            <kanban class="o_comic_kanban_rows" default_order="serie_id,tome,id">
+                <field name="id"/>
+                <field name="work_titre"/>
+                <field name="edition_id"/>
+                <field name="work_id"/>
+                <field name="serie_id"/>
+                <field name="tome"/>
+                <field name="image_couverture"/>
+                <field name="etat_lecture"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_comic_row">
+                            <div class="o_comic_row_cover">
+                                <img t-if="record.image_couverture.raw_value" loading="lazy"
+                                     t-att-src="'/web/image/comic.edition/' + record.edition_id.raw_value + '/image_couverture'"
+                                     t-att-alt="record.work_id.value"/>
+                                <div t-else="" class="o_comic_row_placeholder">
+                                    <span t-esc="record.tome.raw_value or (record.serie_id.value || '?')[0]"/>
+                                </div>
+                            </div>
+                            <div class="o_comic_row_main">
+                                <div class="o_comic_row_title" t-esc="record.serie_id.value or record.work_id.value"/>
+                                <div class="o_comic_row_meta">
+                                    <t t-if="record.tome.raw_value">Vol. <t t-esc="record.tome.raw_value"/> · </t>
+                                    <t t-esc="record.work_titre.value or record.work_id.value"/>
+                                </div>
+                                <div class="o_comic_row_stars">
+                                    <field name="note_etoiles" widget="priority"/>
+                                </div>
+                            </div>
+                            <div class="o_comic_row_stat">
+                                <span t-if="record.etat_lecture.raw_value == 'lu'" class="badge text-bg-success">Read</span>
+                                <span t-elif="record.etat_lecture.raw_value == 'en_cours'" class="badge text-bg-warning">Reading</span>
+                                <span t-else="" class="badge text-bg-light">Unread</span>
+                            </div>
+                            <div class="o_comic_row_actions o_comic_row_actions_fixed">
+                                <button name="action_set_reading" type="object" class="btn btn-sm btn-outline-secondary"
+                                        title="I'm reading it" invisible="etat_lecture != 'non_lu'">
+                                    <i class="fa fa-book"/> Reading
+                                </button>
+                                <button name="action_set_read" type="object" class="btn btn-sm btn-primary"
+                                        title="Mark as read" invisible="etat_lecture == 'lu'">
+                                    <i class="fa fa-check"/> Read
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="view_comic_customer_album_form" model="ir.ui.view">
         <field name="name">comic.customer.album.form</field>
         <field name="model">comic.customer.album</field>
@@ -161,9 +219,13 @@
     </record>
 
     <record id="action_comic_my_library" model="ir.actions.act_window">
-        <field name="name">My Library</field>
+        <field name="name">My Albums</field>
         <field name="res_model">comic.customer.album</field>
         <field name="view_mode">kanban,list,form</field>
+        <field name="view_ids" eval="[Command.clear(),
+            Command.create({'view_mode': 'kanban', 'view_id': ref('view_comic_customer_album_kanban_rows')}),
+            Command.create({'view_mode': 'list', 'view_id': ref('view_comic_customer_album_list')}),
+            Command.create({'view_mode': 'form', 'view_id': ref('view_comic_customer_album_form')})]"/>
         <field name="search_view_id" ref="view_comic_customer_album_search"/>
         <field name="domain">[('partner_id.user_ids', 'in', [uid])]</field>
         <field name="context">{'search_default_collection': 1}</field>
@@ -183,6 +245,10 @@
         <field name="name">To Read</field>
         <field name="res_model">comic.customer.album</field>
         <field name="view_mode">kanban,list,form</field>
+        <field name="view_ids" eval="[Command.clear(),
+            Command.create({'view_mode': 'kanban', 'view_id': ref('view_comic_customer_album_kanban_rows')}),
+            Command.create({'view_mode': 'list', 'view_id': ref('view_comic_customer_album_list')}),
+            Command.create({'view_mode': 'form', 'view_id': ref('view_comic_customer_album_form')})]"/>
         <field name="search_view_id" ref="view_comic_customer_album_search"/>
         <field name="domain">[('partner_id.user_ids', 'in', [uid]), ('dans_collection', '=', True), ('etat_lecture', '!=', 'lu')]</field>
         <field name="context">{'create': False}</field>

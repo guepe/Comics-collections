@@ -38,7 +38,7 @@
                 <!-- État : recherche -->
                 <group invisible="state != 'search'">
                     <group string="Search for an album">
-                        <field name="search_term" widget="isbn_scan"
+                        <field name="search_term" widget="isbn_scan" required="state == 'search'"
                                placeholder="ISBN (9782...) or album title"
                                autofocus="1"/>
                         <field name="search_type" readonly="1"/>
@@ -139,10 +139,15 @@
                             class="btn-secondary"
                             invisible="state != 'done'"/>
 
+                    <!-- Fermer sans enregistrer (pas de « Recherche » obligatoire à remplir) ;
+                         ouvert depuis une édition : retour sur sa fiche. -->
+                    <button string="Close" special="cancel" class="btn-secondary"
+                            invisible="edition_id"/>
                     <button name="action_close_and_return"
                             string="Close"
                             type="object"
-                            class="btn-secondary"/>
+                            class="btn-secondary"
+                            invisible="not edition_id"/>
                 </footer>
             </form>
         </field>

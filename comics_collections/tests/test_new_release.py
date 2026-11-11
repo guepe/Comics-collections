@@ -117,6 +117,7 @@ class TestNewRelease(TransactionCase):
         result = (owned | wanted).with_user(self.user_a).action_add_to_my_wishlist()
         self.assertEqual(result["tag"], "display_notification")
         self.assertIn("1 album(s)", result["params"]["message"])
+        self.assertIn("already in your collection", result["params"]["message"])
 
         owned_entry = CustomerAlbum.search(
             [("partner_id", "=", partner.id), ("edition_id", "=", owned.primary_edition_id.id)]

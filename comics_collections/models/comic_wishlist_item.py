@@ -57,6 +57,7 @@ class ComicWishlistItem(models.Model):
     type = fields.Selection([("manque", "Missing"), ("souhait", "Wish")], readonly=True)
     # Affichage seul de la couverture de l'album.
     image_couverture = fields.Binary(related="work_id.image_couverture", string="Cover")
+    work_titre = fields.Char(related="work_id.titre_canonique", string="Album title")
     # Onglet « Sorties » : album pas encore paru (date de parution aujourd'hui ou plus tard).
     is_upcoming = fields.Boolean(string="Upcoming", compute="_compute_is_upcoming", search="_search_is_upcoming")
 

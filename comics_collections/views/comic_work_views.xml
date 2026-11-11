@@ -121,6 +121,10 @@
                         <h1>
                             <field name="titre_canonique" placeholder="Album title"/>
                         </h1>
+                        <div class="o_comic_my_rating" invisible="not in_my_collection or not id">
+                            <span class="text-muted me-2">My rating</span>
+                            <field name="my_note_etoiles" widget="priority" nolabel="1"/>
+                        </div>
                     </div>
 
                     <field name="primary_edition_id" invisible="1"/>

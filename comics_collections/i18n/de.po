@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0-20261102\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 16:38+0000\n"
+"POT-Creation-Date: 2026-11-11 20:52+0000\n"
 "PO-Revision-Date: 2026-11-10 15:12+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -45,6 +45,12 @@ msgstr "„%s“ ist keine gültige ISBN-10."
 #: code:addons/comics_collections/models/comic_work.py:0
 msgid "%(count)s album(s) added to your wishlist."
 msgstr "%(count)s Album/Alben zu Ihrer Wunschliste hinzugefügt."
+
+#. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "%(count)s album(s) already in your collection: an album you own is never put back in your wishlist."
+msgstr "%(count)s Album/Alben bereits in Ihrer Sammlung: Ein Album, das Sie besitzen, kommt nie zurück auf die Wunschliste."
 
 #. module: comics_collections
 #. odoo-python
@@ -131,33 +137,38 @@ msgstr "'Sammlungsinventar'"
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__1
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work__my_note_etoiles__1
 msgid "1 star"
 msgstr "1 Stern"
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__2
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work__my_note_etoiles__2
 msgid "2 stars"
 msgstr "2 Sterne"
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__3
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work__my_note_etoiles__3
 msgid "3 stars"
 msgstr "3 Sterne"
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__4
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work__my_note_etoiles__4
 msgid "4 stars"
 msgstr "4 Sterne"
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__5
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work__my_note_etoiles__5
 msgid "5 stars"
 msgstr "5 Sterne"
 
 #. module: comics_collections
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
-msgid "<i class=\"fa fa-calendar\" title=\"Release date\"/>"
-msgstr "<i class=\"fa fa-calendar\" title=\"Erscheinungsdatum\"/>"
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban_rows
+msgid "<i class=\"fa fa-book\"/> Reading"
+msgstr "<i class=\"fa fa-book\"/> Lese ich"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
@@ -166,9 +177,13 @@ msgstr "<i class=\"fa fa-check\"/> Verfolgt"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 msgid "<i class=\"fa fa-check\"/> I have it"
 msgstr "<i class=\"fa fa-check\"/> Habe ich"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban_rows
+msgid "<i class=\"fa fa-check\"/> Read"
+msgstr "<i class=\"fa fa-check\"/> Gelesen"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
@@ -194,6 +209,21 @@ msgstr "<span class=\"ms-2\">Bd.</span>"
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban_missing
 msgid "<span class=\"o_comic_followed o_comic_followed_badge\"><i class=\"fa fa-check\"/> Followed</span>"
 msgstr "<span class=\"o_comic_followed o_comic_followed_badge\"><i class=\"fa fa-check\"/> Verfolgt</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+msgid "<span class=\"text-muted me-2\">My average rating</span>"
+msgstr "<span class=\"text-muted me-2\">Meine Durchschnittsbewertung</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
+msgid "<span class=\"text-muted me-2\">My rating</span>"
+msgstr "<span class=\"text-muted me-2\">Meine Bewertung</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
+msgid "<span class=\"text-muted ms-2 small\">(average of my rated albums)</span>"
+msgstr "<span class=\"text-muted ms-2 small\">(Durchschnitt meiner bewerteten Alben)</span>"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
@@ -223,6 +253,11 @@ msgstr "<span>fehlend</span>"
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_kanban
 msgid "<span>read</span>"
 msgstr "<span>gelesen</span>"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
+msgid "<span>release</span>"
+msgstr "<span>Erscheinung</span>"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
@@ -329,15 +364,6 @@ msgid "Add an album"
 msgstr "Album hinzufügen"
 
 #. module: comics_collections
-#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_wishes
-msgid ""
-"Add an album to your wishlist from its form (\"Add to my wishlist\")\n"
-"                or from your library."
-msgstr ""
-"Fügen Sie ein Album über sein Formular (\"Zu meiner Wunschliste hinzufügen\")\n"
-"                oder aus Ihrer Bibliothek zur Wunschliste hinzu."
-
-#. module: comics_collections
 #: model:ir.actions.server,name:comics_collections.action_work_add_to_my_wishlist
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
 msgid "Add to My Wishlist"
@@ -352,11 +378,6 @@ msgid ""
 msgstr ""
 "Fügen Sie Ihre Alben einzeln hinzu oder importieren Sie Ihre Sammlung\n"
 "                            aus einer CSV- oder Excel-Datei."
-
-#. module: comics_collections
-#: model:ir.ui.menu,name:comics_collections.menu_comic_referentiel
-msgid "Advanced Catalog"
-msgstr "Erweiterter Katalog"
 
 #. module: comics_collections
 #: model:comic.genre,name:comics_collections.genre_aventure
@@ -394,6 +415,8 @@ msgid "Album returned"
 msgstr "Album zurückgegeben"
 
 #. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__work_titre
+#: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__work_titre
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
 msgid "Album title"
 msgstr "Albumtitel"
@@ -556,6 +579,11 @@ msgid "Authors to transfer"
 msgstr "Zu übertragende Autoren"
 
 #. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_serie__my_rating_stars
+msgid "Average of my ratings of the albums of this series (rate the albums to change it)."
+msgstr "Durchschnitt meiner Bewertungen der Alben dieser Serie (bewerten Sie die Alben, um ihn zu ändern)."
+
+#. module: comics_collections
 #: model:ir.model.fields,help:comics_collections.field_comic_serie__my_rating
 msgid "Average rating (0-5) of the albums of this series I have rated."
 msgstr "Durchschnittliche Bewertung (0-5) der Alben dieser Serie, die ich bewertet habe."
@@ -661,8 +689,8 @@ msgstr "Kanonischer Titel des Werks"
 
 #. module: comics_collections
 #: model:ir.ui.menu,name:comics_collections.menu_comic_catalogues
-msgid "Catalogs"
-msgstr "Kataloge"
+msgid "Catalog"
+msgstr "Katalog"
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_dedup_pair__reason__conflit_certain
@@ -951,8 +979,6 @@ msgstr "Land"
 #: model:ir.model.fields,field_description:comics_collections.field_comic_serie__image_couverture
 #: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__image_couverture
 #: model:ir.model.fields,field_description:comics_collections.field_comic_work__image_couverture
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "Cover"
 msgstr "Cover"
@@ -968,11 +994,6 @@ msgstr "Cover-URL"
 #: code:addons/comics_collections/wizards/comic_import_wizard.py:0
 msgid "Cover not downloaded: %s"
 msgstr "Cover nicht heruntergeladen: %s"
-
-#. module: comics_collections
-#: model:ir.model,website_form_label:comics_collections.model_res_partner
-msgid "Create a Customer"
-msgstr "Kunde erstellen"
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__create_uid
@@ -1437,16 +1458,20 @@ msgid "I"
 msgstr ""
 
 #. module: comics_collections
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "I have it"
 msgstr "Habe ich"
 
 #. module: comics_collections
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "I have it: add to my collection"
 msgstr "Habe ich: zu meiner Sammlung hinzufügen"
+
+#. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban_rows
+msgid "I'm reading it"
+msgstr "Ich lese es gerade"
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__id
@@ -1538,8 +1563,8 @@ msgstr "Ignorieren"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
-msgid "Ignore this volume"
-msgstr "Diesen Band ignorieren"
+msgid "Ignore this volume (do not buy)"
+msgstr "Diesen Band ignorieren (nicht kaufen)"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
@@ -1844,6 +1869,11 @@ msgid "Mark as Unread"
 msgstr "Als ungelesen markieren"
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban_rows
+msgid "Mark as read"
+msgstr "Als gelesen markieren"
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_dedup_pair_list
 msgid "Merge A → B"
 msgstr "A → B zusammenführen"
@@ -1890,6 +1920,7 @@ msgstr "Nachrichten"
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_missing_count
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_wishlist_item__type__manque
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
 msgid "Missing"
 msgstr "Fehlend"
@@ -1914,6 +1945,7 @@ msgid "My Activity Deadline"
 msgstr "Frist für meine Aktivitäten"
 
 #. module: comics_collections
+#: model:ir.actions.act_window,name:comics_collections.action_comic_my_library
 #: model:ir.actions.act_window,name:comics_collections.action_comic_work
 #: model:ir.ui.menu,name:comics_collections.menu_comic_albums
 msgid "My Albums"
@@ -1930,12 +1962,6 @@ msgstr "Meine Sammlung"
 #: model_terms:ir.ui.view,arch_db:comics_collections.report_comic_collection_inventory
 msgid "My Collection Inventory"
 msgstr "Inventar meiner Sammlung"
-
-#. module: comics_collections
-#: model:ir.actions.act_window,name:comics_collections.action_comic_my_library
-#: model:ir.ui.menu,name:comics_collections.menu_comic_my_library
-msgid "My Library"
-msgstr "Meine Bibliothek"
 
 #. module: comics_collections
 #: model:ir.actions.act_window,name:comics_collections.action_comic_serie
@@ -1958,6 +1984,11 @@ msgid "My albums"
 msgstr "Meine Alben"
 
 #. module: comics_collections
+#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_rating_stars
+msgid "My average rating"
+msgstr "Meine Durchschnittsbewertung"
+
+#. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_form
 msgid "My collection"
 msgstr "Meine Sammlung"
@@ -1974,8 +2005,14 @@ msgstr "Meine noch nicht zurückgegebenen Verleihungen von Alben dieser Serie."
 
 #. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_rating
+#: model:ir.model.fields,field_description:comics_collections.field_comic_work__my_note_etoiles
 msgid "My rating"
 msgstr "Meine Bewertung"
+
+#. module: comics_collections
+#: model:ir.model.fields,help:comics_collections.field_comic_work__my_note_etoiles
+msgid "My star rating of this album (kept in my library)."
+msgstr "Meine Sternebewertung dieses Albums (in meiner Bibliothek gespeichert)."
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__name_initial__n
@@ -2030,6 +2067,12 @@ msgid "No"
 msgstr "Nein"
 
 #. module: comics_collections
+#. odoo-python
+#: code:addons/comics_collections/models/comic_work.py:0
+msgid "No album to add."
+msgstr "Kein Album hinzuzufügen."
+
+#. module: comics_collections
 #. odoo-javascript
 #: code:addons/comics_collections/static/src/dashboard/collection_dashboard.xml:0
 msgid "No albums owned."
@@ -2076,6 +2119,7 @@ msgstr "Keine fehlenden Bände."
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__note_etoiles__0
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_work__my_note_etoiles__0
 msgid "No rating"
 msgstr "Keine Bewertung"
 
@@ -2101,11 +2145,6 @@ msgstr "Es wurde kein verwendbares XLSX-Blatt gefunden."
 #: code:addons/comics_collections/wizards/comic_import_wizard.py:0
 msgid "No usable row was found in the file."
 msgstr "In der Datei wurde keine verwendbare Zeile gefunden."
-
-#. module: comics_collections
-#: model_terms:ir.actions.act_window,help:comics_collections.action_comic_wishes
-msgid "No wishes yet."
-msgstr "Noch keine Wünsche."
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_form
@@ -2465,17 +2504,10 @@ msgid "Rating ≥ 4★"
 msgstr "Bewertung ≥ 4★"
 
 #. module: comics_collections
-#: model:ir.model.fields,field_description:comics_collections.field_comic_edition__rating_ids
-#: model:ir.model.fields,field_description:comics_collections.field_comic_pret__rating_ids
-#: model:ir.model.fields,field_description:comics_collections.field_comic_serie__rating_ids
-#: model:ir.model.fields,field_description:comics_collections.field_comic_work__rating_ids
-msgid "Ratings"
-msgstr "Bewertungen"
-
-#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_read_count
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__etat_lecture__lu
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban_rows
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
 msgid "Read"
@@ -2484,6 +2516,7 @@ msgstr "Gelesen"
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__etat_lecture__en_cours
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban_rows
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
 msgid "Reading"
 msgstr "Wird gelesen"
@@ -2540,7 +2573,6 @@ msgstr "Aus gefolgten Serien entfernen"
 
 #. module: comics_collections
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "Remove from my wishlist"
 msgstr "Von meiner Wunschliste entfernen"
@@ -3023,25 +3055,30 @@ msgid "URL slug"
 msgstr "URL-Slug"
 
 #. module: comics_collections
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "Unfollow this series"
 msgstr "Dieser Serie nicht mehr folgen"
 
 #. module: comics_collections
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_list
 msgid "Unfollow this series?"
 msgstr "Dieser Serie nicht mehr folgen?"
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__source__inconnu
+#: model:ir.model.fields.selection,name:comics_collections.selection__comic_serie__statut__inconnu
 msgid "Unknown"
 msgstr "Unbekannt"
 
 #. module: comics_collections
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
+msgid "Unknown status"
+msgstr "Status unbekannt"
+
+#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_serie__my_unread_count
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_customer_album__etat_lecture__non_lu
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban_rows
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_search
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_search
 msgid "Unread"
@@ -3057,6 +3094,7 @@ msgstr "Nicht unterstützter Operator für „Überfällig“."
 #: model:ir.actions.act_window,name:comics_collections.action_comic_upcoming
 #: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__is_upcoming
 #: model:ir.ui.menu,name:comics_collections.menu_comic_upcoming
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
 msgid "Upcoming"
 msgstr "Demnächst"
@@ -3121,10 +3159,10 @@ msgstr "Meine Sammlung anzeigen"
 #: model:ir.model.fields,field_description:comics_collections.field_comic_customer_album__tome
 #: model:ir.model.fields,field_description:comics_collections.field_comic_wishlist_item__tome
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_customer_album_kanban_rows
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_editeur_form
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_serie_form
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
-#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban_covers
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_kanban
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_work_list
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_partner_form_comic_author
@@ -3163,6 +3201,11 @@ msgid "W"
 msgstr ""
 
 #. module: comics_collections
+#: model:ir.ui.menu,name:comics_collections.menu_comic_wanted
+msgid "Wanted"
+msgstr "Meine Wünsche"
+
+#. module: comics_collections
 #: model:ir.model.fields,field_description:comics_collections.field_comic_editeur__site_web
 msgid "Website"
 msgstr "Website"
@@ -3174,12 +3217,11 @@ msgstr "Wikidata-ID"
 
 #. module: comics_collections
 #: model:ir.model.fields.selection,name:comics_collections.selection__comic_wishlist_item__type__souhait
+#: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_kanban
 msgid "Wish"
 msgstr "Wunsch"
 
 #. module: comics_collections
-#: model:ir.actions.act_window,name:comics_collections.action_comic_wishes
-#: model:ir.ui.menu,name:comics_collections.menu_comic_wishes
 #: model_terms:ir.ui.view,arch_db:comics_collections.view_comic_wishlist_item_search
 msgid "Wishes"
 msgstr "Wünsche"
@@ -3355,6 +3397,3 @@ msgid ""
 msgstr ""
 "“ ignoriert: Dies ist keine ISBN\n"
 "                    (EAN-13 beginnend mit 978 oder 979)."
-
-#~ msgid "volumes"
-#~ msgstr "Bände"

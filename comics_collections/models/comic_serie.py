@@ -45,12 +45,14 @@ class ComicSerie(models.Model):
     )
     statut = fields.Selection(
         [
+            ("inconnu", "Unknown"),
             ("en_cours", "Ongoing"),
             ("terminee", "Completed"),
             ("abandonnee", "Discontinued"),
         ],
         string="Status",
-        default="en_cours",
+        # Inconnu tant que personne (utilisateur ou IA de comic_ai) ne l'a renseigné
+        default="inconnu",
         tracking=True,
     )
     genre_id = fields.Many2one("comic.genre", string="Genre")
@@ -142,6 +144,12 @@ class ComicSerie(models.Model):
         digits=(2, 1),
         compute="_compute_my_counts",
         help="Average rating (0-5) of the albums of this series I have rated.",
+    )
+    my_rating_stars = fields.Selection(
+        [(str(n), str(n)) for n in range(6)],
+        string="My average rating",
+        compute="_compute_my_rating_stars",
+        help="Average of my ratings of the albums of this series (rate the albums to change it).",
     )
 
     @api.depends("name")
@@ -294,6 +302,11 @@ class ComicSerie(models.Model):
 
     @api.depends_context("uid")
     @api.depends("work_ids.tome")
+    @api.depends_context("uid")
+    def _compute_my_rating_stars(self):
+        for serie in self:
+            serie.my_rating_stars = str(int(round(serie.my_rating or 0)))
+
     def _compute_my_counts(self):
         counts = self._my_collection_counts([sid for sid in self.ids if sid])
         for serie in self:

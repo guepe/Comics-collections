@@ -1,6 +1,6 @@
 {
     "name": "Comic Datasource",
-    "version": "19.0.1.6.0",
+    "version": "19.0.1.6.1",
     "category": "Productivity",
     "summary": "Covers and metadata for your comics from Google Books, Open Library and the BnF: "
     "one-click completion, search & import, missing volumes detection",

@@ -1,6 +1,6 @@
 {
     "name": "Comic Collection",
-    "version": "19.0.4.5.0",
+    "version": "19.0.4.6.0",
     "category": "Productivity",
     "summary": "Your comic, manga & graphic-novel collection in Odoo: series, missing volumes, "
     "wishlist, loans, ISBN scan, dashboard and collection value",

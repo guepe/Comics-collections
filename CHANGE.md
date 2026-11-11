@@ -2690,3 +2690,39 @@ cinq modules : 472 tests verts.
   « Voir », « Ne plus suivre »), **À paraître**, **Souhaits** (grandes couvertures).
 - SCSS compatible thème sombre ; traductions FR / NL / DE ; tests `test_serie_my_counts.py` (12).
   Suite complète (deux dépôts) : 534 verts.
+
+## 2026-11-11 — Vues alignées (lignes) et statut de série « Inconnu » (`comics_collections` 19.0.4.6.0)
+
+- **Pile à lire**, **À paraître** et **Ma wishlist** passent au même format en lignes que
+  « Mes séries » (couverture, série, « T3 · titre », étiquette Manque / Souhait / À paraître ou
+  état de lecture, date de parution, actions en colonne de largeur fixe). Nouveaux champs liés
+  `work_titre` (bibliothèque, wishlist) ; actions `action_set_reading` / `action_set_read` sur
+  `comic.customer.album`. Menu « Souhaits » retiré (doublon de « Ma wishlist », remontée après
+  « À paraître ») ; vues « grandes couvertures » supprimées.
+- **Statut de série « Inconnu »** (`inconnu`), nouvelle valeur par défaut : les filtres
+  « En cours » / « Terminées » de « Mes séries » ne voyaient que des séries « En cours » par
+  défaut (ni l'import ni les sources ne renseignent le statut). Migration `19.0.4.6.0` : les
+  séries « En cours » sans changement de statut suivi passent à « Inconnu ». Filtre « Statut
+  inconnu » ; badge masqué pour « Inconnu » (lignes et shop). Le statut peut être proposé par
+  l'IA (`comic_ai`). Tests `test_serie_statut.py`.
+- **Menus du back-office réorganisés en trois parties** :
+  - *Ma collection* (ce que j'ai) : Tableau de bord, Mes séries, Mes albums, À lire,
+    Rechercher des BD, Prêts. « Mes albums » est désormais la bibliothèque personnelle, en
+    lignes (état de lecture, note, Lu / En cours) ; l'ancienne entrée « Ma bibliothèque » y
+    est fusionnée (l'action « albums » reste pour le tableau de bord).
+  - *Mes envies* (nouveau `menu_comic_wanted`) : Albums manquants, Ma wishlist, À paraître
+    (+ « Découvrir de nouvelles BD » avec `comic_ai`).
+  - *Catalogues* (toutes les BD) : Toutes les séries, Tous les albums (gestionnaire ; ouverts
+    à tous avec `comic_shop`), Auteurs, Éditeurs, Genres, Éditions et Doublons potentiels
+    (gestionnaire). L'ancien sous-menu « Référentiel avancé » disparaît.
+  - *Configuration* : Import CSV/Excel (tous), Sources de données (gestionnaire).
+- **Étoiles** : « Ma note » en étoiles sous le titre de la fiche album (`comic.work.my_note_etoiles`,
+  calculé pour l'utilisateur, modifiable si l'album est possédé, écrit dans la bibliothèque) ;
+  « Ma note moyenne » en étoiles sur la fiche série (`comic.serie.my_rating_stars`, lecture
+  seule, moyenne de mes albums notés). Test `TestMyRatingStars`.
+- `comic_datasource` : « Rechercher des BD » — le bouton « Fermer » refusait de fermer (champ
+  « Recherche » obligatoire au niveau du modèle) ; il ferme désormais sans enregistrer, le
+  champ n'est obligatoire que pour lancer la recherche.
+- « Ajouter à ma wishlist » (action sur les albums) : le résultat dit désormais clairement
+  combien d'albums ont été ajoutés et combien étaient déjà possédés (un album possédé n'est
+  jamais remis en wishlist) ; avant, une notification discrète « 0 album(s) ajouté(s) ».

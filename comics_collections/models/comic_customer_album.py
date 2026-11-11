@@ -101,6 +101,7 @@ class ComicCustomerAlbum(models.Model):
     serie_id = fields.Many2one(related="work_id.serie_id", store=True, string="Series")
     tome = fields.Integer(related="work_id.tome", store=True, string="Vol.", aggregator=False)
     image_couverture = fields.Image(related="edition_id.image_couverture", string="Cover")
+    work_titre = fields.Char(related="work_id.titre_canonique", string="Album title")
     currency_id = fields.Many2one(
         "res.currency",
         string="Currency",
@@ -317,6 +318,14 @@ class ComicCustomerAlbum(models.Model):
     # ── Inventaire PDF (US-071) ─────────────────────────────────────────────
 
     @api.model
+    def action_set_reading(self):
+        """« Pile à lire » : je commence cet album."""
+        self.write({"etat_lecture": "en_cours"})
+
+    def action_set_read(self):
+        """« Pile à lire » : album lu (il quitte la pile)."""
+        self.write({"etat_lecture": "lu"})
+
     def action_print_my_inventory(self):
         """Return the inventory report action on the current user's collection."""
         entries = self.search([("partner_id", "=", self.env.user.partner_id.id), ("dans_collection", "=", True)])

@@ -8,7 +8,7 @@
               groups="comics_collections.group_comic_user"
               sequence="50"/>
 
-    <!-- Ma Collection — parcours utilisateur courant -->
+    <!-- 1. Ma collection — ce que j'ai -->
     <menuitem id="menu_comic_collection"
               name="My Collection"
               parent="menu_comic_root"
@@ -29,69 +29,74 @@
               groups="comics_collections.group_comic_user"
               sequence="10"/>
 
-    <!-- Onglets façon « espace collection » : à lire, manquants, sorties, souhaits -->
+    <!-- « Mes albums » : ma bibliothèque (état de lecture, note, prix) ; l'ancienne
+         entrée « Ma bibliothèque » y est fusionnée. -->
+    <menuitem id="menu_comic_albums"
+              name="My Albums"
+              parent="menu_comic_collection"
+              action="action_comic_my_library"
+              groups="comics_collections.group_comic_user"
+              sequence="20"/>
+
     <menuitem id="menu_comic_to_read"
               name="To Read"
               parent="menu_comic_collection"
               action="action_comic_to_read"
               groups="comics_collections.group_comic_user"
-              sequence="11"/>
-
-    <menuitem id="menu_comic_missing"
-              name="Missing Volumes"
-              parent="menu_comic_collection"
-              action="action_comic_serie_missing"
-              groups="comics_collections.group_comic_user"
-              sequence="12"/>
-
-    <menuitem id="menu_comic_upcoming"
-              name="Upcoming"
-              parent="menu_comic_collection"
-              action="action_comic_upcoming"
-              groups="comics_collections.group_comic_user"
-              sequence="13"/>
-
-    <menuitem id="menu_comic_wishes"
-              name="Wishes"
-              parent="menu_comic_collection"
-              action="action_comic_wishes"
-              groups="comics_collections.group_comic_user"
-              sequence="14"/>
-
-    <menuitem id="menu_comic_albums"
-              name="My Albums"
-              parent="menu_comic_collection"
-              action="action_comic_work"
-              groups="comics_collections.group_comic_user"
-              sequence="20"/>
-
-    <menuitem id="menu_comic_my_library"
-              name="My Library"
-              parent="menu_comic_collection"
-              action="action_comic_my_library"
-              groups="comics_collections.group_comic_user"
-              sequence="25"/>
+              sequence="30"/>
 
     <menuitem id="menu_comic_prets"
               name="Loans"
               parent="menu_comic_collection"
               action="action_comic_pret"
               groups="comics_collections.group_comic_user"
-              sequence="30"/>
-
-    <menuitem id="menu_comic_import"
-              name="CSV/Excel Import"
-              parent="menu_comic_collection"
-              action="action_comic_import_wizard"
-              groups="comics_collections.group_comic_user"
               sequence="40"/>
 
-    <!-- Catalogues -->
+    <!-- 2. Mes envies — ce qui me manque ou que je veux -->
+    <menuitem id="menu_comic_wanted"
+              name="Wanted"
+              parent="menu_comic_root"
+              groups="comics_collections.group_comic_user"
+              sequence="15"/>
+
+    <menuitem id="menu_comic_missing"
+              name="Missing Volumes"
+              parent="menu_comic_wanted"
+              action="action_comic_serie_missing"
+              groups="comics_collections.group_comic_user"
+              sequence="10"/>
+
+    <!-- « Ma wishlist » : comic_wishlist_menu.xml (sequence 20) -->
+
+    <menuitem id="menu_comic_upcoming"
+              name="Upcoming"
+              parent="menu_comic_wanted"
+              action="action_comic_upcoming"
+              groups="comics_collections.group_comic_user"
+              sequence="30"/>
+
+    <!-- 3. Catalogue — toutes les BD (référentiel commun) -->
     <menuitem id="menu_comic_catalogues"
-              name="Catalogs"
+              name="Catalog"
               parent="menu_comic_root"
               groups="comics_collections.group_comic_user"
               sequence="20"/>
+
+    <!-- Séries et albums de tout le catalogue : gestionnaire dans le cœur (la collection
+         est privée, US-087) ; comic_shop les ouvre à tous les utilisateurs BD. -->
+    <menuitem id="menu_comic_referentiel_series"
+              name="All Series"
+              parent="menu_comic_catalogues"
+              action="action_comic_serie_catalogue"
+              groups="comics_collections.group_comic_manager"
+              sequence="5"/>
+
+    <menuitem id="menu_comic_referentiel_albums"
+              name="All Albums"
+              parent="menu_comic_catalogues"
+              action="action_comic_work_catalogue"
+              groups="comics_collections.group_comic_manager"
+              sequence="6"/>
 
     <menuitem id="menu_comic_auteurs"
               name="Authors"
@@ -114,48 +119,32 @@
               groups="comics_collections.group_comic_user"
               sequence="30"/>
 
-    <!-- Configuration (gestionnaire uniquement) -->
-    <menuitem id="menu_comic_config_root"
-              name="Configuration"
-              parent="menu_comic_root"
-              groups="comics_collections.group_comic_manager"
-              sequence="90"/>
-
-    <!-- Référentiel avancé — visible managers uniquement -->
-    <menuitem id="menu_comic_referentiel"
-              name="Advanced Catalog"
-              parent="menu_comic_config_root"
-              groups="comics_collections.group_comic_manager"
-              sequence="10"/>
-
-    <!-- Catalogue complet (US-087) : la collection est privée dans le cœur ;
-         comic_shop réexpose le catalogue aux utilisateurs. -->
-    <menuitem id="menu_comic_referentiel_albums"
-              name="All Albums"
-              parent="menu_comic_referentiel"
-              action="action_comic_work_catalogue"
-              groups="comics_collections.group_comic_manager"
-              sequence="5"/>
-
-    <menuitem id="menu_comic_referentiel_series"
-              name="All Series"
-              parent="menu_comic_referentiel"
-              action="action_comic_serie_catalogue"
-              groups="comics_collections.group_comic_manager"
-              sequence="10"/>
-
     <menuitem id="menu_comic_editions"
               name="Editions"
-              parent="menu_comic_referentiel"
+              parent="menu_comic_catalogues"
               action="action_comic_edition"
-              groups="comics_collections.group_comic_manager"
-              sequence="20"/>
+              groups="-comics_collections.group_comic_user,comics_collections.group_comic_manager"
+              sequence="40"/>
 
     <menuitem id="menu_comic_dedup"
               name="Potential Duplicates"
-              parent="menu_comic_config_root"
+              parent="menu_comic_catalogues"
               action="action_comic_dedup_pair"
               groups="comics_collections.group_comic_manager"
               sequence="50"/>
+
+    <!-- 4. Configuration — import (tous) et réglages (gestionnaire) -->
+    <menuitem id="menu_comic_config_root"
+              name="Configuration"
+              parent="menu_comic_root"
+              groups="comics_collections.group_comic_user"
+              sequence="90"/>
+
+    <menuitem id="menu_comic_import"
+              name="CSV/Excel Import"
+              parent="menu_comic_config_root"
+              action="action_comic_import_wizard"
+              groups="comics_collections.group_comic_user"
+              sequence="5"/>
 
 </odoo>

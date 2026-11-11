@@ -24,3 +24,4 @@ from . import test_isbn_scan
 from . import test_authors_overview
 from . import test_library_search
 from . import test_serie_my_counts
+from . import test_serie_statut

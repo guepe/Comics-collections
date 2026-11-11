@@ -10,6 +10,7 @@ from odoo import SUPERUSER_ID, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 from ..utils.normalize import normalize_title
+from .comic_customer_album import NOTE_ETOILES
 
 _logger = logging.getLogger(__name__)
 
@@ -142,6 +143,13 @@ class ComicWork(models.Model):
     # Bibliothèque de l'utilisateur courant (bouton « Ajouter à ma wishlist », #7)
     in_my_collection = fields.Boolean(string="In my collection", compute="_compute_my_library")
     in_my_wishlist = fields.Boolean(string="In my wishlist", compute="_compute_my_library")
+    my_note_etoiles = fields.Selection(
+        NOTE_ETOILES,
+        string="My rating",
+        compute="_compute_my_library",
+        inverse="_inverse_my_note_etoiles",
+        help="My star rating of this album (kept in my library).",
+    )
     synopsis = fields.Html(
         string="Synopsis",
         related="primary_edition_id.synopsis",
@@ -182,6 +190,7 @@ class ComicWork(models.Model):
         "edition_ids.customer_album_ids.partner_id",
         "edition_ids.customer_album_ids.dans_collection",
         "edition_ids.customer_album_ids.dans_wishlist",
+        "edition_ids.customer_album_ids.note",
     )
     def _compute_my_library(self):
         """Album possédé / souhaité par l'utilisateur courant (une de ses éditions)."""
@@ -191,9 +200,22 @@ class ComicWork(models.Model):
         )
         owned = set(entries.filtered("dans_collection").edition_id.work_id.ids)
         wished = set(entries.filtered(lambda e: e.dans_wishlist and not e.dans_collection).edition_id.work_id.ids)
+        notes = {}
+        for entry in entries.filtered("dans_collection"):
+            notes[entry.edition_id.work_id.id] = max(notes.get(entry.edition_id.work_id.id, 0), entry.note or 0)
         for work in self:
             work.in_my_collection = work.id in owned
             work.in_my_wishlist = work.id in wished
+            work.my_note_etoiles = str(int(round(notes.get(work.id, 0))))
+
+    def _inverse_my_note_etoiles(self):
+        """Ma note s'écrit dans mes entrées de bibliothèque possédées de l'album."""
+        partner = self.env.user.partner_id
+        for work in self:
+            entries = self.env["comic.customer.album"].search(
+                [("partner_id", "=", partner.id), ("work_id", "=", work.id), ("dans_collection", "=", True)]
+            )
+            entries.write({"note": float(work.my_note_etoiles or 0)})
 
     @api.depends("edition_ids")
     def _compute_nb_editions(self):
@@ -430,26 +452,33 @@ class ComicWork(models.Model):
         """
         partner = self.env.user.partner_id
         CustomerAlbum = self.env["comic.customer.album"]
-        added = 0
+        added = owned = 0
         for work in self:
             edition = work.primary_edition_id
             if not edition:
                 continue
-            existing = CustomerAlbum.search(
-                [("partner_id", "=", partner.id), ("edition_id", "=", edition.id)],
-                limit=1,
-            )
-            if existing and existing.dans_collection:
+            if work.in_my_collection:
+                owned += 1
                 continue
             CustomerAlbum._upsert(partner, edition, {"dans_wishlist": True, "dans_collection": False})
             added += 1
+        messages = []
+        if added:
+            messages.append(self.env._("%(count)s album(s) added to your wishlist.", count=added))
+        if owned:
+            messages.append(
+                self.env._(
+                    "%(count)s album(s) already in your collection: an album you own is never put back in your wishlist.",  # noqa: E501
+                    count=owned,
+                )
+            )
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
             "params": {
                 "title": self.env._("Wishlist"),
-                "message": self.env._("%(count)s album(s) added to your wishlist.", count=added),
-                "type": "success" if added else "info",
+                "message": " ".join(messages) or self.env._("No album to add."),
+                "type": "success" if added else "warning",
                 "sticky": False,
             },
         }

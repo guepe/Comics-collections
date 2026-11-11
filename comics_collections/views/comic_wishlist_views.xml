@@ -38,97 +38,59 @@
         </field>
     </record>
 
+    <!-- Wishlist en lignes (même style que « Mes séries ») -->
     <record id="view_comic_wishlist_item_kanban" model="ir.ui.view">
         <field name="name">comic.wishlist.item.kanban</field>
         <field name="model">comic.wishlist.item</field>
         <field name="arch" type="xml">
-            <kanban class="o_comic_kanban_series" create="false" default_order="serie_id,tome"
+            <kanban class="o_comic_kanban_rows" create="false" default_order="serie_id,tome,work_id"
                     action="action_open_work" type="object">
-                <field name="type"/>
-                <field name="tome"/>
-                <templates>
-                    <t t-name="card">
-                        <div class="o_comic_serie_card">
-                            <div class="o_comic_serie_cover">
-                                <field name="image_couverture" widget="image"
-                                       options="{'size': [0, 180]}" alt="Cover"/>
-                                <span t-if="record.tome.raw_value" class="o_comic_serie_statut"
-                                      style="background:#1a73e8;">
-                                    Vol. <t t-esc="record.tome.raw_value"/>
-                                </span>
-                            </div>
-                            <div class="o_comic_serie_info">
-                                <div class="o_comic_serie_title"><field name="work_id"/></div>
-                                <div class="o_comic_serie_meta">
-                                    <field name="serie_id"/>
-                                </div>
-                                <div class="d-flex align-items-center gap-1 mt-1">
-                                    <field name="type" widget="badge"
-                                           decoration-danger="type == 'manque'"
-                                           decoration-info="type == 'souhait'"/>
-                                    <field name="date_parution" class="text-muted small"/>
-                                </div>
-                                <div class="d-flex gap-1 mt-2">
-                                    <button name="action_mark_owned" type="object"
-                                            class="btn btn-sm btn-primary" title="I have it">
-                                        <i class="fa fa-check"/> I have it
-                                    </button>
-                                    <button name="action_ignore" type="object"
-                                            class="btn btn-sm btn-secondary" title="Ignore this volume"
-                                            invisible="type != 'manque'">
-                                        <i class="fa fa-eye-slash"/>
-                                    </button>
-                                    <button name="action_remove" type="object"
-                                            class="btn btn-sm btn-secondary" title="Remove from my wishlist"
-                                            invisible="type != 'souhait'">
-                                        <i class="fa fa-times"/>
-                                    </button>
-                                    <button name="action_remove" type="object"
-                                            class="btn btn-sm btn-secondary" title="Unfollow this series"
-                                            confirm="Unfollow this series?"
-                                            invisible="type != 'manque'">
-                                        <i class="fa fa-times"/>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </t>
-                </templates>
-            </kanban>
-        </field>
-    </record>
-
-    <!-- Grandes couvertures : onglets « Souhaits » et « Sorties » -->
-    <record id="view_comic_wishlist_item_kanban_covers" model="ir.ui.view">
-        <field name="name">comic.wishlist.item.kanban.covers</field>
-        <field name="model">comic.wishlist.item</field>
-        <field name="priority">20</field>
-        <field name="arch" type="xml">
-            <kanban class="o_comic_kanban_covers" create="false" default_order="serie_id,tome,work_id"
-                    action="action_open_work" type="object">
+                <field name="id"/>
                 <field name="work_id"/>
                 <field name="serie_id"/>
                 <field name="type"/>
                 <field name="tome"/>
                 <field name="date_parution"/>
+                <field name="is_upcoming"/>
+                <field name="image_couverture"/>
+                <field name="work_titre"/>
                 <templates>
                     <t t-name="card">
-                        <div class="o_comic_cover_card">
-                            <div class="o_comic_cover_card_img">
-                                <field name="image_couverture" widget="image" alt="Cover"/>
+                        <div class="o_comic_row">
+                            <div class="o_comic_row_cover">
+                                <img t-if="record.image_couverture.raw_value" loading="lazy"
+                                     t-att-src="'/web/image/comic.work/' + record.work_id.raw_value + '/image_couverture'"
+                                     t-att-alt="record.work_id.value"/>
+                                <div t-else="" class="o_comic_row_placeholder">
+                                    <span t-esc="record.tome.raw_value or (record.serie_id.value || '?')[0]"/>
+                                </div>
                             </div>
-                            <div class="o_comic_cover_card_title">
-                                <t t-esc="record.serie_id.value"/>
-                                <span t-if="record.tome.raw_value" class="o_comic_cover_card_tome">Vol. <t t-esc="record.tome.raw_value"/></span>
+                            <div class="o_comic_row_main">
+                                <div class="o_comic_row_title" t-esc="record.serie_id.value or record.work_id.value"/>
+                                <div class="o_comic_row_meta">
+                                    <t t-if="record.tome.raw_value">Vol. <t t-esc="record.tome.raw_value"/> · </t>
+                                    <t t-esc="record.work_titre.value or record.work_id.value"/>
+                                </div>
+                                <div class="mt-1">
+                                    <span t-if="record.is_upcoming.raw_value" class="badge text-bg-info">Upcoming</span>
+                                    <span t-elif="record.type.raw_value == 'manque'" class="badge text-bg-danger">Missing</span>
+                                    <span t-else="" class="badge text-bg-secondary">Wish</span>
+                                </div>
                             </div>
-                            <div class="o_comic_cover_card_meta" t-esc="record.work_id.value"/>
-                            <div t-if="record.date_parution.raw_value" class="o_comic_cover_card_date">
-                                <i class="fa fa-calendar" title="Release date"/> <field name="date_parution"/>
+                            <div class="o_comic_row_stat o_comic_row_stat_wide">
+                                <strong t-if="record.date_parution.raw_value"><field name="date_parution"/></strong>
+                                <strong t-else="">—</strong>
+                                <span>release</span>
                             </div>
-                            <div class="d-flex gap-1 mt-2">
+                            <div class="o_comic_row_actions o_comic_row_actions_fixed">
                                 <button name="action_mark_owned" type="object"
                                         class="btn btn-sm btn-primary" title="I have it: add to my collection">
                                     <i class="fa fa-check"/> I have it
+                                </button>
+                                <button name="action_ignore" type="object"
+                                        class="btn btn-sm btn-outline-secondary" title="Ignore this volume (do not buy)"
+                                        invisible="type != 'manque'">
+                                    <i class="fa fa-eye-slash"/>
                                 </button>
                                 <button name="action_remove" type="object"
                                         class="btn btn-sm btn-outline-secondary" title="Remove from my wishlist"
@@ -143,10 +105,11 @@
         </field>
     </record>
 
+    <!-- « À paraître » : mêmes lignes, triées par date de parution -->
     <record id="view_comic_wishlist_item_kanban_upcoming" model="ir.ui.view">
         <field name="name">comic.wishlist.item.kanban.upcoming</field>
         <field name="model">comic.wishlist.item</field>
-        <field name="inherit_id" ref="view_comic_wishlist_item_kanban_covers"/>
+        <field name="inherit_id" ref="view_comic_wishlist_item_kanban"/>
         <field name="mode">primary</field>
         <field name="priority">30</field>
         <field name="arch" type="xml">
@@ -181,7 +144,7 @@
     <record id="action_comic_wishlist" model="ir.actions.act_window">
         <field name="name">My Wishlist</field>
         <field name="res_model">comic.wishlist.item</field>
-        <field name="view_mode">list,kanban</field>
+        <field name="view_mode">kanban,list</field>
         <field name="search_view_id" ref="view_comic_wishlist_item_search"/>
         <field name="domain">[('user_id', '=', uid)]</field>
         <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
@@ -214,28 +177,6 @@
             <p>
                 Albums to be released in the series you follow, or that you wish for,
                 appear here by release date.
-            </p>
-        </field>
-    </record>
-
-    <!-- « Souhaits » : souhaits manuels de la wishlist, en grandes couvertures -->
-    <record id="action_comic_wishes" model="ir.actions.act_window">
-        <field name="name">Wishes</field>
-        <field name="res_model">comic.wishlist.item</field>
-        <field name="view_mode">kanban,list</field>
-        <field name="view_ids" eval="[Command.clear(),
-            Command.create({'view_mode': 'kanban', 'view_id': ref('view_comic_wishlist_item_kanban_covers')}),
-            Command.create({'view_mode': 'list', 'view_id': ref('view_comic_wishlist_item_list')})]"/>
-        <field name="search_view_id" ref="view_comic_wishlist_item_search"/>
-        <field name="domain">[('user_id', '=', uid), ('type', '=', 'souhait')]</field>
-        <field name="context">{'create': False, 'edit': False, 'delete': False}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                No wishes yet.
-            </p>
-            <p>
-                Add an album to your wishlist from its form ("Add to my wishlist")
-                or from your library.
             </p>
         </field>
     </record>

@@ -77,8 +77,9 @@ class TestPrivateCollection(TransactionCase):
         manager = self.env.ref("comics_collections.group_comic_manager")
         for xmlid in ("menu_comic_referentiel_albums", "menu_comic_referentiel_series"):
             menu = self.env.ref(f"comics_collections.{xmlid}")
-            self.assertEqual(menu.parent_id, self.env.ref("comics_collections.menu_comic_referentiel"))
-            self.assertEqual(menu.group_ids, manager)
+            self.assertEqual(menu.parent_id, self.env.ref("comics_collections.menu_comic_catalogues"))
+            # Gestionnaire dans le cœur ; comic_shop y ajoute les utilisateurs BD
+            self.assertIn(manager, menu.group_ids)
         self.assertFalse(self.env.ref("comics_collections.action_comic_serie_catalogue").domain)
 
     def test_create_with_auto_own(self):

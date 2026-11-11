@@ -28,7 +28,8 @@ class ComicDatasourceSearchWizard(models.TransientModel):
     _name = "comic.datasource.search.wizard"
     _description = "Multi-source comic search and import"
 
-    search_term = fields.Char(string="Search", required=True)
+    # Obligatoire seulement pour lancer la recherche (vue) : « Fermer » ne doit pas l'exiger
+    search_term = fields.Char(string="Search")
     search_type = fields.Selection(
         [("isbn", "ISBN / EAN-13"), ("title", "Title")],
         compute="_compute_search_type",
@@ -59,6 +60,8 @@ class ComicDatasourceSearchWizard(models.TransientModel):
 
     def action_search(self):
         self.ensure_one()
+        if not (self.search_term or "").strip():
+            raise UserError(self.env._("Enter an ISBN, a title or a series to search."))
         self.result_ids.unlink()
 
         from ..aggregator import ComicDataAggregator

@@ -171,6 +171,8 @@ class TestSerieMyCounts(TransactionCase):
         )
         upcoming = self._action_records("comics_collections.action_comic_upcoming", self.user_a)
         self.assertEqual(set(upcoming.mapped("work_id").ids), {self.works[4].id, wish_work.id})
-        wishes = self._action_records("comics_collections.action_comic_wishes", self.user_a)
+        wishes = self._action_records("comics_collections.action_comic_wishlist", self.user_a).filtered(
+            lambda line: line.type == "souhait"
+        )
         self.assertEqual(wishes.work_id, wish_work)
         self.assertFalse(self._action_records("comics_collections.action_comic_upcoming", self.user_b))

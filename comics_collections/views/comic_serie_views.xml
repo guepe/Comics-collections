@@ -39,6 +39,12 @@
                         <h1>
                             <field name="name" placeholder="Series title"/>
                         </h1>
+                        <div class="o_comic_my_rating" invisible="not my_owned_count">
+                            <field name="my_owned_count" invisible="1"/>
+                            <span class="text-muted me-2">My average rating</span>
+                            <field name="my_rating_stars" widget="priority" readonly="1" nolabel="1"/>
+                            <span class="text-muted ms-2 small">(average of my rated albums)</span>
+                        </div>
                     </div>
                     <group>
                         <group>
@@ -95,6 +101,8 @@
                         domain="[('statut', '=', 'en_cours')]"/>
                 <filter string="Completed" name="terminee"
                         domain="[('statut', '=', 'terminee')]"/>
+                <filter string="Unknown status" name="statut_inconnu"
+                        domain="[('statut', '=', 'inconnu')]"/>
                 <filter string="My followed series" name="a_suivre"
                         domain="[('a_suivre', '=', True)]"/>
                 <separator/>
@@ -171,7 +179,8 @@
                             <div class="o_comic_row_meta">
                                 <span t-esc="record.type.value"/>
                                 <t t-if="record.editeur_id.value"> · <span t-esc="record.editeur_id.value"/></t>
-                                <span t-attf-class="o_comic_row_statut o_statut_#{record.statut.raw_value}"
+                                <span t-if="record.statut.raw_value != 'inconnu'"
+                                      t-attf-class="o_comic_row_statut o_statut_#{record.statut.raw_value}"
                                       t-esc="record.statut.value"/>
                             </div>
                             <div class="o_comic_row_stars" t-att-title="record.my_rating.value">
