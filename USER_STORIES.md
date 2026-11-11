@@ -11,7 +11,7 @@
 - Format : *En tant que… / Je veux… / Afin de…*, puis contexte technique et critères `- [ ]`.
 - Cocher `[x]` dès qu'un critère est réellement livré — jamais par anticipation. Une US dont
   tous les critères sont cochés prend ✅, puis passe en une ligne dans l'[annexe](#4-annexe--livré).
-- Numérotation continue : **prochaine US = US-093**. Une piste 💡 garde son numéro quand elle est
+- Numérotation continue : **prochaine US = US-094**. Une piste 💡 garde son numéro quand elle est
   priorisée.
 - **Depuis le 2026-11-10, les US à faire vivent dans les issues GitHub** (label `us`, label
   `epic:E*`, jalon = épic, Project [Comic Collection — Odoo](https://github.com/users/guepe/projects/3)).
@@ -29,6 +29,7 @@
 | **Maintenant** | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064 (#2)                 | 🔄   |
 | **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
 | **Plus tard**  | [E10 — Internationalisation](#e10--internationalisation)                  | US-092 (#9)                 | ✅   |
+| **En pause**   | [E11 — App mobile](#e11--app-mobile)                                      | US-093 (#11)                | ⏸   |
 
 ---
 
@@ -48,6 +49,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064 (#2)               |
 | E9   | Shop & commerçant                    | `comic_shop` (dépôt privé)          | ⏳   | —      | pro#1 → pro#4             |
 | E10  | Internationalisation (EN, FR, NL, DE) | tous                               | ✅   | 1      | —                         |
+| E11  | App mobile (PWA)                     | `comic_mobile`                      | ⏸   | —      | US-093 (#11)              |
 
 ---
 
@@ -112,6 +114,16 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | US     | Issue | Titre                                         |
 | ------ | ----- | --------------------------------------------- |
 | US-092 | [#9](https://github.com/guepe/Comics-collections/issues/9) | Interface des modules en anglais |
+
+### E11 — App mobile
+
+> ⏸ En pause (2026-11-11). App iPhone / Android installable (PWA) servie par Odoo, module
+> gratuit `comic_mobile`. Code mis de côté sur la branche `us-093-mobile` (hors `19.0-dev`).
+> Maquette : https://claude.ai/artifact/4xmt5TPH6yfZHYbeVQx2QA
+
+| US     | Issue | Titre                                         |
+| ------ | ----- | --------------------------------------------- |
+| US-093 | [#11](https://github.com/guepe/Comics-collections/issues/11) | App mobile (PWA) pour gérer sa collection — en pause |
 
 ---
 
