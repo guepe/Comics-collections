@@ -11,7 +11,7 @@
 - Format : *En tant que… / Je veux… / Afin de…*, puis contexte technique et critères `- [ ]`.
 - Cocher `[x]` dès qu'un critère est réellement livré — jamais par anticipation. Une US dont
   tous les critères sont cochés prend ✅, puis passe en une ligne dans l'[annexe](#4-annexe--livré).
-- Numérotation continue : **prochaine US = US-094**. Une piste 💡 garde son numéro quand elle est
+- Numérotation continue : **prochaine US = US-095**. Une piste 💡 garde son numéro quand elle est
   priorisée.
 - **Depuis le 2026-11-10, les US à faire vivent dans les issues GitHub** (label `us`, label
   `epic:E*`, jalon = épic, Project [Comic Collection — Odoo](https://github.com/users/guepe/projects/3)).
@@ -27,7 +27,7 @@
 | Horizon        | Épic                                                                      | US                          | État |
 | -------------- | ------------------------------------------------------------------------- | --------------------------- | ---- |
 | **Maintenant** | [E8 — Qualité & publication OCA](#e8--qualité--publication-oca)           | US-064 (#2)                 | 🔄   |
-| **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072       | ⏳   |
+| **Plus tard**  | [E9 — Shop & commerçant](#e9--shop--commerçant)                           | US-046, 047, 049, 072, 094  | ⏳   |
 | **Plus tard**  | [E10 — Internationalisation](#e10--internationalisation)                  | US-092 (#9)                 | ✅   |
 | **En pause**   | [E11 — App mobile](#e11--app-mobile)                                      | US-093 (#11)                | ⏸   |
 
@@ -47,7 +47,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | E6   | Séries sur le portail                | `comic_shop`                        | ✅   | 3 US   | —                         |
 | E7   | IA                                   | `comic_ai` / `comic_ai_shop`        | ✅   | 6 US   | —                         |
 | E8   | Qualité & publication OCA            | transverse                          | 🔄   | 10 US  | US-064 (#2)               |
-| E9   | Shop & commerçant                    | `comic_shop` (dépôt privé)          | ⏳   | —      | pro#1 → pro#4             |
+| E9   | Shop & commerçant                    | `comic_shop` (dépôt privé)          | ⏳   | —      | pro#1 → pro#4, pro#6      |
 | E10  | Internationalisation (EN, FR, NL, DE) | tous                               | ✅   | 1      | —                         |
 | E11  | App mobile (PWA)                     | `comic_mobile`                      | ⏸   | —      | US-093 (#11)              |
 
@@ -99,6 +99,7 @@ Les épics ouverts sont numérotés dans l'ordre de priorité (E5 = le plus prio
 | US-047 | [pro#2](https://github.com/guepe/Comics-collections-pro/issues/2) | Rapport « Séries et auteurs à référencer » |
 | US-049 | [pro#3](https://github.com/guepe/Comics-collections-pro/issues/3) | Tableau de bord commerçant — vue marché |
 | US-072 | [pro#4](https://github.com/guepe/Comics-collections-pro/issues/4) | Réservation de tomes en magasin |
+| US-094 | [pro#6](https://github.com/guepe/Comics-collections-pro/issues/6) | Connecteur BDL / FEL : prix belge, disponibilité, parutions (exploration) |
 
 > Bugs ouverts : [#1](https://github.com/guepe/Comics-collections/issues/1) — doublons lors de
 > la complétion des séries (à vérifier depuis la déduplication US-050/056) ;
